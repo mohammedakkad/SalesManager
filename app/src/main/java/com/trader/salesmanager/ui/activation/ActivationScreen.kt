@@ -31,7 +31,7 @@ fun ActivationScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = androidx.compose.material.icons.Icons.Default.Store,
+            imageVector = androidx.compose.material.icons.Icons.Default.ShoppingCart,
             contentDescription = null,
             modifier = Modifier.size(80.dp),
             tint = PrimaryGreen
