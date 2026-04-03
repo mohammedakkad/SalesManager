@@ -5,34 +5,27 @@ import androidx.lifecycle.viewModelScope
 import com.trader.salesmanager.domain.repository.TransactionRepository
 import com.trader.salesmanager.util.DateUtils.todayEnd
 import com.trader.salesmanager.util.DateUtils.todayStart
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
 
 class HomeViewModel(private val repo: TransactionRepository) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-
-    init { loadTodaySummary() }
-
-    fun loadTodaySummary() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+    val uiState: StateFlow<HomeUiState> = repo.getAllTransactions()
+        .map { transactions ->
             val start = todayStart()
             val end   = todayEnd()
-            val total  = repo.getTotalAmountByDate(start, end)
-            val paid   = repo.getPaidAmountByDate(start, end)
-            _uiState.update {
-                it.copy(
-                    todayTotal   = total,
-                    todayPaid    = paid,
-                    todayUnpaid  = total - paid,
-                    isLoading    = false
-                )
-            }
+            val todayTx = transactions.filter { it.date in start..end }
+            val total   = todayTx.sumOf { it.amount }
+            val paid    = todayTx.filter { it.isPaid }.sumOf { it.amount }
+            HomeUiState(
+                todayTotal  = total,
+                todayPaid   = paid,
+                todayUnpaid = total - paid,
+                isLoading   = false
+            )
         }
-    }
+        .stateIn(
+            scope            = viewModelScope,
+            started          = SharingStarted.WhileSubscribed(5_000),
+            initialValue     = HomeUiState(isLoading = true)
+        )
 }

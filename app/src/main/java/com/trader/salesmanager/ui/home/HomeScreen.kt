@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.home
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,35 +62,77 @@ fun HomeScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // ── اليوم ملخص ──
-            Text("ملخص اليوم", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(
+                "ملخص اليوم",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                SummaryCard(modifier = Modifier.weight(1f), label = "الإجمالي",  amount = uiState.todayTotal,  color = MaterialTheme.colorScheme.primary)
-                SummaryCard(modifier = Modifier.weight(1f), label = "المدفوع",   amount = uiState.todayPaid,   color = PaidGreen)
-                SummaryCard(modifier = Modifier.weight(1f), label = "غير مدفوع", amount = uiState.todayUnpaid, color = UnpaidOrange)
+                AnimatedSummaryCard(
+                    modifier = Modifier.weight(1f),
+                    label  = "الإجمالي",
+                    amount = uiState.todayTotal,
+                    color  = MaterialTheme.colorScheme.primary
+                )
+                AnimatedSummaryCard(
+                    modifier = Modifier.weight(1f),
+                    label  = "المدفوع",
+                    amount = uiState.todayPaid,
+                    color  = PaidGreen
+                )
+                AnimatedSummaryCard(
+                    modifier = Modifier.weight(1f),
+                    label  = "غير مدفوع",
+                    amount = uiState.todayUnpaid,
+                    color  = UnpaidOrange
+                )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // ── القوائم السريعة ──
+            Spacer(Modifier.height(4.dp))
             Text("القوائم", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                NavCard(icon = Icons.Default.People,        label = "الزبائن",     onClick = onNavigateToCustomers)
-                NavCard(icon = Icons.Default.ReceiptLong,   label = "العمليات",    onClick = onNavigateToTransactions)
-                NavCard(icon = Icons.Default.BarChart,      label = "التقارير",    onClick = onNavigateToReports)
-                NavCard(icon = Icons.Default.Warning,       label = "الديون",      onClick = onNavigateToDebts, tint = DebtRed)
+                NavCard(icon = Icons.Default.People,      label = "الزبائن",  onClick = onNavigateToCustomers)
+                NavCard(icon = Icons.Default.ReceiptLong, label = "العمليات", onClick = onNavigateToTransactions)
+                NavCard(icon = Icons.Default.BarChart,    label = "التقارير", onClick = onNavigateToReports)
+                NavCard(icon = Icons.Default.Warning,     label = "الديون",   onClick = onNavigateToDebts, tint = DebtRed)
             }
         }
     }
 }
 
 @Composable
-private fun SummaryCard(modifier: Modifier = Modifier, label: String, amount: Double, color: androidx.compose.ui.graphics.Color) {
-    Card(modifier = modifier, shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.12f))) {
-        Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+private fun AnimatedSummaryCard(
+    modifier: Modifier = Modifier,
+    label: String,
+    amount: Double,
+    color: androidx.compose.ui.graphics.Color
+) {
+    // Animate the number smoothly whenever it changes
+    val animatedAmount by animateFloatAsState(
+        targetValue = amount.toFloat(),
+        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
+        label = "amount_$label"
+    )
+
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.12f))
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(label, style = MaterialTheme.typography.labelSmall, color = color)
             Spacer(Modifier.height(4.dp))
-            Text(String.format("%.2f", amount), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = color)
+            Text(
+                text = String.format("%.2f", animatedAmount),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
         }
     }
 }
@@ -106,10 +149,7 @@ private fun NavCard(
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(28.dp))
             Spacer(Modifier.width(16.dp))
             Text(label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
