@@ -3,6 +3,8 @@ package com.trader.salesmanager.ui.activation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,7 +33,7 @@ fun ActivationScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = androidx.compose.material.icons.Icons.Default.ShoppingCart,
+            imageVector = Icons.Default.Lock,
             contentDescription = null,
             modifier = Modifier.size(80.dp),
             tint = PrimaryGreen
