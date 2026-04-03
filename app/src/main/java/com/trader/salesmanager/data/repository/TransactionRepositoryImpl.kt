@@ -4,21 +4,25 @@ import com.trader.salesmanager.data.local.dao.CustomerDao
 import com.trader.salesmanager.data.local.dao.PaymentMethodDao
 import com.trader.salesmanager.data.local.dao.TransactionDao
 import com.trader.salesmanager.data.local.entity.TransactionEntity
+import com.trader.salesmanager.data.remote.FirebaseSyncService
 import com.trader.salesmanager.domain.model.Transaction
+import com.trader.salesmanager.domain.repository.ActivationRepository
 import com.trader.salesmanager.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
     private val customerDao: CustomerDao,
-    private val paymentMethodDao: PaymentMethodDao
+    private val paymentMethodDao: PaymentMethodDao,
+    private val syncService: FirebaseSyncService,
+    private val activationRepo: ActivationRepository
 ) : TransactionRepository {
 
+    private suspend fun merchantCode() = activationRepo.getMerchantCode()
+
     private suspend fun TransactionEntity.toEnrichedDomain(): Transaction {
-        val customerName = customerDao.getCustomerById(customerId)?.name ?: ""
+        val customerName      = customerDao.getCustomerById(customerId)?.name ?: ""
         val paymentMethodName = paymentMethodId?.let { paymentMethodDao.getPaymentMethodById(it)?.name } ?: ""
         return toDomain(customerName, paymentMethodName)
     }
@@ -38,14 +42,22 @@ class TransactionRepositoryImpl(
     override suspend fun getTransactionById(id: Long): Transaction? =
         transactionDao.getTransactionById(id)?.toEnrichedDomain()
 
-    override suspend fun insertTransaction(transaction: Transaction): Long =
-        transactionDao.insertTransaction(TransactionEntity.fromDomain(transaction))
+    override suspend fun insertTransaction(transaction: Transaction): Long {
+        val id = transactionDao.insertTransaction(TransactionEntity.fromDomain(transaction))
+        val saved = transaction.copy(id = id)
+        syncService.pushTransaction(merchantCode(), saved)   // push to Firebase
+        return id
+    }
 
-    override suspend fun updateTransaction(transaction: Transaction) =
+    override suspend fun updateTransaction(transaction: Transaction) {
         transactionDao.updateTransaction(TransactionEntity.fromDomain(transaction))
+        syncService.pushTransaction(merchantCode(), transaction) // push to Firebase
+    }
 
-    override suspend fun deleteTransaction(transaction: Transaction) =
+    override suspend fun deleteTransaction(transaction: Transaction) {
         transactionDao.deleteTransaction(TransactionEntity.fromDomain(transaction))
+        syncService.deleteTransaction(merchantCode(), transaction.id) // delete from Firebase
+    }
 
     override suspend fun getTotalAmountByDate(startDate: Long, endDate: Long): Double =
         transactionDao.getTotalAmountByDate(startDate, endDate)

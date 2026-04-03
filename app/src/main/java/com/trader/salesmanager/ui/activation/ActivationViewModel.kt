@@ -37,7 +37,8 @@ class ActivationViewModel(private val repo: ActivationRepository) : ViewModel() 
             _uiState.update { it.copy(isLoading = true, error = null) }
             val isValid = repo.validateCode(code)
             if (isValid) {
-                repo.saveActivationStatus(true)
+                // Save code + fetch all merchant data from Firebase
+                repo.saveActivationStatus(activated = true, code = code)
                 _uiState.update { it.copy(isLoading = false, isSuccess = true) }
                 _isActivated.value = true
             } else {
