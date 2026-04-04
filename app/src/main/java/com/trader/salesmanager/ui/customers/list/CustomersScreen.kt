@@ -1,18 +1,26 @@
 package com.trader.salesmanager.ui.customers.list
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trader.salesmanager.domain.model.Customer
+import com.trader.salesmanager.ui.components.*
+import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,76 +32,99 @@ fun CustomersScreen(
     viewModel: CustomersViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var customerToDelete by remember { mutableStateOf<Customer?>(null) }
+    var showDeleteDialog by remember { mutableStateOf<Customer?>(null) }
 
-    customerToDelete?.let { customer ->
+    showDeleteDialog?.let { customer ->
         AlertDialog(
-            onDismissRequest = { customerToDelete = null },
-            title = { Text("حذف الزبون") },
-            text = { Text("هل تريد حذف ${customer.name}؟ سيتم حذف جميع عملياته.") },
+            onDismissRequest = { showDeleteDialog = null },
+            icon = { Icon(Icons.Rounded.DeleteForever, null, tint = DebtRed) },
+            title = { Text("حذف الزبون", fontWeight = FontWeight.Bold) },
+            text = { Text("سيتم حذف ${customer.name} وجميع عملياته نهائياً.") },
             confirmButton = {
-                TextButton(onClick = { viewModel.deleteCustomer(customer); customerToDelete = null }) {
-                    Text("حذف", color = MaterialTheme.colorScheme.error)
-                }
+                Button(
+                    onClick = { viewModel.deleteCustomer(customer); showDeleteDialog = null },
+                    colors = ButtonDefaults.buttonColors(containerColor = DebtRed)
+                ) { Text("حذف") }
             },
-            dismissButton = { TextButton(onClick = { customerToDelete = null }) { Text("إلغاء") } }
+            dismissButton = { OutlinedButton(onClick = { showDeleteDialog = null }) { Text("إلغاء") } },
+            shape = RoundedCornerShape(20.dp)
         )
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("الزبائن", fontWeight = FontWeight.Bold) },
-                navigationIcon = { IconButton(onClick = onNavigateUp) { Icon(Icons.Default.ArrowBack, null) } },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        },
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddCustomer) {
-                Icon(Icons.Default.PersonAdd, contentDescription = "إضافة زبون")
+            FloatingActionButton(
+                onClick = onAddCustomer,
+                containerColor = Emerald500,
+                contentColor = Color.White,
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Icon(Icons.Rounded.PersonAdd, null)
             }
         }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-            // ── Search Bar ──
-            OutlinedTextField(
-                value = uiState.searchQuery,
-                onValueChange = viewModel::updateSearch,
-                placeholder = { Text("بحث عن زبون...") },
-                leadingIcon = { Icon(Icons.Default.Search, null) },
-                trailingIcon = {
-                    if (uiState.searchQuery.isNotEmpty())
-                        IconButton(onClick = { viewModel.updateSearch("") }) { Icon(Icons.Default.Clear, null) }
-                },
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp)
-            )
-
-            if (uiState.isLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else if (uiState.customers.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.PeopleOutline, null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(Modifier.height(8.dp))
-                        Text("لا يوجد زبائن بعد", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            // ── Header ──────────────────────────────────────────
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Brush.horizontalGradient(listOf(Emerald700, Cyan500)))
+                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+            ) {
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Column {
+                            Text("الزبائن", style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold, color = Color.White)
+                            Text("${uiState.customers.size} زبون", color = Color.White.copy(0.7f),
+                                style = MaterialTheme.typography.bodySmall)
+                        }
                     }
+                    Spacer(Modifier.height(12.dp))
+                    ModernSearchBar(
+                        query = uiState.searchQuery,
+                        onQueryChange = viewModel::updateSearch,
+                        placeholder = "بحث بالاسم..."
+                    )
                 }
-            } else {
-                LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(uiState.customers, key = { it.id }) { customer ->
-                        CustomerItem(
-                            customer = customer,
-                            onClick = { onCustomerClick(customer.id) },
-                            onDelete = { customerToDelete = customer }
-                        )
+            }
+
+            // ── Content ──────────────────────────────────────────
+            AnimatedContent(
+                targetState = uiState.customers.isEmpty(),
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                label = "content"
+            ) { empty ->
+                if (empty) {
+                    EmptyState(
+                        icon = Icons.Rounded.People,
+                        title = "لا يوجد زبائن بعد",
+                        subtitle = "اضغط + لإضافة أول زبون",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        itemsIndexed(uiState.customers, key = { _, c -> c.id }) { index, customer ->
+                            val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                            AnimatedVisibility(
+                                visibleState = visible,
+                                enter = slideInVertically(initialOffsetY = { it / 2 }, animationSpec = tween(300, delayMillis = index * 40)) + fadeIn()
+                            ) {
+                                CustomerCard(
+                                    customer = customer,
+                                    onClick = { onCustomerClick(customer.id) },
+                                    onDelete = { showDeleteDialog = customer }
+                                )
+                            }
+                        }
+                        item { Spacer(Modifier.height(72.dp)) }
                     }
                 }
             }
@@ -102,14 +133,39 @@ fun CustomersScreen(
 }
 
 @Composable
-private fun CustomerItem(customer: Customer, onClick: () -> Unit, onDelete: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), onClick = onClick, elevation = CardDefaults.cardElevation(2.dp)) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.Person, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(36.dp))
-            Spacer(Modifier.width(12.dp))
-            Text(customer.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
-            IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error) }
-            Icon(Icons.Default.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+private fun CustomerCard(customer: Customer, onClick: () -> Unit, onDelete: () -> Unit) {
+    val initial = customer.name.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
+    val colors = listOf(Emerald500, Cyan500, Violet500, UnpaidAmber)
+    val cardColor = colors[customer.name.length % colors.size]
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        onClick = onClick,
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Brush.radialGradient(listOf(cardColor, cardColor.copy(0.7f)))),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(initial, color = Color.White, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(customer.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                Text("اضغط لعرض التفاصيل", style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            IconButton(onClick = onDelete) {
+                Icon(Icons.Rounded.DeleteOutline, null, tint = DebtRed.copy(alpha = 0.7f))
+            }
+            Icon(Icons.Rounded.ChevronRight, null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
         }
     }
 }

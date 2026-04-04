@@ -1,21 +1,27 @@
 package com.trader.salesmanager.ui.debts
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.trader.salesmanager.ui.theme.DebtRed
+import com.trader.salesmanager.ui.components.*
+import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DebtsScreen(
     onNavigateUp: () -> Unit,
@@ -23,40 +29,100 @@ fun DebtsScreen(
     viewModel: DebtsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("الديون", fontWeight = FontWeight.Bold) },
-                navigationIcon = { IconButton(onClick = onNavigateUp) { Icon(Icons.Default.ArrowBack, null) } },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = DebtRed,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary, navigationIconContentColor = MaterialTheme.colorScheme.onPrimary)
-            )
-        }
-    ) { padding ->
-        if (uiState.isLoading) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-        } else if (uiState.debts.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Default.CheckCircle, null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.primary)
-                    Spacer(Modifier.height(8.dp))
-                    Text("لا توجد ديون! 🎉", style = MaterialTheme.typography.titleMedium)
+
+    Scaffold { padding ->
+        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Brush.horizontalGradient(listOf(DebtRed, Color(0xFFFF6B6B))))
+                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Column {
+                        Text("الديون", style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold, color = Color.White)
+                        Text("${uiState.debts.size} زبون عليه دين", color = Color.White.copy(0.7f),
+                            style = MaterialTheme.typography.bodySmall)
+                    }
                 }
             }
-        } else {
-            LazyColumn(modifier = Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(uiState.debts, key = { it.customer.id }) { item ->
-                    Card(shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth(), onClick = { onCustomerClick(item.customer.id) },
-                        colors = CardDefaults.cardColors(containerColor = DebtRed.copy(0.08f))) {
-                        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Person, null, tint = DebtRed, modifier = Modifier.size(32.dp))
-                            Spacer(Modifier.width(12.dp))
-                            Text(item.customer.name, modifier = Modifier.weight(1f), fontWeight = FontWeight.Medium)
-                            Text(String.format("%.2f", item.debt), color = DebtRed, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+
+            AnimatedContent(
+                targetState = uiState.isLoading to uiState.debts.isEmpty(),
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                label = "debts"
+            ) { (loading, empty) ->
+                when {
+                    loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = DebtRed)
+                    }
+                    empty -> EmptyState(
+                        icon = Icons.Rounded.CheckCircle,
+                        title = "لا توجد ديون 🎉",
+                        subtitle = "جميع الزبائن سددوا ديونهم",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    else -> LazyColumn(
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        itemsIndexed(uiState.debts, key = { _, d -> d.customer.id }) { index, item ->
+                            val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                            AnimatedVisibility(
+                                visibleState = visible,
+                                enter = slideInVertically(initialOffsetY = { it / 2 }, animationSpec = tween(300, delayMillis = index * 50)) + fadeIn()
+                            ) {
+                                DebtCard(
+                                    name = item.customer.name,
+                                    debt = item.debt,
+                                    rank = index + 1,
+                                    onClick = { onCustomerClick(item.customer.id) }
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DebtCard(name: String, debt: Double, rank: Int, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = DebtRed.copy(alpha = 0.06f)),
+        elevation = CardDefaults.cardElevation(0.dp)
+    ) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(DebtRed.copy(0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("#$rank", color = DebtRed, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                Text("اضغط لعرض التفاصيل", style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Text(
+                String.format("%.2f", debt),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = DebtRed
+            )
         }
     }
 }
