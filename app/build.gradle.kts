@@ -1,17 +1,8 @@
-import java.util.Properties
-
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)    // ← library, not application
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics)
-}
-
-val keystorePropertiesFile = rootProject.file("keystore.properties")
-val keystoreProperties = Properties().apply {
-    if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
 }
 
 android {
@@ -19,31 +10,13 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.trader.salesmanager"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables { useSupportLibrary = true }
-    }
-
-    signingConfigs {
-        create("release") {
-            storeFile = file(System.getenv("KEYSTORE_PATH") ?: keystoreProperties["storeFile"] as String? ?: "keystore.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: keystoreProperties["storePassword"] as String? ?: ""
-            keyAlias = System.getenv("KEY_ALIAS") ?: keystoreProperties["keyAlias"] as String? ?: ""
-            keyPassword = System.getenv("KEY_PASSWORD") ?: keystoreProperties["keyPassword"] as String? ?: ""
-        }
     }
 
     buildTypes {
-        debug { applicationIdSuffix = ".debug"; isDebuggable = true }
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false   // libraries must NOT minify
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -54,29 +27,30 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime)
-    implementation(libs.androidx.lifecycle.viewmodel)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.datastore)
-    implementation(libs.navigation.compose)
-    implementation(libs.coroutines.android)
-    implementation(libs.coroutines.play)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.graphics)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.material.icons)
+    // api = transitive: consumers (:salesmanager, :admin) get these automatically
+    api(libs.androidx.core.ktx)
+    api(libs.androidx.lifecycle.runtime)
+    api(libs.androidx.lifecycle.viewmodel)
+    api(libs.androidx.activity.compose)
+    api(libs.androidx.datastore)
+    api(libs.navigation.compose)
+    api(libs.coroutines.android)
+    api(libs.coroutines.play)
+    api(platform(libs.compose.bom))
+    api(libs.compose.ui)
+    api(libs.compose.ui.graphics)
+    api(libs.compose.ui.tooling.preview)
+    api(libs.compose.material3)
+    api(libs.compose.material.icons)
     debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
+    api(libs.room.runtime)
+    api(libs.room.ktx)
     ksp(libs.room.compiler)
-    implementation(libs.koin.android)
-    implementation(libs.koin.compose)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.database)
-    implementation("androidx.compose.material:material-icons-extended")
+    api(libs.koin.android)
+    api(libs.koin.compose)
+    api(platform(libs.firebase.bom))
+    api(libs.firebase.crashlytics)
+    api(libs.firebase.analytics)
+    api(libs.firebase.database)
+    api("androidx.compose.material:material-icons-extended")
 }
