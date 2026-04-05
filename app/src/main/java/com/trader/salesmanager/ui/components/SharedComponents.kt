@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,7 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.trader.salesmanager.ui.theme.*
 
@@ -132,17 +134,12 @@ fun StatCard(
                 }
             }
             Spacer(Modifier.height(8.dp))
-            AnimatedCounter(
-                value = value,
-                style = MaterialTheme.typography.titleLarge,
-                color = color
-            )
+            AnimatedCounter(value = value, style = MaterialTheme.typography.titleLarge, color = color)
         }
     }
 }
 
 // ── Modern Search Bar ─────────────────────────────────────────────────
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModernSearchBar(
     query: String,
@@ -150,18 +147,12 @@ fun ModernSearchBar(
     placeholder: String = "بحث...",
     modifier: Modifier = Modifier
 ) {
-    var active by remember { mutableStateOf(false) }
-    
     OutlinedTextField(
         value = query,
         onValueChange = onQueryChange,
         placeholder = { Text(placeholder, style = MaterialTheme.typography.bodyMedium) },
         leadingIcon = {
-            Icon(
-                androidx.compose.material.icons.Icons.Default.Search,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
+            Icon(Icons.Rounded.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         },
         trailingIcon = {
             AnimatedVisibility(
@@ -170,11 +161,7 @@ fun ModernSearchBar(
                 exit = scaleOut() + fadeOut()
             ) {
                 IconButton(onClick = { onQueryChange("") }) {
-                    Icon(
-                        androidx.compose.material.icons.Icons.Default.Close,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Icon(Icons.Rounded.Close, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         },
@@ -198,17 +185,17 @@ fun EmptyState(
     subtitle: String,
     modifier: Modifier = Modifier
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 0.95f, targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(tween(1500), RepeatMode.Reverse),
+        label = "scale"
+    )
     Column(
         modifier = modifier.fillMaxWidth().padding(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-        val scale by infiniteTransition.animateFloat(
-            initialValue = 0.95f, targetValue = 1.05f,
-            animationSpec = infiniteRepeatable(tween(1500), RepeatMode.Reverse),
-            label = "scale"
-        )
         Box(
             modifier = Modifier
                 .size(88.dp)
@@ -216,22 +203,17 @@ fun EmptyState(
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                icon, contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(40.dp)
-            )
+            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(40.dp))
         }
         Spacer(Modifier.height(20.dp))
         Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(6.dp))
         Text(subtitle, style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
     }
 }
 
-// ── Modern Top App Bar ────────────────────────────────────────────────
+// ── Gradient Top Bar ──────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradientTopBar(
@@ -244,10 +226,7 @@ fun GradientTopBar(
         navigationIcon = {
             if (onNavigateUp != null) {
                 IconButton(onClick = onNavigateUp) {
-                    Icon(
-                        androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null, tint = Color.White
-                    )
+                    Icon(Icons.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
                 }
             }
         },
@@ -256,8 +235,6 @@ fun GradientTopBar(
             containerColor = Color.Transparent,
             actionIconContentColor = Color.White
         ),
-        modifier = Modifier.background(
-            Brush.horizontalGradient(listOf(Emerald700, Cyan500))
-        )
+        modifier = Modifier.background(Brush.horizontalGradient(listOf(Emerald700, Cyan500)))
     )
 }
