@@ -1,0 +1,14 @@
+package com.trader.core.domain.repository
+
+import com.trader.core.domain.model.Merchant
+import com.trader.core.domain.model.MerchantStatus
+import kotlinx.coroutines.flow.Flow
+
+interface MerchantAdminRepository {
+    fun getAllMerchants(): Flow<List<Merchant>>
+    suspend fun getMerchantById(id: String): Merchant?
+    suspend fun addMerchant(merchant: Merchant): String
+    suspend fun updateMerchant(merchant: Merchant)
+    suspend fun deleteMerchant(id: String)
+    suspend fun setMerchantStatus(id: String, status: MerchantStatus)
+}

@@ -1,0 +1,35 @@
+name: Build SalesManager Release APK
+
+on:
+  push:
+    tags: ['merchant-v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'temurin', cache: gradle }
+      - name: Add google-services.json
+        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > salesmanager/google-services.json
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > salesmanager/keystore.jks
+      - name: Build
+        env:
+          KEYSTORE_PATH: keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /tmp/gradle
+          export PATH="/tmp/gradle/gradle-8.7/bin:$PATH"
+          gradle :salesmanager:assembleRelease --stacktrace
+      - uses: actions/upload-artifact@v4
+        with: { name: salesmanager-apk, path: salesmanager/build/outputs/apk/release/salesmanager-release.apk }
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with: { files: salesmanager/build/outputs/apk/release/salesmanager-release.apk }
+        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }

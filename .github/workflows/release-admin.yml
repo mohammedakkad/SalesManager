@@ -1,0 +1,35 @@
+name: Build Admin Release APK
+
+on:
+  push:
+    tags: ['admin-v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { java-version: '17', distribution: 'temurin', cache: gradle }
+      - name: Add google-services.json
+        run: echo "${{ secrets.ADMIN_GOOGLE_SERVICES_JSON }}" > admin/google-services.json
+      - name: Decode Keystore
+        run: echo "${{ secrets.ADMIN_KEYSTORE_BASE64 }}" | base64 --decode > admin/keystore_admin.jks
+      - name: Build
+        env:
+          ADMIN_KEYSTORE_PATH: keystore_admin.jks
+          ADMIN_KEYSTORE_PASSWORD: ${{ secrets.ADMIN_KEYSTORE_PASSWORD }}
+          ADMIN_KEY_ALIAS: ${{ secrets.ADMIN_KEY_ALIAS }}
+          ADMIN_KEY_PASSWORD: ${{ secrets.ADMIN_KEY_PASSWORD }}
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /tmp/gradle
+          export PATH="/tmp/gradle/gradle-8.7/bin:$PATH"
+          gradle :admin:assembleRelease --stacktrace
+      - uses: actions/upload-artifact@v4
+        with: { name: admin-apk, path: admin/build/outputs/apk/release/admin-release.apk }
+      - if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with: { files: admin/build/outputs/apk/release/admin-release.apk }
+        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
