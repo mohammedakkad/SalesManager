@@ -78,4 +78,5 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.database)
+    implementation("androidx.compose.material:material-icons-extended")
 }
