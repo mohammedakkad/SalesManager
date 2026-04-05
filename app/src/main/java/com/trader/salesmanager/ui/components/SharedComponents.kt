@@ -171,7 +171,7 @@ fun ModernSearchBar(
             ) {
                 IconButton(onClick = { onQueryChange("") }) {
                     Icon(
-                        androidx.compose.material.icons.Icons.Default.Clear,
+                        androidx.compose.material.icons.Icons.Default.Close,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -245,7 +245,7 @@ fun GradientTopBar(
             if (onNavigateUp != null) {
                 IconButton(onClick = onNavigateUp) {
                     Icon(
-                        androidx.compose.material.icons.Icons.Default.ArrowBack,
+                        androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = null, tint = Color.White
                     )
                 }
