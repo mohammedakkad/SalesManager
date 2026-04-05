@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "520815967269",
+    "firebase_url": "https://sales-manager-f195a-default-rtdb.firebaseio.com",
+    "project_id": "sales-manager-f195a",
+    "storage_bucket": "sales-manager-f195a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520815967269:android:7d52727ac1d1d4afca13cc",
+        "android_client_info": {
+          "package_name": "com.trader.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8FVtwaUpRI-UHOZrw7VO0Cy3n7UIWQNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520815967269:android:c09e92adc859016cca13cc",
+        "android_client_info": {
+          "package_name": "com.trader.salesmanager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8FVtwaUpRI-UHOZrw7VO0Cy3n7UIWQNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
