@@ -13,7 +13,20 @@
           "package_name": "com.trader.admin"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "520815967269-8qr8716clit0vsn4u3mdevemglndh7q7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trader.admin",
+            "certificate_hash": "4c9931c2ddcf9f1cb296a1d4eb742281ae6655f7"
+          }
+        },
+        {
+          "client_id": "520815967269-lc6d7gc5ddrkfqfvuamq7b6fit2endal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB8FVtwaUpRI-UHOZrw7VO0Cy3n7UIWQNs"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520815967269-lc6d7gc5ddrkfqfvuamq7b6fit2endal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -32,7 +50,20 @@
           "package_name": "com.trader.salesmanager"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "520815967269-2plpniq8h3c0l2rdm5na610u9jdfscst.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trader.salesmanager",
+            "certificate_hash": "4c9931c2ddcf9f1cb296a1d4eb742281ae6655f7"
+          }
+        },
+        {
+          "client_id": "520815967269-lc6d7gc5ddrkfqfvuamq7b6fit2endal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB8FVtwaUpRI-UHOZrw7VO0Cy3n7UIWQNs"
@@ -40,7 +71,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520815967269-lc6d7gc5ddrkfqfvuamq7b6fit2endal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
