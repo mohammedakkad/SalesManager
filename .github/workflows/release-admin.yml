@@ -20,10 +20,8 @@ jobs:
       - name: Add google-services.json
         run: echo "${{ secrets.ADMIN_GOOGLE_SERVICES_JSON }}" > admin/google-services.json
 
-      - name: Decode Keystore
-        run: |
-          echo "${{ secrets.ADMIN_KEYSTORE_BASE64 }}" | base64 --decode > keystore_admin.jks
-          echo "ADMIN_KEYSTORE_PATH=$(pwd)/keystore_admin.jks" >> $GITHUB_ENV
+      - name: Decode Keystore into admin folder
+        run: echo "${{ secrets.ADMIN_KEYSTORE_BASE64 }}" | base64 --decode > admin/keystore_admin.jks
 
       - name: Build Admin APK
         env:

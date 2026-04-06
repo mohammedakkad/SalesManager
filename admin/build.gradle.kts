@@ -13,11 +13,6 @@ val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
 }
 
-// Keystore path: env variable takes priority, then local properties, then default
-val keystorePath = System.getenv("ADMIN_KEYSTORE_PATH")
-    ?: keystoreProperties["storeFile"] as String?
-    ?: "keystore_admin.jks"
-
 android {
     namespace  = "com.trader.admin"
     compileSdk = 35
@@ -28,7 +23,8 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile     = file(keystorePath)
+            // keystore_admin.jks is placed inside admin/ folder by CI
+            storeFile     = file("keystore_admin.jks")
             storePassword = System.getenv("ADMIN_KEYSTORE_PASSWORD") ?: keystoreProperties["storePassword"] as String? ?: ""
             keyAlias      = System.getenv("ADMIN_KEY_ALIAS")         ?: keystoreProperties["keyAlias"]      as String? ?: ""
             keyPassword   = System.getenv("ADMIN_KEY_PASSWORD")      ?: keystoreProperties["keyPassword"]   as String? ?: ""
