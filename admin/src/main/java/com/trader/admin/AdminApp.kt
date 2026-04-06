@@ -5,6 +5,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.trader.admin.di.adminModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import com.trader.admin.AdminMessagingService
 
 class AdminApp : Application() {
     override fun onCreate() {
@@ -14,5 +15,6 @@ class AdminApp : Application() {
             androidContext(this@AdminApp)
             modules(adminModule)
         }
+        AdminMessagingService().checkExpiringMerchants()
     }
 }

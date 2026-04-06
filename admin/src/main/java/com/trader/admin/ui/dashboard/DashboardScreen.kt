@@ -26,6 +26,7 @@ import org.koin.androidx.compose.koinViewModel
 fun DashboardScreen(
     onNavigateToMerchants: () -> Unit,
     onNavigateToChat: () -> Unit,
+    onNavigateToNotifications: () -> Unit,
     onSignOut: () -> Unit,
     viewModel: DashboardViewModel = koinViewModel()
 ) {
@@ -37,18 +38,30 @@ fun DashboardScreen(
         // ── Header ─────────────────────────────────────────────
         Box(
             modifier = Modifier.fillMaxWidth()
-                .background(Brush.linearGradient(listOf(Indigo500, Violet500)))
-                .padding(top = 52.dp, bottom = 80.dp, start = 20.dp, end = 20.dp)
+            .background(Brush.linearGradient(listOf(Indigo500, Violet500)))
+            .padding(top = 52.dp, bottom = 80.dp, start = 20.dp, end = 20.dp)
         ) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Column {
                     Text("Admin Panel", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Color.White)
                     Text("لوحة إدارة البائعين", color = Color.White.copy(0.8f), style = MaterialTheme.typography.bodyMedium)
                 }
-                IconButton(
-                    onClick = onSignOut,
-                    modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                ) { Icon(Icons.Rounded.Logout, null, tint = Color.White) }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // ← أضف زر الإشعارات
+                    IconButton(
+                        onClick = onNavigateToNotifications,
+                        modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
+                    ) {
+                        Icon(Icons.Rounded.Notifications, null, tint = Color.White)
+                    }
+
+                    IconButton(
+                        onClick = onSignOut,
+                        modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
+                    ) {
+                        Icon(Icons.Rounded.Logout, null, tint = Color.White)
+                    }
+                }
             }
         }
 
@@ -119,7 +132,9 @@ private fun ActionCard(icon: ImageVector, title: String, subtitle: String, color
             Box(
                 modifier = Modifier.size(52.dp).clip(RoundedCornerShape(14.dp)).background(color.copy(0.15f)),
                 contentAlignment = Alignment.Center
-            ) { Icon(icon, null, tint = color, modifier = Modifier.size(26.dp)) }
+            ) {
+                Icon(icon, null, tint = color, modifier = Modifier.size(26.dp))
+            }
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = Slate100)

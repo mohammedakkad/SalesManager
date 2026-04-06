@@ -15,6 +15,7 @@ import com.trader.admin.ui.chat.list.ChatListViewModel
 import com.trader.admin.ui.chat.detail.ChatDetailViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import com.trader.admin.ui.notifications.NotificationsViewModel
 
 val adminModule = module {
     // Services
@@ -33,4 +34,6 @@ val adminModule = module {
     viewModel { params -> MerchantDetailViewModel(get(), params.get()) }
     viewModel { ChatListViewModel(get(), get()) }
     viewModel { params -> ChatDetailViewModel(get(), params.get()) }
+    
+    viewModel { NotificationsViewModel(get()) }
 }
