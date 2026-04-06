@@ -17,6 +17,7 @@ import com.trader.salesmanager.ui.transactions.list.TransactionsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import com.trader.core.util.NetworkMonitor
 
 val salesManagerModule = module {
     // Database
@@ -27,6 +28,7 @@ val salesManagerModule = module {
 
     // Remote
     single { FirebaseSyncService() }
+    single { NetworkMonitor(androidContext()) } 
 
     // Repositories
     single<ActivationRepository> {
@@ -37,7 +39,7 @@ val salesManagerModule = module {
     single<PaymentMethodRepository>  { PaymentMethodRepositoryImpl(get(), get(), get()) }
 
     // ViewModels
-    viewModel { ActivationViewModel(get()) }
+    viewModel { ActivationViewModel(get(), get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { CustomersViewModel(get()) }
     viewModel { AddEditCustomerViewModel(get()) }
