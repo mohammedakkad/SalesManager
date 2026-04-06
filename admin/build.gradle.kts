@@ -48,5 +48,9 @@ dependencies {
     implementation(project(":app"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.auth)                  
+    implementation(libs.androidx.credentials)           
+    implementation(libs.androidx.credentials.play)      
+    implementation(libs.googleid)      
     debugImplementation(libs.compose.ui.tooling)
 }
