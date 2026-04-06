@@ -13,6 +13,11 @@ val keystoreProperties = Properties().apply {
     if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
 }
 
+// Keystore path: env variable takes priority, then local properties, then default
+val keystorePath = System.getenv("ADMIN_KEYSTORE_PATH")
+    ?: keystoreProperties["storeFile"] as String?
+    ?: "keystore_admin.jks"
+
 android {
     namespace  = "com.trader.admin"
     compileSdk = 35
@@ -23,17 +28,20 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile   = file(System.getenv("ADMIN_KEYSTORE_PATH")     ?: keystoreProperties["storeFile"]    as String? ?: "keystore_admin.jks")
-            storePassword = System.getenv("ADMIN_KEYSTORE_PASSWORD")    ?: keystoreProperties["storePassword"] as String? ?: ""
-            keyAlias    = System.getenv("ADMIN_KEY_ALIAS")              ?: keystoreProperties["keyAlias"]     as String? ?: ""
-            keyPassword = System.getenv("ADMIN_KEY_PASSWORD")           ?: keystoreProperties["keyPassword"]  as String? ?: ""
+            storeFile     = file(keystorePath)
+            storePassword = System.getenv("ADMIN_KEYSTORE_PASSWORD") ?: keystoreProperties["storePassword"] as String? ?: ""
+            keyAlias      = System.getenv("ADMIN_KEY_ALIAS")         ?: keystoreProperties["keyAlias"]      as String? ?: ""
+            keyPassword   = System.getenv("ADMIN_KEY_PASSWORD")      ?: keystoreProperties["keyPassword"]   as String? ?: ""
         }
     }
     buildTypes {
-        debug   { applicationIdSuffix = ".debug" }
-        release { isMinifyEnabled = true; isShrinkResources = true
+        debug { applicationIdSuffix = ".debug" }
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release") }
+            signingConfig = signingConfigs.getByName("release")
+        }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
     kotlinOptions { jvmTarget = "11" }
