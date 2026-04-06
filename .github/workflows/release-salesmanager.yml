@@ -15,10 +15,10 @@ jobs:
       - name: Add google-services.json
         run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > salesmanager/google-services.json
       - name: Decode Keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > salesmanager/keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
       - name: Build
         env:
-          KEYSTORE_PATH: salesmanager/keystore.jks
+          KEYSTORE_PATH: ${{ github.workspace }}/keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
