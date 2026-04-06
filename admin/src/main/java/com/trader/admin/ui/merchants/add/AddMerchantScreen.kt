@@ -268,7 +268,7 @@ private fun AdminTextField(
         label = { Text(label, color = Slate400) },
         leadingIcon = { Icon(icon, null, tint = Indigo400) },
         supportingText = supportingText?.let {
-            { Text(it, color = Slate500, style = MaterialTheme.typography.labelSmall) }
+            { Text(it, color = Slate400, style = MaterialTheme.typography.labelSmall) }
         },
         shape = RoundedCornerShape(14.dp),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),

@@ -59,7 +59,7 @@ fun NotificationsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Icon(Icons.Rounded.NotificationsNone, null,
                             tint = Slate600, modifier = Modifier.size(64.dp))
-                        Text("لا توجد إشعارات", color = Slate500,
+                        Text("لا توجد إشعارات", color = Slate400,
                             style = MaterialTheme.typography.bodyLarge)
                         Text("جميع البائعين في حالة جيدة",
                             color = Slate600, style = MaterialTheme.typography.bodySmall)

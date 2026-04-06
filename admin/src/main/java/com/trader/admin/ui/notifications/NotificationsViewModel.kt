@@ -41,7 +41,8 @@ class NotificationsViewModel(private val repo: MerchantAdminRepository) : ViewMo
                 }
                 // سينتهي خلال يومين
                 !merchant.isPermanent && merchant.expiryDate != null -> {
-                    val remaining = merchant.expiryDate.toDate().time - now
+                    val expiry = merchant.expiryDate
+                        val remaining = expiry!!.toDate().time - now
                     if (remaining in 0..twoDays) {
                         val hours = TimeUnit.MILLISECONDS.toHours(remaining)
                         val msg = if (hours < 24) "ينتهي خلال $hours ساعة!"
