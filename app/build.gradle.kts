@@ -36,4 +36,5 @@ dependencies {
     api(libs.firebase.auth)
     api(libs.firebase.firestore)
     api(libs.firebase.crashlytics)
+    api(libs.firebase.analytics)
 }

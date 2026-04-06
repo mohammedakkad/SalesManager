@@ -2,7 +2,6 @@ package com.trader.core.data.remote
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 import com.trader.core.domain.model.Merchant
 import com.trader.core.domain.model.MerchantStatus
 import kotlinx.coroutines.channels.awaitClose
@@ -15,10 +14,24 @@ class MerchantAdminService {
     private val merchantsRef = db.collection("merchants")
 
     fun getAllMerchants(): Flow<List<Merchant>> = callbackFlow {
-        val listener = merchantsRef.addSnapshotListener { snap, _ ->
-            val list = snap?.documents?.mapNotNull { doc ->
-                doc.toObject<MerchantFirestore>()?.toDomain(doc.id)
-            } ?: emptyList()
+        val listener = merchantsRef.addSnapshotListener { snapshot, error ->
+            if (error != null || snapshot == null) return@addSnapshotListener
+            val list = snapshot.documents.mapNotNull { doc ->
+                try {
+                    val data = doc.data ?: return@mapNotNull null
+                    Merchant(
+                        id          = doc.id,
+                        name        = data["name"] as? String ?: "",
+                        phone       = data["phone"] as? String ?: "",
+                        activationCode = data["activationCode"] as? String ?: "",
+                        status      = MerchantStatus.valueOf(data["status"] as? String ?: "ACTIVE"),
+                        isPermanent = data["isPermanent"] as? Boolean ?: true,
+                        expiryDate  = doc.getTimestamp("expiryDate"),
+                        createdAt   = doc.getTimestamp("createdAt"),
+                        lastSeen    = doc.getTimestamp("lastSeen")
+                    )
+                } catch (e: Exception) { null }
+            }
             trySend(list)
         }
         awaitClose { listener.remove() }
@@ -26,17 +39,29 @@ class MerchantAdminService {
 
     suspend fun getMerchantById(id: String): Merchant? {
         val doc = merchantsRef.document(id).get().await()
-        return doc.toObject<MerchantFirestore>()?.toDomain(doc.id)
+        val data = doc.data ?: return null
+        return try {
+            Merchant(
+                id          = doc.id,
+                name        = data["name"] as? String ?: "",
+                phone       = data["phone"] as? String ?: "",
+                activationCode = data["activationCode"] as? String ?: "",
+                status      = MerchantStatus.valueOf(data["status"] as? String ?: "ACTIVE"),
+                isPermanent = data["isPermanent"] as? Boolean ?: true,
+                expiryDate  = doc.getTimestamp("expiryDate"),
+                createdAt   = doc.getTimestamp("createdAt"),
+                lastSeen    = doc.getTimestamp("lastSeen")
+            )
+        } catch (e: Exception) { null }
     }
 
     suspend fun addMerchant(merchant: Merchant): String {
-        val data = merchant.toFirestore()
-        val ref = merchantsRef.add(data).await()
+        val ref = merchantsRef.add(merchant.toMap()).await()
         return ref.id
     }
 
     suspend fun updateMerchant(merchant: Merchant) {
-        merchantsRef.document(merchant.id).set(merchant.toFirestore()).await()
+        merchantsRef.document(merchant.id).set(merchant.toMap()).await()
     }
 
     suspend fun deleteMerchant(id: String) {
@@ -47,22 +72,14 @@ class MerchantAdminService {
         merchantsRef.document(id).update("status", status.name).await()
     }
 
-    private fun Merchant.toFirestore() = mapOf(
-        "name" to name, "phone" to phone, "activationCode" to activationCode,
-        "status" to status.name, "isPermanent" to isPermanent,
-        "expiryDate" to expiryDate, "createdAt" to (createdAt ?: Timestamp.now()),
-        "lastSeen" to lastSeen
-    )
-}
-
-data class MerchantFirestore(
-    val name: String = "", val phone: String = "", val activationCode: String = "",
-    val status: String = "ACTIVE", val isPermanent: Boolean = true,
-    val expiryDate: Timestamp? = null, val createdAt: Timestamp? = null, val lastSeen: Timestamp? = null
-) {
-    fun toDomain(id: String) = Merchant(
-        id = id, name = name, phone = phone, activationCode = activationCode,
-        status = MerchantStatus.valueOf(status), isPermanent = isPermanent,
-        expiryDate = expiryDate, createdAt = createdAt, lastSeen = lastSeen
+    private fun Merchant.toMap() = mapOf(
+        "name"           to name,
+        "phone"          to phone,
+        "activationCode" to activationCode,
+        "status"         to status.name,
+        "isPermanent"    to isPermanent,
+        "expiryDate"     to expiryDate,
+        "createdAt"      to (createdAt ?: Timestamp.now()),
+        "lastSeen"       to lastSeen
     )
 }
