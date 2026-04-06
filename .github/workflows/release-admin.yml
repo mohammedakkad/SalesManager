@@ -21,7 +21,7 @@ jobs:
         run: echo "${{ secrets.ADMIN_GOOGLE_SERVICES_JSON }}" > admin/google-services.json
 
       - name: Decode Keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > salesmanager/keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > admin/keystore.jks
       - name: Build
         env:
           KEYSTORE_PATH: keystore.jks
