@@ -43,7 +43,7 @@ fun AdminNavigation() {
             DashboardScreen(
                 onNavigateToMerchants = { navController.navigate(AdminScreen.Merchants.route) },
                 onNavigateToChat      = { navController.navigate(AdminScreen.ChatList.route) },
-                onSignOut             = { authVm.signOut(context); navController.navigate(AdminScreen.Login.route) { popUpTo(0) { inclusive = true } } }
+                onSignOut             = { authVm.signOut(); navController.navigate(AdminScreen.Login.route) { popUpTo(0) { inclusive = true } } }
             )
         }
         composable(AdminScreen.Merchants.route) {
