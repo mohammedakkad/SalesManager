@@ -2,8 +2,8 @@ package com.trader.salesmanager.ui.activation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.salesmanager.domain.repository.ActivationRepository
-import com.trader.salesmanager.util.NetworkMonitor
+import com.trader.core.domain.repository.ActivationRepository
+import com.trader.core.util.NetworkMonitor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

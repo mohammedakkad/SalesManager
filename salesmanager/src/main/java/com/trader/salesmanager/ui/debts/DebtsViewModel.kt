@@ -2,9 +2,9 @@ package com.trader.salesmanager.ui.debts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.salesmanager.domain.model.Customer
-import com.trader.salesmanager.domain.repository.CustomerRepository
-import com.trader.salesmanager.domain.repository.TransactionRepository
+import com.trader.core.domain.model.Customer
+import com.trader.core.domain.repository.CustomerRepository
+import com.trader.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

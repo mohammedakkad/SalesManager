@@ -2,8 +2,8 @@ package com.trader.salesmanager.ui.payments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.salesmanager.domain.model.PaymentMethod
-import com.trader.salesmanager.domain.repository.PaymentMethodRepository
+import com.trader.core.domain.model.PaymentMethod
+import com.trader.core.domain.repository.PaymentMethodRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

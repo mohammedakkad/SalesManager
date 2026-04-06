@@ -18,10 +18,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.trader.salesmanager.domain.model.Transaction
+import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.components.*
 import com.trader.salesmanager.ui.theme.*
-import com.trader.salesmanager.util.DateUtils.toDateString
+import com.trader.core.util.DateUtils.toDateString
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 

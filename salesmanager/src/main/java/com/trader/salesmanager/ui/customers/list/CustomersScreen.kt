@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.trader.salesmanager.domain.model.Customer
+import com.trader.core.domain.model.Customer
 import com.trader.salesmanager.ui.components.*
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel

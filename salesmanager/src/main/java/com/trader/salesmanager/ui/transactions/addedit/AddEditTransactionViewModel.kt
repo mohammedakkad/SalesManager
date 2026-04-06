@@ -2,12 +2,12 @@ package com.trader.salesmanager.ui.transactions.addedit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.salesmanager.domain.model.Customer
-import com.trader.salesmanager.domain.model.PaymentMethod
-import com.trader.salesmanager.domain.model.Transaction
-import com.trader.salesmanager.domain.repository.CustomerRepository
-import com.trader.salesmanager.domain.repository.PaymentMethodRepository
-import com.trader.salesmanager.domain.repository.TransactionRepository
+import com.trader.core.domain.model.Customer
+import com.trader.core.domain.model.PaymentMethod
+import com.trader.core.domain.model.Transaction
+import com.trader.core.domain.repository.CustomerRepository
+import com.trader.core.domain.repository.PaymentMethodRepository
+import com.trader.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

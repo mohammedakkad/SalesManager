@@ -12,11 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.trader.salesmanager.domain.model.Customer
-import com.trader.salesmanager.domain.model.PaymentMethod
+import com.trader.core.domain.model.Customer
+import com.trader.core.domain.model.PaymentMethod
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
-import com.trader.salesmanager.domain.repository.PaymentMethodRepository
+import com.trader.core.domain.repository.PaymentMethodRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
