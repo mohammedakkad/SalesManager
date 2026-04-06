@@ -18,10 +18,10 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile     = file("keystore_admin.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
-            keyAlias      = System.getenv("KEY_ALIAS")         ?: ""
-            keyPassword   = System.getenv("KEY_PASSWORD")      ?: ""
+            storeFile   = file(System.getenv("KEYSTORE_PATH")     ?: keystoreProperties["storeFile"]    as String? ?: "keystore.jks")
+            storePassword = System.getenv("KEYSTORE_PASSWORD")    ?: keystoreProperties["storePassword"] as String? ?: ""
+            keyAlias    = System.getenv("KEY_ALIAS")              ?: keystoreProperties["keyAlias"]     as String? ?: ""
+            keyPassword = System.getenv("KEY_PASSWORD")           ?: keystoreProperties["keyPassword"]  as String? ?: ""
         }
     }
     buildTypes {
