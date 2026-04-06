@@ -20,14 +20,14 @@ jobs:
       - name: Add google-services.json
         run: echo "${{ secrets.ADMIN_GOOGLE_SERVICES_JSON }}" > admin/google-services.json
 
-      - name: Decode Keystore into admin folder
-        run: echo "${{ secrets.ADMIN_KEYSTORE_BASE64 }}" | base64 --decode > admin/keystore_admin.jks
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > admin/keystore_admin.jks
 
       - name: Build Admin APK
         env:
-          ADMIN_KEYSTORE_PASSWORD: ${{ secrets.ADMIN_KEYSTORE_PASSWORD }}
-          ADMIN_KEY_ALIAS: ${{ secrets.ADMIN_KEY_ALIAS }}
-          ADMIN_KEY_PASSWORD: ${{ secrets.ADMIN_KEY_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O /tmp/gradle.zip
           unzip -q /tmp/gradle.zip -d /tmp/gradle

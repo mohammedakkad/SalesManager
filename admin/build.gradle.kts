@@ -8,11 +8,6 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
-val keystorePropertiesFile = rootProject.file("keystore.admin.properties")
-val keystoreProperties = Properties().apply {
-    if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
-}
-
 android {
     namespace  = "com.trader.admin"
     compileSdk = 35
@@ -23,11 +18,10 @@ android {
     }
     signingConfigs {
         create("release") {
-            // keystore_admin.jks is placed inside admin/ folder by CI
             storeFile     = file("keystore_admin.jks")
-            storePassword = System.getenv("ADMIN_KEYSTORE_PASSWORD") ?: keystoreProperties["storePassword"] as String? ?: ""
-            keyAlias      = System.getenv("ADMIN_KEY_ALIAS")         ?: keystoreProperties["keyAlias"]      as String? ?: ""
-            keyPassword   = System.getenv("ADMIN_KEY_PASSWORD")      ?: keystoreProperties["keyPassword"]   as String? ?: ""
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias      = System.getenv("KEY_ALIAS")         ?: ""
+            keyPassword   = System.getenv("KEY_PASSWORD")      ?: ""
         }
     }
     buildTypes {
