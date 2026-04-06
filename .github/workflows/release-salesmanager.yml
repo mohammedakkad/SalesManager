@@ -18,7 +18,7 @@ jobs:
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > salesmanager/keystore.jks
       - name: Build
         env:
-          KEYSTORE_PATH: keystore.jks
+          KEYSTORE_PATH: salesmanager/keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
