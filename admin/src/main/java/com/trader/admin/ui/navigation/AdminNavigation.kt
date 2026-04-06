@@ -28,6 +28,7 @@ fun AdminNavigation() {
     val navController = rememberNavController()
     val authVm: AuthViewModel = koinViewModel()
     val authState by authVm.state.collectAsState()
+    val context = LocalContext.current 
 
     val start = if (authState.isAuthenticated) AdminScreen.Dashboard.route else AdminScreen.Login.route
 
@@ -41,7 +42,7 @@ fun AdminNavigation() {
             DashboardScreen(
                 onNavigateToMerchants = { navController.navigate(AdminScreen.Merchants.route) },
                 onNavigateToChat      = { navController.navigate(AdminScreen.ChatList.route) },
-                onSignOut             = { authVm.signOut(); navController.navigate(AdminScreen.Login.route) { popUpTo(0) { inclusive = true } } }
+                onSignOut             = { authVm.signOut(context); navController.navigate(AdminScreen.Login.route) { popUpTo(0) { inclusive = true } } }
             )
         }
         composable(AdminScreen.Merchants.route) {
