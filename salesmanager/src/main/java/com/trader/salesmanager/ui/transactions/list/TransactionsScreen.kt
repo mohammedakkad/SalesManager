@@ -16,10 +16,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.trader.salesmanager.domain.model.Transaction
-import com.trader.salesmanager.ui.components.*
+import com.trader.core.domain.model.Transaction
+import com.trader.core.util.DateUtils.toDateString
+import com.trader.salesmanager.ui.components.StatusChip
 import com.trader.salesmanager.ui.theme.*
-import com.trader.salesmanager.util.DateUtils.toDateString
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -42,7 +42,6 @@ fun TransactionsScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-            // ── Header ──────────────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -58,12 +57,11 @@ fun TransactionsScreen(
                         Column {
                             Text("العمليات", style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("${uiState.transactions.size} عملية", color = Color.White.copy(0.7f),
-                                style = MaterialTheme.typography.bodySmall)
+                            Text("\${uiState.transactions.size} عملية",
+                                color = Color.White.copy(0.7f), style = MaterialTheme.typography.bodySmall)
                         }
                     }
                     Spacer(Modifier.height(12.dp))
-                    // ── Filter Chips ─────────────────────────────
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf(null to "الكل", true to "مدفوع", false to "غير مدفوع").forEach { (value, label) ->
                             val selected = uiState.filterPaid == value
@@ -88,19 +86,21 @@ fun TransactionsScreen(
                 }
             }
 
-            // ── List ─────────────────────────────────────────────
             AnimatedContent(
                 targetState = uiState.transactions.isEmpty(),
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
                 label = "list"
             ) { empty ->
                 if (empty) {
-                    EmptyState(
-                        icon = Icons.Rounded.Receipt,
-                        title = "لا توجد عمليات",
-                        subtitle = "اضغط + لإضافة عملية جديدة",
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Rounded.Receipt, null,
+                                modifier = Modifier.size(64.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Spacer(Modifier.height(8.dp))
+                            Text("لا توجد عمليات", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
@@ -110,7 +110,10 @@ fun TransactionsScreen(
                             val visible = remember { MutableTransitionState(false).apply { targetState = true } }
                             AnimatedVisibility(
                                 visibleState = visible,
-                                enter = slideInVertically(initialOffsetY = { it / 2 }, animationSpec = tween(300, delayMillis = index * 40)) + fadeIn()
+                                enter = slideInVertically(
+                                    initialOffsetY = { it / 2 },
+                                    animationSpec = tween(300, delayMillis = index * 40)
+                                ) + fadeIn()
                             ) {
                                 TransactionCard(tx = tx, onClick = { onTransactionClick(tx.id) })
                             }
@@ -133,7 +136,6 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            // Amount circle
             Box(
                 modifier = Modifier
                     .size(52.dp)
@@ -161,7 +163,8 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
                     Text(tx.date.toDateString(), style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (tx.paymentMethodName.isNotEmpty()) {
-                        Text("•", color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                        Text("•", color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall)
                         Text(tx.paymentMethodName, style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
