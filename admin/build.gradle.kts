@@ -8,6 +8,11 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
+}
+
 android {
     namespace  = "com.trader.admin"
     compileSdk = 35
