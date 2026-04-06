@@ -2,7 +2,7 @@ name: Build SalesManager Release APK
 
 on:
   push:
-    tags: ['merchant-v*']
+    branches: ['**']
   workflow_dispatch:
 
 jobs:

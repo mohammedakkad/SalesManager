@@ -2,7 +2,7 @@ name: Build Admin Release APK
 
 on:
   push:
-    tags: ['admin-v*']
+    branches: ['**']
   workflow_dispatch:
 
 jobs:
