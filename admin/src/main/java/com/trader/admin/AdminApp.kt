@@ -15,6 +15,6 @@ class AdminApp : Application() {
             androidContext(this@AdminApp)
             modules(adminModule)
         }
-        AdminMessagingService().checkExpiringMerchants()
+        AdminMessagingService.checkExpiringMerchants(this)
     }
 }
