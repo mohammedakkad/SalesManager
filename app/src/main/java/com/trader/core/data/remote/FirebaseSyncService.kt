@@ -1,7 +1,13 @@
 package com.trader.core.data.remote
 
-import com.google.firebase.database.*
-import com.trader.core.domain.model.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.trader.core.domain.model.Customer
+import com.trader.core.domain.model.PaymentMethod
+import com.trader.core.domain.model.PaymentType
+import com.trader.core.domain.model.Transaction as AppTransaction
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -89,7 +95,7 @@ class FirebaseSyncService {
         awaitClose { ref.removeEventListener(listener) }
     }
 
-    fun observeTransactions(merchantCode: String): Flow<List<Transaction>> = callbackFlow {
+    fun observeTransactions(merchantCode: String): Flow<List<AppTransaction>> = callbackFlow {
         val ref = db.reference.child("merchants").child(merchantCode).child("transactions")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
@@ -164,6 +170,6 @@ class FirebaseSyncService {
 
 data class MerchantData(
     val customers: List<Customer>,
-    val transactions: List<Transaction>,
+    val transactions: List<AppTransaction>,
     val paymentMethods: List<PaymentMethod>
 )
