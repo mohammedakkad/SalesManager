@@ -26,8 +26,12 @@ class ActivationRepositoryImpl(
     private val MERCHANT_CODE = stringPreferencesKey("merchant_code")
 
     override suspend fun validateCode(code: String) = firebaseService.validateCode(code)
-    override suspend fun isActivated() = context.dataStore.data.map { it[IS_ACTIVATED] ?: false }.first()
-    override suspend fun getMerchantCode() = context.dataStore.data.map { it[MERCHANT_CODE] ?: "" }.first()
+    override suspend fun isActivated() = context.dataStore.data.map {
+        it[IS_ACTIVATED] ?: false
+    }.first()
+    override suspend fun getMerchantCode() = context.dataStore.data.map {
+        it[MERCHANT_CODE] ?: ""
+    }.first()
 
     override suspend fun saveActivationStatus(activated: Boolean, code: String) {
         context.dataStore.edit {
@@ -41,7 +45,9 @@ class ActivationRepositoryImpl(
     }
 
     override suspend fun deactivate() {
-        context.dataStore.edit { it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = "" }
+        context.dataStore.edit {
+            it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = ""
+        }
         customerDao.deleteAll()
         transactionDao.deleteAll()
         paymentMethodDao.deleteAll()
@@ -51,14 +57,19 @@ class ActivationRepositoryImpl(
      * Listens to Firestore merchant document via callbackFlow.
      * Emits new status whenever admin changes it (ACTIVE → DISABLED / EXPIRED / deleted).
      */
-    override fun observeMerchantStatus(): Flow<MerchantStatus?> = callbackFlow {
+    override fun observeMerchantStatus(): Flow<MerchantStatus?> = flow {
         val code = getMerchantCode()
-        if (code.isEmpty()) { trySend(null); close(); return@callbackFlow }
+        if (code.isEmpty()) {
+            emit(null); return@flow
+        }
 
-        val listener = FirebaseFirestore.getInstance()
+        callbackFlow<MerchantStatus?> {
+            val listener = FirebaseFirestore.getInstance()
             .collection("merchants")
             .whereEqualTo("activationCode", code)
-            .addSnapshotListener { snapshot, _ ->
+            .addSnapshotListener {
+                snapshot, _ ->
+                // ... نفس الكود
                 if (snapshot == null || snapshot.isEmpty) {
                     // Document deleted → treat as DISABLED
                     trySend(MerchantStatus.DISABLED)
@@ -66,25 +77,47 @@ class ActivationRepositoryImpl(
                 }
                 val doc = snapshot.documents.firstOrNull()
                 val status = doc?.getString("status")?.let {
-                    runCatching { MerchantStatus.valueOf(it) }.getOrNull()
+                    runCatching {
+                        MerchantStatus.valueOf(it)
+                    }.getOrNull()
                 }
                 trySend(status)
             }
-        awaitClose { listener.remove() }
+            awaitClose {
+                listener.remove()
+            }
+        }.collect {
+            emit(it)
+        }
+
+
     }
 
     // ── private ──────────────────────────────────────────────────
     private suspend fun fetchAndStoreAllData(code: String) {
-        val data = try { firebaseService.fetchAllData(code) } catch (e: Exception) { return }
+        val data = try {
+            firebaseService.fetchAllData(code)
+        } catch (e: Exception) {
+            return
+        }
         // Insert order matters: customers first (FK parent), then methods, then transactions
-        data.customers.forEach { c ->
-            try { customerDao.insertCustomer(CustomerEntity.fromDomain(c)) } catch (_: Exception) {}
+        data.customers.forEach {
+            c ->
+            try {
+                customerDao.insertCustomer(CustomerEntity.fromDomain(c))
+            } catch (_: Exception) {}
         }
-        data.paymentMethods.forEach { m ->
-            try { paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(m)) } catch (_: Exception) {}
+        data.paymentMethods.forEach {
+            m ->
+            try {
+                paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(m))
+            } catch (_: Exception) {}
         }
-        data.transactions.forEach { t ->
-            try { transactionDao.insertTransaction(TransactionEntity.fromDomain(t)) } catch (_: Exception) {}
+        data.transactions.forEach {
+            t ->
+            try {
+                transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
+            } catch (_: Exception) {}
         }
     }
 }

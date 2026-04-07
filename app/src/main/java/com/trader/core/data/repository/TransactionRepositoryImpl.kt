@@ -8,6 +8,7 @@ import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import com.trader.core.domain.model.Transaction as AppTransaction
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
@@ -38,7 +39,7 @@ class TransactionRepositoryImpl(
         paymentMethodName = paymentMethodId?.let { paymentMethodDao.getPaymentMethodById(it)?.name } ?: ""
     )
 
-    override fun getAllTransactions(): Flow<List<Transaction>> {
+    override fun getAllTransactions(): Flow<List<AppTransaction>> {
         ensureRealtimeSync()
         return transactionDao.getAllTransactions().map { it.map { e -> e.enrich() } }
     }
