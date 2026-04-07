@@ -6,11 +6,11 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,14 +23,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.trader.core.domain.model.Transaction
-import com.trader.salesmanager.ui.components.AnimatedCounter
-import com.trader.salesmanager.ui.components.StatusChip
+import com.trader.salesmanager.ui.components.*
 import com.trader.salesmanager.ui.theme.*
 import com.trader.core.util.DateUtils.toDateString
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomerDetailsScreen(
     customerId: Long,
@@ -46,22 +44,14 @@ fun CustomerDetailsScreen(
     val phone   = uiState.customer?.phone ?: ""
     val initial = name.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
 
-    fun openWhatsApp(prefix: String) {
-        val digits = phone.filter { it.isDigit() }.trimStart('0')
-        val number = "$prefix$digits"
-        try {
-            val intent = Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://wa.me/$number"))
-            context.startActivity(intent)
-        } catch (e: Exception) { /* WhatsApp not installed */ }
-    }
+    // clean phone: keep digits only, strip leading 0
+    val rawPhone = phone.filter { it.isDigit() }.trimStart('0')
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddTransaction,
-                containerColor = Emerald500,
-                contentColor = Color.White,
+                containerColor = Emerald500, contentColor = Color.White,
                 shape = RoundedCornerShape(16.dp)
             ) { Icon(Icons.Rounded.Add, null) }
         }
@@ -71,7 +61,7 @@ fun CustomerDetailsScreen(
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             item {
-                // ── Header ──────────────────────────────────────
+                // ── Header gradient ─────────────────────────────
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -81,7 +71,7 @@ fun CustomerDetailsScreen(
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             IconButton(onClick = onNavigateUp) {
-                                Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                             }
                             Spacer(Modifier.weight(1f))
                             IconButton(onClick = onEditCustomer) {
@@ -89,55 +79,73 @@ fun CustomerDetailsScreen(
                             }
                         }
                         Spacer(Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                             Box(
-                                modifier = Modifier.size(64.dp).clip(CircleShape)
-                                    .background(Color.White.copy(0.2f)),
+                                modifier = Modifier.size(64.dp).clip(CircleShape).background(Color.White.copy(0.2f)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(initial, color = Color.White,
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold)
+                                Text(initial, color = Color.White, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
                             }
                             Column {
-                                Text(name, color = Color.White,
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    fontWeight = FontWeight.Bold)
+                                Text(name, color = Color.White, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                                Text("${uiState.transactions.size} عملية", color = Color.White.copy(0.7f), style = MaterialTheme.typography.bodySmall)
                                 if (phone.isNotEmpty())
-                                    Text(phone, color = Color.White.copy(0.7f),
-                                        style = MaterialTheme.typography.bodySmall)
-                                Text("${uiState.transactions.size} عملية",
-                                    color = Color.White.copy(0.7f),
-                                    style = MaterialTheme.typography.bodySmall)
+                                    Text(phone, color = Color.White.copy(0.8f), style = MaterialTheme.typography.bodySmall)
                             }
                         }
                     }
                 }
             }
 
+            // ── WhatsApp buttons (only when phone exists) ─────────
+            if (rawPhone.isNotEmpty()) {
+                item {
+                    Spacer(Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        // 972 → Israel number
+                        WhatsAppButton(
+                            label = "واتساب 972",
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                val url = "https://wa.me/972$rawPhone"
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            }
+                        )
+                        // 970 → Palestine number
+                        WhatsAppButton(
+                            label = "واتساب 970",
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                val url = "https://wa.me/970$rawPhone"
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            }
+                        )
+                    }
+                }
+            }
+
             item {
-                Spacer(Modifier.height(16.dp))
                 // ── Debt Card ────────────────────────────────────
+                Spacer(Modifier.height(16.dp))
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (uiState.totalDebt > 0) DebtRed.copy(0.08f)
-                                         else PaidGreen.copy(0.08f)
+                        containerColor = if (uiState.totalDebt > 0) DebtRed.copy(0.08f) else PaidGreen.copy(0.08f)
                     ),
                     elevation = CardDefaults.cardElevation(0.dp)
                 ) {
                     Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier.size(56.dp).clip(CircleShape)
-                                .background(if (uiState.totalDebt > 0) DebtRed.copy(0.15f)
-                                             else PaidGreen.copy(0.15f)),
+                                .background(if (uiState.totalDebt > 0) DebtRed.copy(0.15f) else PaidGreen.copy(0.15f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                if (uiState.totalDebt > 0) Icons.Rounded.Warning
-                                else Icons.Rounded.CheckCircle,
+                                if (uiState.totalDebt > 0) Icons.Rounded.Warning else Icons.Rounded.CheckCircle,
                                 null,
                                 tint = if (uiState.totalDebt > 0) DebtRed else PaidGreen,
                                 modifier = Modifier.size(28.dp)
@@ -158,97 +166,58 @@ fun CustomerDetailsScreen(
                         }
                     }
                 }
-
-                // ── WhatsApp Buttons (only if phone exists) ──────
-                if (phone.isNotEmpty()) {
-                    Spacer(Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        // 972 button
-                        Button(
-                            onClick = { openWhatsApp("972") },
-                            modifier = Modifier.weight(1f).height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF25D366))
-                        ) {
-                            Icon(Icons.Rounded.Chat, null,
-                                tint = Color.White, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(6.dp))
-                            Text("+972", color = Color.White, fontWeight = FontWeight.Bold)
-                        }
-                        // 970 button
-                        Button(
-                            onClick = { openWhatsApp("970") },
-                            modifier = Modifier.weight(1f).height(48.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF128C7E))
-                        ) {
-                            Icon(Icons.Rounded.Chat, null,
-                                tint = Color.White, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(6.dp))
-                            Text("+970", color = Color.White, fontWeight = FontWeight.Bold)
-                        }
-                    }
-                }
-
                 Spacer(Modifier.height(20.dp))
-                Text("العمليات",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp))
+                Text("العمليات", style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp))
                 Spacer(Modifier.height(10.dp))
             }
 
-            if (uiState.isLoading) {
-                item {
-                    Box(Modifier.fillMaxWidth().padding(40.dp), Alignment.Center) {
-                        CircularProgressIndicator(color = Emerald500)
-                    }
-                }
-            } else if (uiState.transactions.isEmpty()) {
-                item {
-                    Box(Modifier.fillMaxWidth().padding(40.dp), Alignment.Center) {
-                        Text("لا توجد عمليات بعد",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
+            itemsIndexed(uiState.transactions, key = { _, t -> t.id }) { index, tx ->
+                val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                AnimatedVisibility(
+                    visibleState = visible,
+                    enter = slideInVertically(initialOffsetY = { it / 2 }, animationSpec = tween(250, delayMillis = index * 40)) + fadeIn()
+                ) {
+                    TxMiniCard(tx = tx, onClick = { onTransactionClick(tx.id) },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
                 }
             }
 
-            items(uiState.transactions, key = { it.id }) { tx ->
-                TxMiniCard(
-                    tx = tx,
-                    onClick = { onTransactionClick(tx.id) },
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
+            if (uiState.transactions.isEmpty() && !uiState.isLoading) {
+                item {
+                    EmptyState(icon = Icons.Rounded.Receipt, title = "لا توجد عمليات", subtitle = "اضغط + لإضافة أول عملية")
+                }
             }
         }
     }
 }
 
 @Composable
-private fun TxMiniCard(tx: Transaction, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
+private fun WhatsAppButton(label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Button(
         onClick = onClick,
-        elevation = CardDefaults.cardElevation(1.dp)
+        modifier = modifier.height(44.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF25D366)),
+        shape = RoundedCornerShape(12.dp)
     ) {
+        Icon(Icons.Rounded.Chat, null, modifier = Modifier.size(16.dp))
+        Spacer(Modifier.width(6.dp))
+        Text(label, style = MaterialTheme.typography.labelMedium)
+    }
+}
+
+@Composable
+private fun TxMiniCard(tx: Transaction, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Card(modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), onClick = onClick,
+        elevation = CardDefaults.cardElevation(1.dp)) {
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(tx.date.toDateString(),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(tx.date.toDateString(), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (tx.paymentMethodName.isNotEmpty())
-                    Text(tx.paymentMethodName,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(tx.paymentMethodName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Spacer(Modifier.width(12.dp))
-            Text(String.format("%.2f", tx.amount),
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold)
+            Text(String.format("%.2f", tx.amount), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
             Spacer(Modifier.width(8.dp))
             StatusChip(isPaid = tx.isPaid)
         }

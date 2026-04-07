@@ -3,25 +3,28 @@ package com.trader.salesmanager.ui.navigation
 sealed class Screen(val route: String) {
     object Activation       : Screen("activation")
     object Home             : Screen("home")
-    object Customers        : Screen("customers")
-    object AddCustomer      : Screen("customers/add")
-    object EditCustomer     : Screen("customers/{customerId}/edit") {
-        fun route(id: Long) = "customers/$id/edit"
+    object CustomersList    : Screen("customers_list")
+    object AddCustomer      : Screen("add_customer")
+    object EditCustomer     : Screen("edit_customer/{customerId}") {
+        fun createRoute(id: Long) = "edit_customer/$id"
     }
-    object CustomerDetails  : Screen("customers/{customerId}") {
-        fun route(id: Long) = "customers/$id"
+    object CustomerDetails  : Screen("customer_details/{customerId}") {
+        fun createRoute(id: Long) = "customer_details/$id"
     }
-    object Transactions     : Screen("transactions")
-    object AddTransaction   : Screen("transactions/add")
-    object EditTransaction  : Screen("transactions/{transactionId}/edit") {
-        fun route(id: Long) = "transactions/$id/edit"
+    object TransactionsList : Screen("transactions_list")
+    object AddTransaction   : Screen("add_transaction?customerId={customerId}") {
+        fun createRoute(customerId: Long? = null) =
+            if (customerId != null) "add_transaction?customerId=$customerId" else "add_transaction?customerId=-1"
     }
-    object TransactionDetails : Screen("transactions/{transactionId}") {
-        fun route(id: Long) = "transactions/$id"
+    object EditTransaction  : Screen("edit_transaction/{transactionId}") {
+        fun createRoute(id: Long) = "edit_transaction/$id"
     }
-    object Debts            : Screen("debts")
+    object TransactionDetails : Screen("transaction_details/{transactionId}") {
+        fun createRoute(id: Long) = "transaction_details/$id"
+    }
     object Reports          : Screen("reports")
-    object Payments         : Screen("payments")
+    object PaymentMethods   : Screen("payment_methods")
+    object Debts            : Screen("debts")
     object Settings         : Screen("settings")
     object Chat             : Screen("chat")
 }

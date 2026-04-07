@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface CustomerDao {
     @Query("SELECT * FROM customers ORDER BY createdAt DESC")
     fun getAllCustomers(): Flow<List<CustomerEntity>>
+    @Query("SELECT * FROM customers ORDER BY createdAt DESC")
+    suspend fun getAllCustomersOnce(): List<CustomerEntity>
     @Query("SELECT * FROM customers WHERE name LIKE '%' || :query || '%'")
     fun searchCustomers(query: String): Flow<List<CustomerEntity>>
     @Query("SELECT * FROM customers WHERE id = :id")
@@ -16,4 +18,5 @@ interface CustomerDao {
     suspend fun insertCustomer(customer: CustomerEntity): Long
     @Update suspend fun updateCustomer(customer: CustomerEntity)
     @Delete suspend fun deleteCustomer(customer: CustomerEntity)
+    @Query("DELETE FROM customers") suspend fun deleteAll()
 }

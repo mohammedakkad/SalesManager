@@ -1,368 +1,346 @@
 package com.trader.salesmanager.ui.reports
 
-import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.trader.salesmanager.ui.components.AnimatedCounter
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.sin
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportsScreen(
     onNavigateUp: () -> Unit,
     viewModel: ReportsViewModel = koinViewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
-    ) {
-        // ── Header ───────────────────────────────────────────────────
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Brush.linearGradient(listOf(Violet500, Cyan500)))
-                .padding(top = 48.dp, bottom = 24.dp, start = 16.dp, end = 16.dp)
-        ) {
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("التقارير", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
-                    }
-                    Spacer(Modifier.width(4.dp))
-                    Column {
-                        Text("التقارير", style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold, color = Color.White)
-                        Text("تحليل أداء المبيعات", color = Color.White.copy(0.7f),
-                            style = MaterialTheme.typography.bodySmall)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
                     }
                 }
-                Spacer(Modifier.height(16.dp))
-                // Period switcher
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White.copy(0.15f))
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    listOf(ReportPeriod.DAY to "اليوم", ReportPeriod.WEEK to "الأسبوع", ReportPeriod.MONTH to "الشهر")
-                        .forEach { (p, label) ->
-                            val sel = state.period == p
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(if (sel) Color.White else Color.Transparent)
-                                    .clickable { viewModel.setPeriod(p) }
-                                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                            ) {
-                                Text(label,
-                                    color = if (sel) Violet500 else Color.White,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal)
+            )
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // ── Period Switcher ──────────────────────────────────
+            item {
+                PeriodSwitcher(selected = uiState.period, onSelect = viewModel::setPeriod)
+            }
+
+            // ── Summary Cards ────────────────────────────────────
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    SummaryCard(label = "الإجمالي", value = uiState.totalAmount, color = Emerald500, modifier = Modifier.weight(1f))
+                    SummaryCard(label = "المدفوع", value = uiState.paidAmount, color = PaidGreen, modifier = Modifier.weight(1f))
+                    SummaryCard(label = "الديون", value = uiState.unpaidAmount, color = DebtRed, modifier = Modifier.weight(1f))
+                }
+            }
+
+            // ── Line Chart ───────────────────────────────────────
+            if (uiState.dailySales.isNotEmpty()) {
+                item {
+                    ChartCard(title = "منحنى المبيعات اليومية") {
+                        LineChart(data = uiState.dailySales, modifier = Modifier.fillMaxWidth().height(180.dp))
+                    }
+                }
+            }
+
+            // ── Bar Chart ────────────────────────────────────────
+            if (uiState.dailySales.isNotEmpty()) {
+                item {
+                    ChartCard(title = "مدفوع مقابل غير مدفوع") {
+                        BarChart(data = uiState.dailySales, modifier = Modifier.fillMaxWidth().height(160.dp))
+                    }
+                }
+            }
+
+            // ── Donut Chart ──────────────────────────────────────
+            if (uiState.paymentShares.isNotEmpty()) {
+                item {
+                    ChartCard(title = "توزيع طرق الدفع") {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            DonutChart(
+                                data = uiState.paymentShares,
+                                modifier = Modifier.size(140.dp)
+                            )
+                            Spacer(Modifier.width(16.dp))
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                val donutColors = listOf(Emerald500, Color(0xFF3B82F6), Color(0xFFF59E0B), Color(0xFFEF4444), Color(0xFF8B5CF6))
+                                uiState.paymentShares.forEachIndexed { i, share ->
+                                    val total = uiState.paymentShares.sumOf { it.amount }.takeIf { it > 0 } ?: 1.0
+                                    val pct = (share.amount / total * 100).toInt()
+                                    LegendItem(label = share.name, percent = pct, color = donutColors[i % donutColors.size])
+                                }
                             }
                         }
-                }
-            }
-        }
-
-        if (state.isLoading) {
-            Box(Modifier.fillMaxWidth().height(300.dp), Alignment.Center) {
-                CircularProgressIndicator(color = Violet500)
-            }
-            return@Column
-        }
-
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-
-            // ── Summary Cards ────────────────────────────────────────
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                SummaryCard(Modifier.weight(1f), "إجمالي المبيعات", state.totalSales, Violet500, Icons.Rounded.TrendingUp)
-                SummaryCard(Modifier.weight(1f), "عدد العمليات", state.transactionCount.toDouble(), Cyan500, Icons.Rounded.Receipt, isInt = true)
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                SummaryCard(Modifier.weight(1f), "مدفوع", state.totalPaid, PaidGreen, Icons.Rounded.CheckCircle)
-                SummaryCard(Modifier.weight(1f), "غير مدفوع", state.totalUnpaid, UnpaidAmber, Icons.Rounded.PendingActions)
-            }
-
-            // ── Line Chart ───────────────────────────────────────────
-            if (state.dailyStats.isNotEmpty()) {
-                SectionCard(title = "منحنى المبيعات", icon = Icons.Rounded.ShowChart) {
-                    LineChartView(stats = state.dailyStats, modifier = Modifier.fillMaxWidth().height(160.dp))
-                }
-            }
-
-            // ── Paid vs Unpaid Bar ───────────────────────────────────
-            if (state.totalSales > 0) {
-                SectionCard(title = "المدفوع مقابل غير المدفوع", icon = Icons.Rounded.BarChart) {
-                    PaidVsUnpaidBar(paid = state.totalPaid, unpaid = state.totalUnpaid)
-                }
-            }
-
-            // ── Donut — Payment Methods ──────────────────────────────
-            if (state.paymentStats.isNotEmpty()) {
-                SectionCard(title = "طرق الدفع", icon = Icons.Rounded.PieChart) {
-                    DonutChart(stats = state.paymentStats)
-                }
-            }
-
-            // ── Top Customers ────────────────────────────────────────
-            if (state.topCustomers.isNotEmpty()) {
-                SectionCard(title = "أبرز الزبائن", icon = Icons.Rounded.Star) {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        state.topCustomers.forEachIndexed { i, c ->
-                            TopCustomerRow(rank = i + 1, customer = c, maxTotal = state.topCustomers.first().total)
-                        }
                     }
                 }
             }
 
-            Spacer(Modifier.height(80.dp))
-        }
-    }
-}
-
-// ── Summary Card ─────────────────────────────────────────────────────
-@Composable
-private fun SummaryCard(
-    modifier: Modifier, label: String, value: Double, color: Color,
-    icon: androidx.compose.ui.graphics.vector.ImageVector, isInt: Boolean = false
-) {
-    var visible by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) { visible = true }
-    val scale by animateFloatAsState(if (visible) 1f else 0.85f,
-        spring(Spring.DampingRatioMediumBouncy), label = "scale")
-
-    Card(
-        modifier = modifier.graphicsLayer(scaleX = scale, scaleY = scale),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(0.08f)),
-        elevation = CardDefaults.cardElevation(0.dp)
-    ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
-                Text(label, style = MaterialTheme.typography.labelSmall, color = color)
-                Box(Modifier.size(28.dp).clip(CircleShape).background(color.copy(0.15f)),
-                    Alignment.Center) {
-                    Icon(icon, null, tint = color, modifier = Modifier.size(14.dp))
+            // ── Top Spenders ─────────────────────────────────────
+            if (uiState.topSpenders.isNotEmpty()) {
+                item {
+                    ChartCard(title = "أعلى 5 زبائن شراءً") {
+                        RankList(items = uiState.topSpenders, color = Emerald500)
+                    }
                 }
             }
-            Spacer(Modifier.height(6.dp))
-            if (isInt) {
-                val animVal by animateIntAsState(value.toInt(), spring(Spring.DampingRatioMediumBouncy), label = "int")
-                Text("$animVal", style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold, color = color)
-            } else {
-                AnimatedCounter(value = value, style = MaterialTheme.typography.headlineMedium, color = color)
+
+            // ── Top Debtors ──────────────────────────────────────
+            if (uiState.topDebtors.isNotEmpty()) {
+                item {
+                    ChartCard(title = "أعلى 5 زبائن ديناً") {
+                        RankList(items = uiState.topDebtors, color = DebtRed)
+                    }
+                }
             }
         }
     }
 }
 
-// ── Section Card Wrapper ─────────────────────────────────────────────
+// ── Period Switcher ──────────────────────────────────────────
 @Composable
-private fun SectionCard(
-    title: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+private fun PeriodSwitcher(selected: ReportPeriod, onSelect: (ReportPeriod) -> Unit) {
+    val labels = mapOf(ReportPeriod.TODAY to "اليوم", ReportPeriod.WEEK to "الأسبوع", ReportPeriod.MONTH to "الشهر")
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant),
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(icon, null, tint = Violet500, modifier = Modifier.size(18.dp))
-                Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+        labels.forEach { (period, label) ->
+            val isSelected = period == selected
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(4.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(if (isSelected) Emerald500 else Color.Transparent),
+                contentAlignment = Alignment.Center
+            ) {
+                TextButton(onClick = { onSelect(period) }, modifier = Modifier.fillMaxWidth()) {
+                    Text(label, color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
+                }
             }
-            Spacer(Modifier.height(16.dp))
+        }
+    }
+}
+
+// ── Summary Card with count-up animation ────────────────────
+@Composable
+private fun SummaryCard(label: String, value: Double, color: Color, modifier: Modifier = Modifier) {
+    var target by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(value) { target = value.toFloat() }
+    val animated by animateFloatAsState(target, tween(1200, easing = FastOutSlowInEasing), label = "count")
+    Card(modifier = modifier, shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = color.copy(0.1f))) {
+        Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(label, style = MaterialTheme.typography.labelSmall, color = color)
+            Spacer(Modifier.height(4.dp))
+            Text(
+                String.format("%.0f", animated),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.ExtraBold,
+                color = color
+            )
+        }
+    }
+}
+
+// ── Chart Card wrapper ───────────────────────────────────────
+@Composable
+private fun ChartCard(title: String, content: @Composable () -> Unit) {
+    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(12.dp))
             content()
         }
     }
 }
 
-// ── Line Chart ────────────────────────────────────────────────────────
+// ── Line Chart ───────────────────────────────────────────────
 @Composable
-private fun LineChartView(stats: List<DailyStat>, modifier: Modifier = Modifier) {
-    val animProgress by animateFloatAsState(
-        targetValue = 1f,
-        animationSpec = tween(1200, easing = EaseOutCubic),
-        label = "line"
-    )
-    val maxVal = stats.maxOf { it.total }.coerceAtLeast(1.0)
-    val gradientBrush = Brush.verticalGradient(listOf(Violet500.copy(0.4f), Color.Transparent))
-    val lineBrush = Brush.horizontalGradient(listOf(Violet500, Cyan500))
+private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier = Modifier) {
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(data) {
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(1500, easing = FastOutSlowInEasing))
+    }
+    val anim by progress.asState()
+    val lineColor = Emerald500
+    val fillColor = Emerald500.copy(0.15f)
 
     Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height - 20.dp.toPx()
-        val step = if (stats.size > 1) w / (stats.size - 1) else w
-
-        val points = stats.mapIndexed { i, s ->
-            Offset(i * step, h - (s.total / maxVal * h * animProgress).toFloat())
+        if (data.isEmpty()) return@Canvas
+        val maxVal = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
+        val stepX = size.width / (data.size - 1).coerceAtLeast(1)
+        val points = data.mapIndexed { i, e ->
+            Offset(i * stepX, size.height * (1f - (e.total / maxVal).toFloat()))
         }
+        val drawCount = (points.size * anim).toInt().coerceAtLeast(1).coerceAtMost(points.size)
+        val visiblePoints = points.take(drawCount)
 
-        // Fill under line
-        if (points.size > 1) {
-            val path = Path().apply {
-                moveTo(points.first().x, h)
-                points.forEach { lineTo(it.x, it.y) }
-                lineTo(points.last().x, h)
-                close()
-            }
-            drawPath(path, gradientBrush)
+        // Fill path
+        val path = Path()
+        visiblePoints.forEachIndexed { i, pt ->
+            if (i == 0) path.moveTo(pt.x, pt.y) else path.lineTo(pt.x, pt.y)
         }
+        path.lineTo(visiblePoints.last().x, size.height)
+        path.lineTo(visiblePoints.first().x, size.height)
+        path.close()
+        drawPath(path, Brush.verticalGradient(listOf(fillColor, Color.Transparent)))
 
         // Line
-        if (points.size > 1) {
-            val linePath = Path().apply {
-                moveTo(points.first().x, points.first().y)
-                for (i in 1 until points.size) {
-                    val prev = points[i - 1]; val curr = points[i]
-                    val cpX = (prev.x + curr.x) / 2
-                    cubicTo(cpX, prev.y, cpX, curr.y, curr.x, curr.y)
-                }
-            }
-            drawPath(linePath, lineBrush, style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round))
+        val linePath = Path()
+        visiblePoints.forEachIndexed { i, pt ->
+            if (i == 0) linePath.moveTo(pt.x, pt.y) else linePath.lineTo(pt.x, pt.y)
         }
+        drawPath(linePath, lineColor, style = Stroke(3.dp.toPx(), cap = StrokeCap.Round))
 
         // Dots
-        points.forEach { pt ->
-            drawCircle(Color.White, radius = 5.dp.toPx(), center = pt)
-            drawCircle(Violet500, radius = 3.dp.toPx(), center = pt)
+        visiblePoints.forEach { pt ->
+            drawCircle(Color.White, 5.dp.toPx(), pt)
+            drawCircle(lineColor, 3.dp.toPx(), pt)
         }
     }
 }
 
-// ── Paid vs Unpaid Bar ────────────────────────────────────────────────
+// ── Bar Chart ─────────────────────────────────────────────────
 @Composable
-private fun PaidVsUnpaidBar(paid: Double, unpaid: Double) {
-    val total = (paid + unpaid).coerceAtLeast(1.0)
-    val paidFraction = (paid / total).toFloat()
-    val animPaid by animateFloatAsState(paidFraction, tween(900, easing = EaseOutCubic), label = "bar")
+private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier = Modifier) {
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(data) {
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing))
+    }
+    val anim by progress.asState()
+    val paidColor = PaidGreen
+    val unpaidColor = DebtRed
 
+    Canvas(modifier = modifier) {
+        if (data.isEmpty()) return@Canvas
+        val maxVal = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
+        val groupW = size.width / data.size
+        val barW = groupW * 0.35f
+        val gap = barW * 0.2f
+
+        data.forEachIndexed { i, entry ->
+            val left = i * groupW + gap
+            val paidH = (entry.paid / maxVal * size.height * anim).toFloat()
+            val unpaidH = ((entry.total - entry.paid) / maxVal * size.height * anim).toFloat()
+            // Paid bar
+            drawRoundRect(paidColor, topLeft = Offset(left, size.height - paidH),
+                size = Size(barW, paidH), cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()))
+            // Unpaid bar
+            drawRoundRect(unpaidColor.copy(0.7f), topLeft = Offset(left + barW + 2.dp.toPx(), size.height - unpaidH),
+                size = Size(barW, unpaidH), cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()))
+        }
+    }
+}
+
+// ── Donut Chart ───────────────────────────────────────────────
+@Composable
+private fun DonutChart(data: List<PaymentShare>, modifier: Modifier = Modifier) {
+    val donutColors = listOf(Emerald500, Color(0xFF3B82F6), Color(0xFFF59E0B), Color(0xFFEF4444), Color(0xFF8B5CF6))
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(data) {
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(1400, easing = FastOutSlowInEasing))
+    }
+    val anim by progress.asState()
+    val total = data.sumOf { it.amount }.takeIf { it > 0 } ?: 1.0
+
+    Canvas(modifier = modifier) {
+        val stroke = 28.dp.toPx()
+        val radius = min(size.width, size.height) / 2f - stroke / 2f
+        val center = Offset(size.width / 2f, size.height / 2f)
+        var startAngle = -90f
+        data.forEachIndexed { i, share ->
+            val sweep = (share.amount / total * 360 * anim).toFloat()
+            drawArc(
+                color = donutColors[i % donutColors.size],
+                startAngle = startAngle,
+                sweepAngle = sweep,
+                useCenter = false,
+                topLeft = Offset(center.x - radius, center.y - radius),
+                size = Size(radius * 2, radius * 2),
+                style = Stroke(stroke, cap = StrokeCap.Round)
+            )
+            startAngle += sweep
+        }
+    }
+}
+
+// ── Legend Item ───────────────────────────────────────────────
+@Composable
+private fun LegendItem(label: String, percent: Int, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(color))
+        Text("$label ($percent%)", style = MaterialTheme.typography.labelSmall)
+    }
+}
+
+// ── Rank List ─────────────────────────────────────────────────
+@Composable
+private fun RankList(items: List<CustomerRank>, color: Color) {
+    val maxVal = items.maxOfOrNull { it.amount }?.takeIf { it > 0 } ?: 1.0
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(Modifier.fillMaxWidth().height(20.dp).clip(RoundedCornerShape(10.dp))) {
-            Box(Modifier.weight(animPaid.coerceAtLeast(0.01f)).fillMaxHeight()
-                .background(Brush.horizontalGradient(listOf(PaidGreen, Emerald400))))
-            Box(Modifier.weight((1f - animPaid).coerceAtLeast(0.01f)).fillMaxHeight()
-                .background(Brush.horizontalGradient(listOf(UnpaidAmber, Color(0xFFFBBF24)))))
-        }
-        Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Box(Modifier.size(10.dp).clip(CircleShape).background(PaidGreen))
-                Text("مدفوع ${(paidFraction * 100).toInt()}%",
-                    style = MaterialTheme.typography.labelSmall, color = PaidGreen)
+        items.forEachIndexed { i, item ->
+            val barProgress = remember { Animatable(0f) }
+            LaunchedEffect(item.amount) {
+                barProgress.snapTo(0f)
+                barProgress.animateTo((item.amount / maxVal).toFloat(), tween(900, delayMillis = i * 100, easing = FastOutSlowInEasing))
             }
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Box(Modifier.size(10.dp).clip(CircleShape).background(UnpaidAmber))
-                Text("غير مدفوع ${((1 - paidFraction) * 100).toInt()}%",
-                    style = MaterialTheme.typography.labelSmall, color = UnpaidAmber)
-            }
-        }
-    }
-}
-
-// ── Donut Chart ───────────────────────────────────────────────────────
-@Composable
-private fun DonutChart(stats: List<PaymentStat>) {
-    val total = stats.sumOf { it.amount }.coerceAtLeast(1.0)
-    val animProgress by animateFloatAsState(1f, tween(1000, easing = EaseOutCubic), label = "donut")
-
-    Row(verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Canvas(modifier = Modifier.size(120.dp)) {
-            var startAngle = -90f
-            stats.forEach { stat ->
-                val sweep = (stat.amount / total * 360f * animProgress).toFloat()
-                drawArc(
-                    color = Color(stat.color),
-                    startAngle = startAngle,
-                    sweepAngle = sweep,
-                    useCenter = false,
-                    style = Stroke(width = 24.dp.toPx(), cap = StrokeCap.Butt),
-                    topLeft = Offset(12.dp.toPx(), 12.dp.toPx()),
-                    size = Size(size.width - 24.dp.toPx(), size.height - 24.dp.toPx())
-                )
-                startAngle += sweep + 2f
-            }
-        }
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            stats.forEach { stat ->
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Box(Modifier.size(10.dp).clip(CircleShape).background(Color(stat.color)))
-                    Text(stat.name, style = MaterialTheme.typography.bodySmall)
-                    Text(String.format("%.0f", stat.amount),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            }
-        }
-    }
-}
-
-// ── Top Customer Row ──────────────────────────────────────────────────
-@Composable
-private fun TopCustomerRow(rank: Int, customer: TopCustomer, maxTotal: Double) {
-    val animWidth by animateFloatAsState(
-        (customer.total / maxTotal.coerceAtLeast(1.0)).toFloat(),
-        tween(800, delayMillis = rank * 100, easing = EaseOutCubic), label = "bar$rank"
-    )
-    val medalColors = listOf(Color(0xFFFFD700), Color(0xFFC0C0C0), Color(0xFFCD7F32))
-
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Box(Modifier.size(28.dp).clip(CircleShape)
-                .background(if (rank <= 3) medalColors[rank - 1].copy(0.2f)
-                            else MaterialTheme.colorScheme.surfaceVariant),
-                Alignment.Center) {
-                Text("$rank", fontWeight = FontWeight.Bold, fontSize = 11.sp,
-                    color = if (rank <= 3) medalColors[rank - 1]
-                            else MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            Column(Modifier.weight(1f)) {
-                Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-                    Text(customer.name, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold)
-                    Text(String.format("%.0f", customer.total),
-                        style = MaterialTheme.typography.labelSmall, color = Violet500, fontWeight = FontWeight.Bold)
-                }
-                Spacer(Modifier.height(4.dp))
-                Box(Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)) {
-                    Box(Modifier.fillMaxWidth(animWidth).fillMaxHeight()
-                        .background(Brush.horizontalGradient(listOf(Violet500, Cyan500)))
-                        .clip(RoundedCornerShape(3.dp)))
-                }
-                if (customer.debt > 0) {
-                    Spacer(Modifier.height(2.dp))
-                    Text("دين: ${String.format("%.0f", customer.debt)}",
-                        style = MaterialTheme.typography.labelSmall, color = DebtRed)
+            val prog by barProgress.asState()
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("${i + 1}", style = MaterialTheme.typography.labelSmall,
+                    color = color, fontWeight = FontWeight.Bold, modifier = Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                        Text(item.name, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
+                        Text(String.format("%.0f", item.amount), style = MaterialTheme.typography.labelSmall, color = color)
+                    }
+                    Spacer(Modifier.height(3.dp))
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp))
+                            .background(color.copy(0.15f))
+                    ) {
+                        Box(modifier = Modifier.fillMaxWidth(prog).fillMaxHeight()
+                            .clip(RoundedCornerShape(3.dp)).background(color))
+                    }
                 }
             }
         }

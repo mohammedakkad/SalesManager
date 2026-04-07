@@ -8,106 +8,116 @@ import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.DateUtils.todayEnd
 import com.trader.core.util.DateUtils.todayStart
 import kotlinx.coroutines.flow.*
+import java.text.SimpleDateFormat
 import java.util.*
 
-data class DailyStat(val day: Int, val total: Double, val paid: Double)
-data class PaymentStat(val name: String, val amount: Double, val color: Long)
-data class TopCustomer(val name: String, val total: Double, val debt: Double)
+enum class ReportPeriod { TODAY, WEEK, MONTH }
+
+data class DaySalesEntry(val label: String, val total: Double, val paid: Double)
+data class CustomerRank(val name: String, val amount: Double)
+data class PaymentShare(val name: String, val amount: Double)
 
 data class ReportsUiState(
     val period: ReportPeriod = ReportPeriod.MONTH,
-    val totalSales: Double = 0.0,
-    val totalPaid: Double = 0.0,
-    val totalUnpaid: Double = 0.0,
-    val transactionCount: Int = 0,
-    val dailyStats: List<DailyStat> = emptyList(),
-    val paymentStats: List<PaymentStat> = emptyList(),
-    val topCustomers: List<TopCustomer> = emptyList(),
+    val totalAmount: Double = 0.0,
+    val paidAmount: Double = 0.0,
+    val unpaidAmount: Double = 0.0,
+    val txCount: Int = 0,
+    val dailySales: List<DaySalesEntry> = emptyList(),
+    val paymentShares: List<PaymentShare> = emptyList(),
+    val topSpenders: List<CustomerRank> = emptyList(),
+    val topDebtors: List<CustomerRank> = emptyList(),
     val isLoading: Boolean = true
 )
 
-enum class ReportPeriod { DAY, WEEK, MONTH }
-
 class ReportsViewModel(
-    private val transactionRepo: TransactionRepository,
+    private val txRepo: TransactionRepository,
     private val customerRepo: CustomerRepository
 ) : ViewModel() {
 
     private val _period = MutableStateFlow(ReportPeriod.MONTH)
-    val uiState: StateFlow<ReportsUiState> = _period
-        .flatMapLatest { period ->
-            val (start, end) = periodRange(period)
-            transactionRepo.getTransactionsByDate(start, end).map { transactions ->
-                buildState(transactions, period)
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ReportsUiState())
+
+    val uiState: StateFlow<ReportsUiState> = combine(
+        txRepo.getAllTransactions(),
+        _period
+    ) { transactions, period ->
+        val (start, end) = periodRange(period)
+        val filtered = transactions.filter { it.date in start..end }
+        buildState(filtered, transactions, period)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ReportsUiState())
 
     fun setPeriod(p: ReportPeriod) { _period.value = p }
 
-    private fun periodRange(period: ReportPeriod): Pair<Long, Long> {
+    private fun periodRange(p: ReportPeriod): Pair<Long, Long> {
         val cal = Calendar.getInstance()
-        val end = todayEnd()
-        return when (period) {
-            ReportPeriod.DAY   -> todayStart() to end
-            ReportPeriod.WEEK  -> { cal.add(Calendar.DAY_OF_YEAR, -7); cal.timeInMillis to end }
-            ReportPeriod.MONTH -> { cal.add(Calendar.DAY_OF_YEAR, -30); cal.timeInMillis to end }
+        return when (p) {
+            ReportPeriod.TODAY -> todayStart() to todayEnd()
+            ReportPeriod.WEEK  -> {
+                cal.set(Calendar.DAY_OF_WEEK, cal.firstDayOfWeek)
+                cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0); cal.set(Calendar.SECOND, 0)
+                val s = cal.timeInMillis
+                cal.add(Calendar.DAY_OF_WEEK, 6)
+                cal.set(Calendar.HOUR_OF_DAY, 23); cal.set(Calendar.MINUTE, 59); cal.set(Calendar.SECOND, 59)
+                s to cal.timeInMillis
+            }
+            ReportPeriod.MONTH -> {
+                cal.set(Calendar.DAY_OF_MONTH, 1)
+                cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0); cal.set(Calendar.SECOND, 0)
+                val s = cal.timeInMillis
+                cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
+                cal.set(Calendar.HOUR_OF_DAY, 23); cal.set(Calendar.MINUTE, 59); cal.set(Calendar.SECOND, 59)
+                s to cal.timeInMillis
+            }
         }
     }
 
-    private fun buildState(txs: List<Transaction>, period: ReportPeriod): ReportsUiState {
-        val total   = txs.sumOf { it.amount }
-        val paid    = txs.filter { it.isPaid }.sumOf { it.amount }
-        val unpaid  = txs.filter { !it.isPaid }.sumOf { it.amount }
+    private fun buildState(filtered: List<Transaction>, all: List<Transaction>, period: ReportPeriod): ReportsUiState {
+        val total   = filtered.sumOf { it.amount }
+        val paid    = filtered.filter { it.isPaid }.sumOf { it.amount }
+        val unpaid  = total - paid
 
-        // Daily stats — group by day
-        val byDay = txs.groupBy {
-            Calendar.getInstance().apply { timeInMillis = it.date }.get(Calendar.DAY_OF_YEAR)
+        // Daily sales for line + bar chart
+        val dayFmt  = SimpleDateFormat("dd/MM", Locale.getDefault())
+        val dailyMap = mutableMapOf<String, Pair<Double, Double>>() // label → (total, paid)
+        filtered.forEach { tx ->
+            val label = dayFmt.format(Date(tx.date))
+            val (t, p) = dailyMap.getOrDefault(label, 0.0 to 0.0)
+            dailyMap[label] = (t + tx.amount) to (p + if (tx.isPaid) tx.amount else 0.0)
         }
-        val days = when (period) {
-            ReportPeriod.DAY   -> 1
-            ReportPeriod.WEEK  -> 7
-            ReportPeriod.MONTH -> 30
+        val dailySales = dailyMap.entries
+            .sortedBy { SimpleDateFormat("dd/MM", Locale.getDefault()).parse(it.key)?.time ?: 0L }
+            .map { DaySalesEntry(it.key, it.value.first, it.value.second) }
+
+        // Payment method distribution
+        val pmMap = mutableMapOf<String, Double>()
+        filtered.forEach { tx ->
+            val name = tx.paymentMethodName.ifEmpty { "أخرى" }
+            pmMap[name] = pmMap.getOrDefault(name, 0.0) + tx.amount
         }
-        val cal = Calendar.getInstance()
-        val dailyStats = (0 until minOf(days, 30)).map { i ->
-            val c = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -i) }
-            val dayKey = c.get(Calendar.DAY_OF_YEAR)
-            val dayTxs = byDay[dayKey] ?: emptyList()
-            DailyStat(
-                day   = days - i,
-                total = dayTxs.sumOf { it.amount },
-                paid  = dayTxs.filter { it.isPaid }.sumOf { it.amount }
-            )
-        }.reversed()
+        val paymentShares = pmMap.entries.sortedByDescending { it.value }
+            .map { PaymentShare(it.key, it.value) }
 
-        // Payment method breakdown
-        val paymentColors = listOf(0xFF10B981L, 0xFF06B6D4L, 0xFF8B5CF6L, 0xFFF59E0BL, 0xFFEF4444L)
-        val byMethod = txs.groupBy { it.paymentMethodName.ifEmpty { "غير محدد" } }
-        val paymentStats = byMethod.entries.mapIndexed { i, (name, list) ->
-            PaymentStat(name, list.sumOf { it.amount }, paymentColors[i % paymentColors.size])
-        }.sortedByDescending { it.amount }
+        // Top 5 spenders (by total purchase)
+        val spenderMap = mutableMapOf<String, Double>()
+        filtered.forEach { tx ->
+            spenderMap[tx.customerName] = spenderMap.getOrDefault(tx.customerName, 0.0) + tx.amount
+        }
+        val topSpenders = spenderMap.entries.sortedByDescending { it.value }.take(5)
+            .map { CustomerRank(it.key, it.value) }
 
-        // Top customers
-        val byCustomer = txs.groupBy { it.customerId }
-        val topCustomers = byCustomer.map { (_, list) ->
-            TopCustomer(
-                name  = list.first().customerName,
-                total = list.sumOf { it.amount },
-                debt  = list.filter { !it.isPaid }.sumOf { it.amount }
-            )
-        }.sortedByDescending { it.total }.take(5)
+        // Top 5 debtors (unpaid transactions across ALL time)
+        val debtMap = mutableMapOf<String, Double>()
+        all.filter { !it.isPaid }.forEach { tx ->
+            debtMap[tx.customerName] = debtMap.getOrDefault(tx.customerName, 0.0) + tx.amount
+        }
+        val topDebtors = debtMap.entries.sortedByDescending { it.value }.take(5)
+            .map { CustomerRank(it.key, it.value) }
 
         return ReportsUiState(
-            period           = period,
-            totalSales       = total,
-            totalPaid        = paid,
-            totalUnpaid      = unpaid,
-            transactionCount = txs.size,
-            dailyStats       = dailyStats,
-            paymentStats     = paymentStats,
-            topCustomers     = topCustomers,
-            isLoading        = false
+            period = period, totalAmount = total, paidAmount = paid, unpaidAmount = unpaid,
+            txCount = filtered.size, dailySales = dailySales,
+            paymentShares = paymentShares, topSpenders = topSpenders,
+            topDebtors = topDebtors, isLoading = false
         )
     }
 }

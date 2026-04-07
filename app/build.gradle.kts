@@ -37,4 +37,5 @@ dependencies {
     api(libs.firebase.firestore)
     api(libs.firebase.crashlytics)
     api(libs.firebase.analytics)
+    api(libs.firebase.messaging)
 }

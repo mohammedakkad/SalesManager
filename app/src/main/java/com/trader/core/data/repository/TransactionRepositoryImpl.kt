@@ -1,15 +1,13 @@
 package com.trader.core.data.repository
 
-import com.trader.core.data.local.dao.CustomerDao
-import com.trader.core.data.local.dao.PaymentMethodDao
-import com.trader.core.data.local.dao.TransactionDao
+import com.trader.core.data.local.dao.*
 import com.trader.core.data.local.entity.TransactionEntity
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.TransactionRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
@@ -19,74 +17,49 @@ class TransactionRepositoryImpl(
     private val activationRepo: ActivationRepository
 ) : TransactionRepository {
 
+    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var syncJob: Job? = null
+
+    private fun ensureRealtimeSync() {
+        if (syncJob?.isActive == true) return
+        syncJob = syncScope.launch {
+            val code = activationRepo.getMerchantCode()
+            if (code.isEmpty()) return@launch
+            sync.observeTransactions(code).collect { list ->
+                list.forEach { transactionDao.insertTransaction(TransactionEntity.fromDomain(it)) }
+            }
+        }
+    }
+
     private suspend fun code() = activationRepo.getMerchantCode()
 
-    override fun getAllTransactions(): Flow<List<Transaction>> =
-    transactionDao.getAllTransactions().map {
-        list ->
-        list.map {
-            entity -> entity.toDomain(
-                customerName = customerDao.getCustomerById(entity.customerId)?.name ?: "",
-                paymentMethodName = entity.paymentMethodId?.let {
-                    paymentMethodDao.getPaymentMethodById(it)?.name
-                } ?: ""
-            )}
+    private suspend fun TransactionEntity.enrich() = toDomain(
+        customerName = customerDao.getCustomerById(customerId)?.name ?: "",
+        paymentMethodName = paymentMethodId?.let { paymentMethodDao.getPaymentMethodById(it)?.name } ?: ""
+    )
+
+    override fun getAllTransactions(): Flow<List<Transaction>> {
+        ensureRealtimeSync()
+        return transactionDao.getAllTransactions().map { it.map { e -> e.enrich() } }
     }
-
-    override fun getTransactionsByCustomer(customerId: Long): Flow<List<Transaction>> =
-    transactionDao.getTransactionsByCustomer(customerId).map {
-        list ->
-        list.map {
-            it.toDomain(
-                paymentMethodName = it.paymentMethodId?.let {
-                    paymentMethodDao.getPaymentMethodById(it)?.name
-                } ?: ""
-            )}
+    override fun getTransactionsByCustomer(cid: Long) =
+        transactionDao.getTransactionsByCustomer(cid).map { it.map { e -> e.enrich() } }
+    override fun getTransactionsByDate(s: Long, e: Long) =
+        transactionDao.getTransactionsByDate(s, e).map { it.map { en -> en.enrich() } }
+    override fun getUnpaidTransactions() =
+        transactionDao.getUnpaidTransactions().map { it.map { e -> e.enrich() } }
+    override suspend fun getTransactionById(id: Long) = transactionDao.getTransactionById(id)?.enrich()
+    override suspend fun insertTransaction(t: Transaction): Long {
+        val id = transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
+        sync.pushTransaction(code(), t.copy(id = id)); return id
     }
-
-    override fun getUnpaidTransactions(): Flow<List<Transaction>> =
-    transactionDao.getUnpaidTransactions().map {
-        list ->
-        list.map {
-            entity -> entity.toDomain(
-                customerName = customerDao.getCustomerById(entity.customerId)?.name ?: ""
-            )}
+    override suspend fun updateTransaction(t: Transaction) {
+        transactionDao.updateTransaction(TransactionEntity.fromDomain(t)); sync.pushTransaction(code(), t)
     }
-
-    override fun getTransactionsByDate(startDate: Long, endDate: Long): Flow<List<Transaction>> =
-    transactionDao.getTransactionsByDate(startDate, endDate).map {
-        list ->
-        list.map {
-            entity -> entity.toDomain(
-                customerName = customerDao.getCustomerById(entity.customerId)?.name ?: ""
-            )}
+    override suspend fun deleteTransaction(t: Transaction) {
+        transactionDao.deleteTransaction(TransactionEntity.fromDomain(t)); sync.deleteTransaction(code(), t.id)
     }
-
-    override suspend fun getTransactionById(id: Long): Transaction? =
-    transactionDao.getTransactionById(id)?.toDomain()
-
-    override suspend fun insertTransaction(transaction: Transaction): Long {
-        val id = transactionDao.insertTransaction(TransactionEntity.fromDomain(transaction))
-        sync.pushTransaction(code(), transaction.copy(id = id))
-        return id
-    }
-
-    override suspend fun updateTransaction(transaction: Transaction) {
-        transactionDao.updateTransaction(TransactionEntity.fromDomain(transaction))
-        sync.pushTransaction(code(), transaction)
-    }
-
-    override suspend fun deleteTransaction(transaction: Transaction) {
-        transactionDao.deleteTransaction(TransactionEntity.fromDomain(transaction))
-        sync.deleteTransaction(code(), transaction.id)
-    }
-
-    override suspend fun getTotalAmountByDate(startDate: Long, endDate: Long): Double =
-    transactionDao.getTotalAmountByDate(startDate, endDate)
-
-    override suspend fun getPaidAmountByDate(startDate: Long, endDate: Long): Double =
-    transactionDao.getPaidAmountByDate(startDate, endDate)
-
-    override suspend fun getUnpaidAmountByCustomer(customerId: Long): Double =
-    transactionDao.getUnpaidAmountByCustomer(customerId)
+    override suspend fun getTotalAmountByDate(s: Long, e: Long) = transactionDao.getTotalAmountByDate(s, e)
+    override suspend fun getPaidAmountByDate(s: Long, e: Long) = transactionDao.getPaidAmountByDate(s, e)
+    override suspend fun getUnpaidAmountByCustomer(cid: Long) = transactionDao.getUnpaidAmountByCustomer(cid)
 }

@@ -6,6 +6,7 @@ import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.CustomerRepository
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -14,14 +15,39 @@ class CustomerRepositoryImpl(
     private val sync: FirebaseSyncService,
     private val activationRepo: ActivationRepository
 ) : CustomerRepository {
-    private suspend fun code() = activationRepo.getMerchantCode()
-    override fun getAllCustomers(): Flow<List<Customer>> = dao.getAllCustomers().map { it.map(CustomerEntity::toDomain) }
-    override fun searchCustomers(q: String): Flow<List<Customer>> = dao.searchCustomers(q).map { it.map(CustomerEntity::toDomain) }
-    override suspend fun getCustomerById(id: Long): Customer? = dao.getCustomerById(id)?.toDomain()
-    override suspend fun insertCustomer(customer: Customer): Long {
-        val id = dao.insertCustomer(CustomerEntity.fromDomain(customer))
-        sync.pushCustomer(code(), customer.copy(id = id)); return id
+
+    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var syncJob: Job? = null
+
+    /** Start Firebase → Room streaming (idempotent) */
+    private fun ensureRealtimeSync() {
+        if (syncJob?.isActive == true) return
+        syncJob = syncScope.launch {
+            val code = activationRepo.getMerchantCode()
+            if (code.isEmpty()) return@launch
+            sync.observeCustomers(code).collect { list ->
+                list.forEach { dao.insertCustomer(CustomerEntity.fromDomain(it)) }
+            }
+        }
     }
-    override suspend fun updateCustomer(customer: Customer) { dao.updateCustomer(CustomerEntity.fromDomain(customer)); sync.pushCustomer(code(), customer) }
-    override suspend fun deleteCustomer(customer: Customer) { dao.deleteCustomer(CustomerEntity.fromDomain(customer)); sync.deleteCustomer(code(), customer.id) }
+
+    private suspend fun code() = activationRepo.getMerchantCode()
+
+    override fun getAllCustomers(): Flow<List<Customer>> {
+        ensureRealtimeSync()
+        return dao.getAllCustomers().map { it.map(CustomerEntity::toDomain) }
+    }
+    override fun searchCustomers(q: String): Flow<List<Customer>> =
+        dao.searchCustomers(q).map { it.map(CustomerEntity::toDomain) }
+    override suspend fun getCustomerById(id: Long) = dao.getCustomerById(id)?.toDomain()
+    override suspend fun insertCustomer(c: Customer): Long {
+        val id = dao.insertCustomer(CustomerEntity.fromDomain(c))
+        sync.pushCustomer(code(), c.copy(id = id)); return id
+    }
+    override suspend fun updateCustomer(c: Customer) {
+        dao.updateCustomer(CustomerEntity.fromDomain(c)); sync.pushCustomer(code(), c)
+    }
+    override suspend fun deleteCustomer(c: Customer) {
+        dao.deleteCustomer(CustomerEntity.fromDomain(c)); sync.deleteCustomer(code(), c.id)
+    }
 }

@@ -13,8 +13,6 @@ data class CustomerEntity(
 ) {
     fun toDomain() = Customer(id = id, name = name, phone = phone, createdAt = createdAt)
     companion object {
-        fun fromDomain(c: Customer) = CustomerEntity(
-            id = c.id, name = c.name, phone = c.phone, createdAt = c.createdAt
-        )
+        fun fromDomain(c: Customer) = CustomerEntity(id = c.id, name = c.name, phone = c.phone, createdAt = c.createdAt)
     }
 }

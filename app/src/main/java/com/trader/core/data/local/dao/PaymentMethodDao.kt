@@ -14,4 +14,5 @@ interface PaymentMethodDao {
     suspend fun insertPaymentMethod(method: PaymentMethodEntity): Long
     @Update suspend fun updatePaymentMethod(method: PaymentMethodEntity)
     @Delete suspend fun deletePaymentMethod(method: PaymentMethodEntity)
+    @Query("DELETE FROM payment_methods") suspend fun deleteAll()
 }

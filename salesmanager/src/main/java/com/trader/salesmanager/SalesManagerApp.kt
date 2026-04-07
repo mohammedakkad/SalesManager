@@ -2,6 +2,8 @@ package com.trader.salesmanager
 
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.database.FirebaseDatabase
+import com.trader.core.util.ExpiryNotificationHelper
 import com.trader.salesmanager.di.salesManagerModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -10,6 +12,10 @@ class SalesManagerApp : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+        // Offline writes queued on disk → auto-sync on reconnect
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+        // Create notification channel (required for Android 8+)
+        ExpiryNotificationHelper.createChannel(this)
         startKoin {
             androidContext(this@SalesManagerApp)
             modules(salesManagerModule)

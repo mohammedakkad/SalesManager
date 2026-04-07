@@ -1,38 +1,169 @@
 package com.trader.core.data.remote
 
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.trader.core.domain.model.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class FirebaseSyncService {
     private val db = FirebaseDatabase.getInstance()
 
+    // ── Type-safe Int/Long helpers ───────────────────────────────
+    private fun Any?.asLong(): Long? = when (this) {
+        is Long -> this; is Int -> toLong(); is Double -> toLong(); else -> null
+    }
+    private fun Any?.asDouble(): Double? = when (this) {
+        is Double -> this; is Long -> toDouble(); is Int -> toDouble(); else -> null
+    }
+
+    // ── Activation ───────────────────────────────────────────────
     suspend fun validateCode(code: String): Boolean = try {
         val snap = db.reference.child("activation_codes").child(code).get().await()
         snap.exists() && snap.getValue(Boolean::class.java) == true
     } catch (e: Exception) { false }
 
-    fun pushCustomer(merchantCode: String, customer: Customer) {
-        db.reference.child("merchants").child(merchantCode).child("customers").child(customer.id.toString())
-            .setValue(mapOf("id" to customer.id, "name" to customer.name, "createdAt" to customer.createdAt))
+    // ── One-time full fetch on activation ────────────────────────
+    suspend fun fetchAllData(merchantCode: String): MerchantData {
+        val root = db.reference.child("merchants").child(merchantCode)
+        val customers = try {
+            root.child("customers").get().await().children.mapNotNull { snap ->
+                val m = snap.value as? Map<*, *> ?: return@mapNotNull null
+                Customer(
+                    id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
+                    name = m["name"] as? String ?: return@mapNotNull null,
+                    phone = m["phone"] as? String ?: "",
+                    createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
+                )
+            }
+        } catch (e: Exception) { emptyList() }
+        val paymentMethods = try {
+            root.child("payment_methods").get().await().children.mapNotNull { snap ->
+                val m = snap.value as? Map<*, *> ?: return@mapNotNull null
+                PaymentMethod(
+                    id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
+                    name = m["name"] as? String ?: return@mapNotNull null,
+                    type = runCatching { PaymentType.valueOf(m["type"] as? String ?: "") }.getOrDefault(PaymentType.OTHER)
+                )
+            }
+        } catch (e: Exception) { emptyList() }
+        val transactions = try {
+            root.child("transactions").get().await().children.mapNotNull { snap ->
+                val m = snap.value as? Map<*, *> ?: return@mapNotNull null
+                Transaction(
+                    id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
+                    customerId = m["customerId"].asLong() ?: return@mapNotNull null,
+                    amount = m["amount"].asDouble() ?: return@mapNotNull null,
+                    isPaid = m["isPaid"] as? Boolean ?: false,
+                    paymentMethodId = m["paymentMethodId"].asLong(),
+                    note = m["note"] as? String ?: "",
+                    date = m["date"].asLong() ?: System.currentTimeMillis(),
+                    paidAt = m["paidAt"].asLong()
+                )
+            }
+        } catch (e: Exception) { emptyList() }
+        return MerchantData(customers, transactions, paymentMethods)
     }
-    fun deleteCustomer(merchantCode: String, customerId: Long) {
-        db.reference.child("merchants").child(merchantCode).child("customers").child(customerId.toString()).removeValue()
+
+    // ── Real-time streams (callbackFlow) ─────────────────────────
+    fun observeCustomers(merchantCode: String): Flow<List<Customer>> = callbackFlow {
+        val ref = db.reference.child("merchants").child(merchantCode).child("customers")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snap: DataSnapshot) {
+                trySend(snap.children.mapNotNull { child ->
+                    val m = child.value as? Map<*, *> ?: return@mapNotNull null
+                    runCatching {
+                        Customer(
+                            id = m["id"].asLong() ?: child.key?.toLongOrNull() ?: return@mapNotNull null,
+                            name = m["name"] as? String ?: return@mapNotNull null,
+                            phone = m["phone"] as? String ?: "",
+                            createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
+                        )
+                    }.getOrNull()
+                })
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
     }
-    fun pushTransaction(merchantCode: String, transaction: Transaction) {
-        db.reference.child("merchants").child(merchantCode).child("transactions").child(transaction.id.toString())
-            .setValue(mapOf("id" to transaction.id, "customerId" to transaction.customerId, "amount" to transaction.amount,
-                "isPaid" to transaction.isPaid, "paymentMethodId" to transaction.paymentMethodId,
-                "note" to transaction.note, "date" to transaction.date, "paidAt" to transaction.paidAt))
+
+    fun observeTransactions(merchantCode: String): Flow<List<Transaction>> = callbackFlow {
+        val ref = db.reference.child("merchants").child(merchantCode).child("transactions")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snap: DataSnapshot) {
+                trySend(snap.children.mapNotNull { child ->
+                    val m = child.value as? Map<*, *> ?: return@mapNotNull null
+                    runCatching {
+                        Transaction(
+                            id = m["id"].asLong() ?: child.key?.toLongOrNull() ?: return@mapNotNull null,
+                            customerId = m["customerId"].asLong() ?: return@mapNotNull null,
+                            amount = m["amount"].asDouble() ?: return@mapNotNull null,
+                            isPaid = m["isPaid"] as? Boolean ?: false,
+                            paymentMethodId = m["paymentMethodId"].asLong(),
+                            note = m["note"] as? String ?: "",
+                            date = m["date"].asLong() ?: System.currentTimeMillis(),
+                            paidAt = m["paidAt"].asLong()
+                        )
+                    }.getOrNull()
+                })
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
     }
-    fun deleteTransaction(merchantCode: String, transactionId: Long) {
-        db.reference.child("merchants").child(merchantCode).child("transactions").child(transactionId.toString()).removeValue()
+
+    fun observePaymentMethods(merchantCode: String): Flow<List<PaymentMethod>> = callbackFlow {
+        val ref = db.reference.child("merchants").child(merchantCode).child("payment_methods")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snap: DataSnapshot) {
+                trySend(snap.children.mapNotNull { child ->
+                    val m = child.value as? Map<*, *> ?: return@mapNotNull null
+                    runCatching {
+                        PaymentMethod(
+                            id = m["id"].asLong() ?: child.key?.toLongOrNull() ?: return@mapNotNull null,
+                            name = m["name"] as? String ?: return@mapNotNull null,
+                            type = runCatching { PaymentType.valueOf(m["type"] as? String ?: "") }.getOrDefault(PaymentType.OTHER)
+                        )
+                    }.getOrNull()
+                })
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
     }
-    fun pushPaymentMethod(merchantCode: String, method: PaymentMethod) {
-        db.reference.child("merchants").child(merchantCode).child("payment_methods").child(method.id.toString())
-            .setValue(mapOf("id" to method.id, "name" to method.name, "type" to method.type.name))
+
+    // ── Push helpers ─────────────────────────────────────────────
+    fun pushCustomer(merchantCode: String, c: Customer) {
+        db.reference.child("merchants").child(merchantCode).child("customers").child(c.id.toString())
+            .setValue(mapOf("id" to c.id, "name" to c.name, "phone" to c.phone, "createdAt" to c.createdAt))
     }
-    fun deletePaymentMethod(merchantCode: String, methodId: Long) {
-        db.reference.child("merchants").child(merchantCode).child("payment_methods").child(methodId.toString()).removeValue()
+    fun deleteCustomer(merchantCode: String, id: Long) {
+        db.reference.child("merchants").child(merchantCode).child("customers").child(id.toString()).removeValue()
+    }
+    fun pushTransaction(merchantCode: String, t: Transaction) {
+        db.reference.child("merchants").child(merchantCode).child("transactions").child(t.id.toString())
+            .setValue(mapOf("id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
+                "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
+                "note" to t.note, "date" to t.date, "paidAt" to t.paidAt))
+    }
+    fun deleteTransaction(merchantCode: String, id: Long) {
+        db.reference.child("merchants").child(merchantCode).child("transactions").child(id.toString()).removeValue()
+    }
+    fun pushPaymentMethod(merchantCode: String, m: PaymentMethod) {
+        db.reference.child("merchants").child(merchantCode).child("payment_methods").child(m.id.toString())
+            .setValue(mapOf("id" to m.id, "name" to m.name, "type" to m.type.name))
+    }
+    fun deletePaymentMethod(merchantCode: String, id: Long) {
+        db.reference.child("merchants").child(merchantCode).child("payment_methods").child(id.toString()).removeValue()
     }
 }
+
+data class MerchantData(
+    val customers: List<Customer>,
+    val transactions: List<Transaction>,
+    val paymentMethods: List<PaymentMethod>
+)
