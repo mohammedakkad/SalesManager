@@ -36,6 +36,7 @@ fun HomeScreen(
     onNavigateToReports: () -> Unit,
     onNavigateToDebts: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToChat: () -> Unit,
     onAddTransaction: () -> Unit,
     viewModel: HomeViewModel = koinViewModel()
 ) {

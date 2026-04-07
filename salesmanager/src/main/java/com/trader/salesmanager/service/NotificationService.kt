@@ -1,0 +1,70 @@
+package com.trader.salesmanager.service
+
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import com.trader.salesmanager.MainActivity
+
+object NotificationService {
+
+    private const val CHANNEL_EXPIRY = "expiry_channel"
+    private const val CHANNEL_GENERAL = "general_channel"
+
+    fun createChannels(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            nm.createNotificationChannel(
+                NotificationChannel(CHANNEL_EXPIRY, "انتهاء الاشتراك", NotificationManager.IMPORTANCE_HIGH).apply {
+                    description = "إشعارات اقتراب انتهاء مدة الاشتراك"
+                }
+            )
+            nm.createNotificationChannel(
+                NotificationChannel(CHANNEL_GENERAL, "إشعارات عامة", NotificationManager.IMPORTANCE_DEFAULT)
+            )
+        }
+    }
+
+    fun showExpiryWarning(context: Context, daysLeft: Long) {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            context, 0, intent, PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val title = if (daysLeft <= 0) "⚠️ انتهى اشتراكك!" else "⚠️ اشتراكك سينتهي قريباً"
+        val body  = if (daysLeft <= 0) "تواصل مع الإدارة لتجديد اشتراكك"
+                    else "متبقي $daysLeft يوم فقط — تواصل مع الإدارة للتجديد"
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_EXPIRY)
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        try {
+            NotificationManagerCompat.from(context).notify(1001, notification)
+        } catch (e: SecurityException) { /* permission not granted */ }
+    }
+
+    fun showStatusChanged(context: Context, message: String) {
+        val notification = NotificationCompat.Builder(context, CHANNEL_GENERAL)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentTitle("تغيير حالة الحساب")
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
+            .build()
+        try {
+            NotificationManagerCompat.from(context).notify(1002, notification)
+        } catch (e: SecurityException) { /* permission not granted */ }
+    }
+}

@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
@@ -48,7 +50,11 @@ fun AddEditCustomerScreen(
                 }
             }
 
-            Column(modifier = Modifier.fillMaxWidth().padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Name
                 OutlinedTextField(
                     value = uiState.name,
                     onValueChange = viewModel::updateName,
@@ -57,9 +63,25 @@ fun AddEditCustomerScreen(
                     isError = uiState.error != null,
                     supportingText = uiState.error?.let { { Text(it) } },
                     shape = RoundedCornerShape(14.dp),
-                    modifier = Modifier.fillMaxWidth(), singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Emerald500)
                 )
+
+                // Phone
+                OutlinedTextField(
+                    value = uiState.phone,
+                    onValueChange = viewModel::updatePhone,
+                    label = { Text("رقم الهاتف (اختياري)") },
+                    leadingIcon = { Icon(Icons.Rounded.Phone, null, tint = Emerald500) },
+                    placeholder = { Text("0501234567") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = Emerald500)
+                )
+
                 Button(
                     onClick = viewModel::save,
                     enabled = !uiState.isLoading,
@@ -68,8 +90,11 @@ fun AddEditCustomerScreen(
                     colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
                 ) {
                     AnimatedContent(uiState.isLoading, label = "save") { loading ->
-                        if (loading) CircularProgressIndicator(Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp)
-                        else Text("حفظ", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyLarge)
+                        if (loading) CircularProgressIndicator(
+                            Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp
+                        )
+                        else Text("حفظ", fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
