@@ -57,7 +57,7 @@ class FirebaseSyncService {
         val transactions = try {
             root.child("transactions").get().await().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
-                Transaction(
+                AppTransaction(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
                     customerId = m["customerId"].asLong() ?: return@mapNotNull null,
                     amount = m["amount"].asDouble() ?: return@mapNotNull null,
@@ -102,7 +102,7 @@ class FirebaseSyncService {
                 trySend(snap.children.mapNotNull { child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
-                        Transaction(
+                        AppTransaction(
                             id = m["id"].asLong() ?: child.key?.toLongOrNull() ?: return@mapNotNull null,
                             customerId = m["customerId"].asLong() ?: return@mapNotNull null,
                             amount = m["amount"].asDouble() ?: return@mapNotNull null,
@@ -150,7 +150,7 @@ class FirebaseSyncService {
     fun deleteCustomer(merchantCode: String, id: Long) {
         db.reference.child("merchants").child(merchantCode).child("customers").child(id.toString()).removeValue()
     }
-    fun pushTransaction(merchantCode: String, t: Transaction) {
+    fun pushTransaction(merchantCode: String, t: AppTransaction) {
         db.reference.child("merchants").child(merchantCode).child("transactions").child(t.id.toString())
             .setValue(mapOf("id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
                 "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
