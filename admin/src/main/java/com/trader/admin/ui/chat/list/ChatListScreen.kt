@@ -22,29 +22,64 @@ import com.trader.admin.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ChatListScreen(onNavigateUp: () -> Unit, onChatClick: (String) -> Unit, viewModel: ChatListViewModel = koinViewModel()) {
+fun ChatListScreen(
+    onNavigateUp: () -> Unit,
+    // passes activationCode (not merchantId) so both sides use same Firestore path
+    onChatClick: (activationCode: String, merchantName: String) -> Unit,
+    viewModel: ChatListViewModel = koinViewModel()
+) {
     val chats by viewModel.chats.collectAsState()
 
     Scaffold(containerColor = Navy950) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-            Box(modifier = Modifier.fillMaxWidth()
-                .background(Brush.horizontalGradient(listOf(Cyan500, Indigo500)))
-                .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .background(Brush.horizontalGradient(listOf(Cyan500, Indigo500)))
+                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onNavigateUp) { Icon(Icons.Rounded.ArrowBack, null, tint = Color.White) }
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                    }
                     Spacer(Modifier.width(8.dp))
                     Column {
-                        Text("الدردشة والدعم", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Color.White)
-                        Text("${chats.size} محادثة", color = Color.White.copy(0.7f), style = MaterialTheme.typography.bodySmall)
+                        Text("الدردشة والدعم",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold, color = Color.White)
+                        Text("${chats.size} محادثة",
+                            color = Color.White.copy(0.7f),
+                            style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
-            LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                itemsIndexed(chats, key = { _, c -> c.merchant.id }) { index, item ->
-                    val visible = remember { MutableTransitionState(false).apply { targetState = true } }
-                    AnimatedVisibility(visible, enter = slideInVertically(animationSpec = tween(300, index * 40)) + fadeIn()) {
-                        ChatListItem(item = item, onClick = { onChatClick(item.merchant.id) })
+
+            if (chats.isEmpty()) {
+                Box(Modifier.fillMaxSize(), Alignment.Center) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Rounded.Forum, null,
+                            modifier = Modifier.size(64.dp),
+                            tint = Slate600)
+                        Spacer(Modifier.height(8.dp))
+                        Text("لا يوجد بائعون بعد", color = Slate400)
+                    }
+                }
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    itemsIndexed(chats, key = { _, c -> c.merchant.id }) { index, item ->
+                        val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                        AnimatedVisibility(
+                            visible,
+                            enter = slideInVertically(animationSpec = tween(300, index * 40)) + fadeIn()
+                        ) {
+                            ChatListItem(
+                                item = item,
+                                // ✅ pass activationCode so admin writes to same path as merchant
+                                onClick = { onChatClick(item.merchant.activationCode, item.merchant.name) }
+                            )
+                        }
                     }
                 }
             }
@@ -53,24 +88,45 @@ fun ChatListScreen(onNavigateUp: () -> Unit, onChatClick: (String) -> Unit, view
 }
 
 @Composable
-private fun ChatListItem(item: com.trader.admin.ui.chat.list.ChatListItem, onClick: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = Navy900), elevation = CardDefaults.cardElevation(2.dp)
+private fun ChatListItem(item: ChatListItem, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = Navy900),
+        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(48.dp).clip(CircleShape).background(Brush.radialGradient(listOf(Cyan500.copy(0.3f), Cyan500.copy(0.1f)))),
-                contentAlignment = Alignment.Center) {
-                Text(item.merchant.name.firstOrNull()?.uppercaseChar()?.toString() ?: "?",
-                    color = Cyan500, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Box(
+                Modifier.size(48.dp).clip(CircleShape)
+                    .background(Brush.radialGradient(listOf(Cyan500.copy(0.3f), Cyan500.copy(0.1f)))),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    item.merchant.name.firstOrNull()?.uppercaseChar()?.toString() ?: "?",
+                    color = Cyan500,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
             }
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(item.merchant.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = Slate100)
-                Text(item.merchant.phone, style = MaterialTheme.typography.bodySmall, color = Slate400)
+                Text(item.merchant.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold, color = Slate100)
+                Text(item.merchant.phone,
+                    style = MaterialTheme.typography.bodySmall, color = Slate400)
+                Text("كود: ${item.merchant.activationCode}",
+                    style = MaterialTheme.typography.labelSmall, color = Slate600)
             }
             if (item.unreadCount > 0) {
-                Box(Modifier.size(24.dp).clip(CircleShape).background(Indigo500), contentAlignment = Alignment.Center) {
-                    Text("${item.unreadCount}", color = Color.White, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                Box(
+                    Modifier.size(24.dp).clip(CircleShape).background(Indigo500),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("${item.unreadCount}", color = Color.White,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold)
                 }
             }
             Spacer(Modifier.width(8.dp))

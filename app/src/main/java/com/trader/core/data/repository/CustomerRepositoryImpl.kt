@@ -18,7 +18,6 @@ class CustomerRepositoryImpl(
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    // Start realtime sync immediately when the repo is created (Koin singleton init)
     init { startRealtimeSync() }
 
     private fun startRealtimeSync() {
@@ -26,17 +25,18 @@ class CustomerRepositoryImpl(
             val code = activationRepo.getMerchantCode()
             if (code.isEmpty()) return@launch
             sync.observeCustomers(code).collect { list ->
-                list.forEach { dao.insertCustomer(CustomerEntity.fromDomain(it)) }
+                // upsert: safe — won't trigger CASCADE delete of transactions
+                list.forEach { dao.upsertCustomer(CustomerEntity.fromDomain(it)) }
             }
         }
     }
 
     private suspend fun code() = activationRepo.getMerchantCode()
 
-    override fun getAllCustomers(): Flow<List<Customer>> =
+    override fun getAllCustomers() =
         dao.getAllCustomers().map { it.map(CustomerEntity::toDomain) }
 
-    override fun searchCustomers(q: String): Flow<List<Customer>> =
+    override fun searchCustomers(q: String) =
         dao.searchCustomers(q).map { it.map(CustomerEntity::toDomain) }
 
     override suspend fun getCustomerById(id: Long) = dao.getCustomerById(id)?.toDomain()

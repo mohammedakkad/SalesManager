@@ -3,8 +3,6 @@ package com.trader.admin.ui.navigation
 import androidx.compose.runtime.*
 import androidx.navigation.*
 import androidx.navigation.compose.*
-import androidx.compose.ui.platform.LocalContext
-import android.app.Activity
 import com.trader.admin.ui.auth.LoginScreen
 import com.trader.admin.ui.auth.AuthViewModel
 import com.trader.admin.ui.dashboard.DashboardScreen
@@ -13,7 +11,6 @@ import com.trader.admin.ui.merchants.add.AddMerchantScreen
 import com.trader.admin.ui.merchants.detail.MerchantDetailScreen
 import com.trader.admin.ui.chat.list.ChatListScreen
 import com.trader.admin.ui.chat.detail.ChatDetailScreen
-import com.trader.admin.ui.notifications.NotificationsScreen
 import org.koin.androidx.compose.koinViewModel
 
 sealed class AdminScreen(val route: String) {
@@ -21,10 +18,14 @@ sealed class AdminScreen(val route: String) {
     object Dashboard      : AdminScreen("dashboard")
     object Merchants      : AdminScreen("merchants")
     object AddMerchant    : AdminScreen("merchants/add")
-    object MerchantDetail : AdminScreen("merchants/{merchantId}") { fun route(id: String) = "merchants/$id" }
+    object MerchantDetail : AdminScreen("merchants/{merchantId}") {
+        fun route(id: String) = "merchants/$id"
+    }
     object ChatList       : AdminScreen("chat")
-    object ChatDetail     : AdminScreen("chat/{merchantId}?name={merchantName}") { fun route(id: String, name: String) = "chat/$id?name=$name" }
-    object Notifications  : AdminScreen("notifications")
+    object ChatDetail     : AdminScreen("chat/{activationCode}?name={merchantName}") {
+        // ✅ use activationCode — same as what merchant app uses
+        fun route(activationCode: String, name: String) = "chat/$activationCode?name=$name"
+    }
 }
 
 @Composable
@@ -32,10 +33,9 @@ fun AdminNavigation() {
     val navController = rememberNavController()
     val authVm: AuthViewModel = koinViewModel()
     val authState by authVm.state.collectAsState()
-    val context = LocalContext.current
-    val activity = context as Activity
 
-    val start = if (authState.isAuthenticated) AdminScreen.Dashboard.route else AdminScreen.Login.route
+    val start = if (authState.isAuthenticated) AdminScreen.Dashboard.route
+                else AdminScreen.Login.route
 
     NavHost(navController = navController, startDestination = start) {
         composable(AdminScreen.Login.route) {
@@ -49,7 +49,6 @@ fun AdminNavigation() {
             DashboardScreen(
                 onNavigateToMerchants = { navController.navigate(AdminScreen.Merchants.route) },
                 onNavigateToChat      = { navController.navigate(AdminScreen.ChatList.route) },
-                onNavigateToNotifications = { navController.navigate(AdminScreen.Notifications.route) },
                 onSignOut             = {
                     authVm.signOut()
                     navController.navigate(AdminScreen.Login.route) { popUpTo(0) { inclusive = true } }
@@ -66,7 +65,8 @@ fun AdminNavigation() {
         composable(AdminScreen.AddMerchant.route) {
             AddMerchantScreen(onNavigateUp = { navController.navigateUp() })
         }
-        composable(AdminScreen.MerchantDetail.route,
+        composable(
+            AdminScreen.MerchantDetail.route,
             listOf(navArgument("merchantId") { type = NavType.StringType })
         ) {
             MerchantDetailScreen(
@@ -77,26 +77,24 @@ fun AdminNavigation() {
         composable(AdminScreen.ChatList.route) {
             ChatListScreen(
                 onNavigateUp = { navController.navigateUp() },
-                onChatClick  = { navController.navigate(AdminScreen.ChatDetail.route(it, "بائع")) }
-            )
-        }
-        composable(AdminScreen.ChatDetail.route,
-            listOf(
-                navArgument("merchantId")   { type = NavType.StringType },
-                navArgument("merchantName") { type = NavType.StringType; defaultValue = "بائع" }
-            )
-        ) {
-            ChatDetailScreen(
-                merchantId   = it.arguments!!.getString("merchantId")!!,
-                merchantName = it.arguments!!.getString("merchantName") ?: "بائع",
-                onNavigateUp = { navController.navigateUp() }
+                // ✅ activationCode passed — matches merchant's Firestore path
+                onChatClick  = { code, name ->
+                    navController.navigate(AdminScreen.ChatDetail.route(code, name))
+                }
             )
         }
         composable(
-            route = AdminScreen.Notifications.route,
-            deepLinks = listOf(navDeepLink { uriPattern = "admin://notifications" })
+            AdminScreen.ChatDetail.route,
+            listOf(
+                navArgument("activationCode") { type = NavType.StringType },
+                navArgument("merchantName")   { type = NavType.StringType; defaultValue = "بائع" }
+            )
         ) {
-            NotificationsScreen(onNavigateUp = { navController.navigateUp() })
+            ChatDetailScreen(
+                merchantId   = it.arguments!!.getString("activationCode")!!,
+                merchantName = it.arguments!!.getString("merchantName") ?: "بائع",
+                onNavigateUp = { navController.navigateUp() }
+            )
         }
     }
 }
