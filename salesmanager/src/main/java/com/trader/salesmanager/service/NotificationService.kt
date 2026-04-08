@@ -38,16 +38,24 @@ object NotificationService {
             "DELETED" -> "تم حذف حسابك"
             else -> "حسابك غير نشط"
         }
-        val notif = NotificationCompat.Builder(context, CHANNEL_ID)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
+
+        // Changed CHANNEL_ID to CHANNEL_EXPIRY (or CHANNEL_GENERAL)
+        val notif = NotificationCompat.Builder(context, CHANNEL_EXPIRY)
+        // Ensure you have the correct import for R or use a system icon for now
+        .setSmallIcon(android.R.drawable.ic_dialog_alert)
         .setContentTitle("مدير المبيعات — تنبيه")
         .setContentText(message)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setAutoCancel(true)
         .build()
-        NotificationManagerCompat.from(context)
-        .notify(BLOCKED_NOTIF_ID, notif)
+
+        try {
+            NotificationManagerCompat.from(context).notify(BLOCKED_NOTIF_ID, notif)
+        } catch (e: SecurityException) {
+            /* permission not granted */
+        }
     }
+
 
     fun showExpiryWarning(context: Context, daysLeft: Long) {
         val intent = Intent(context, MainActivity::class.java).apply {
