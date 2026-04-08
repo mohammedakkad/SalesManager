@@ -22,15 +22,22 @@ class MerchantStatusRepositoryImpl : MerchantStatusRepository {
                     trySend(null) // deleted
                     return
                 }
-                val status = snapshot.child("status").getValue(String::class.java)
-                val active = snapshot.getValue(Boolean::class.java)
-                when {
-                    status != null -> trySend(
-                        try { MerchantStatus.valueOf(status) } catch (e: Exception) { MerchantStatus.ACTIVE }
+                // The node can be stored in two formats:
+                // Legacy:  activation_codes/{code} = true  (Boolean)
+                // Current: activation_codes/{code} = { status: "ACTIVE" }  (Map)
+                // We must check for Map first — calling getValue(Boolean) on a Map throws a crash.
+                val statusStr = snapshot.child("status").getValue(String::class.java)
+                if (statusStr != null) {
+                    // New Map format — use status string directly
+                    trySend(
+                        try { MerchantStatus.valueOf(statusStr) }
+                        catch (e: Exception) { MerchantStatus.ACTIVE }
                     )
-                    active == false -> trySend(MerchantStatus.DISABLED)
-                    else -> trySend(MerchantStatus.ACTIVE)
+                    return
                 }
+                // Legacy Boolean format
+                val boolVal = try { snapshot.getValue(Boolean::class.java) } catch (e: Exception) { null }
+                trySend(if (boolVal == false) MerchantStatus.DISABLED else MerchantStatus.ACTIVE)
             }
             override fun onCancelled(error: DatabaseError) {}
         }
