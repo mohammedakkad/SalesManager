@@ -2,8 +2,12 @@ package com.trader.core.data.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.Preferences
+import com.trader.core.data.local.appDataStore
 import com.google.firebase.firestore.FirebaseFirestore
 import com.trader.core.data.local.dao.*
 import com.trader.core.data.local.entity.*

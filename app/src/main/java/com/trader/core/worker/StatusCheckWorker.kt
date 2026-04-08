@@ -7,6 +7,11 @@ import com.trader.core.data.repository.ActivationRepositoryImpl
 import com.trader.core.service.NotificationService
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.Preferences
+import com.trader.core.data.local.appDataStore
 
 class StatusCheckWorker(
     context: Context,
