@@ -5,9 +5,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
 
     <application
-        android:name="com.trader.salesmanager.SalesManagerApp"
+        android:name=".SalesManagerApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,7 +21,7 @@
         android:theme="@style/Theme.SalesManager">
 
         <activity
-            android:name="com.trader.salesmanager.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.SalesManager">
             <intent-filter>
@@ -27,14 +30,25 @@
             </intent-filter>
         </activity>
 
-        <!-- FCM service for chat push notifications -->
+        <!-- FCM service -->
         <service
-            android:name="com.trader.salesmanager.ChatNotificationService"
+            android:name=".ChatNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <!-- FileProvider for APK installation -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
 
         <provider
             android:name="androidx.startup.InitializationProvider"
