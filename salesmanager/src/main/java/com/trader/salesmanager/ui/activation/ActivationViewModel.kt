@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.repository.ActivationRepository
-import com.trader.core.domain.repository.StartupStatus
+import com.trader.core.domain.model.StartupStatus
 import com.trader.core.util.NetworkMonitor
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

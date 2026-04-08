@@ -12,6 +12,7 @@ import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.repository.ActivationRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import com.trader.core.domain.model.StartupStatus
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
 
