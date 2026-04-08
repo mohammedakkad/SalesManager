@@ -5,8 +5,10 @@ import com.trader.core.data.remote.ChatService
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.data.repository.*
 import com.trader.core.domain.repository.*
+import com.trader.core.data.repository.MerchantStatusRepositoryImpl
 import com.trader.core.util.NetworkMonitor
 import com.trader.salesmanager.ui.activation.ActivationViewModel
+import com.trader.salesmanager.ui.activation.MerchantWatcherViewModel
 import com.trader.salesmanager.ui.chat.ChatViewModel
 import com.trader.salesmanager.ui.customers.addedit.AddEditCustomerViewModel
 import com.trader.salesmanager.ui.customers.details.CustomerDetailsViewModel
@@ -41,9 +43,11 @@ val salesManagerModule = module {
     single<TransactionRepository>   { TransactionRepositoryImpl(get(), get(), get(), get(), get()) }
     single<PaymentMethodRepository> { PaymentMethodRepositoryImpl(get(), get(), get()) }
     single<ChatRepository>          { ChatRepositoryImpl(get()) }
+    single<MerchantStatusRepository>{ MerchantStatusRepositoryImpl() }
 
     // ── ViewModels ───────────────────────────────────────────────
     viewModel { ActivationViewModel(get(), get()) }
+    viewModel { MerchantWatcherViewModel(get(), get(), androidContext()) }
     viewModel { HomeViewModel(get()) }
     viewModel { CustomersViewModel(get()) }
     viewModel { AddEditCustomerViewModel(get()) }
