@@ -16,6 +16,7 @@ googleServices        = "4.4.2"
 crashlyticsPlugin     = "3.0.2"
 datastore             = "1.1.1"
 coreNotification      = "1.13.1"
+workmanager = "2.9.1"
 
 [libraries]
 androidx-core-ktx             = { group = "androidx.core",            name = "core-ktx",                    version.ref = "coreKtx" }
@@ -45,6 +46,8 @@ firebase-database             = { group = "com.google.firebase",       name = "f
 firebase-auth                 = { group = "com.google.firebase",       name = "firebase-auth-ktx" }
 firebase-firestore            = { group = "com.google.firebase",       name = "firebase-firestore-ktx" }
 firebase-messaging            = { group = "com.google.firebase",       name = "firebase-messaging-ktx" }
+androidx-work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager" }
+koin-workmanager      = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koin" }
 
 [plugins]
 android-application   = { id = "com.android.application", version.ref = "agp" }

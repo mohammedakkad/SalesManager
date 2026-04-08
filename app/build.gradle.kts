@@ -6,12 +6,20 @@ plugins {
 }
 
 android {
-    namespace  = "com.trader.core"
+    namespace = "com.trader.core"
     compileSdk = 35
-    defaultConfig { minSdk = 24 }
-    compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
-    kotlinOptions { jvmTarget = "11" }
-    buildFeatures { compose = true }
+    defaultConfig {
+        minSdk = 24
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
@@ -38,4 +46,6 @@ dependencies {
     api(libs.firebase.crashlytics)
     api(libs.firebase.analytics)
     api(libs.firebase.messaging)
+    api(libs.androidx.work.runtime)
+    api(libs.koin.workmanager)
 }

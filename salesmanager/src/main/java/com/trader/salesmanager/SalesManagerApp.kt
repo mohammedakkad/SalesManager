@@ -7,6 +7,7 @@ import com.trader.core.util.ExpiryNotificationHelper
 import com.trader.salesmanager.di.salesManagerModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import com.trader.core.worker.StatusCheckWorker
 
 class SalesManagerApp : Application() {
     override fun onCreate() {
@@ -20,5 +21,7 @@ class SalesManagerApp : Application() {
             androidContext(this@SalesManagerApp)
             modules(salesManagerModule)
         }
+        
+        StatusCheckWorker.schedule(this)
     }
 }

@@ -24,20 +24,29 @@ class FirebaseSyncService {
         is Double -> this; is Long -> toDouble(); is Int -> toDouble(); else -> null
     }
 
-    // ── Activation ───────────────────────────────────────────────
-    suspend fun validateCode(code: String): Boolean {
+    suspend fun validateCodeDetailed(code: String): ValidationResult {
         return try {
             val snap = db.reference.child("activation_codes").child(code).get().await()
-            if (!snap.exists()) return false
-            // Support both formats: Boolean true (old) or Map with status field (new)
+            if (!snap.exists()) return ValidationResult.NotFound
             val boolVal = snap.getValue(Boolean::class.java)
-            if (boolVal != null) return boolVal
-            val map = snap.value as? Map<*, *> ?: return false
-            val status = map["status"] as? String ?: return true
-            status == "ACTIVE"
+            if (boolVal != null) return if (boolVal) ValidationResult.Active else ValidationResult.Disabled
+            val map = snap.value as? Map<*, *> ?: return ValidationResult.Active
+            when (map["status"] as? String) {
+                "ACTIVE" -> ValidationResult.Active
+                "DISABLED" -> ValidationResult.Disabled
+                "EXPIRED" -> ValidationResult.Expired
+                "DELETED" -> ValidationResult.NotFound
+                else -> ValidationResult.Active
+            }
         } catch (e: Exception) {
-            false
-        }}
+            ValidationResult.NetworkError
+        }
+    }
+
+
+    // ── Activation ───────────────────────────────────────────────
+    suspend fun validateCode(code: String): Boolean =
+    validateCodeDetailed(code) == ValidationResult.Active
 
     // Check current status without full validation (used on app startup)
     suspend fun getCodeStatus(code: String): String? {
@@ -218,3 +227,11 @@ data class MerchantData(
     val transactions: List<AppTransaction>,
     val paymentMethods: List<PaymentMethod>
 )
+
+sealed class ValidationResult {
+    object Active : ValidationResult()
+    object Disabled : ValidationResult()
+    object Expired : ValidationResult()
+    object NotFound : ValidationResult()
+    object NetworkError : ValidationResult()
+    }
