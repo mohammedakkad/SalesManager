@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.*
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.data.repository.ActivationRepositoryImpl
-import com.trader.core.service.NotificationService
+import com.trader.salesmanager.service.NotificationService
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 import androidx.datastore.preferences.core.booleanPreferencesKey
