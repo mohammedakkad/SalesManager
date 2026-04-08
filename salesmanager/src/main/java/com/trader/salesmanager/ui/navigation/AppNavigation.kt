@@ -31,165 +31,290 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AppNavigation() {
-    val navController  = rememberNavController()
-    val activationVm: ActivationViewModel     = koinViewModel()
-    val watcherVm: MerchantWatcherViewModel   = koinViewModel()
+    val navController = rememberNavController()
+    val activationVm: ActivationViewModel = koinViewModel()
+    val watcherVm: MerchantWatcherViewModel = koinViewModel()
 
     val startupState by activationVm.startupState.collectAsState()
-    var liveBlockMessage by remember { mutableStateOf<String?>(null) }
+    var liveBlockMessage by remember {
+        mutableStateOf<String?>(null)
+    }
 
-    // Watch real-time events AFTER entering app
     LaunchedEffect(Unit) {
-        watcherVm.event.collect { event ->
+        watcherVm.event.collect {
+            event ->
             val msg = when (event) {
-                is MerchantEvent.Disabled      -> "تم تعطيل حسابك من قِبل الإدارة."
-                is MerchantEvent.Deleted       -> "تم حذف حسابك. تواصل مع الإدارة."
-                is MerchantEvent.Expired       -> "انتهت مدة اشتراكك. تواصل مع الإدارة للتجديد."
+                is MerchantEvent.Disabled -> "تم تعطيل حسابك من قِبل الإدارة."
+                is MerchantEvent.Deleted -> "تم حذف حسابك. تواصل مع الإدارة."
+                is MerchantEvent.Expired -> "انتهت مدة اشتراكك. تواصل مع الإدارة للتجديد."
                 is MerchantEvent.ExpiryWarning -> null
             }
             if (msg != null) liveBlockMessage = msg
         }
     }
 
-    // Live block dialog (while inside app)
-    liveBlockMessage?.let { msg ->
+    liveBlockMessage?.let {
+        msg ->
         AlertDialog(
             onDismissRequest = {},
-            icon  = { Icon(Icons.Rounded.Warning, null, tint = Color(0xFFF59E0B)) },
-            title = { Text("تنبيه", fontWeight = FontWeight.Bold) },
-            text  = { Text(msg) },
+            icon = {
+                Icon(Icons.Rounded.Warning, null, tint = Color(0xFFF59E0B))
+            },
+            title = {
+                Text("تنبيه", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(msg)
+            },
             confirmButton = {
                 Button(onClick = {
                     liveBlockMessage = null
                     activationVm.deactivate()
                     navController.navigate(Screen.Activation.route) {
-                        popUpTo(0) { inclusive = true }
+                        popUpTo(0) {
+                            inclusive = true
+                        }
                     }
-                }) { Text("حسناً") }
+                }) {
+                    Text("حسناً")
+                }
             }
         )
     }
 
-    // ── Startup gating ────────────────────────────────────────────
     when (val s = startupState) {
-        // Still checking Firebase
         is StartupState.Checking -> {
             SplashCheckScreen()
             return
         }
-        // Blocked — show blocking screen, not the app
         is StartupState.Blocked -> {
             BlockedScreen(
-                message  = s.message,
+                message = s.message,
                 canRetry = s.canRetry,
-                onRetry  = { activationVm.checkStartup() }
+                onRetry = {
+                    activationVm.checkStartup()
+                }
             )
             return
+        } else -> {
+            /* ACTIVE or NeedActivation — continue to NavHost */
         }
-        else -> { /* ACTIVE or NeedActivation — continue to NavHost */ }
     }
 
     val start = if (startupState == StartupState.Proceed)
         Screen.Home.route else Screen.Activation.route
 
     NavHost(
-        navController    = navController,
+        navController = navController,
         startDestination = start,
-        enterTransition  = { slideInHorizontally(tween(280)) { it / 4 } + fadeIn(tween(280)) },
-        exitTransition   = { slideOutHorizontally(tween(280)) { -it / 4 } + fadeOut(tween(280)) },
-        popEnterTransition  = { slideInHorizontally(tween(280)) { -it / 4 } + fadeIn(tween(280)) },
-        popExitTransition   = { slideOutHorizontally(tween(280)) { it / 4 } + fadeOut(tween(280)) }
+        enterTransition = {
+            slideInHorizontally(tween(280)) {
+                it / 4
+            } + fadeIn(tween(280))
+        },
+        exitTransition = {
+            slideOutHorizontally(tween(280)) {
+                -it / 4
+            } + fadeOut(tween(280))
+        },
+        popEnterTransition = {
+            slideInHorizontally(tween(280)) {
+                -it / 4
+            } + fadeIn(tween(280))
+        },
+        popExitTransition = {
+            slideOutHorizontally(tween(280)) {
+                it / 4
+            } + fadeOut(tween(280))
+        }
     ) {
         composable(Screen.Activation.route) {
             ActivationScreen(onActivated = {
                 navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.Activation.route) { inclusive = true }
+                    popUpTo(Screen.Activation.route) {
+                        inclusive = true
+                    }
                 }
             })
         }
         composable(Screen.Home.route) {
             HomeScreen(
-                onNavigateToCustomers    = { navController.navigate(Screen.Customers.route) },
-                onNavigateToTransactions = { navController.navigate(Screen.Transactions.route) },
-                onNavigateToReports      = { navController.navigate(Screen.Reports.route) },
-                onNavigateToSettings     = { navController.navigate(Screen.Settings.route) },
-                onNavigateToChat         = { navController.navigate(Screen.Chat.route) },
-                onAddCustomer            = { navController.navigate(Screen.AddCustomer.route) },
-                onAddTransaction         = { navController.navigate(Screen.AddTransaction.route) }
+                onNavigateToCustomers = {
+                    navController.navigate(Screen.CustomersList.route)
+                },
+                onNavigateToTransactions = {
+                    navController.navigate(Screen.TransactionsList.route)
+                },
+                onNavigateToReports = {
+                    navController.navigate(Screen.Reports.route)
+                },
+                onNavigateToDebts = {
+                    navController.navigate(Screen.Debts.route)
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Screen.Settings.route)
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chat.route)
+                },
+                onAddTransaction = {
+                    navController.navigate(Screen.AddTransaction.createRoute())
+                }
             )
         }
-        composable(Screen.Customers.route) {
+        composable(Screen.CustomersList.route) {
             CustomersScreen(
-                onNavigateUp    = { navController.navigateUp() },
-                onCustomerClick = { navController.navigate(Screen.CustomerDetails.route(it)) },
-                onAddCustomer   = { navController.navigate(Screen.AddCustomer.route) }
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+                onCustomerClick = {
+                    navController.navigate(Screen.CustomerDetails.createRoute(it))
+                },
+                onAddCustomer = {
+                    navController.navigate(Screen.AddCustomer.route)
+                }
             )
         }
         composable(Screen.AddCustomer.route) {
-            AddEditCustomerScreen(customerId = null, onNavigateUp = { navController.navigateUp() })
+            AddEditCustomerScreen(customerId = null, onNavigateUp = {
+                navController.navigateUp()
+            })
         }
-        composable(Screen.EditCustomer.route,
-            listOf(navArgument("customerId") { type = NavType.LongType })
+        composable(
+            Screen.EditCustomer.route,
+            listOf(navArgument("customerId") {
+                type = NavType.LongType
+            })
         ) {
             AddEditCustomerScreen(
-                customerId   = it.arguments!!.getLong("customerId"),
-                onNavigateUp = { navController.navigateUp() }
+                customerId = it.arguments!!.getLong("customerId"),
+                onNavigateUp = {
+                    navController.navigateUp()
+                }
             )
         }
-        composable(Screen.CustomerDetails.route,
-            listOf(navArgument("customerId") { type = NavType.LongType })
-        ) { back ->
+        composable(
+            Screen.CustomerDetails.route,
+            listOf(navArgument("customerId") {
+                type = NavType.LongType
+            })
+        ) {
+            back ->
             val id = back.arguments!!.getLong("customerId")
             CustomerDetailsScreen(
-                customerId       = id,
-                onNavigateUp     = { navController.navigateUp() },
-                onEditCustomer   = { navController.navigate(Screen.EditCustomer.route(id)) },
-                onAddTransaction = { navController.navigate(Screen.AddTransaction.route) },
-                onTransactionClick = { navController.navigate(Screen.TransactionDetails.route(it)) }
+                customerId = id,
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+                onEditCustomer = {
+                    navController.navigate(Screen.EditCustomer.createRoute(id))
+                },
+                onAddTransaction = {
+                    navController.navigate(Screen.AddTransaction.createRoute(id))
+                },
+                onTransactionClick = {
+                    navController.navigate(Screen.TransactionDetails.createRoute(it))
+                }
             )
         }
-        composable(Screen.Transactions.route) {
+        composable(Screen.TransactionsList.route) {
             TransactionsScreen(
-                onNavigateUp       = { navController.navigateUp() },
-                onTransactionClick = { navController.navigate(Screen.TransactionDetails.route(it)) },
-                onAddTransaction   = { navController.navigate(Screen.AddTransaction.route) }
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+                onTransactionClick = {
+                    navController.navigate(Screen.TransactionDetails.createRoute(it))
+                },
+                onAddTransaction = {
+                    navController.navigate(Screen.AddTransaction.createRoute())
+                }
             )
         }
-        composable(Screen.AddTransaction.route) {
-            AddEditTransactionScreen(transactionId = null, onNavigateUp = { navController.navigateUp() })
+        composable(
+            Screen.AddTransaction.route,
+            listOf(navArgument("customerId") {
+                type = NavType.LongType
+                defaultValue = -1L
+            })
+        ) {
+            back ->
+            val preselectedId = back.arguments!!.getLong("customerId").takeIf {
+                it != -1L
+            }
+            AddEditTransactionScreen(
+                transactionId = null,
+                preselectedCustomerId = preselectedId,
+                onNavigateUp = {
+                    navController.navigateUp()
+                }
+            )
         }
-        composable(Screen.EditTransaction.route,
-            listOf(navArgument("transactionId") { type = NavType.LongType })
+        composable(
+            Screen.EditTransaction.route,
+            listOf(navArgument("transactionId") {
+                type = NavType.LongType
+            })
         ) {
             AddEditTransactionScreen(
                 transactionId = it.arguments!!.getLong("transactionId"),
-                onNavigateUp  = { navController.navigateUp() }
+                preselectedCustomerId = null,
+                onNavigateUp = {
+                    navController.navigateUp()
+                }
             )
         }
-        composable(Screen.TransactionDetails.route,
-            listOf(navArgument("transactionId") { type = NavType.LongType })
-        ) { back ->
+        composable(
+            Screen.TransactionDetails.route,
+            listOf(navArgument("transactionId") {
+                type = NavType.LongType
+            })
+        ) {
+            back ->
             val id = back.arguments!!.getLong("transactionId")
             TransactionDetailsScreen(
                 transactionId = id,
-                onNavigateUp  = { navController.navigateUp() },
-                onEdit        = { navController.navigate(Screen.EditTransaction.route(it)) }
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+                onEdit = {
+                    navController.navigate(Screen.EditTransaction.createRoute(it))
+                }
             )
         }
         composable(Screen.Debts.route) {
             DebtsScreen(
-                onNavigateUp    = { navController.navigateUp() },
-                onCustomerClick = { navController.navigate(Screen.CustomerDetails.route(it)) }
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+                onCustomerClick = {
+                    navController.navigate(Screen.CustomerDetails.createRoute(it))
+                }
             )
         }
-        composable(Screen.Reports.route)  { ReportsScreen(onNavigateUp = { navController.navigateUp() }) }
-        composable(Screen.Payments.route) { PaymentMethodsScreen(onNavigateUp = { navController.navigateUp() }) }
+        composable(Screen.Reports.route) {
+            ReportsScreen(onNavigateUp = {
+                navController.navigateUp()
+            })
+        }
+        composable(Screen.PaymentMethods.route) {
+            PaymentMethodsScreen(onNavigateUp = {
+                navController.navigateUp()
+            })
+        }
         composable(Screen.Settings.route) {
             SettingsScreen(
-                onNavigateUp              = { navController.navigateUp() },
-                onNavigateToPaymentMethods = { navController.navigate(Screen.Payments.route) }
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+                onNavigateToPaymentMethods = {
+                    navController.navigate(Screen.PaymentMethods.route)
+                }
             )
         }
-        composable(Screen.Chat.route) { ChatScreen(onNavigateUp = { navController.navigateUp() }) }
+        composable(Screen.Chat.route) {
+            ChatScreen(onNavigateUp = {
+                navController.navigateUp()
+            })
+        }
     }
 }

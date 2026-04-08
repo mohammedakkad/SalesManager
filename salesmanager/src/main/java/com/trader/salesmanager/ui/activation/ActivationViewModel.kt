@@ -9,18 +9,10 @@ import com.trader.core.util.NetworkMonitor
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-data class ActivationUiState(
-    val code: String = "",
-    val isLoading: Boolean = false,
-    val isSuccess: Boolean = false,
-    val error: String? = null,
-    val showNoInternetSnackbar: Boolean = false
-)
-
 sealed class StartupState {
     object Checking : StartupState()
-    object Proceed  : StartupState()  // enter app
-    object NeedActivation : StartupState()  // show activation screen
+    object Proceed  : StartupState()
+    object NeedActivation : StartupState()
     data class Blocked(val message: String, val canRetry: Boolean = false) : StartupState()
 }
 
@@ -35,7 +27,6 @@ class ActivationViewModel(
     private val _startupState = MutableStateFlow<StartupState>(StartupState.Checking)
     val startupState: StateFlow<StartupState> = _startupState.asStateFlow()
 
-    // Real-time status watcher (after entering app)
     val merchantStatus: StateFlow<MerchantStatus?> = repo.observeMerchantStatus()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
@@ -47,21 +38,18 @@ class ActivationViewModel(
             val result = repo.verifyStatusOnStartup()
             _startupState.value = when (result) {
                 StartupStatus.ACTIVE        -> StartupState.Proceed
-                StartupStatus.OFFLINE       -> StartupState.Proceed // allow offline entry
+                StartupStatus.OFFLINE       -> StartupState.Proceed
                 StartupStatus.NOT_ACTIVATED -> StartupState.NeedActivation
                 StartupStatus.DISABLED      -> StartupState.Blocked(
-                    message = "تم تعطيل حسابك من قِبل الإدارة.
-تواصل مع الإدارة لإعادة التفعيل.",
+                    message = "تم تعطيل حسابك من قِبل الإدارة.\nتواصل مع الإدارة لإعادة التفعيل.",
                     canRetry = false
                 )
                 StartupStatus.EXPIRED       -> StartupState.Blocked(
-                    message = "انتهت مدة اشتراكك.
-تواصل مع الإدارة لتجديد الاشتراك.",
+                    message = "انتهت مدة اشتراكك.\nتواصل مع الإدارة لتجديد الاشتراك.",
                     canRetry = false
                 )
                 StartupStatus.DELETED       -> StartupState.Blocked(
-                    message = "كود التفعيل غير موجود.
-تواصل مع الإدارة للحصول على كود جديد.",
+                    message = "كود التفعيل غير موجود.\nتواصل مع الإدارة للحصول على كود جديد.",
                     canRetry = true
                 )
             }
