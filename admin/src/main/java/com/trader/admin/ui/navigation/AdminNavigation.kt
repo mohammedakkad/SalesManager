@@ -49,6 +49,7 @@ fun AdminNavigation() {
             DashboardScreen(
                 onNavigateToMerchants = { navController.navigate(AdminScreen.Merchants.route) },
                 onNavigateToChat      = { navController.navigate(AdminScreen.ChatList.route) },
+                onNavigateToNotifications = { navController.navigate(AdminScreen.Notifications.route) },
                 onSignOut             = {
                     authVm.signOut()
                     navController.navigate(AdminScreen.Login.route) { popUpTo(0) { inclusive = true } }
