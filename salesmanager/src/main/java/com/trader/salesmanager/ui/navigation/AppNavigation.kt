@@ -308,6 +308,9 @@ fun AppNavigation() {
                 },
                 onNavigateToPaymentMethods = {
                     navController.navigate(Screen.PaymentMethods.route)
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chat.route)
                 }
             )
         }
