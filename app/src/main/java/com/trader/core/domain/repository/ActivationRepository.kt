@@ -1,6 +1,7 @@
 package com.trader.core.domain.repository
 
 import com.trader.core.domain.model.MerchantStatus
+import com.trader.core.domain.model.StartupStatus
 import kotlinx.coroutines.flow.Flow
 
 interface ActivationRepository {
@@ -12,13 +13,4 @@ interface ActivationRepository {
     fun observeMerchantStatus(): Flow<MerchantStatus?>
     // Check status on startup — returns null if offline (don't block)
     suspend fun verifyStatusOnStartup(): StartupStatus
-}
-
-enum class StartupStatus {
-    ACTIVE,     // all good — enter app
-    DISABLED,   // blocked by admin
-    EXPIRED,    // subscription ended
-    DELETED,    // code no longer exists
-    NOT_ACTIVATED, // never activated
-    OFFLINE     // no internet — allow entry with warning
 }
