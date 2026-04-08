@@ -16,11 +16,11 @@ class PaymentMethodRepositoryImpl(
 ) : PaymentMethodRepository {
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private var syncJob: Job? = null
 
-    private fun ensureRealtimeSync() {
-        if (syncJob?.isActive == true) return
-        syncJob = syncScope.launch {
+    init { startRealtimeSync() }
+
+    private fun startRealtimeSync() {
+        syncScope.launch {
             val code = activationRepo.getMerchantCode()
             if (code.isEmpty()) return@launch
             sync.observePaymentMethods(code).collect { list ->
@@ -31,19 +31,24 @@ class PaymentMethodRepositoryImpl(
 
     private suspend fun code() = activationRepo.getMerchantCode()
 
-    override fun getAllPaymentMethods(): Flow<List<PaymentMethod>> {
-        ensureRealtimeSync()
-        return dao.getAllPaymentMethods().map { it.map(PaymentMethodEntity::toDomain) }
-    }
+    override fun getAllPaymentMethods(): Flow<List<PaymentMethod>> =
+        dao.getAllPaymentMethods().map { it.map(PaymentMethodEntity::toDomain) }
+
     override suspend fun getPaymentMethodById(id: Long) = dao.getPaymentMethodById(id)?.toDomain()
+
     override suspend fun insertPaymentMethod(m: PaymentMethod): Long {
         val id = dao.insertPaymentMethod(PaymentMethodEntity.fromDomain(m))
-        sync.pushPaymentMethod(code(), m.copy(id = id)); return id
+        sync.pushPaymentMethod(code(), m.copy(id = id))
+        return id
     }
+
     override suspend fun updatePaymentMethod(m: PaymentMethod) {
-        dao.updatePaymentMethod(PaymentMethodEntity.fromDomain(m)); sync.pushPaymentMethod(code(), m)
+        dao.updatePaymentMethod(PaymentMethodEntity.fromDomain(m))
+        sync.pushPaymentMethod(code(), m)
     }
+
     override suspend fun deletePaymentMethod(m: PaymentMethod) {
-        dao.deletePaymentMethod(PaymentMethodEntity.fromDomain(m)); sync.deletePaymentMethod(code(), m.id)
+        dao.deletePaymentMethod(PaymentMethodEntity.fromDomain(m))
+        sync.deletePaymentMethod(code(), m.id)
     }
 }

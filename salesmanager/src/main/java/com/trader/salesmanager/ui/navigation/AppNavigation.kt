@@ -25,10 +25,11 @@ import org.koin.androidx.compose.koinViewModel
 fun AppNavigation() {
     val navController = rememberNavController()
     val activationVm: ActivationViewModel = koinViewModel()
-    val isActivated by activationVm.isActivated.collectAsState()
+    val isActivated   by activationVm.isActivated.collectAsState()
     val merchantStatus by activationVm.merchantStatus.collectAsState()
 
-    // Auto-logout when admin disables/deletes/expires the merchant
+    // Only deactivate when admin EXPLICITLY sets DISABLED or EXPIRED.
+    // null = Firestore not configured, no internet, or merchant not found → do nothing.
     LaunchedEffect(merchantStatus) {
         if (isActivated == true &&
             (merchantStatus == MerchantStatus.DISABLED || merchantStatus == MerchantStatus.EXPIRED)
@@ -40,7 +41,7 @@ fun AppNavigation() {
         }
     }
 
-    if (isActivated == null) return // loading
+    if (isActivated == null) return
 
     val start = if (isActivated == true) Screen.Home.route else Screen.Activation.route
 
@@ -76,10 +77,8 @@ fun AppNavigation() {
         composable(Screen.EditCustomer.route,
             arguments = listOf(navArgument("customerId") { type = NavType.LongType })
         ) {
-            AddEditCustomerScreen(
-                customerId   = it.arguments?.getLong("customerId"),
-                onNavigateUp = { navController.navigateUp() }
-            )
+            AddEditCustomerScreen(customerId = it.arguments?.getLong("customerId"),
+                onNavigateUp = { navController.navigateUp() })
         }
         composable(Screen.CustomerDetails.route,
             arguments = listOf(navArgument("customerId") { type = NavType.LongType })
@@ -129,8 +128,11 @@ fun AppNavigation() {
                 onCustomerClick = { navController.navigate(Screen.CustomerDetails.createRoute(it)) })
         }
         composable(Screen.Settings.route) {
-            SettingsScreen(onNavigateUp = { navController.navigateUp() },
-                onNavigateToPaymentMethods = { navController.navigate(Screen.PaymentMethods.route) })
+            SettingsScreen(
+                onNavigateUp               = { navController.navigateUp() },
+                onNavigateToPaymentMethods = { navController.navigate(Screen.PaymentMethods.route) },
+                onNavigateToChat           = { navController.navigate(Screen.Chat.route) }
+            )
         }
         composable(Screen.Chat.route) { ChatScreen(onNavigateUp = { navController.navigateUp() }) }
     }

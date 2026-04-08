@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -35,8 +36,7 @@ fun TransactionsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddTransaction,
-                containerColor = Cyan500,
-                contentColor = Color.White,
+                containerColor = Cyan500, contentColor = Color.White,
                 shape = RoundedCornerShape(16.dp)
             ) { Icon(Icons.Rounded.Add, null) }
         }
@@ -51,14 +51,21 @@ fun TransactionsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.width(8.dp))
                         Column {
-                            Text("العمليات", style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("\${uiState.transactions.size} عملية",
-                                color = Color.White.copy(0.7f), style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                "العمليات",
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold, color = Color.White
+                            )
+                            // FIX: was \${...} which shows as literal text — removed backslash
+                            Text(
+                                "${uiState.transactions.size} عملية",
+                                color = Color.White.copy(0.7f),
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
                     }
                     Spacer(Modifier.height(12.dp))
@@ -67,13 +74,13 @@ fun TransactionsScreen(
                             val selected = uiState.filterPaid == value
                             FilterChip(
                                 selected = selected,
-                                onClick = { viewModel.setFilter(value) },
-                                label = { Text(label, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal) },
-                                colors = FilterChipDefaults.filterChipColors(
+                                onClick  = { viewModel.setFilter(value) },
+                                label    = { Text(label, fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal) },
+                                colors   = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = Color.White,
-                                    selectedLabelColor = Emerald700,
-                                    containerColor = Color.White.copy(0.2f),
-                                    labelColor = Color.White
+                                    selectedLabelColor     = Emerald700,
+                                    containerColor         = Color.White.copy(0.2f),
+                                    labelColor             = Color.White
                                 ),
                                 border = FilterChipDefaults.filterChipBorder(
                                     enabled = true, selected = selected,
@@ -112,7 +119,7 @@ fun TransactionsScreen(
                                 visibleState = visible,
                                 enter = slideInVertically(
                                     initialOffsetY = { it / 2 },
-                                    animationSpec = tween(300, delayMillis = index * 40)
+                                    animationSpec  = tween(300, delayMillis = index * 40)
                                 ) + fadeIn()
                             ) {
                                 TransactionCard(tx = tx, onClick = { onTransactionClick(tx.id) })
@@ -129,11 +136,11 @@ fun TransactionsScreen(
 @Composable
 private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        onClick = onClick,
+        modifier  = Modifier.fillMaxWidth(),
+        shape     = RoundedCornerShape(16.dp),
+        onClick   = onClick,
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors    = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -142,7 +149,7 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
                     .background(
                         Brush.radialGradient(
                             if (tx.isPaid) listOf(PaidGreen.copy(0.2f), PaidGreen.copy(0.05f))
-                            else listOf(UnpaidAmber.copy(0.2f), UnpaidAmber.copy(0.05f))
+                            else           listOf(UnpaidAmber.copy(0.2f), UnpaidAmber.copy(0.05f))
                         ),
                         RoundedCornerShape(14.dp)
                     ),
@@ -151,7 +158,7 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
                 Icon(
                     if (tx.isPaid) Icons.Rounded.CheckCircle else Icons.Rounded.PendingActions,
                     null,
-                    tint = if (tx.isPaid) PaidGreen else UnpaidAmber,
+                    tint     = if (tx.isPaid) PaidGreen else UnpaidAmber,
                     modifier = Modifier.size(26.dp)
                 )
             }
@@ -163,8 +170,7 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
                     Text(tx.date.toDateString(), style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (tx.paymentMethodName.isNotEmpty()) {
-                        Text("•", color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodySmall)
+                        Text("•", color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                         Text(tx.paymentMethodName, style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
@@ -173,9 +179,9 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     String.format("%.2f", tx.amount),
-                    style = MaterialTheme.typography.titleMedium,
+                    style      = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = if (tx.isPaid) PaidGreen else MaterialTheme.colorScheme.onSurface
+                    color      = if (tx.isPaid) PaidGreen else MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(Modifier.height(4.dp))
                 StatusChip(isPaid = tx.isPaid)

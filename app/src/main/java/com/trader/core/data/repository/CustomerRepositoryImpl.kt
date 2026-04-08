@@ -17,12 +17,12 @@ class CustomerRepositoryImpl(
 ) : CustomerRepository {
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private var syncJob: Job? = null
 
-    /** Start Firebase → Room streaming (idempotent) */
-    private fun ensureRealtimeSync() {
-        if (syncJob?.isActive == true) return
-        syncJob = syncScope.launch {
+    // Start realtime sync immediately when the repo is created (Koin singleton init)
+    init { startRealtimeSync() }
+
+    private fun startRealtimeSync() {
+        syncScope.launch {
             val code = activationRepo.getMerchantCode()
             if (code.isEmpty()) return@launch
             sync.observeCustomers(code).collect { list ->
@@ -33,21 +33,27 @@ class CustomerRepositoryImpl(
 
     private suspend fun code() = activationRepo.getMerchantCode()
 
-    override fun getAllCustomers(): Flow<List<Customer>> {
-        ensureRealtimeSync()
-        return dao.getAllCustomers().map { it.map(CustomerEntity::toDomain) }
-    }
+    override fun getAllCustomers(): Flow<List<Customer>> =
+        dao.getAllCustomers().map { it.map(CustomerEntity::toDomain) }
+
     override fun searchCustomers(q: String): Flow<List<Customer>> =
         dao.searchCustomers(q).map { it.map(CustomerEntity::toDomain) }
+
     override suspend fun getCustomerById(id: Long) = dao.getCustomerById(id)?.toDomain()
+
     override suspend fun insertCustomer(c: Customer): Long {
         val id = dao.insertCustomer(CustomerEntity.fromDomain(c))
-        sync.pushCustomer(code(), c.copy(id = id)); return id
+        sync.pushCustomer(code(), c.copy(id = id))
+        return id
     }
+
     override suspend fun updateCustomer(c: Customer) {
-        dao.updateCustomer(CustomerEntity.fromDomain(c)); sync.pushCustomer(code(), c)
+        dao.updateCustomer(CustomerEntity.fromDomain(c))
+        sync.pushCustomer(code(), c)
     }
+
     override suspend fun deleteCustomer(c: Customer) {
-        dao.deleteCustomer(CustomerEntity.fromDomain(c)); sync.deleteCustomer(code(), c.id)
+        dao.deleteCustomer(CustomerEntity.fromDomain(c))
+        sync.deleteCustomer(code(), c.id)
     }
 }
