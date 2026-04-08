@@ -114,4 +114,34 @@ class ActivationRepositoryImpl(
             try { transactionDao.insertTransaction(TransactionEntity.fromDomain(t)) } catch (_: Exception) {}
         }
     }
+
+    override suspend fun verifyStatusOnStartup(): StartupStatus {
+        val activated = isActivated()
+        if (!activated) return StartupStatus.NOT_ACTIVATED
+
+        val code = getMerchantCode()
+        if (code.isEmpty()) return StartupStatus.NOT_ACTIVATED
+
+        // Check Firebase status
+        val status = firebaseService.getCodeStatus(code)
+            ?: return StartupStatus.OFFLINE  // offline — allow entry
+
+        return when (status) {
+            "ACTIVE"   -> StartupStatus.ACTIVE
+            "DISABLED" -> {
+                // Auto-clear local activation
+                context.dataStore.edit { it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = "" }
+                StartupStatus.DISABLED
+            }
+            "EXPIRED"  -> {
+                context.dataStore.edit { it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = "" }
+                StartupStatus.EXPIRED
+            }
+            "DELETED"  -> {
+                context.dataStore.edit { it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = "" }
+                StartupStatus.DELETED
+            }
+            else -> StartupStatus.ACTIVE
+        }
+    }
 }

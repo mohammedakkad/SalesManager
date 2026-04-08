@@ -27,8 +27,24 @@ class FirebaseSyncService {
     // ── Activation ───────────────────────────────────────────────
     suspend fun validateCode(code: String): Boolean = try {
         val snap = db.reference.child("activation_codes").child(code).get().await()
-        snap.exists() && snap.getValue(Boolean::class.java) == true
+        if (!snap.exists()) return false
+        // Support both formats: Boolean true (old) or Map with status field (new)
+        val boolVal = snap.getValue(Boolean::class.java)
+        if (boolVal != null) return boolVal
+        val map = snap.value as? Map<*, *> ?: return false
+        val status = map["status"] as? String ?: return true
+        status == "ACTIVE"
     } catch (e: Exception) { false }
+
+    // Check current status without full validation (used on app startup)
+    suspend fun getCodeStatus(code: String): String? = try {
+        val snap = db.reference.child("activation_codes").child(code).get().await()
+        if (!snap.exists()) return "DELETED"
+        val boolVal = snap.getValue(Boolean::class.java)
+        if (boolVal != null) return if (boolVal) "ACTIVE" else "DISABLED"
+        val map = snap.value as? Map<*, *> ?: return "ACTIVE"
+        map["status"] as? String ?: "ACTIVE"
+    } catch (e: Exception) { null } // null = offline, don't block
 
     // ── One-time full fetch on activation ────────────────────────
     suspend fun fetchAllData(merchantCode: String): MerchantData {
