@@ -14,34 +14,36 @@ object AppUpdateChecker {
      *   is_force: true
      *   changelog: ["ميزة جديدة: تقارير تفصيلية", "إصلاح: مشكلة المزامنة", "تحسين: سرعة التطبيق"]
      */
-    suspend fun check(): AppUpdateInfo? = try {
-        val snap = FirebaseDatabase.getInstance()
-            .reference
-            .child("app_updates")
-            .child("salesmanager")
-            .get()
-            .await()
+    suspend fun check(): AppUpdateInfo? {
+        return try {
+            val snap = FirebaseDatabase.getInstance()
+                .reference
+                .child("app_updates")
+                .child("salesmanager")
+                .get()
+                .await()
 
-        if (!snap.exists()) return null
+            if (!snap.exists()) return null
 
-        val latestVersion = (snap.child("latest_version").getValue(Long::class.java) ?: 0L).toInt()
-        val versionName   = snap.child("version_name").getValue(String::class.java) ?: ""
-        val downloadUrl   = snap.child("download_url").getValue(String::class.java) ?: ""
-        val isForce       = snap.child("is_force").getValue(Boolean::class.java) ?: true
+            val latestVersion = (snap.child("latest_version").getValue(Long::class.java) ?: 0L).toInt()
+            val versionName   = snap.child("version_name").getValue(String::class.java) ?: ""
+            val downloadUrl   = snap.child("download_url").getValue(String::class.java) ?: ""
+            val isForce       = snap.child("is_force").getValue(Boolean::class.java) ?: true
 
-        val changelog = mutableListOf<String>()
-        snap.child("changelog").children.forEach { child ->
-            child.getValue(String::class.java)?.let { changelog.add(it) }
+            val changelog = mutableListOf<String>()
+            snap.child("changelog").children.forEach { child ->
+                child.getValue(String::class.java)?.let { changelog.add(it) }
+            }
+
+            AppUpdateInfo(
+                latestVersion = latestVersion,
+                versionName   = versionName,
+                downloadUrl   = downloadUrl,
+                changelog     = changelog,
+                isForce       = isForce
+            )
+        } catch (e: Exception) {
+            null // offline or error — don't block
         }
-
-        AppUpdateInfo(
-            latestVersion = latestVersion,
-            versionName   = versionName,
-            downloadUrl   = downloadUrl,
-            changelog     = changelog,
-            isForce       = isForce
-        )
-    } catch (e: Exception) {
-        null // offline or error — don't block
     }
 }

@@ -406,7 +406,7 @@ private fun AdjustExpiryDialog(
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(10.dp),
                             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
-                            colors = OutlinedButtonDefaults.outlinedButtonColors(
+                            colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = if (customDays == days.toString()) Cyan500 else Slate400
                             ),
                             border = ButtonDefaults.outlinedButtonBorder(true).copy(
