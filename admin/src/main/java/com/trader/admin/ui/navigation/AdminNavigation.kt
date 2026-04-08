@@ -11,6 +11,7 @@ import com.trader.admin.ui.merchants.add.AddMerchantScreen
 import com.trader.admin.ui.merchants.detail.MerchantDetailScreen
 import com.trader.admin.ui.chat.list.ChatListScreen
 import com.trader.admin.ui.chat.detail.ChatDetailScreen
+import com.trader.admin.ui.notifications.NotificationsScreen
 import org.koin.androidx.compose.koinViewModel
 
 sealed class AdminScreen(val route: String) {
@@ -26,6 +27,7 @@ sealed class AdminScreen(val route: String) {
         // ✅ use activationCode — same as what merchant app uses
         fun route(activationCode: String, name: String) = "chat/$activationCode?name=$name"
     }
+    object Notifications  : AdminScreen("notifications")
 }
 
 @Composable
@@ -96,6 +98,13 @@ fun AdminNavigation() {
                 merchantName = it.arguments!!.getString("merchantName") ?: "بائع",
                 onNavigateUp = { navController.navigateUp() }
             )
+        }
+        
+        composable(
+            route = AdminScreen.Notifications.route,
+            deepLinks = listOf(navDeepLink { uriPattern = "admin://notifications" })
+        ) {
+            NotificationsScreen(onNavigateUp = { navController.navigateUp() })
         }
     }
 }
