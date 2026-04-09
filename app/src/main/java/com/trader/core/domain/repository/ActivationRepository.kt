@@ -13,6 +13,5 @@ interface ActivationRepository {
     suspend fun saveActivationStatus(activated: Boolean, code: String = "")
     suspend fun deactivate()
     fun observeMerchantStatus(): Flow<MerchantStatus?>
-    // Check status on startup — returns null if offline (don't block)
     suspend fun verifyStatusOnStartup(): StartupStatus
 }

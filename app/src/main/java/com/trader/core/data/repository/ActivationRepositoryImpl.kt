@@ -1,23 +1,27 @@
 package com.trader.core.data.repository
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.Preferences
-import com.trader.core.data.local.appDataStore
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.firebase.firestore.FirebaseFirestore
-import com.trader.core.data.local.dao.*
-import com.trader.core.data.local.entity.*
+import com.trader.core.data.local.appDataStore
+import com.trader.core.data.local.dao.CustomerDao
+import com.trader.core.data.local.dao.PaymentMethodDao
+import com.trader.core.data.local.dao.TransactionDao
+import com.trader.core.data.local.entity.CustomerEntity
+import com.trader.core.data.local.entity.PaymentMethodEntity
+import com.trader.core.data.local.entity.TransactionEntity
 import com.trader.core.data.remote.FirebaseSyncService
+import com.trader.core.data.remote.ValidationResult
 import com.trader.core.domain.model.MerchantStatus
+import com.trader.core.domain.model.StartupStatus
 import com.trader.core.domain.repository.ActivationRepository
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
-import com.trader.core.domain.model.StartupStatus
-import com.trader.core.data.remote.ValidationResult
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
 
 class ActivationRepositoryImpl(
@@ -117,7 +121,7 @@ class ActivationRepositoryImpl(
     private suspend fun fetchAndStoreAllData(code: String) {
         val data = try {
             firebaseService.fetchAllData(code)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             return
         }
         data.customers.forEach { c ->
