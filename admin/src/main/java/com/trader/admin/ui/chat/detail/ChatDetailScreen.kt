@@ -65,7 +65,7 @@ fun ChatDetailScreen(
             AdminChatInputBar(
                 uiState   = uiState,
                 onInput   = viewModel::updateText,
-                onSend    = viewModel::sendOrSave,
+                onSend    = viewModel::send,
                 onCancel  = viewModel::cancelEdit
             )
         }
