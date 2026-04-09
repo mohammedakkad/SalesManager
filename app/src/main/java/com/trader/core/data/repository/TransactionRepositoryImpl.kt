@@ -19,7 +19,9 @@ class TransactionRepositoryImpl(
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    init { startRealtimeSync() }
+    init {
+        startRealtimeSync()
+    }
 
     private fun startRealtimeSync() {
         syncScope.launch {
@@ -34,8 +36,9 @@ class TransactionRepositoryImpl(
     private suspend fun code() = activationRepo.getMerchantCode()
 
     private suspend fun TransactionEntity.enrich() = toDomain(
-        customerName      = customerDao.getCustomerById(customerId)?.name ?: "",
-        paymentMethodName = paymentMethodId?.let { paymentMethodDao.getPaymentMethodById(it)?.name } ?: ""
+        customerName = customerDao.getCustomerById(customerId)?.name ?: "",
+        paymentMethodName = paymentMethodId?.let { paymentMethodDao.getPaymentMethodById(it)?.name }
+            ?: ""
     )
 
     override fun getAllTransactions(): Flow<List<Transaction>> =
@@ -50,7 +53,8 @@ class TransactionRepositoryImpl(
     override fun getUnpaidTransactions() =
         transactionDao.getUnpaidTransactions().map { it.map { e -> e.enrich() } }
 
-    override suspend fun getTransactionById(id: Long) = transactionDao.getTransactionById(id)?.enrich()
+    override suspend fun getTransactionById(id: Long) =
+        transactionDao.getTransactionById(id)?.enrich()
 
     override suspend fun insertTransaction(t: Transaction): Long {
         val id = transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
@@ -68,7 +72,12 @@ class TransactionRepositoryImpl(
         sync.deleteTransaction(code(), t.id)
     }
 
-    override suspend fun getTotalAmountByDate(s: Long, e: Long) = transactionDao.getTotalAmountByDate(s, e)
-    override suspend fun getPaidAmountByDate(s: Long, e: Long)  = transactionDao.getPaidAmountByDate(s, e)
-    override suspend fun getUnpaidAmountByCustomer(cid: Long)   = transactionDao.getUnpaidAmountByCustomer(cid)
+    override suspend fun getTotalAmountByDate(s: Long, e: Long) =
+        transactionDao.getTotalAmountByDate(s, e)
+
+    override suspend fun getPaidAmountByDate(s: Long, e: Long) =
+        transactionDao.getPaidAmountByDate(s, e)
+
+    override suspend fun getUnpaidAmountByCustomer(cid: Long) =
+        transactionDao.getUnpaidAmountByCustomer(cid)
 }

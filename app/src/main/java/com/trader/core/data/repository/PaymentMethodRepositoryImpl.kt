@@ -17,7 +17,9 @@ class PaymentMethodRepositoryImpl(
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    init { startRealtimeSync() }
+    init {
+        startRealtimeSync()
+    }
 
     private fun startRealtimeSync() {
         syncScope.launch {

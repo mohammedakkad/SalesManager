@@ -34,17 +34,17 @@ class ActivationRepositoryImpl(
     override suspend fun validateCode(code: String) = firebaseService.validateCode(code)
 
     override suspend fun validateCodeDetailed(code: String): ValidationResult =
-    firebaseService.validateCodeDetailed(code)
+        firebaseService.validateCodeDetailed(code)
 
     override suspend fun isActivated() =
-    context.appDataStore.data.map {
-        it[IS_ACTIVATED] ?: false
-    }.first()
+        context.appDataStore.data.map {
+            it[IS_ACTIVATED] ?: false
+        }.first()
 
     override suspend fun getMerchantCode() =
-    context.appDataStore.data.map {
-        it[MERCHANT_CODE] ?: ""
-    }.first()
+        context.appDataStore.data.map {
+            it[MERCHANT_CODE] ?: ""
+        }.first()
 
     override suspend fun saveActivationStatus(activated: Boolean, code: String) {
         context.appDataStore.edit {
@@ -83,31 +83,30 @@ class ActivationRepositoryImpl(
         }
 
         val listener = FirebaseFirestore.getInstance()
-        .collection("merchants")
-        .whereEqualTo("activationCode", code)
-        .addSnapshotListener {
-            snapshot, error ->
-            if (error != null || snapshot == null) {
-                // Network error or Firestore not configured → do NOT deactivate
-                trySend(null)
-                return@addSnapshotListener
+            .collection("merchants")
+            .whereEqualTo("activationCode", code)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null) {
+                    // Network error or Firestore not configured → do NOT deactivate
+                    trySend(null)
+                    return@addSnapshotListener
+                }
+                if (snapshot.isEmpty) {
+                    // Merchant document not found in Firestore.
+                    // Could mean Firestore is not used or doc hasn't been created yet.
+                    // Emit null = "status unknown" → AppNavigation does nothing.
+                    trySend(null)
+                    return@addSnapshotListener
+                }
+                val doc = snapshot.documents.firstOrNull()
+                val status = doc?.getString("status")?.let {
+                    runCatching {
+                        MerchantStatus.valueOf(it)
+                    }.getOrNull()
+                }
+                // Only emit DISABLED/EXPIRED — emit null for ACTIVE or unrecognized
+                trySend(if (status == MerchantStatus.DISABLED || status == MerchantStatus.EXPIRED) status else null)
             }
-            if (snapshot.isEmpty) {
-                // Merchant document not found in Firestore.
-                // Could mean Firestore is not used or doc hasn't been created yet.
-                // Emit null = "status unknown" → AppNavigation does nothing.
-                trySend(null)
-                return@addSnapshotListener
-            }
-            val doc = snapshot.documents.firstOrNull()
-            val status = doc?.getString("status")?.let {
-                runCatching {
-                    MerchantStatus.valueOf(it)
-                }.getOrNull()
-            }
-            // Only emit DISABLED/EXPIRED — emit null for ACTIVE or unrecognized
-            trySend(if (status == MerchantStatus.DISABLED || status == MerchantStatus.EXPIRED) status else null)
-        }
 
         awaitClose {
             listener.remove()
@@ -121,23 +120,23 @@ class ActivationRepositoryImpl(
         } catch (e: Exception) {
             return
         }
-        data.customers.forEach {
-            c ->
+        data.customers.forEach { c ->
             try {
                 customerDao.insertCustomer(CustomerEntity.fromDomain(c))
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+            }
         }
-        data.paymentMethods.forEach {
-            m ->
+        data.paymentMethods.forEach { m ->
             try {
                 paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(m))
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+            }
         }
-        data.transactions.forEach {
-            t ->
+        data.transactions.forEach { t ->
             try {
                 transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+            }
         }
     }
 
@@ -150,7 +149,7 @@ class ActivationRepositoryImpl(
 
         // Check Firebase status
         val status = firebaseService.getCodeStatus(code)
-        ?: return StartupStatus.OFFLINE // offline — allow entry
+            ?: return StartupStatus.OFFLINE // offline — allow entry
 
         return when (status) {
             "ACTIVE" -> StartupStatus.ACTIVE
@@ -161,18 +160,22 @@ class ActivationRepositoryImpl(
                 }
                 StartupStatus.DISABLED
             }
+
             "EXPIRED" -> {
                 context.appDataStore.edit {
                     it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = ""
                 }
                 StartupStatus.EXPIRED
             }
+
             "DELETED" -> {
                 context.appDataStore.edit {
                     it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = ""
                 }
                 StartupStatus.DELETED
-            } else -> StartupStatus.ACTIVE
+            }
+
+            else -> StartupStatus.ACTIVE
         }
     }
 }

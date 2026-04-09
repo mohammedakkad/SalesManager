@@ -6,9 +6,11 @@ import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.CustomerRepository
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class CustomerRepositoryImpl(
     private val dao: CustomerDao,
@@ -18,7 +20,9 @@ class CustomerRepositoryImpl(
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    init { startRealtimeSync() }
+    init {
+        startRealtimeSync()
+    }
 
     private fun startRealtimeSync() {
         syncScope.launch {

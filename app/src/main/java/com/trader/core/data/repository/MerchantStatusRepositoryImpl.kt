@@ -30,15 +30,23 @@ class MerchantStatusRepositoryImpl : MerchantStatusRepository {
                 if (statusStr != null) {
                     // New Map format — use status string directly
                     trySend(
-                        try { MerchantStatus.valueOf(statusStr) }
-                        catch (e: Exception) { MerchantStatus.ACTIVE }
+                        try {
+                            MerchantStatus.valueOf(statusStr)
+                        } catch (_: Exception) {
+                            MerchantStatus.ACTIVE
+                        }
                     )
                     return
                 }
                 // Legacy Boolean format
-                val boolVal = try { snapshot.getValue(Boolean::class.java) } catch (e: Exception) { null }
+                val boolVal = try {
+                    snapshot.getValue(Boolean::class.java)
+                } catch (_: Exception) {
+                    null
+                }
                 trySend(if (boolVal == false) MerchantStatus.DISABLED else MerchantStatus.ACTIVE)
             }
+
             override fun onCancelled(error: DatabaseError) {}
         }
         ref.addValueEventListener(listener)
@@ -49,13 +57,19 @@ class MerchantStatusRepositoryImpl : MerchantStatusRepository {
         val ref = db.reference.child("activation_codes").child(code)
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val isPermanent = snapshot.child("isPermanent").getValue(Boolean::class.java) ?: true
-                if (isPermanent) { trySend(null); return }
+                val isPermanent =
+                    snapshot.child("isPermanent").getValue(Boolean::class.java) != false
+                if (isPermanent) {
+                    trySend(null); return
+                }
                 val expiryMs = snapshot.child("expiryDate").getValue(Long::class.java)
-                if (expiryMs == null) { trySend(null); return }
+                if (expiryMs == null) {
+                    trySend(null); return
+                }
                 val daysLeft = TimeUnit.MILLISECONDS.toDays(expiryMs - System.currentTimeMillis())
                 trySend(daysLeft)
             }
+
             override fun onCancelled(error: DatabaseError) {}
         }
         ref.addValueEventListener(listener)
