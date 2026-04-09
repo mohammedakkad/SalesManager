@@ -2,12 +2,18 @@ name: Build SalesManager Release APK
 
 on:
   push:
+    # Build on every branch push (artifact only — no release)
     branches: ['**']
+    # Publish GitHub Release ONLY when a salesmanager-v* tag is pushed
+    # Example: git tag salesmanager-v2 && git push origin salesmanager-v2
+    tags:
+      - 'salesmanager-v*'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,7 +29,22 @@ jobs:
       - name: Decode Keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
 
-      - name: Build
+      # ── Auto-bump versionCode from tag ─────────────────────────────
+      # Tag "salesmanager-v3" → versionCode = 3
+      - name: Extract versionCode from tag
+        if: startsWith(github.ref, 'refs/tags/salesmanager-v')
+        run: |
+          TAG="${GITHUB_REF#refs/tags/salesmanager-v}"
+          echo "VERSION_CODE=$TAG" >> $GITHUB_ENV
+          echo "Detected versionCode: $TAG"
+
+      - name: Patch versionCode in build.gradle.kts
+        if: startsWith(github.ref, 'refs/tags/salesmanager-v')
+        run: |
+          sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/" salesmanager/build.gradle.kts
+          echo "Patched versionCode to $VERSION_CODE"
+
+      - name: Build Release APK
         env:
           KEYSTORE_PATH: ${{ github.workspace }}/keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -35,14 +56,23 @@ jobs:
           export PATH="/tmp/gradle/gradle-8.7/bin:$PATH"
           gradle :salesmanager:assembleRelease --stacktrace
 
+      # ── Always upload artifact (for testing any branch build) ──────
       - uses: actions/upload-artifact@v4
         with:
           name: salesmanager-apk
           path: salesmanager/build/outputs/apk/release/salesmanager-release.apk
 
-      - if: startsWith(github.ref, 'refs/tags/')
+      # ── Publish GitHub Release ONLY on salesmanager-v* tag ─────────
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/salesmanager-v')
         uses: softprops/action-gh-release@v2
         with:
+          # The release name shown in GitHub UI and to users
+          name: "الإصدار ${{ github.ref_name }}"
+          # Changelog: edit this section or use the GitHub Release editor
+          # Each line starting with "- " becomes one changelog entry in the app
+          body: |
+            - تحسينات في الأداء والاستقرار
           files: salesmanager/build/outputs/apk/release/salesmanager-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
