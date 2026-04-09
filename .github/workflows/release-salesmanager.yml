@@ -8,6 +8,11 @@ on:
       - 'salesmanager-v*'   # e.g. salesmanager-v1.0.1
   workflow_dispatch:
 
+
+# ✅ Required for creating GitHub releases
+permissions:
+  contents: write
+  
 jobs:
   build:
     runs-on: ubuntu-latest
