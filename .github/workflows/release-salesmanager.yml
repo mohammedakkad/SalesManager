@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - production
+      - develop
     tags:
       - 'salesmanager-v*'   # e.g. salesmanager-v1.0.1
   workflow_dispatch:
