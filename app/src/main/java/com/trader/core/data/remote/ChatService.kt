@@ -12,10 +12,13 @@ import kotlinx.coroutines.tasks.await
 class ChatService {
     private val db = FirebaseFirestore.getInstance()
 
+    private fun messagesRef(merchantId: String) = db
+        .collection("chat")
+        .document(merchantId)
+        .collection("messages")
+
     fun getMessages(merchantId: String): Flow<List<ChatMessage>> = callbackFlow {
-        val ref = db.collection("chat")
-            .document(merchantId)
-            .collection("messages")
+        val ref = messagesRef(merchantId)
             .orderBy("timestamp", Query.Direction.ASCENDING)
 
         val listener = ref.addSnapshotListener { snapshot, error ->
@@ -27,7 +30,9 @@ class ChatService {
                     senderId   = doc.getString("senderId") ?: "",
                     senderName = doc.getString("senderName") ?: "",
                     timestamp  = doc.getTimestamp("timestamp"),
-                    isRead     = doc.getBoolean("isRead") ?: false
+                    isRead     = doc.getBoolean("isRead") ?: false,
+                    editedAt   = doc.getTimestamp("editedAt"),
+                    deletedAt  = doc.getTimestamp("deletedAt")
                 )
             }
             trySend(msgs)
@@ -36,33 +41,54 @@ class ChatService {
     }
 
     suspend fun sendMessage(merchantId: String, message: ChatMessage) {
-        db.collection("chat")
-            .document(merchantId)
-            .collection("messages")
-            .add(mapOf(
+        messagesRef(merchantId).add(
+            mapOf(
                 "text"       to message.text,
                 "senderId"   to message.senderId,
                 "senderName" to message.senderName,
                 "timestamp"  to Timestamp.now(),
-                "isRead"     to false
-            )).await()
+                "isRead"     to false,
+                "editedAt"   to null,
+                "deletedAt"  to null
+            )
+        ).await()
     }
 
     suspend fun markAsRead(merchantId: String, messageId: String) {
-        db.collection("chat")
-            .document(merchantId)
-            .collection("messages")
+        messagesRef(merchantId)
             .document(messageId)
             .update("isRead", true)
             .await()
     }
 
-    fun getUnreadCount(merchantId: String): Flow<Int> = callbackFlow {
-        val ref = db.collection("chat")
-            .document(merchantId)
-            .collection("messages")
+    /** تعديل نص رسالة */
+    suspend fun editMessage(merchantId: String, messageId: String, newText: String) {
+        messagesRef(merchantId)
+            .document(messageId)
+            .update(
+                mapOf(
+                    "text"     to newText,
+                    "editedAt" to Timestamp.now()
+                )
+            ).await()
+    }
+
+    /** حذف ناعم — يحتفظ بالرسالة كـ "تم حذف هذه الرسالة" */
+    suspend fun deleteMessage(merchantId: String, messageId: String) {
+        messagesRef(merchantId)
+            .document(messageId)
+            .update(
+                mapOf(
+                    "text"      to "",
+                    "deletedAt" to Timestamp.now()
+                )
+            ).await()
+    }
+
+    fun getUnreadCount(merchantId: String, excludeSenderId: String): Flow<Int> = callbackFlow {
+        val ref = messagesRef(merchantId)
             .whereEqualTo("isRead", false)
-            .whereNotEqualTo("senderId", "admin")
+            .whereNotEqualTo("senderId", excludeSenderId)
 
         val listener = ref.addSnapshotListener { snapshot, _ ->
             trySend(snapshot?.size() ?: 0)

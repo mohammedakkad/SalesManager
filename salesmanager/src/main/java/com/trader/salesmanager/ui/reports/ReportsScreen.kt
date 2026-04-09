@@ -1,14 +1,18 @@
 package com.trader.salesmanager.ui.reports
 
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,10 +24,15 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -61,17 +70,48 @@ fun ReportsScreen(
             // ── Summary Cards ────────────────────────────────────
             item {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    SummaryCard(label = "الإجمالي", value = uiState.totalAmount, color = Emerald500, modifier = Modifier.weight(1f))
-                    SummaryCard(label = "المدفوع", value = uiState.paidAmount, color = PaidGreen, modifier = Modifier.weight(1f))
-                    SummaryCard(label = "الديون", value = uiState.unpaidAmount, color = DebtRed, modifier = Modifier.weight(1f))
+                    SummaryCard("الإجمالي", uiState.totalAmount, Emerald500, Modifier.weight(1f))
+                    SummaryCard("المدفوع",  uiState.paidAmount,  PaidGreen,  Modifier.weight(1f))
+                    SummaryCard("الديون",   uiState.unpaidAmount, DebtRed,   Modifier.weight(1f))
                 }
+            }
+
+            // ── تقويم الشهر ──────────────────────────────────────
+            item {
+                CalendarCard(
+                    month      = uiState.calendarMonth,
+                    year       = uiState.calendarYear,
+                    dayTotals  = uiState.dayTotals,
+                    selectedDay = uiState.selectedDay,
+                    onDayClick  = viewModel::selectDay,
+                    onPrev      = viewModel::prevMonth,
+                    onNext      = viewModel::nextMonth
+                )
+            }
+
+            // ── عمليات اليوم المحدد ──────────────────────────────
+            if (uiState.selectedDay != null) {
+                item {
+                    SelectedDayDetail(
+                        day           = uiState.selectedDay!!,
+                        month         = uiState.calendarMonth,
+                        year          = uiState.calendarYear,
+                        transactions  = uiState.selectedDayTransactions,
+                        summary       = uiState.selectedDaySummary
+                    )
+                }
+            }
+
+            // ── تحليل اليوم (صباح / ظهر / مساء) ─────────────────
+            item {
+                TodayAnalysisCard(analysis = uiState.todayAnalysis)
             }
 
             // ── Line Chart ───────────────────────────────────────
             if (uiState.dailySales.isNotEmpty()) {
                 item {
-                    ChartCard(title = "منحنى المبيعات اليومية") {
-                        LineChart(data = uiState.dailySales, modifier = Modifier.fillMaxWidth().height(180.dp))
+                    ChartCard("منحنى المبيعات اليومية") {
+                        LineChart(uiState.dailySales, Modifier.fillMaxWidth().height(180.dp))
                     }
                 }
             }
@@ -79,8 +119,8 @@ fun ReportsScreen(
             // ── Bar Chart ────────────────────────────────────────
             if (uiState.dailySales.isNotEmpty()) {
                 item {
-                    ChartCard(title = "مدفوع مقابل غير مدفوع") {
-                        BarChart(data = uiState.dailySales, modifier = Modifier.fillMaxWidth().height(160.dp))
+                    ChartCard("مدفوع مقابل غير مدفوع") {
+                        BarChart(uiState.dailySales, Modifier.fillMaxWidth().height(160.dp))
                     }
                 }
             }
@@ -88,19 +128,15 @@ fun ReportsScreen(
             // ── Donut Chart ──────────────────────────────────────
             if (uiState.paymentShares.isNotEmpty()) {
                 item {
-                    ChartCard(title = "توزيع طرق الدفع") {
+                    ChartCard("توزيع طرق الدفع") {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            DonutChart(
-                                data = uiState.paymentShares,
-                                modifier = Modifier.size(140.dp)
-                            )
+                            DonutChart(uiState.paymentShares, Modifier.size(140.dp))
                             Spacer(Modifier.width(16.dp))
+                            val donutColors = listOf(Emerald500, Color(0xFF3B82F6), Color(0xFFF59E0B), Color(0xFFEF4444), Color(0xFF8B5CF6))
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                val donutColors = listOf(Emerald500, Color(0xFF3B82F6), Color(0xFFF59E0B), Color(0xFFEF4444), Color(0xFF8B5CF6))
                                 uiState.paymentShares.forEachIndexed { i, share ->
                                     val total = uiState.paymentShares.sumOf { it.amount }.takeIf { it > 0 } ?: 1.0
-                                    val pct = (share.amount / total * 100).toInt()
-                                    LegendItem(label = share.name, percent = pct, color = donutColors[i % donutColors.size])
+                                    LegendItem(share.name, (share.amount / total * 100).toInt(), donutColors[i % donutColors.size])
                                 }
                             }
                         }
@@ -108,49 +144,362 @@ fun ReportsScreen(
                 }
             }
 
-            // ── Top Spenders ─────────────────────────────────────
+            // ── Top Spenders / Debtors ───────────────────────────
             if (uiState.topSpenders.isNotEmpty()) {
-                item {
-                    ChartCard(title = "أعلى 5 زبائن شراءً") {
-                        RankList(items = uiState.topSpenders, color = Emerald500)
-                    }
+                item { ChartCard("أعلى 5 زبائن شراءً") { RankList(uiState.topSpenders, Emerald500) } }
+            }
+            if (uiState.topDebtors.isNotEmpty()) {
+                item { ChartCard("أعلى 5 زبائن ديناً") { RankList(uiState.topDebtors, DebtRed) } }
+            }
+        }
+    }
+}
+
+// ── التقويم ───────────────────────────────────────────────────
+@Composable
+private fun CalendarCard(
+    month: Int, year: Int,
+    dayTotals: Map<Int, Double>,
+    selectedDay: Int?,
+    onDayClick: (Int) -> Unit,
+    onPrev: () -> Unit,
+    onNext: () -> Unit
+) {
+    val arabicMonths = listOf(
+        "يناير","فبراير","مارس","أبريل","مايو","يونيو",
+        "يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"
+    )
+    val maxDayTotal = dayTotals.values.maxOrNull()?.takeIf { it > 0 } ?: 1.0
+
+    val cal = Calendar.getInstance().apply {
+        set(Calendar.YEAR, year); set(Calendar.MONTH, month); set(Calendar.DAY_OF_MONTH, 1)
+    }
+    val daysInMonth    = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+    val firstDayOfWeek = (cal.get(Calendar.DAY_OF_WEEK) - 1 + 7) % 7  // 0=Sun
+
+    Card(
+        shape     = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(2.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // رأس التقويم
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment     = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onPrev) {
+                    Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null)
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        arabicMonths[month],
+                        style      = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text("$year", style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                IconButton(onClick = onNext) {
+                    Icon(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, null)
                 }
             }
 
-            // ── Top Debtors ──────────────────────────────────────
-            if (uiState.topDebtors.isNotEmpty()) {
-                item {
-                    ChartCard(title = "أعلى 5 زبائن ديناً") {
-                        RankList(items = uiState.topDebtors, color = DebtRed)
+            Spacer(Modifier.height(8.dp))
+
+            // أيام الأسبوع
+            val weekDays = listOf("أح","إث","ثل","أر","خم","جم","سب")
+            Row(modifier = Modifier.fillMaxWidth()) {
+                weekDays.forEach { d ->
+                    Text(d, modifier = Modifier.weight(1f),
+                        textAlign  = TextAlign.Center,
+                        style      = MaterialTheme.typography.labelSmall,
+                        color      = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold)
+                }
+            }
+
+            Spacer(Modifier.height(6.dp))
+
+            // خلايا الأيام
+            val totalCells = firstDayOfWeek + daysInMonth
+            val rows       = (totalCells + 6) / 7
+            for (row in 0 until rows) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    for (col in 0 until 7) {
+                        val cellIndex = row * 7 + col
+                        val day       = cellIndex - firstDayOfWeek + 1
+                        if (day < 1 || day > daysInMonth) {
+                            Spacer(Modifier.weight(1f))
+                        } else {
+                            val hasData    = dayTotals.containsKey(day)
+                            val intensity  = if (hasData) (dayTotals[day]!! / maxDayTotal).toFloat() else 0f
+                            val isSelected = day == selectedDay
+                            val isToday    = run {
+                                val now = Calendar.getInstance()
+                                day == now.get(Calendar.DAY_OF_MONTH) &&
+                                month == now.get(Calendar.MONTH) &&
+                                year  == now.get(Calendar.YEAR)
+                            }
+
+                            CalendarDay(
+                                day        = day,
+                                intensity  = intensity,
+                                hasData    = hasData,
+                                isSelected = isSelected,
+                                isToday    = isToday,
+                                modifier   = Modifier.weight(1f),
+                                onClick    = { onDayClick(day) }
+                            )
+                        }
                     }
+                }
+                Spacer(Modifier.height(4.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun CalendarDay(
+    day: Int, intensity: Float, hasData: Boolean,
+    isSelected: Boolean, isToday: Boolean,
+    modifier: Modifier, onClick: () -> Unit
+) {
+    val bgColor = when {
+        isSelected -> Emerald500
+        hasData    -> Emerald500.copy(alpha = 0.15f + intensity * 0.5f)
+        else       -> Color.Transparent
+    }
+    val textColor = when {
+        isSelected -> Color.White
+        isToday    -> Emerald500
+        else       -> MaterialTheme.colorScheme.onSurface
+    }
+
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .padding(2.dp)
+            .clip(CircleShape)
+            .background(bgColor)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                "$day",
+                style      = MaterialTheme.typography.labelMedium,
+                color      = textColor,
+                fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal
+            )
+            if (hasData && !isSelected) {
+                Box(
+                    Modifier.size(4.dp).clip(CircleShape)
+                        .background(Emerald500)
+                )
+            }
+        }
+    }
+}
+
+// ── تفاصيل اليوم المحدد ──────────────────────────────────────
+@Composable
+private fun SelectedDayDetail(
+    day: Int, month: Int, year: Int,
+    transactions: List<Transaction>,
+    summary: Triple<Double, Double, Double>
+) {
+    val arabicMonths = listOf(
+        "يناير","فبراير","مارس","أبريل","مايو","يونيو",
+        "يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"
+    )
+    val (total, paid, unpaid) = summary
+
+    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // عنوان
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    Modifier.size(36.dp).clip(CircleShape).background(Emerald500),
+                    Alignment.Center
+                ) {
+                    Text("$day", color = Color.White, fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge)
+                }
+                Spacer(Modifier.width(10.dp))
+                Text("${arabicMonths[month]} $year",
+                    style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            if (transactions.isEmpty()) {
+                // لا توجد عمليات
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Rounded.EventBusy, null,
+                            modifier = Modifier.size(48.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.3f))
+                        Spacer(Modifier.height(8.dp))
+                        Text("لا توجد عمليات في هذا اليوم",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.6f),
+                            style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            } else {
+                // ملخص اليوم
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    DaySummaryChip("الإجمالي", total, Emerald500, Modifier.weight(1f))
+                    DaySummaryChip("مدفوع",    paid,  PaidGreen,  Modifier.weight(1f))
+                    DaySummaryChip("معلق",     unpaid, DebtRed,   Modifier.weight(1f))
+                }
+
+                Spacer(Modifier.height(12.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(0.3f))
+                Spacer(Modifier.height(10.dp))
+
+                // قائمة العمليات
+                transactions.take(5).forEach { tx ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Box(
+                            Modifier.size(8.dp).clip(CircleShape)
+                                .background(if (tx.isPaid) PaidGreen else UnpaidAmber)
+                        )
+                        Text(tx.customerName.ifEmpty { "—" },
+                            modifier = Modifier.weight(1f),
+                            style    = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis)
+                        Text(
+                            String.format("%.0f", tx.amount),
+                            style      = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color      = if (tx.isPaid) PaidGreen else UnpaidAmber
+                        )
+                    }
+                }
+                if (transactions.size > 5) {
+                    Text("+ ${transactions.size - 5} عمليات أخرى",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                        textAlign = TextAlign.Center)
                 }
             }
         }
     }
 }
 
-// ── Period Switcher ──────────────────────────────────────────
+@Composable
+private fun DaySummaryChip(label: String, value: Double, color: Color, modifier: Modifier) {
+    Surface(modifier = modifier, shape = RoundedCornerShape(12.dp), color = color.copy(0.1f)) {
+        Column(
+            modifier = Modifier.padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(label, style = MaterialTheme.typography.labelSmall, color = color)
+            Spacer(Modifier.height(2.dp))
+            Text(String.format("%.0f", value),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold, color = color)
+        }
+    }
+}
+
+// ── تحليل اليوم (صباح/ظهر/مساء) ─────────────────────────────
+@Composable
+private fun TodayAnalysisCard(analysis: TimeOfDayAnalysis) {
+    val total = (analysis.morningTotal + analysis.afternoonTotal + analysis.eveningTotal)
+        .takeIf { it > 0 } ?: 1.0
+
+    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Rounded.Analytics, null,
+                    tint = Violet500, modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("تحليل اليوم", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(14.dp))
+
+            listOf(
+                Triple("🌅 الصباح",  analysis.morningTotal,   Color(0xFFF59E0B)),
+                Triple("☀️ الظهيرة", analysis.afternoonTotal, Color(0xFF06B6D4)),
+                Triple("🌙 المساء",  analysis.eveningTotal,   Color(0xFF8B5CF6))
+            ).forEach { (label, value, color) ->
+                TimeSlotRow(label, value, value / total, color)
+                Spacer(Modifier.height(10.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun TimeSlotRow(label: String, value: Double, ratio: Float, color: Color) {
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(ratio) {
+        progress.snapTo(0f)
+        progress.animateTo(ratio, tween(900, easing = FastOutSlowInEasing))
+    }
+    val anim by progress.asState()
+
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment     = Alignment.CenterVertically
+        ) {
+            Text(label, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
+            Text(
+                String.format("%.0f", value),
+                style      = MaterialTheme.typography.labelMedium,
+                color      = color,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Spacer(Modifier.height(4.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth().height(8.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(color.copy(0.12f))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(anim)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Brush.horizontalGradient(listOf(color.copy(0.7f), color)))
+            )
+        }
+    }
+}
+
+// ── الـ Composables المشتركة (من الملف الأصلي) ───────────────
 @Composable
 private fun PeriodSwitcher(selected: ReportPeriod, onSelect: (ReportPeriod) -> Unit) {
     val labels = mapOf(ReportPeriod.TODAY to "اليوم", ReportPeriod.WEEK to "الأسبوع", ReportPeriod.MONTH to "الشهر")
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         labels.forEach { (period, label) ->
             val isSelected = period == selected
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(4.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                modifier = Modifier.weight(1f).padding(4.dp).clip(RoundedCornerShape(10.dp))
                     .background(if (isSelected) Emerald500 else Color.Transparent),
                 contentAlignment = Alignment.Center
             ) {
                 TextButton(onClick = { onSelect(period) }, modifier = Modifier.fillMaxWidth()) {
-                    Text(label, color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                    Text(label,
+                        color      = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
                 }
             }
@@ -158,9 +507,8 @@ private fun PeriodSwitcher(selected: ReportPeriod, onSelect: (ReportPeriod) -> U
     }
 }
 
-// ── Summary Card with count-up animation ────────────────────
 @Composable
-private fun SummaryCard(label: String, value: Double, color: Color, modifier: Modifier = Modifier) {
+private fun SummaryCard(label: String, value: Double, color: Color, modifier: Modifier) {
     var target by remember { mutableFloatStateOf(0f) }
     LaunchedEffect(value) { target = value.toFloat() }
     val animated by animateFloatAsState(target, tween(1200, easing = FastOutSlowInEasing), label = "count")
@@ -169,17 +517,13 @@ private fun SummaryCard(label: String, value: Double, color: Color, modifier: Mo
         Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(label, style = MaterialTheme.typography.labelSmall, color = color)
             Spacer(Modifier.height(4.dp))
-            Text(
-                String.format("%.0f", animated),
+            Text(String.format("%.0f", animated),
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.ExtraBold,
-                color = color
-            )
+                fontWeight = FontWeight.ExtraBold, color = color)
         }
     }
 }
 
-// ── Chart Card wrapper ───────────────────────────────────────
 @Composable
 private fun ChartCard(title: String, content: @Composable () -> Unit) {
     Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
@@ -191,98 +535,64 @@ private fun ChartCard(title: String, content: @Composable () -> Unit) {
     }
 }
 
-// ── Line Chart ───────────────────────────────────────────────
 @Composable
-private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier = Modifier) {
+private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
     val progress = remember { Animatable(0f) }
-    LaunchedEffect(data) {
-        progress.snapTo(0f)
-        progress.animateTo(1f, tween(1500, easing = FastOutSlowInEasing))
-    }
+    LaunchedEffect(data) { progress.snapTo(0f); progress.animateTo(1f, tween(1500, easing = FastOutSlowInEasing)) }
     val anim by progress.asState()
-    val lineColor = Emerald500
-    val fillColor = Emerald500.copy(0.15f)
 
     Canvas(modifier = modifier) {
         if (data.isEmpty()) return@Canvas
-        val maxVal = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
-        val stepX = size.width / (data.size - 1).coerceAtLeast(1)
-        val points = data.mapIndexed { i, e ->
-            Offset(i * stepX, size.height * (1f - (e.total / maxVal).toFloat()))
+        val maxVal  = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
+        val stepX   = size.width / (data.size - 1).coerceAtLeast(1)
+        val points  = data.mapIndexed { i, e -> Offset(i * stepX, size.height * (1f - (e.total / maxVal).toFloat())) }
+        val visible = points.take((points.size * anim).toInt().coerceAtLeast(1).coerceAtMost(points.size))
+        val path    = Path().apply {
+            visible.forEachIndexed { i, pt -> if (i == 0) moveTo(pt.x, pt.y) else lineTo(pt.x, pt.y) }
+            lineTo(visible.last().x, size.height); lineTo(visible.first().x, size.height); close()
         }
-        val drawCount = (points.size * anim).toInt().coerceAtLeast(1).coerceAtMost(points.size)
-        val visiblePoints = points.take(drawCount)
-
-        // Fill path
-        val path = Path()
-        visiblePoints.forEachIndexed { i, pt ->
-            if (i == 0) path.moveTo(pt.x, pt.y) else path.lineTo(pt.x, pt.y)
+        drawPath(path, Brush.verticalGradient(listOf(Emerald500.copy(0.15f), Color.Transparent)))
+        val linePath = Path().apply {
+            visible.forEachIndexed { i, pt -> if (i == 0) moveTo(pt.x, pt.y) else lineTo(pt.x, pt.y) }
         }
-        path.lineTo(visiblePoints.last().x, size.height)
-        path.lineTo(visiblePoints.first().x, size.height)
-        path.close()
-        drawPath(path, Brush.verticalGradient(listOf(fillColor, Color.Transparent)))
-
-        // Line
-        val linePath = Path()
-        visiblePoints.forEachIndexed { i, pt ->
-            if (i == 0) linePath.moveTo(pt.x, pt.y) else linePath.lineTo(pt.x, pt.y)
-        }
-        drawPath(linePath, lineColor, style = Stroke(3.dp.toPx(), cap = StrokeCap.Round))
-
-        // Dots
-        visiblePoints.forEach { pt ->
+        drawPath(linePath, Emerald500, style = Stroke(3.dp.toPx(), cap = StrokeCap.Round))
+        visible.forEach { pt ->
             drawCircle(Color.White, 5.dp.toPx(), pt)
-            drawCircle(lineColor, 3.dp.toPx(), pt)
+            drawCircle(Emerald500, 3.dp.toPx(), pt)
         }
     }
 }
 
-// ── Bar Chart ─────────────────────────────────────────────────
 @Composable
-private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier = Modifier) {
+private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
     val progress = remember { Animatable(0f) }
-    LaunchedEffect(data) {
-        progress.snapTo(0f)
-        progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing))
-    }
+    LaunchedEffect(data) { progress.snapTo(0f); progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing)) }
     val anim by progress.asState()
-    val paidColor = PaidGreen
-    val unpaidColor = DebtRed
 
     Canvas(modifier = modifier) {
         if (data.isEmpty()) return@Canvas
-        val maxVal = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
-        val groupW = size.width / data.size
-        val barW = groupW * 0.35f
-        val gap = barW * 0.2f
-
+        val maxVal  = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
+        val groupW  = size.width / data.size
+        val barW    = groupW * 0.35f
         data.forEachIndexed { i, entry ->
-            val left = i * groupW + gap
-            val paidH = (entry.paid / maxVal * size.height * anim).toFloat()
+            val left    = i * groupW + barW * 0.2f
+            val paidH   = (entry.paid / maxVal * size.height * anim).toFloat()
             val unpaidH = ((entry.total - entry.paid) / maxVal * size.height * anim).toFloat()
-            // Paid bar
-            drawRoundRect(paidColor, topLeft = Offset(left, size.height - paidH),
-                size = Size(barW, paidH), cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()))
-            // Unpaid bar
-            drawRoundRect(unpaidColor.copy(0.7f), topLeft = Offset(left + barW + 2.dp.toPx(), size.height - unpaidH),
-                size = Size(barW, unpaidH), cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()))
+            drawRoundRect(PaidGreen, Offset(left, size.height - paidH),
+                Size(barW, paidH), androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()))
+            drawRoundRect(DebtRed.copy(0.7f), Offset(left + barW + 2.dp.toPx(), size.height - unpaidH),
+                Size(barW, unpaidH), androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()))
         }
     }
 }
 
-// ── Donut Chart ───────────────────────────────────────────────
 @Composable
-private fun DonutChart(data: List<PaymentShare>, modifier: Modifier = Modifier) {
+private fun DonutChart(data: List<PaymentShare>, modifier: Modifier) {
     val donutColors = listOf(Emerald500, Color(0xFF3B82F6), Color(0xFFF59E0B), Color(0xFFEF4444), Color(0xFF8B5CF6))
-    val progress = remember { Animatable(0f) }
-    LaunchedEffect(data) {
-        progress.snapTo(0f)
-        progress.animateTo(1f, tween(1400, easing = FastOutSlowInEasing))
-    }
-    val anim by progress.asState()
+    val progress    = remember { Animatable(0f) }
+    LaunchedEffect(data) { progress.snapTo(0f); progress.animateTo(1f, tween(1400, easing = FastOutSlowInEasing)) }
+    val anim  by progress.asState()
     val total = data.sumOf { it.amount }.takeIf { it > 0 } ?: 1.0
-
     Canvas(modifier = modifier) {
         val stroke = 28.dp.toPx()
         val radius = min(size.width, size.height) / 2f - stroke / 2f
@@ -290,30 +600,22 @@ private fun DonutChart(data: List<PaymentShare>, modifier: Modifier = Modifier) 
         var startAngle = -90f
         data.forEachIndexed { i, share ->
             val sweep = (share.amount / total * 360 * anim).toFloat()
-            drawArc(
-                color = donutColors[i % donutColors.size],
-                startAngle = startAngle,
-                sweepAngle = sweep,
-                useCenter = false,
-                topLeft = Offset(center.x - radius, center.y - radius),
-                size = Size(radius * 2, radius * 2),
-                style = Stroke(stroke, cap = StrokeCap.Round)
-            )
+            drawArc(donutColors[i % donutColors.size], startAngle, sweep, false,
+                Offset(center.x - radius, center.y - radius),
+                Size(radius * 2, radius * 2), style = Stroke(stroke, cap = StrokeCap.Round))
             startAngle += sweep
         }
     }
 }
 
-// ── Legend Item ───────────────────────────────────────────────
 @Composable
 private fun LegendItem(label: String, percent: Int, color: Color) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(color))
+        Box(Modifier.size(10.dp).clip(CircleShape).background(color))
         Text("$label ($percent%)", style = MaterialTheme.typography.labelSmall)
     }
 }
 
-// ── Rank List ─────────────────────────────────────────────────
 @Composable
 private fun RankList(items: List<CustomerRank>, color: Color) {
     val maxVal = items.maxOfOrNull { it.amount }?.takeIf { it > 0 } ?: 1.0
@@ -322,24 +624,20 @@ private fun RankList(items: List<CustomerRank>, color: Color) {
             val barProgress = remember { Animatable(0f) }
             LaunchedEffect(item.amount) {
                 barProgress.snapTo(0f)
-                barProgress.animateTo((item.amount / maxVal).toFloat(), tween(900, delayMillis = i * 100, easing = FastOutSlowInEasing))
+                barProgress.animateTo((item.amount / maxVal).toFloat(), tween(900, i * 100, FastOutSlowInEasing))
             }
             val prog by barProgress.asState()
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("${i + 1}", style = MaterialTheme.typography.labelSmall,
                     color = color, fontWeight = FontWeight.Bold, modifier = Modifier.width(16.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.weight(1f)) {
+                    Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
                         Text(item.name, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
                         Text(String.format("%.0f", item.amount), style = MaterialTheme.typography.labelSmall, color = color)
                     }
                     Spacer(Modifier.height(3.dp))
-                    Box(
-                        modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp))
-                            .background(color.copy(0.15f))
-                    ) {
-                        Box(modifier = Modifier.fillMaxWidth(prog).fillMaxHeight()
-                            .clip(RoundedCornerShape(3.dp)).background(color))
+                    Box(Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)).background(color.copy(0.15f))) {
+                        Box(Modifier.fillMaxWidth(prog).fillMaxHeight().clip(RoundedCornerShape(3.dp)).background(color))
                     }
                 }
             }
