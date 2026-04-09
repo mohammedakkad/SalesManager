@@ -12,8 +12,8 @@ import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 
 class MerchantAdminService {
-    private val db     = FirebaseFirestore.getInstance()
-    private val rtdb   = FirebaseDatabase.getInstance().reference
+    private val db = FirebaseFirestore.getInstance()
+    private val realTimeDatabase = FirebaseDatabase.getInstance().reference
     private val merchantsRef = db.collection("merchants")
 
     fun getAllMerchants(): Flow<List<Merchant>> = callbackFlow {
@@ -23,17 +23,19 @@ class MerchantAdminService {
                 try {
                     val data = doc.data ?: return@mapNotNull null
                     Merchant(
-                        id             = doc.id,
-                        name           = data["name"] as? String ?: "",
-                        phone          = data["phone"] as? String ?: "",
+                        id = doc.id,
+                        name = data["name"] as? String ?: "",
+                        phone = data["phone"] as? String ?: "",
                         activationCode = data["activationCode"] as? String ?: "",
-                        status         = MerchantStatus.valueOf(data["status"] as? String ?: "ACTIVE"),
-                        isPermanent    = data["isPermanent"] as? Boolean ?: true,
-                        expiryDate     = doc.getTimestamp("expiryDate"),
-                        createdAt      = doc.getTimestamp("createdAt"),
-                        lastSeen       = doc.getTimestamp("lastSeen")
+                        status = MerchantStatus.valueOf(data["status"] as? String ?: "ACTIVE"),
+                        isPermanent = data["isPermanent"] as? Boolean != false,
+                        expiryDate = doc.getTimestamp("expiryDate"),
+                        createdAt = doc.getTimestamp("createdAt"),
+                        lastSeen = doc.getTimestamp("lastSeen")
                     )
-                } catch (e: Exception) { null }
+                } catch (_: Exception) {
+                    null
+                }
             }
             trySend(list)
         }
@@ -41,21 +43,23 @@ class MerchantAdminService {
     }
 
     suspend fun getMerchantById(id: String): Merchant? {
-        val doc  = merchantsRef.document(id).get().await()
+        val doc = merchantsRef.document(id).get().await()
         val data = doc.data ?: return null
         return try {
             Merchant(
-                id             = doc.id,
-                name           = data["name"] as? String ?: "",
-                phone          = data["phone"] as? String ?: "",
+                id = doc.id,
+                name = data["name"] as? String ?: "",
+                phone = data["phone"] as? String ?: "",
                 activationCode = data["activationCode"] as? String ?: "",
-                status         = MerchantStatus.valueOf(data["status"] as? String ?: "ACTIVE"),
-                isPermanent    = data["isPermanent"] as? Boolean ?: true,
-                expiryDate     = doc.getTimestamp("expiryDate"),
-                createdAt      = doc.getTimestamp("createdAt"),
-                lastSeen       = doc.getTimestamp("lastSeen")
+                status = MerchantStatus.valueOf(data["status"] as? String ?: "ACTIVE"),
+                isPermanent = data["isPermanent"] as? Boolean != false,
+                expiryDate = doc.getTimestamp("expiryDate"),
+                createdAt = doc.getTimestamp("createdAt"),
+                lastSeen = doc.getTimestamp("lastSeen")
             )
-        } catch (e: Exception) { null }
+        } catch (_: Exception) {
+            null
+        }
     }
 
     suspend fun addMerchant(merchant: Merchant): String {
@@ -68,11 +72,11 @@ class MerchantAdminService {
     }
 
     suspend fun deleteMerchant(id: String) {
-        // Get code first to clean up RTDB too
+        // Get code first to clean up Real Time Database too
         val code = getMerchantById(id)?.activationCode
         merchantsRef.document(id).delete().await()
         if (!code.isNullOrEmpty()) {
-            rtdb.child("activation_codes").child(code).removeValue().await()
+            realTimeDatabase.child("activation_codes").child(code).removeValue().await()
         }
     }
 
@@ -80,7 +84,7 @@ class MerchantAdminService {
      * FIX: Updates BOTH Firestore (status field) AND Realtime Database
      * (activation_codes/{code}) so that the merchant app validation stays in sync.
      * Previously only Firestore was updated → merchant could still re-activate
-     * with a disabled code because RTDB still showed "ACTIVE".
+     * with a disabled code because Real Time Database still showed "ACTIVE".
      */
     suspend fun setStatus(id: String, status: MerchantStatus) {
         val code = getMerchantById(id)?.activationCode ?: ""
@@ -90,12 +94,12 @@ class MerchantAdminService {
 
         // 2. Sync Realtime Database so merchant app picks up the change
         if (code.isNotEmpty()) {
-            val rtdbStatus = when (status) {
-                MerchantStatus.ACTIVE   -> mapOf("status" to "ACTIVE")
+            val realTimeDatabaseStatus = when (status) {
+                MerchantStatus.ACTIVE -> mapOf("status" to "ACTIVE")
                 MerchantStatus.DISABLED -> mapOf("status" to "DISABLED")
-                MerchantStatus.EXPIRED  -> mapOf("status" to "EXPIRED")
+                MerchantStatus.EXPIRED -> mapOf("status" to "EXPIRED")
             }
-            rtdb.child("activation_codes").child(code).setValue(rtdbStatus).await()
+            realTimeDatabase.child("activation_codes").child(code).setValue(realTimeDatabaseStatus).await()
         }
     }
 
@@ -120,25 +124,25 @@ class MerchantAdminService {
         merchantsRef.document(id).update(
             mapOf(
                 "expiryDate" to newExpiry,
-                "status"     to newStatus.name
+                "status" to newStatus.name
             )
         ).await()
 
-        // Sync RTDB
+        // Sync Real Time Database
         if (merchant.activationCode.isNotEmpty()) {
-            rtdb.child("activation_codes").child(merchant.activationCode)
+            realTimeDatabase.child("activation_codes").child(merchant.activationCode)
                 .setValue(mapOf("status" to newStatus.name)).await()
         }
     }
 
     private fun Merchant.toMap() = mapOf(
-        "name"           to name,
-        "phone"          to phone,
+        "name" to name,
+        "phone" to phone,
         "activationCode" to activationCode,
-        "status"         to status.name,
-        "isPermanent"    to isPermanent,
-        "expiryDate"     to expiryDate,
-        "createdAt"      to (createdAt ?: Timestamp.now()),
-        "lastSeen"       to lastSeen
+        "status" to status.name,
+        "isPermanent" to isPermanent,
+        "expiryDate" to expiryDate,
+        "createdAt" to (createdAt ?: Timestamp.now()),
+        "lastSeen" to lastSeen
     )
 }

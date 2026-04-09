@@ -20,17 +20,17 @@ class ChatService {
 
         val listener = ref.addSnapshotListener { snapshot, error ->
             if (error != null || snapshot == null) return@addSnapshotListener
-            val msgs = snapshot.documents.mapNotNull { doc ->
+            val message = snapshot.documents.mapNotNull { doc ->
                 ChatMessage(
-                    id         = doc.id,
-                    text       = doc.getString("text") ?: "",
-                    senderId   = doc.getString("senderId") ?: "",
+                    id = doc.id,
+                    text = doc.getString("text") ?: "",
+                    senderId = doc.getString("senderId") ?: "",
                     senderName = doc.getString("senderName") ?: "",
-                    timestamp  = doc.getTimestamp("timestamp"),
-                    isRead     = doc.getBoolean("isRead") ?: false
+                    timestamp = doc.getTimestamp("timestamp"),
+                    isRead = doc.getBoolean("isRead") ?: false
                 )
             }
-            trySend(msgs)
+            trySend(message)
         }
         awaitClose { listener.remove() }
     }
@@ -39,13 +39,15 @@ class ChatService {
         db.collection("chat")
             .document(merchantId)
             .collection("messages")
-            .add(mapOf(
-                "text"       to message.text,
-                "senderId"   to message.senderId,
-                "senderName" to message.senderName,
-                "timestamp"  to Timestamp.now(),
-                "isRead"     to false
-            )).await()
+            .add(
+                mapOf(
+                    "text" to message.text,
+                    "senderId" to message.senderId,
+                    "senderName" to message.senderName,
+                    "timestamp" to Timestamp.now(),
+                    "isRead" to false
+                )
+            ).await()
     }
 
     suspend fun markAsRead(merchantId: String, messageId: String) {
