@@ -2,12 +2,10 @@ name: Build SalesManager Release APK
 
 on:
   push:
-    # Build on every branch push (artifact only — no release)
-    branches: ['**']
-    # Publish GitHub Release ONLY when a salesmanager-v* tag is pushed
-    # Example: git tag salesmanager-v2 && git push origin salesmanager-v2
+    branches:
+      - production
     tags:
-      - 'salesmanager-v*'
+      - 'salesmanager-v*'   # e.g. salesmanager-v1.0.1
   workflow_dispatch:
 
 jobs:
@@ -29,20 +27,28 @@ jobs:
       - name: Decode Keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
 
-      # ── Auto-bump versionCode from tag ─────────────────────────────
-      # Tag "salesmanager-v3" → versionCode = 3
-      - name: Extract versionCode from tag
+      # ── Parse semantic version from tag ───────────────────────────
+      # Tag "salesmanager-v1.0.1" → MAJOR=1  MINOR=0  PATCH=1
+      # versionCode = MAJOR*10000 + MINOR*100 + PATCH  →  10001
+      # versionName = "1.0.1"
+      - name: Parse version from tag
         if: startsWith(github.ref, 'refs/tags/salesmanager-v')
         run: |
-          TAG="${GITHUB_REF#refs/tags/salesmanager-v}"
-          echo "VERSION_CODE=$TAG" >> $GITHUB_ENV
-          echo "Detected versionCode: $TAG"
+          VERSION="${GITHUB_REF#refs/tags/salesmanager-v}"
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          VERSION_CODE=$(( MAJOR * 10000 + MINOR * 100 + PATCH ))
+          echo "VERSION_NAME=$VERSION"       >> $GITHUB_ENV
+          echo "VERSION_CODE=$VERSION_CODE"  >> $GITHUB_ENV
+          echo "Tag: salesmanager-v$VERSION → versionCode=$VERSION_CODE"
 
-      - name: Patch versionCode in build.gradle.kts
+      - name: Patch build.gradle.kts
         if: startsWith(github.ref, 'refs/tags/salesmanager-v')
         run: |
-          sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/" salesmanager/build.gradle.kts
-          echo "Patched versionCode to $VERSION_CODE"
+          sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/"   salesmanager/build.gradle.kts
+          sed -i "s/versionName = \"[^\"]*\"/versionName = \"$VERSION_NAME\"/" salesmanager/build.gradle.kts
+          echo "Patched → versionCode=$VERSION_CODE  versionName=$VERSION_NAME"
 
       - name: Build Release APK
         env:
@@ -56,23 +62,18 @@ jobs:
           export PATH="/tmp/gradle/gradle-8.7/bin:$PATH"
           gradle :salesmanager:assembleRelease --stacktrace
 
-      # ── Always upload artifact (for testing any branch build) ──────
       - uses: actions/upload-artifact@v4
         with:
           name: salesmanager-apk
           path: salesmanager/build/outputs/apk/release/salesmanager-release.apk
 
-      # ── Publish GitHub Release ONLY on salesmanager-v* tag ─────────
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/salesmanager-v')
         uses: softprops/action-gh-release@v2
         with:
-          # The release name shown in GitHub UI and to users
-          name: "الإصدار ${{ github.ref_name }}"
-          # Changelog: edit this section or use the GitHub Release editor
-          # Each line starting with "- " becomes one changelog entry in the app
+          name: "الإصدار ${{ env.VERSION_NAME }}"
           body: |
-            - تحسينات في الأداء والاستقرار
+            - إصلاح عرض التاريخ في تفاصيل العملية
           files: salesmanager/build/outputs/apk/release/salesmanager-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

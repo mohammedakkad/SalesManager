@@ -10,25 +10,22 @@ object AppUpdateChecker {
 
     private const val RELEASES_API =
         "https://api.github.com/repos/mohammedakkad/SalesManager/releases"
-
-    // Must match the exact APK filename produced by GitHub Actions
     private const val APK_ASSET_NAME = "salesmanager-release.apk"
 
     /**
-     * Calls GitHub Releases API and finds the latest non-draft, non-prerelease
-     * that contains salesmanager-release.apk.
+     * Tag convention:  salesmanager-v{major}.{minor}.{patch}
+     * Examples:        salesmanager-v1.0.0  →  versionCode = 10000
+     *                  salesmanager-v1.0.1  →  versionCode = 10001
+     *                  salesmanager-v1.1.0  →  versionCode = 10100
+     *                  salesmanager-v2.0.0  →  versionCode = 20000
      *
-     * Tag convention:  salesmanager-v{versionCode}
-     * Examples:        salesmanager-v2  →  versionCode = 2
-     *                  salesmanager-v10 →  versionCode = 10
-     *
-     * Release body = changelog, one entry per line, supports "- " or "* " prefixes.
+     * Same formula used in the GitHub Actions workflow — always comparable.
      */
     suspend fun check(): AppUpdateInfo? = withContext(Dispatchers.IO) {
         try {
             val conn = URL(RELEASES_API).openConnection() as HttpURLConnection
             conn.apply {
-                requestMethod  = "GET"
+                requestMethod = "GET"
                 setRequestProperty("Accept", "application/vnd.github+json")
                 setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
                 connectTimeout = 10_000
@@ -44,12 +41,10 @@ object AppUpdateChecker {
 
             for (i in 0 until releases.length()) {
                 val release = releases.getJSONObject(i)
+                if (release.optBoolean("draft"))      continue
+                if (release.optBoolean("prerelease")) continue
 
-                // Skip drafts and pre-releases
-                if (release.optBoolean("draft")      ) continue
-                if (release.optBoolean("prerelease") ) continue
-
-                // Find the salesmanager APK asset
+                // Find salesmanager APK asset
                 val assets = release.getJSONArray("assets")
                 var apkUrl = ""
                 for (j in 0 until assets.length()) {
@@ -59,23 +54,14 @@ object AppUpdateChecker {
                         break
                     }
                 }
-                if (apkUrl.isEmpty()) continue   // This release has no salesmanager APK
+                if (apkUrl.isEmpty()) continue
 
-                // Parse versionCode from tag name
-                // "salesmanager-v2" → 2   |   "salesmanager-v10" → 10
-                val tagName = release.getString("tag_name")
-                val versionCode = tagName
-                    .removePrefix("salesmanager-v")
-                    .removePrefix("v")
-                    .toIntOrNull() ?: continue
+                // Parse "salesmanager-v1.0.1" → versionName="1.0.1" versionCode=10001
+                val tagName     = release.getString("tag_name")
+                val versionName = tagName.removePrefix("salesmanager-v").removePrefix("v")
+                val versionCode = parseVersionCode(versionName) ?: continue
 
-                // Release name shown to user (fallback to tag)
-                val versionName = release.optString("name", tagName)
-                    .ifEmpty { tagName }
-
-                // Changelog from release body — one bullet per line
-                val changelogRaw = release.optString("body", "")
-                val changelog = changelogRaw
+                val changelog = release.optString("body", "")
                     .split("\n")
                     .map { it.trim().removePrefix("- ").removePrefix("* ").trim() }
                     .filter { it.isNotEmpty() }
@@ -88,9 +74,24 @@ object AppUpdateChecker {
                     isForce       = true
                 )
             }
-            null  // No matching release found
+            null
         } catch (e: Exception) {
-            null  // Offline or error — never block the user
+            null
         }
+    }
+
+    /**
+     * "1.0.1" → 10001
+     * "1.1.0" → 10100
+     * "2.0.0" → 20000
+     * Falls back to null if format is unexpected.
+     */
+    private fun parseVersionCode(version: String): Int? {
+        val parts = version.split(".")
+        if (parts.size != 3) return null
+        val major = parts[0].toIntOrNull() ?: return null
+        val minor = parts[1].toIntOrNull() ?: return null
+        val patch = parts[2].toIntOrNull() ?: return null
+        return major * 10000 + minor * 100 + patch
     }
 }
