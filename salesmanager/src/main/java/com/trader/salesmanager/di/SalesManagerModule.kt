@@ -29,6 +29,7 @@ val salesManagerModule = module {
     single { get<AppDatabase>().customerDao() }
     single { get<AppDatabase>().transactionDao() }
     single { get<AppDatabase>().paymentMethodDao() }
+    single { get<AppDatabase>().pendingMessageDao() }   // ← جديد
 
     // ── Remote ───────────────────────────────────────────────────
     single { FirebaseSyncService() }
@@ -36,9 +37,7 @@ val salesManagerModule = module {
     single { NetworkMonitor(androidContext()) }
 
     // ── Repositories ─────────────────────────────────────────────
-    single<ActivationRepository> {
-        ActivationRepositoryImpl(androidContext(), get(), get(), get(), get())
-    }
+    single<ActivationRepository>    { ActivationRepositoryImpl(androidContext(), get(), get(), get(), get()) }
     single<CustomerRepository>      { CustomerRepositoryImpl(get(), get(), get()) }
     single<TransactionRepository>   { TransactionRepositoryImpl(get(), get(), get(), get(), get()) }
     single<PaymentMethodRepository> { PaymentMethodRepositoryImpl(get(), get(), get()) }
@@ -48,7 +47,7 @@ val salesManagerModule = module {
     // ── ViewModels ───────────────────────────────────────────────
     viewModel { ActivationViewModel(get(), get()) }
     viewModel { MerchantWatcherViewModel(get(), get(), androidContext()) }
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(get(), get(), get()) }           // ← أُضيف chatRepo + activationRepo
     viewModel { CustomersViewModel(get()) }
     viewModel { AddEditCustomerViewModel(get()) }
     viewModel { params -> CustomerDetailsViewModel(get(), get(), params.get()) }
@@ -57,5 +56,5 @@ val salesManagerModule = module {
     viewModel { ReportsViewModel(get(), get()) }
     viewModel { PaymentMethodsViewModel(get()) }
     viewModel { DebtsViewModel(get(), get()) }
-    viewModel { ChatViewModel(get(), get()) }
+    viewModel { ChatViewModel(get(), get(), get()) }           // ← أُضيف pendingMessageDao
 }
