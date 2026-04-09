@@ -25,6 +25,9 @@ class AppUpdateViewModel : ViewModel() {
     private var currentInfo: AppUpdateInfo? = null
     private var downloadedFile: java.io.File? = null
 
+    /** true أثناء تحضير الرابط أو التحميل — يمنع أي ضغطة إضافية */
+    private var isDownloadInProgress = false
+
     fun checkForUpdate(currentVersionCode: Int) {
         _state.value = UpdateUiState.Checking
         viewModelScope.launch {
@@ -43,17 +46,24 @@ class AppUpdateViewModel : ViewModel() {
     }
 
     fun startDownload(context: Context) {
+        // ❶ منع الضغط المتعدد — إذا كان التحميل جارياً نتجاهل الطلب
+        if (isDownloadInProgress) return
+
         val info = currentInfo ?: return
         if (info.downloadUrl.isEmpty()) {
             _state.value = UpdateUiState.DownloadError("رابط التحميل غير متوفر")
             return
         }
 
-        // Check install permission first
+        // ❷ التحقق من الإذن أولاً (قبل تشغيل أي coroutine)
         if (!AppUpdateDownloader.canInstallUnknownSources(context)) {
             _state.value = UpdateUiState.NeedInstallPermission
             return
         }
+
+        // ❸ قفل الزر فوراً قبل أي عملية
+        isDownloadInProgress = true
+        _state.value = UpdateUiState.Downloading(0)
 
         viewModelScope.launch {
             AppUpdateDownloader.downloadApk(context, info.downloadUrl)
@@ -62,9 +72,13 @@ class AppUpdateViewModel : ViewModel() {
                         is DownloadState.Progress -> _state.value = UpdateUiState.Downloading(downloadState.percent)
                         is DownloadState.Success  -> {
                             downloadedFile = downloadState.file
+                            isDownloadInProgress = false
                             _state.value = UpdateUiState.ReadyToInstall
                         }
-                        is DownloadState.Error    -> _state.value = UpdateUiState.DownloadError(downloadState.message)
+                        is DownloadState.Error    -> {
+                            isDownloadInProgress = false          // السماح بالمحاولة مجدداً عند الخطأ
+                            _state.value = UpdateUiState.DownloadError(downloadState.message)
+                        }
                     }
                 }
         }
@@ -76,6 +90,7 @@ class AppUpdateViewModel : ViewModel() {
     }
 
     fun retryDownload(context: Context) {
+        isDownloadInProgress = false   // reset للسماح بالمحاولة الجديدة
         startDownload(context)
     }
 
