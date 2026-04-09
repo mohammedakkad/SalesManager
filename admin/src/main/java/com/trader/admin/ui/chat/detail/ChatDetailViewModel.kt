@@ -25,9 +25,9 @@ class ChatDetailViewModel(
     private val _uiState = MutableStateFlow(AdminChatUiState())
     val uiState: StateFlow<AdminChatUiState> = _uiState.asStateFlow()
 
-    // backward-compat للـ Composable القديم
     val messages: StateFlow<List<ChatMessage>> = _uiState.map { it.messages }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     val text: StateFlow<String> = _uiState.map { it.inputText }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
@@ -35,7 +35,6 @@ class ChatDetailViewModel(
         viewModelScope.launch {
             repo.getMessages(merchantId).collect { msgs ->
                 _uiState.update { it.copy(messages = msgs) }
-                // علّم رسائل التاجر كـ مقروءة
                 msgs.filter { !it.isRead && it.senderId != SENDER_ADMIN }
                     .forEach { repo.markAsRead(merchantId, it.id) }
             }
@@ -44,22 +43,21 @@ class ChatDetailViewModel(
 
     fun updateText(t: String) = _uiState.update { it.copy(inputText = t) }
 
-    fun sendOrSave() {
+    // Single send() — handles both new message and edit
+    fun send() {
         val editing = _uiState.value.editingMessage
-        if (editing != null) saveEdit(editing) else send()
+        if (editing != null) saveEdit(editing) else sendNew()
     }
 
-    private fun send() {
+    private fun sendNew() {
         val t = _uiState.value.inputText.trim()
         if (t.isEmpty()) return
         _uiState.update { it.copy(inputText = "") }
         viewModelScope.launch {
-            repo.sendMessage(merchantId, ChatMessage(text = t, senderId = SENDER_ADMIN, senderName = "الإدارة"))
+            repo.sendMessage(merchantId,
+                ChatMessage(text = t, senderId = SENDER_ADMIN, senderName = "الإدارة"))
         }
     }
-
-    // backward-compat
-    fun send() = sendOrSave()
 
     fun startEdit(msg: ChatMessage) =
         _uiState.update { it.copy(editingMessage = msg, inputText = msg.text, contextMessageId = null) }
@@ -78,8 +76,8 @@ class ChatDetailViewModel(
         viewModelScope.launch { repo.deleteMessage(merchantId, id) }
     }
 
-    fun showContext(id: String) = _uiState.update { it.copy(contextMessageId = id) }
-    fun dismissContext()        = _uiState.update { it.copy(contextMessageId = null) }
+    fun showContext(id: String)  = _uiState.update { it.copy(contextMessageId = id) }
+    fun dismissContext()         = _uiState.update { it.copy(contextMessageId = null) }
 
     fun enterSelectionMode(id: String) =
         _uiState.update { it.copy(isSelectionMode = true, selectedForDelete = setOf(id), contextMessageId = null) }
@@ -96,5 +94,6 @@ class ChatDetailViewModel(
         viewModelScope.launch { ids.forEach { repo.deleteMessage(merchantId, it) } }
     }
 
-    fun cancelSelection() = _uiState.update { it.copy(selectedForDelete = emptySet(), isSelectionMode = false) }
+    fun cancelSelection() =
+        _uiState.update { it.copy(selectedForDelete = emptySet(), isSelectionMode = false) }
 }

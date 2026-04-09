@@ -435,7 +435,7 @@ private fun TodayAnalysisCard(analysis: TimeOfDayAnalysis) {
                 Triple("☀️ الظهيرة", analysis.afternoonTotal, Color(0xFF06B6D4)),
                 Triple("🌙 المساء",  analysis.eveningTotal,   Color(0xFF8B5CF6))
             ).forEach { (label, value, color) ->
-                TimeSlotRow(label, value, value / total, color)
+                TimeSlotRow(label, value, (value / total).toFloat(), color)
                 Spacer(Modifier.height(10.dp))
             }
         }
