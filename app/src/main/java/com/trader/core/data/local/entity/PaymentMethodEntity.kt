@@ -12,5 +12,9 @@ data class PaymentMethodEntity(
     val type: String = PaymentType.OTHER.name
 ) {
     fun toDomain() = PaymentMethod(id = id, name = name, type = PaymentType.valueOf(type))
-    companion object { fun fromDomain(m: PaymentMethod) = PaymentMethodEntity(id = m.id, name = m.name, type = m.type.name) }
+
+    companion object {
+        fun fromDomain(paymentMethod: PaymentMethod) =
+            PaymentMethodEntity(id = paymentMethod.id, name = paymentMethod.name, type = paymentMethod.type.name)
+    }
 }

@@ -12,7 +12,9 @@ data class CustomerEntity(
     val createdAt: Long = System.currentTimeMillis()
 ) {
     fun toDomain() = Customer(id = id, name = name, phone = phone, createdAt = createdAt)
+
     companion object {
-        fun fromDomain(c: Customer) = CustomerEntity(id = c.id, name = c.name, phone = c.phone, createdAt = c.createdAt)
+        fun fromDomain(customer: Customer) =
+            CustomerEntity(id = customer.id, name = customer.name, phone = customer.phone, createdAt = customer.createdAt)
     }
 }

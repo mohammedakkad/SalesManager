@@ -5,7 +5,12 @@ import com.trader.core.domain.model.Transaction
 
 @Entity(
     tableName = "transactions",
-    foreignKeys = [ForeignKey(entity = CustomerEntity::class, parentColumns = ["id"], childColumns = ["customerId"], onDelete = ForeignKey.CASCADE)],
+    foreignKeys = [ForeignKey(
+        entity = CustomerEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["customerId"],
+        onDelete = ForeignKey.CASCADE
+    )],
     indices = [Index("customerId")]
 )
 data class TransactionEntity(
@@ -19,10 +24,11 @@ data class TransactionEntity(
         isPaid = isPaid, paymentMethodId = paymentMethodId, paymentMethodName = paymentMethodName,
         note = note, date = date, paidAt = paidAt
     )
+
     companion object {
-        fun fromDomain(t: Transaction) = TransactionEntity(
-            id = t.id, customerId = t.customerId, amount = t.amount, isPaid = t.isPaid,
-            paymentMethodId = t.paymentMethodId, note = t.note, date = t.date, paidAt = t.paidAt
+        fun fromDomain(transaction: Transaction) = TransactionEntity(
+            id = transaction.id, customerId = transaction.customerId, amount = transaction.amount, isPaid = transaction.isPaid,
+            paymentMethodId = transaction.paymentMethodId, note = transaction.note, date = transaction.date, paidAt = transaction.paidAt
         )
     }
 }

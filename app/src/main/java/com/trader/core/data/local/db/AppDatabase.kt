@@ -27,14 +27,15 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        fun build(context: Context) = Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
-            .addMigrations(MIGRATION_1_2)
-            .addCallback(object : Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")
-                    db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('بنك', '${PaymentType.BANK.name}')")
-                    db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('محفظة', '${PaymentType.WALLET.name}')")
-                }
-            }).build()
+        fun build(context: Context) =
+            Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
+                .addMigrations(MIGRATION_1_2)
+                .addCallback(object : Callback() {
+                    override fun onCreate(db: SupportSQLiteDatabase) {
+                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")
+                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('بنك', '${PaymentType.BANK.name}')")
+                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('محفظة', '${PaymentType.WALLET.name}')")
+                    }
+                }).build()
     }
 }
