@@ -206,6 +206,9 @@ private fun UpdateCard(
 // ── Update Available ─────────────────────────────────────────────────
 @Composable
 private fun UpdateAvailableContent(info: AppUpdateInfo, onDownload: () -> Unit) {
+    // طبقة حماية UI: نمنع الضغط المتعدد على مستوى الـ Composable أيضاً
+    var isButtonClicked by remember { mutableStateOf(false) }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             "تحديث جديد متاح! 🎉",
@@ -294,14 +297,24 @@ private fun UpdateAvailableContent(info: AppUpdateInfo, onDownload: () -> Unit) 
         Spacer(Modifier.height(16.dp))
 
         Button(
-            onClick = onDownload,
+            onClick = {
+                if (!isButtonClicked) {
+                    isButtonClicked = true
+                    onDownload()
+                }
+            },
+            enabled = !isButtonClicked,
             modifier = Modifier.fillMaxWidth().height(52.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent
             ),
             border = ButtonDefaults.outlinedButtonBorder(false).copy(
-                brush = Brush.horizontalGradient(listOf(Color(0xFF06B6D4), Color(0xFF3B82F6)))
+                brush = if (isButtonClicked)
+                    Brush.horizontalGradient(listOf(Color(0xFF475569), Color(0xFF475569)))
+                else
+                    Brush.horizontalGradient(listOf(Color(0xFF06B6D4), Color(0xFF3B82F6)))
             ),
             contentPadding = PaddingValues(0.dp)
         ) {
@@ -309,19 +322,44 @@ private fun UpdateAvailableContent(info: AppUpdateInfo, onDownload: () -> Unit) 
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        Brush.horizontalGradient(listOf(Color(0xFF06B6D4), Color(0xFF3B82F6))),
+                        if (isButtonClicked)
+                            Brush.horizontalGradient(listOf(Color(0xFF334155), Color(0xFF334155)))
+                        else
+                            Brush.horizontalGradient(listOf(Color(0xFF06B6D4), Color(0xFF3B82F6))),
                         RoundedCornerShape(16.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Download, null,
-                        tint = Color.White, modifier = Modifier.size(20.dp))
-                    Text("تحميل التحديث الآن",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyLarge)
+                if (isButtonClicked) {
+                    // مؤشر تحميل بعد الضغط
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            color = Color(0xFF06B6D4),
+                            strokeWidth = 2.dp
+                        )
+                        Text(
+                            "جاري التحضير...",
+                            color = Color(0xFF94A3B8),
+                            fontWeight = FontWeight.Medium,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Rounded.Download, null,
+                            tint = Color.White, modifier = Modifier.size(20.dp))
+                        Text("تحميل التحديث الآن",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyLarge)
+                    }
                 }
             }
         }

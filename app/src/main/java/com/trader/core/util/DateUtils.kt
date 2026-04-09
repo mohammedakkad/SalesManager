@@ -9,7 +9,7 @@ object DateUtils {
 
     fun Long.toDateString(): String = dateFormat.format(Date(this))
     fun Long.toTimeString(): String = timeFormat.format(Date(this))
-    fun Long.toDateTimeString(): String = "\${toDateString()} \${toTimeString()}"
+    fun Long.toDateTimeString(): String = toDateString() + " " + toTimeString()
 
     fun todayStart(): Long {
         val cal = Calendar.getInstance()
