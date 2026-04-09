@@ -72,3 +72,5 @@ gradle.properties.user
 
 schemas/
 /app/google-services.json
+keystore.properties
+keystore_base64.txt
