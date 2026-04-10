@@ -17,6 +17,7 @@ import com.trader.salesmanager.ui.debts.DebtsViewModel
 import com.trader.salesmanager.ui.home.HomeViewModel
 import com.trader.salesmanager.ui.payments.PaymentMethodsViewModel
 import com.trader.salesmanager.ui.reports.ReportsViewModel
+import com.trader.salesmanager.ui.reports.DayTransactionsViewModel
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel
 import com.trader.salesmanager.ui.transactions.list.TransactionsViewModel
 import org.koin.android.ext.koin.androidContext
@@ -54,6 +55,7 @@ val salesManagerModule = module {
     viewModel { TransactionsViewModel(get()) }
     viewModel { AddEditTransactionViewModel(get(), get()) }
     viewModel { ReportsViewModel(get(), get()) }
+    viewModel { params -> DayTransactionsViewModel(get(), params.get()) }
     viewModel { PaymentMethodsViewModel(get()) }
     viewModel { DebtsViewModel(get(), get()) }
     viewModel { ChatViewModel(get(), get(), get()) }           // ← أُضيف pendingMessageDao

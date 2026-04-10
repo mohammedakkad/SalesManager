@@ -12,6 +12,7 @@ sealed class UpdateUiState {
     data class UpdateAvailable(val info: AppUpdateInfo) : UpdateUiState()
     data class Downloading(val percent: Int)   : UpdateUiState()
     object ReadyToInstall                      : UpdateUiState()
+    object BackgroundDownloading               : UpdateUiState()  // downloading in bg, dialog closed
     object NeedInstallPermission               : UpdateUiState()
     data class DownloadError(val message: String, val canRetry: Boolean = true) : UpdateUiState()
     object UpToDate                            : UpdateUiState()

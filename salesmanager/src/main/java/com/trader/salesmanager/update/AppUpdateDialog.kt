@@ -33,7 +33,8 @@ fun AppUpdateDialog(
     onStartDownload: (Context) -> Unit,
     onInstall: (Context) -> Unit,
     onRetry: (Context) -> Unit,
-    onOpenPermission: (Context) -> Unit
+    onOpenPermission: (Context) -> Unit,
+    onBackgroundDownload: ((Context) -> Unit)? = null
 ) {
     val showDialog = state is UpdateUiState.UpdateAvailable
         || state is UpdateUiState.Downloading
@@ -76,7 +77,8 @@ private fun UpdateCard(
     onStartDownload: () -> Unit,
     onInstall: () -> Unit,
     onRetry: () -> Unit,
-    onOpenPermission: () -> Unit
+    onOpenPermission: () -> Unit,
+    onBackgroundDownload: (() -> Unit)? = null
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "glow")
     val glowAngle by infiniteTransition.animateFloat(
@@ -205,7 +207,7 @@ private fun UpdateCard(
 
 // ── Update Available ─────────────────────────────────────────────────
 @Composable
-private fun UpdateAvailableContent(info: AppUpdateInfo, onDownload: () -> Unit) {
+private fun UpdateAvailableContent(info: AppUpdateInfo, onDownload: () -> Unit, onBackgroundDownload: (() -> Unit)? = null) {
     // طبقة حماية UI: نمنع الضغط المتعدد على مستوى الـ Composable أيضاً
     var isButtonClicked by remember { mutableStateOf(false) }
 

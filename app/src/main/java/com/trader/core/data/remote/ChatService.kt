@@ -40,18 +40,38 @@ class ChatService {
         awaitClose { listener.remove() }
     }
 
+    /**
+     * Send a chat message.
+     * Also writes a notification trigger doc so FCM can be sent via Cloud Function.
+     * Structure: notifications/{merchantId} = { title, body, timestamp }
+     * Cloud Function (or admin app) reads this and sends FCM to merchant device.
+     */
     suspend fun sendMessage(merchantId: String, message: ChatMessage) {
+        val timestamp = Timestamp.now()
         messagesRef(merchantId).add(
             mapOf(
                 "text"       to message.text,
                 "senderId"   to message.senderId,
                 "senderName" to message.senderName,
-                "timestamp"  to Timestamp.now(),
+                "timestamp"  to timestamp,
                 "isRead"     to false,
                 "editedAt"   to null,
                 "deletedAt"  to null
             )
         ).await()
+
+        // Write notification trigger for FCM delivery
+        // The admin app or a Cloud Function will pick this up and send push notification
+        if (message.senderId == com.trader.core.domain.model.SENDER_ADMIN) {
+            try {
+                db.collection("notifications").document(merchantId).set(mapOf(
+                    "title"     to "رسالة جديدة من الإدارة",
+                    "body"      to message.text,
+                    "timestamp" to timestamp,
+                    "isRead"    to false
+                )).await()
+            } catch (_: Exception) {}
+        }
     }
 
     suspend fun markAsRead(merchantId: String, messageId: String) {

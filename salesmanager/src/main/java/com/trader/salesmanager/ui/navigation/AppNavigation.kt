@@ -23,6 +23,7 @@ import com.trader.salesmanager.ui.debts.DebtsScreen
 import com.trader.salesmanager.ui.home.HomeScreen
 import com.trader.salesmanager.ui.payments.PaymentMethodsScreen
 import com.trader.salesmanager.ui.reports.ReportsScreen
+import com.trader.salesmanager.ui.reports.DayTransactionsScreen
 import com.trader.salesmanager.ui.settings.SettingsScreen
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionScreen
 import com.trader.salesmanager.ui.transactions.details.TransactionDetailsScreen

@@ -12,6 +12,12 @@ import com.trader.core.worker.StatusCheckWorker
 class SalesManagerApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        // Refresh FCM token on app start
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+            .addOnSuccessListener { token ->
+                // Token will be saved via onNewToken or here
+                android.util.Log.d("FCM", "Token: $token")
+            }
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         // Offline writes queued on disk → auto-sync on reconnect
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)

@@ -41,6 +41,7 @@ import kotlin.math.sin
 @Composable
 fun ReportsScreen(
     onNavigateUp: () -> Unit,
+    onViewDayTransactions: (Long) -> Unit = {},
     viewModel: ReportsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -306,6 +307,7 @@ private fun CalendarDay(
 // ── تفاصيل اليوم المحدد ──────────────────────────────────────
 @Composable
 private fun SelectedDayDetail(
+    onViewTransactions: (Long) -> Unit = {},
     day: Int, month: Int, year: Int,
     transactions: List<Transaction>,
     summary: Triple<Double, Double, Double>
@@ -438,6 +440,25 @@ private fun TodayAnalysisCard(analysis: TimeOfDayAnalysis) {
                 TimeSlotRow(label, value, (value / total).toFloat(), color)
                 Spacer(Modifier.height(10.dp))
             }
+        }
+        Spacer(Modifier.height(12.dp))
+        Button(
+            onClick = {
+                val cal = Calendar.getInstance()
+                cal.set(Calendar.YEAR, year); cal.set(Calendar.MONTH, month)
+                cal.set(Calendar.DAY_OF_MONTH, day)
+                cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
+                onViewTransactions(cal.timeInMillis)
+            },
+            modifier = Modifier.fillMaxWidth().height(46.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Violet500)
+        ) {
+            Icon(Icons.Rounded.OpenInNew, null, modifier = Modifier.size(16.dp))
+            Spacer(Modifier.width(8.dp))
+            Text("عرض كل العمليات (\${transactions.size})",
+                fontWeight = FontWeight.SemiBold)
         }
     }
 }

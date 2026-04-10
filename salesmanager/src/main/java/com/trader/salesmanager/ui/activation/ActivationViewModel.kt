@@ -70,11 +70,8 @@ sealed class StartupState {
                     it.copy(error = "أدخل كود التفعيل")
                 }; return
             }
-            if (!networkMonitor.isOnline()) {
-                _uiState.update {
-                    it.copy(showNoInternetSnackbar = true)
-                }; return
-            }
+            // ✅ Don't block on isOnline() — let Firebase handle network errors.
+            // NET_CAPABILITY_VALIDATED can be unreliable on some devices/networks.
             viewModelScope.launch {
                 _uiState.update {
                     it.copy(isLoading = true, error = null)
