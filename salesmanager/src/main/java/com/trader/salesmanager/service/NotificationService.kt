@@ -28,6 +28,11 @@ object NotificationService {
             nm.createNotificationChannel(
                 NotificationChannel(CHANNEL_GENERAL, "إشعارات عامة", NotificationManager.IMPORTANCE_DEFAULT)
             )
+            nm.createNotificationChannel(
+                NotificationChannel("debt_reminder_channel", "تذكير الديون", NotificationManager.IMPORTANCE_DEFAULT).apply {
+                    description = "تذكير بالزبائن الذين لم يسددوا"
+                }
+            )
         }
     }
 
