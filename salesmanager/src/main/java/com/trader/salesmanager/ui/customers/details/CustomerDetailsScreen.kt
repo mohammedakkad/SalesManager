@@ -2,6 +2,9 @@ package com.trader.salesmanager.ui.customers.details
 
 import android.content.Intent
 import android.net.Uri
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -101,11 +104,43 @@ fun CustomerDetailsScreen(
             if (rawPhone.isNotEmpty()) {
                 item {
                     Spacer(Modifier.height(12.dp))
+                    // ── Direct call ─────────────────────────────
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        // Direct call — no prefix, uses raw number
+                        Button(
+                            onClick = {
+                                val intent = Intent(Intent.ACTION_DIAL,
+                                    Uri.parse("tel:$phone"))
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF1A73E8)
+                            )
+                        ) {
+                            Icon(Icons.Rounded.Call, null,
+                                tint = Color.White, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(6.dp))
+                            Text("اتصال مباشر",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.labelLarge)
+                        }
+                    }
+
+                    Spacer(Modifier.height(8.dp))
+
+                    // ── WhatsApp buttons ─────────────────────────
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        // 972 → Israel number
                         WhatsAppButton(
                             label = "واتساب 972",
                             modifier = Modifier.weight(1f),
@@ -114,7 +149,6 @@ fun CustomerDetailsScreen(
                                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
                             }
                         )
-                        // 970 → Palestine number
                         WhatsAppButton(
                             label = "واتساب 970",
                             modifier = Modifier.weight(1f),

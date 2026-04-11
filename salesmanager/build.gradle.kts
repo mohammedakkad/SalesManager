@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(project(":app"))
+    implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
     debugImplementation(libs.compose.ui.tooling)
 }

@@ -26,17 +26,21 @@ class FirebaseSyncService {
 
     suspend fun validateCodeDetailed(code: String): ValidationResult {
         return try {
-            val snap = db.reference.child("activation_codes").child(code).get().await()
+            // ✅ Timeout 8 seconds — Firebase hangs indefinitely offline without it
+            val snap = withTimeoutOrNull(8_000) {
+                db.reference.child("activation_codes").child(code).get().await()
+            } ?: return ValidationResult.NetworkError   // timeout = no internet
+
             if (!snap.exists()) return ValidationResult.NotFound
             val boolVal = snap.getValue(Boolean::class.java)
             if (boolVal != null) return if (boolVal) ValidationResult.Active else ValidationResult.Disabled
             val map = snap.value as? Map<*, *> ?: return ValidationResult.Active
             when (map["status"] as? String) {
-                "ACTIVE" -> ValidationResult.Active
-                "DISABLED" -> ValidationResult.Disabled
-                "EXPIRED" -> ValidationResult.Expired
-                "DELETED" -> ValidationResult.NotFound
-                else -> ValidationResult.Active
+                "ACTIVE"    -> ValidationResult.Active
+                "DISABLED"  -> ValidationResult.Disabled
+                "EXPIRED"   -> ValidationResult.Expired
+                "DELETED"   -> ValidationResult.NotFound
+                else        -> ValidationResult.Active
             }
         } catch (e: Exception) {
             ValidationResult.NetworkError
@@ -51,7 +55,9 @@ class FirebaseSyncService {
     // Check current status without full validation (used on app startup)
     suspend fun getCodeStatus(code: String): String? {
         return try {
-            val snap = db.reference.child("activation_codes").child(code).get().await()
+            val snap = withTimeoutOrNull(8_000) {
+                db.reference.child("activation_codes").child(code).get().await()
+            } ?: return null  // timeout = offline
             if (!snap.exists()) return "DELETED"
             val boolVal = snap.getValue(Boolean::class.java)
             if (boolVal != null) return if (boolVal) "ACTIVE" else "DISABLED"

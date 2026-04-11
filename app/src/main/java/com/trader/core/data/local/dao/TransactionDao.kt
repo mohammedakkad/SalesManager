@@ -14,6 +14,10 @@ interface TransactionDao {
     fun getTransactionsByDate(startDate: Long, endDate: Long): Flow<List<TransactionEntity>>
     @Query("SELECT * FROM transactions WHERE isPaid = 0 ORDER BY date ASC")
     fun getUnpaidTransactions(): Flow<List<TransactionEntity>>
+
+    /** Returns unpaid transactions older than [olderThanMillis] timestamp — for debt reminder */
+    @Query("SELECT * FROM transactions WHERE isPaid = 0 AND date <= :olderThanMillis ORDER BY date ASC")
+    suspend fun getUnpaidOlderThan(olderThanMillis: Long): List<TransactionEntity>
     @Query("SELECT * FROM transactions WHERE id = :id")
     suspend fun getTransactionById(id: Long): TransactionEntity?
     @Insert(onConflict = OnConflictStrategy.REPLACE)

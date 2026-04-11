@@ -5,6 +5,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
 import com.trader.core.util.ExpiryNotificationHelper
 import com.trader.salesmanager.di.salesManagerModule
+import com.trader.salesmanager.worker.UnpaidDebtWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import com.trader.core.worker.StatusCheckWorker
@@ -27,6 +28,8 @@ class SalesManagerApp : Application() {
             androidContext(this@SalesManagerApp)
             modules(salesManagerModule)
         }
+        // Schedule unpaid debt reminders — every 8 hours
+        UnpaidDebtWorker.schedule(this)
         
         StatusCheckWorker.schedule(this)
     }
