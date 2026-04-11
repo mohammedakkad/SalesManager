@@ -43,6 +43,7 @@ fun MerchantDetailScreen(
 
     var showDelete         by remember { mutableStateOf(false) }
     var showAdjustExpiry   by remember { mutableStateOf(false) }
+    var showConvertSubscription by remember { mutableStateOf(false) }
     var copiedSnack        by remember { mutableStateOf(false) }
 
     // ── Snackbar for copy feedback ────────────────────────────────
@@ -84,6 +85,20 @@ fun MerchantDetailScreen(
             },
             onDismiss = { showAdjustExpiry = false }
         )
+    }
+
+    // ── Convert subscription type dialog ──────────────────────────
+    if (showConvertSubscription) {
+        merchant?.let { m ->
+            ConvertSubscriptionDialog(
+                currentIsPermanent = m.isPermanent,
+                onConvert = { isPermanent, expiryDate ->
+                    viewModel.convertSubscriptionType(isPermanent, expiryDate)
+                    showConvertSubscription = false
+                },
+                onDismiss = { showConvertSubscription = false }
+            )
+        }
     }
 
     Scaffold(containerColor = Navy950) { padding ->
@@ -198,6 +213,29 @@ fun MerchantDetailScreen(
                                     enabled = !isLoading
                                 ) { Text("تعطيل", color = DisabledRose) }
                             }
+                        }
+
+                        // ── Convert subscription type button ──────────
+                        OutlinedButton(
+                            onClick = { showConvertSubscription = true },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            border = ButtonDefaults.outlinedButtonBorder(true).copy(
+                                brush = androidx.compose.ui.graphics.SolidColor(Cyan500)
+                            ),
+                            enabled = !isLoading
+                        ) {
+                            Icon(
+                                if (m.isPermanent) Icons.Rounded.CalendarToday else Icons.Rounded.AllInclusive,
+                                contentDescription = null,
+                                tint = Cyan500,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                if (m.isPermanent) "تحويل إلى اشتراك مؤقت" else "تحويل إلى اشتراك دائم",
+                                color = Cyan500
+                            )
                         }
                     }
                 }
@@ -446,6 +484,113 @@ private fun AdjustExpiryDialog(
                 enabled = customDays.toIntOrNull() != null && customDays.toIntOrNull()!! > 0,
                 colors  = ButtonDefaults.buttonColors(containerColor = Cyan500)
             ) { Text("تطبيق") }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) { Text("إلغاء", color = Slate400) }
+        }
+    )
+}
+
+// ── Convert subscription type dialog ─────────────────────────────────────────
+@Composable
+private fun ConvertSubscriptionDialog(
+    currentIsPermanent: Boolean,
+    onConvert: (isPermanent: Boolean, expiryDate: com.google.firebase.Timestamp?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var customDays by remember { mutableStateOf("30") }
+    val presets = listOf(30, 90, 180, 365)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor   = Navy900,
+        shape = RoundedCornerShape(20.dp),
+        icon = {
+            Icon(
+                if (currentIsPermanent) Icons.Rounded.CalendarToday else Icons.Rounded.AllInclusive,
+                null,
+                tint = Cyan500
+            )
+        },
+        title = {
+            Text(
+                if (currentIsPermanent) "تحويل إلى اشتراك مؤقت" else "تحويل إلى اشتراك دائم",
+                fontWeight = FontWeight.Bold, color = Slate100
+            )
+        },
+        text = {
+            if (currentIsPermanent) {
+                // دائم → مؤقت: اختر مدة
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    Text(
+                        "سيتم تحويل الاشتراك من دائم إلى مؤقت.\nاختر مدة الاشتراك:",
+                        style = MaterialTheme.typography.bodySmall, color = Slate400
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        presets.forEach { days ->
+                            OutlinedButton(
+                                onClick = { customDays = days.toString() },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = if (customDays == days.toString()) Cyan500 else Slate400
+                                ),
+                                border = ButtonDefaults.outlinedButtonBorder(true).copy(
+                                    brush = androidx.compose.ui.graphics.SolidColor(
+                                        if (customDays == days.toString()) Cyan500 else Slate600
+                                    )
+                                )
+                            ) {
+                                Text(
+                                    when (days) {
+                                        30 -> "شهر"; 90 -> "3 أشهر"
+                                        180 -> "6 أشهر"; else -> "سنة"
+                                    },
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                    }
+                    OutlinedTextField(
+                        value = customDays,
+                        onValueChange = { if (it.all(Char::isDigit)) customDays = it },
+                        label = { Text("أو أدخل عدد أيام مخصص", color = Slate400) },
+                        singleLine = true,
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Slate100, unfocusedTextColor = Slate100,
+                            focusedBorderColor = Cyan500, unfocusedBorderColor = Slate600
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            } else {
+                // مؤقت → دائم: تأكيد فقط
+                Text(
+                    "سيتم تحويل الاشتراك إلى دائم بدون تاريخ انتهاء.",
+                    style = MaterialTheme.typography.bodySmall, color = Slate400
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (currentIsPermanent) {
+                        val days = customDays.toIntOrNull() ?: return@Button
+                        val cal = java.util.Calendar.getInstance().apply {
+                            add(java.util.Calendar.DAY_OF_YEAR, days)
+                        }
+                        onConvert(false, com.google.firebase.Timestamp(cal.time))
+                    } else {
+                        onConvert(true, null)
+                    }
+                },
+                enabled = if (currentIsPermanent) (customDays.toIntOrNull() ?: 0) > 0 else true,
+                colors = ButtonDefaults.buttonColors(containerColor = Cyan500)
+            ) { Text("تأكيد التحويل") }
         },
         dismissButton = {
             OutlinedButton(onClick = onDismiss) { Text("إلغاء", color = Slate400) }

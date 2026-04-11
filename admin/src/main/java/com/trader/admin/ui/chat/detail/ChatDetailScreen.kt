@@ -241,8 +241,14 @@ private fun AdminChatBubble(
         modifier = Modifier
             .fillMaxWidth()
             .background(selectedBg)
-            .pointerInput(isSelectionMode) {
-                detectTapGestures(onLongPress = { onLongPress() }, onTap = { onTap() })
+            .pointerInput(isSelectionMode, isAdmin) {
+                detectTapGestures(
+                    onLongPress = {
+                        // الضغط المطول يعمل فقط على رسائل الأدمن نفسه
+                        if (isAdmin) onLongPress()
+                    },
+                    onTap = { onTap() }
+                )
             }
             .padding(vertical = 2.dp),
         horizontalArrangement = if (isAdmin) Arrangement.End else Arrangement.Start,

@@ -131,6 +131,26 @@ class MerchantAdminService {
         }
     }
 
+    /**
+     * Converts subscription type between permanent and temporary.
+     * When converting to temporary, expiryDate must be provided.
+     * When converting to permanent, expiryDate is cleared.
+     */
+    suspend fun setSubscriptionType(id: String, isPermanent: Boolean, expiryDate: Timestamp?) {
+        val updates = mutableMapOf<String, Any?>("isPermanent" to isPermanent)
+        if (isPermanent) {
+            updates["expiryDate"] = null
+            updates["status"] = MerchantStatus.ACTIVE.name
+        } else {
+            if (expiryDate != null) {
+                updates["expiryDate"] = expiryDate
+                val isActive = expiryDate.toDate().time > System.currentTimeMillis()
+                updates["status"] = if (isActive) MerchantStatus.ACTIVE.name else MerchantStatus.EXPIRED.name
+            }
+        }
+        merchantsRef.document(id).update(updates).await()
+    }
+
     private fun Merchant.toMap() = mapOf(
         "name"           to name,
         "phone"          to phone,

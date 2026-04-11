@@ -2,6 +2,7 @@ package com.trader.admin.ui.merchants.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.trader.core.domain.model.Merchant
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.repository.MerchantAdminRepository
@@ -39,6 +40,16 @@ class MerchantDetailViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             repo.adjustExpiry(merchantId, deltaDays)
+            _merchant.value = repo.getMerchantById(merchantId)
+            _isLoading.value = false
+        }
+    }
+
+    /** Convert permanent → temporary (with expiryDate) or temporary → permanent */
+    fun convertSubscriptionType(isPermanent: Boolean, expiryDate: Timestamp? = null) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repo.setSubscriptionType(merchantId, isPermanent, expiryDate)
             _merchant.value = repo.getMerchantById(merchantId)
             _isLoading.value = false
         }

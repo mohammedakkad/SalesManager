@@ -323,10 +323,13 @@ private fun ChatBubble(
         modifier = Modifier
             .fillMaxWidth()
             .background(selectedBg)
-            .pointerInput(isSelectionMode) {
+            .pointerInput(isSelectionMode, isMe) {
                 detectTapGestures(
-                    onLongPress = { onLongPress() },
-                    onTap       = { onTap() }
+                    onLongPress = {
+                        // الضغط المطول يعمل فقط على رسائل المستخدم نفسه
+                        if (isMe) onLongPress()
+                    },
+                    onTap = { onTap() }
                 )
             }
             .padding(vertical = 2.dp),

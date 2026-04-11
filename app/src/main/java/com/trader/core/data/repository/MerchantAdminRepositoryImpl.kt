@@ -1,5 +1,6 @@
 package com.trader.core.data.repository
 
+import com.google.firebase.Timestamp
 import com.trader.core.data.remote.MerchantAdminService
 import com.trader.core.domain.model.Merchant
 import com.trader.core.domain.model.MerchantStatus
@@ -14,4 +15,6 @@ class MerchantAdminRepositoryImpl(private val service: MerchantAdminService) : M
     override suspend fun deleteMerchant(id: String)                        = service.deleteMerchant(id)
     override suspend fun setMerchantStatus(id: String, status: MerchantStatus) = service.setStatus(id, status)
     override suspend fun adjustExpiry(id: String, deltaDays: Int)          = service.adjustExpiry(id, deltaDays)
+    override suspend fun setSubscriptionType(id: String, isPermanent: Boolean, expiryDate: Timestamp?) =
+        service.setSubscriptionType(id, isPermanent, expiryDate)
 }
