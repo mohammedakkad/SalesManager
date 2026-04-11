@@ -94,6 +94,7 @@ fun ReportsScreen(
             if (uiState.selectedDay != null) {
                 item {
                     SelectedDayDetail(
+                        onViewTransactions = onViewDayTransactions,
                         day           = uiState.selectedDay!!,
                         month         = uiState.calendarMonth,
                         year          = uiState.calendarYear,
@@ -395,6 +396,29 @@ private fun SelectedDayDetail(
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         textAlign = TextAlign.Center)
                 }
+
+                Spacer(Modifier.height(12.dp))
+                Button(
+                    onClick = {
+                        val cal = Calendar.getInstance()
+                        cal.set(Calendar.YEAR, year)
+                        cal.set(Calendar.MONTH, month)
+                        cal.set(Calendar.DAY_OF_MONTH, day)
+                        cal.set(Calendar.HOUR_OF_DAY, 0)
+                        cal.set(Calendar.MINUTE, 0)
+                        cal.set(Calendar.SECOND, 0)
+                        cal.set(Calendar.MILLISECOND, 0)
+                        onViewTransactions(cal.timeInMillis)
+                    },
+                    modifier = Modifier.fillMaxWidth().height(46.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
+                ) {
+                    Icon(Icons.Rounded.OpenInNew, null, modifier = Modifier.size(16.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("عرض كل العمليات (${transactions.size})",
+                        fontWeight = FontWeight.SemiBold)
+                }
             }
         }
     }
@@ -440,25 +464,6 @@ private fun TodayAnalysisCard(analysis: TimeOfDayAnalysis) {
                 TimeSlotRow(label, value, (value / total).toFloat(), color)
                 Spacer(Modifier.height(10.dp))
             }
-        }
-        Spacer(Modifier.height(12.dp))
-        Button(
-            onClick = {
-                val cal = Calendar.getInstance()
-                cal.set(Calendar.YEAR, year); cal.set(Calendar.MONTH, month)
-                cal.set(Calendar.DAY_OF_MONTH, day)
-                cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0)
-                cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
-                onViewTransactions(cal.timeInMillis)
-            },
-            modifier = Modifier.fillMaxWidth().height(46.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Violet500)
-        ) {
-            Icon(Icons.Rounded.OpenInNew, null, modifier = Modifier.size(16.dp))
-            Spacer(Modifier.width(8.dp))
-            Text("عرض كل العمليات (\${transactions.size})",
-                fontWeight = FontWeight.SemiBold)
         }
     }
 }
