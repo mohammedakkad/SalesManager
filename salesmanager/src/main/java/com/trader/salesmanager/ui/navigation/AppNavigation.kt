@@ -296,9 +296,12 @@ fun AppNavigation() {
             )
         }
         composable(Screen.Reports.route) {
-            ReportsScreen(onNavigateUp = {
-                navController.navigateUp()
-            })
+            ReportsScreen(
+                onNavigateUp = { navController.navigateUp() },
+                onViewDayTransactions = { dateMillis ->
+                    navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
+                }
+            )
         }
         composable(Screen.PaymentMethods.route) {
             PaymentMethodsScreen(onNavigateUp = {

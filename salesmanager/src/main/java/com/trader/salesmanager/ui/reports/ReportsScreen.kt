@@ -564,7 +564,7 @@ private fun ChartCard(title: String, content: @Composable () -> Unit) {
 @Composable
 private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
     val progress = remember { Animatable(0f) }
-    LaunchedEffect(data) { progress.snapTo(0f); progress.animateTo(1f, tween(1500, easing = FastOutSlowInEasing)) }
+    LaunchedEffect(Unit) { progress.snapTo(0f); progress.animateTo(1f, tween(1500, easing = FastOutSlowInEasing)) }
     val anim by progress.asState()
 
     Canvas(modifier = modifier) {
@@ -592,7 +592,7 @@ private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
 @Composable
 private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
     val progress = remember { Animatable(0f) }
-    LaunchedEffect(data) { progress.snapTo(0f); progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing)) }
+    LaunchedEffect(Unit) { progress.snapTo(0f); progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing)) }
     val anim by progress.asState()
 
     Canvas(modifier = modifier) {
@@ -616,7 +616,7 @@ private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
 private fun DonutChart(data: List<PaymentShare>, modifier: Modifier) {
     val donutColors = listOf(Emerald500, Color(0xFF3B82F6), Color(0xFFF59E0B), Color(0xFFEF4444), Color(0xFF8B5CF6))
     val progress    = remember { Animatable(0f) }
-    LaunchedEffect(data) { progress.snapTo(0f); progress.animateTo(1f, tween(1400, easing = FastOutSlowInEasing)) }
+    LaunchedEffect(Unit) { progress.snapTo(0f); progress.animateTo(1f, tween(1400, easing = FastOutSlowInEasing)) }
     val anim  by progress.asState()
     val total = data.sumOf { it.amount }.takeIf { it > 0 } ?: 1.0
     Canvas(modifier = modifier) {

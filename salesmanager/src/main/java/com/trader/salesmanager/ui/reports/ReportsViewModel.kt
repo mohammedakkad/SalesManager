@@ -82,8 +82,12 @@ class ReportsViewModel(
         val selPaid   = selectedDayTx.filter { it.isPaid }.sumOf { it.amount }
         val selUnpaid = selTotal - selPaid
 
-        // تحليل اليوم (الـ TODAY فقط — من جميع العمليات)
-        val todayAnalysis = buildTodayAnalysis(transactions)
+        // تحليل اليوم — يستخدم اليوم المحدد إن وُجد، وإلا يوم اليوم
+        val todayAnalysis = if (selectedDay != null) {
+            buildDayAnalysis(transactions, selectedDay, month, year)
+        } else {
+            buildTodayAnalysis(transactions)
+        }
 
         buildState(filtered, transactions, period).copy(
             calendarMonth            = month,
@@ -147,14 +151,24 @@ class ReportsViewModel(
     private fun buildTodayAnalysis(all: List<Transaction>): TimeOfDayAnalysis {
         val start = todayStart()
         val end   = todayEnd()
-        val cal   = Calendar.getInstance()
-        val today = all.filter { it.date in start..end }
+        return buildAnalysisForRange(all, start, end)
+    }
 
-        var morning   = 0.0
-        var afternoon = 0.0
-        var evening   = 0.0
+    private fun buildDayAnalysis(all: List<Transaction>, day: Int, month: Int, year: Int): TimeOfDayAnalysis {
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year); set(Calendar.MONTH, month); set(Calendar.DAY_OF_MONTH, day)
+            set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+        }
+        val start = cal.timeInMillis
+        cal.set(Calendar.HOUR_OF_DAY, 23); cal.set(Calendar.MINUTE, 59); cal.set(Calendar.SECOND, 59); cal.set(Calendar.MILLISECOND, 999)
+        val end = cal.timeInMillis
+        return buildAnalysisForRange(all, start, end)
+    }
 
-        today.forEach { tx ->
+    private fun buildAnalysisForRange(all: List<Transaction>, start: Long, end: Long): TimeOfDayAnalysis {
+        val cal = Calendar.getInstance()
+        var morning = 0.0; var afternoon = 0.0; var evening = 0.0
+        all.filter { it.date in start..end }.forEach { tx ->
             cal.timeInMillis = tx.date
             when (cal.get(Calendar.HOUR_OF_DAY)) {
                 in 6..11  -> morning   += tx.amount

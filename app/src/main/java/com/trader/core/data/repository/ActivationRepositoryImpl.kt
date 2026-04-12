@@ -45,6 +45,15 @@ class ActivationRepositoryImpl(
     context.appDataStore.data.map {
         it[MERCHANT_CODE] ?: ""
     }.first()
+    
+    /**
+     * Emits the current merchant code immediately and on every change.
+     * Repositories use this to start realtime sync as soon as a code is available —
+     * even if the user activates AFTER the repository was created.
+     */
+    override fun observeMerchantCode(): Flow<String> =
+        context.appDataStore.data.map { it[MERCHANT_CODE] ?: "" }.distinctUntilChanged()
+
 
     override suspend fun saveActivationStatus(activated: Boolean, code: String) {
         context.appDataStore.edit {

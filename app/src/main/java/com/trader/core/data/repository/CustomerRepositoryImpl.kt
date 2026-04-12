@@ -8,6 +8,9 @@ import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.CustomerRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 
 class CustomerRepositoryImpl(
@@ -20,14 +23,17 @@ class CustomerRepositoryImpl(
 
     init { startRealtimeSync() }
 
+    /** Same fix as TransactionRepositoryImpl — waits for code via Flow */
     private fun startRealtimeSync() {
         syncScope.launch {
-            val code = activationRepo.getMerchantCode()
-            if (code.isEmpty()) return@launch
-            sync.observeCustomers(code).collect { list ->
-                // upsert: safe — won't trigger CASCADE delete of transactions
-                list.forEach { dao.upsertCustomer(CustomerEntity.fromDomain(it)) }
-            }
+            activationRepo.observeMerchantCode()
+                .filter { it.isNotEmpty() }
+                .distinctUntilChanged()
+                .collectLatest { code ->
+                    sync.observeCustomers(code).collect { list ->
+                        list.forEach { dao.upsertCustomer(CustomerEntity.fromDomain(it)) }
+                    }
+                }
         }
     }
 

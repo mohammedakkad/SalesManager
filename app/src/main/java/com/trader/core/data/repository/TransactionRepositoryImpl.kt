@@ -21,13 +21,24 @@ class TransactionRepositoryImpl(
 
     init { startRealtimeSync() }
 
+    /**
+     * FIX: Watch for merchant code via Flow instead of reading once.
+     * Previously: read code once in init → empty on fresh install → sync never starts.
+     * Now: waits until a non-empty code is emitted (happens right after activation),
+     *      then starts the realtime Firebase listener.
+     * If the user deactivates (code → ""), the sync collector is cancelled automatically.
+     */
     private fun startRealtimeSync() {
         syncScope.launch {
-            val code = activationRepo.getMerchantCode()
-            if (code.isEmpty()) return@launch
-            sync.observeTransactions(code).collect { list ->
-                list.forEach { transactionDao.insertTransaction(TransactionEntity.fromDomain(it)) }
-            }
+            activationRepo.observeMerchantCode()
+                .filter { it.isNotEmpty() }  // wait for activation
+                .distinctUntilChanged()
+                .collectLatest { code ->
+                    // collectLatest cancels previous collector when code changes
+                    sync.observeTransactions(code).collect { list ->
+                        list.forEach { transactionDao.insertTransaction(TransactionEntity.fromDomain(it)) }
+                    }
+                }
         }
     }
 
