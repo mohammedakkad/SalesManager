@@ -326,5 +326,20 @@ fun AppNavigation() {
                 navController.navigateUp()
             })
         }
+        composable(
+            Screen.DayTransactions.route,
+            listOf(navArgument("dateMillis") {
+                type = NavType.LongType
+            })
+        ) { back ->
+            val dateMillis = back.arguments!!.getLong("dateMillis")
+            DayTransactionsScreen(
+                dateMillis = dateMillis,
+                onNavigateUp = { navController.navigateUp() },
+                onTransactionClick = { id ->
+                    navController.navigate(Screen.TransactionDetails.createRoute(id))
+                }
+            )
+        }
     }
 }
