@@ -46,5 +46,11 @@ dependencies {
     implementation(project(":app"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
+    // ── ML Kit Barcode ────────────────────────────────────────
+    implementation(libs.mlkit.barcode)
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.view)
     debugImplementation(libs.compose.ui.tooling)
 }

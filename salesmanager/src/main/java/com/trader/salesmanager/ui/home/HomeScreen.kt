@@ -43,6 +43,7 @@ fun HomeScreen(
     onNavigateToDebts: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToChat: () -> Unit,
+    onNavigateToInventory: () -> Unit = {},
     onAddTransaction: () -> Unit,
     onTransactionClick: (Long) -> Unit,
     viewModel: HomeViewModel = koinViewModel()
@@ -192,6 +193,7 @@ fun HomeScreen(
                     NavItem("العمليات", Icons.Rounded.Receipt,  Cyan500,    onNavigateToTransactions),
                     NavItem("التقارير", Icons.Rounded.BarChart, Violet500,  onNavigateToReports),
                     NavItem("الديون",   Icons.Rounded.Warning,  DebtRed,    onNavigateToDebts),
+                    NavItem("المخزن",   Icons.Rounded.Inventory2, Cyan500,  onNavigateToInventory),
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     navItems.chunked(2).forEach { row ->

@@ -17,6 +17,10 @@ crashlyticsPlugin     = "3.0.2"
 datastore             = "1.1.1"
 coreNotification      = "1.13.1"
 workmanager = "2.9.1"
+mlkit-barcode = "17.3.0"
+camera2 = "1.3.4"
+mlkitBarcode = "17.3.0"
+cameraX     = "1.3.4"
 
 [libraries]
 androidx-core-ktx             = { group = "androidx.core",            name = "core-ktx",                    version.ref = "coreKtx" }
@@ -48,6 +52,16 @@ firebase-firestore            = { group = "com.google.firebase",       name = "f
 firebase-messaging            = { group = "com.google.firebase",       name = "firebase-messaging-ktx" }
 androidx-work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workmanager" }
 koin-workmanager      = { group = "io.insert-koin", name = "koin-androidx-workmanager", version.ref = "koin" }
+mlkit-barcode         = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkit-barcode" }
+camerax-core          = { group = "androidx.camera", name = "camera-core", version.ref = "camera2" }
+camerax-camera2       = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera2" }
+camerax-lifecycle     = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera2" }
+camerax-view          = { group = "androidx.camera", name = "camera-view", version.ref = "camera2" }
+mlkit-barcode         = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkitBarcode" }
+camerax-core          = { group = "androidx.camera", name = "camera-core", version.ref = "cameraX" }
+camerax-camera2       = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraX" }
+camerax-lifecycle     = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraX" }
+camerax-view          = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
 
 [plugins]
 android-application   = { id = "com.android.application", version.ref = "agp" }

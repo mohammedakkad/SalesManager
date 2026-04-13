@@ -30,4 +30,22 @@ sealed class Screen(val route: String) {
     object DayTransactions  : Screen("day_transactions/{dateMillis}") {
         fun createRoute(dateMillis: Long) = "day_transactions/$dateMillis"
     }
+    // ── v2 — المخزن ──────────────────────────────────────────────
+    object Inventory        : Screen("inventory")
+    object AddProduct       : Screen("add_product?barcode={barcode}") {
+        fun createRoute(barcode: String? = null) =
+            if (barcode != null) "add_product?barcode=$barcode" else "add_product?barcode="
+    }
+    object EditProduct      : Screen("edit_product/{productId}") {
+        fun createRoute(productId: String) = "edit_product/$productId"
+    }
+    object ProductDetail    : Screen("product_detail/{productId}") {
+        fun createRoute(productId: String) = "product_detail/$productId"
+    }
+    object InventorySession : Screen("inventory_session")
+    object InvoiceItems     : Screen("invoice_items/{customerName}") {
+        fun createRoute(customerName: String) =
+            "invoice_items/${java.net.URLEncoder.encode(customerName, "UTF-8")}"
+    }
+    object StockReports     : Screen("stock_reports")
 }
