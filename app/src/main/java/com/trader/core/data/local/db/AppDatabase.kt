@@ -14,7 +14,6 @@ import com.trader.core.domain.model.PaymentType
         TransactionEntity::class,
         PaymentMethodEntity::class,
         PendingMessageEntity::class,
-        // ── v4 — نظام المخزون ──────────────────────────
         ProductEntity::class,
         ProductUnitEntity::class,
         StockMovementEntity::class,
@@ -22,7 +21,7 @@ import com.trader.core.domain.model.PaymentType
         InventorySessionEntity::class,
         InventorySessionItemEntity::class
     ],
-    version = 4,
+    version = 5,   // ← bumped from 4 to 5
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -30,7 +29,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
     abstract fun paymentMethodDao(): PaymentMethodDao
     abstract fun pendingMessageDao(): PendingMessageDao
-    // ── v4 ──────────────────────────────────────────────
     abstract fun productDao(): ProductDao
     abstract fun stockMovementDao(): StockMovementDao
     abstract fun invoiceItemDao(): InvoiceItemDao
@@ -62,11 +60,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // transactions: إضافة paymentType و hasItems
                 db.execSQL("ALTER TABLE transactions ADD COLUMN paymentType TEXT NOT NULL DEFAULT 'DEBT'")
                 db.execSQL("ALTER TABLE transactions ADD COLUMN hasItems INTEGER NOT NULL DEFAULT 0")
 
-                // products
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS products (
                         id          TEXT NOT NULL PRIMARY KEY,
@@ -81,7 +77,6 @@ abstract class AppDatabase : RoomDatabase() {
                     )
                 """.trimIndent())
 
-                // product_units
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS product_units (
                         id                TEXT NOT NULL PRIMARY KEY,
@@ -99,9 +94,9 @@ abstract class AppDatabase : RoomDatabase() {
                         FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
                     )
                 """.trimIndent())
+                // ⚠️ Wrong index name — fixed in MIGRATION_4_5
                 db.execSQL("CREATE INDEX IF NOT EXISTS idx_pu_productId ON product_units(productId)")
 
-                // stock_movements
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS stock_movements (
                         id                    TEXT NOT NULL PRIMARY KEY,
@@ -121,7 +116,6 @@ abstract class AppDatabase : RoomDatabase() {
                     )
                 """.trimIndent())
 
-                // invoice_items
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS invoice_items (
                         id            TEXT NOT NULL PRIMARY KEY,
@@ -138,7 +132,6 @@ abstract class AppDatabase : RoomDatabase() {
                     )
                 """.trimIndent())
 
-                // inventory_sessions
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS inventory_sessions (
                         id                TEXT NOT NULL PRIMARY KEY,
@@ -151,7 +144,6 @@ abstract class AppDatabase : RoomDatabase() {
                     )
                 """.trimIndent())
 
-                // inventory_session_items
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS inventory_session_items (
                         id              TEXT NOT NULL PRIMARY KEY,
@@ -167,9 +159,20 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // ✅ FIX: rename wrong index to match what Room expects
+        // Room auto-generates: index_{tableName}_{columnName}
+        // Migration 3→4 created: idx_pu_productId  ← wrong
+        // Room expects:           index_product_units_productId ← correct
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP INDEX IF EXISTS idx_pu_productId")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_product_units_productId ON product_units(productId)")
+            }
+        }
+
         fun build(context: Context) =
             Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")
