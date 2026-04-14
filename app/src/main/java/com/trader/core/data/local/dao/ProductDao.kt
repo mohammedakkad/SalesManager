@@ -73,11 +73,6 @@ interface ProductDao {
     @Query("UPDATE product_units SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markUnitSynced(id: String)
 
-    // ── one-shot للجرد ────────────────────────────────────────────
-
-    @Transaction
-    @Query("SELECT * FROM products ORDER BY name ASC")
-    suspend fun getAllWithUnitsOnce(): List<ProductWithUnitsRelation>
 
     // ── Stock updates ─────────────────────────────────────────────
 

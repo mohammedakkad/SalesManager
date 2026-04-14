@@ -14,5 +14,3 @@ data class Transaction(
     val paidAt: Long? = null,
     val hasItems: Boolean = false       // ← جديد v2
 )
-
-enum class PaymentType { DEBT, CASH, BANK, WALLET }
