@@ -30,12 +30,14 @@ data class InventorySessionItem(
     val id: String = "",
     val sessionId: String = "",
     val productId: String = "",
-    val productName: String = "",       // snapshot
+    val productName: String = "",
     val unitId: String = "",
-    val unitLabel: String = "",         // snapshot
-    val systemQuantity: Double = 0.0,   // ما يقوله النظام
-    val actualQuantity: Double? = null, // ما عدّه البائع (null = لم يُعدّ بعد)
-    val difference: Double get() = (actualQuantity ?: systemQuantity) - systemQuantity
-)
+    val unitLabel: String = "",
+    val systemQuantity: Double = 0.0,
+    val actualQuantity: Double? = null
+) {
+    val difference: Double
+        get() = (actualQuantity ?: systemQuantity) - systemQuantity
+}
 
 enum class InventoryStatus { IN_PROGRESS, FINISHED }
