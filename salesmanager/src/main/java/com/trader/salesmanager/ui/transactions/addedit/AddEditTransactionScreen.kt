@@ -1,22 +1,29 @@
 package com.trader.salesmanager.ui.transactions.addedit
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.trader.core.domain.model.Customer
-import com.trader.core.domain.model.PaymentMethod
+import com.trader.core.domain.model.PaymentType
+import com.trader.core.domain.repository.PaymentMethodRepository
+import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
-import com.trader.core.domain.repository.PaymentMethodRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,6 +31,7 @@ fun AddEditTransactionScreen(
     transactionId: Long?,
     preselectedCustomerId: Long?,
     onNavigateUp: () -> Unit,
+    onNavigateToInvoiceItems: (customerName: String) -> Unit = {},
     viewModel: AddEditTransactionViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -34,100 +42,228 @@ fun AddEditTransactionScreen(
         viewModel.loadTransaction(transactionId)
         viewModel.preselect(preselectedCustomerId)
     }
-    LaunchedEffect(uiState.isSaved) { if (uiState.isSaved) onNavigateUp() }
+    LaunchedEffect(uiState.isSaved) {
+        if (uiState.isSaved) onNavigateUp()
+    }
 
-    var customerExpanded by remember { mutableStateOf(false) }
-    var paymentExpanded by remember { mutableStateOf(false) }
+    var customerExpanded by remember {
+        mutableStateOf(false)
+    }
+    var paymentExpanded by remember {
+        mutableStateOf(false)
+    }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(if (uiState.isEditMode) "تعديل العملية" else "إضافة عملية", fontWeight = FontWeight.Bold) },
-                navigationIcon = { IconButton(onClick = onNavigateUp) { Icon(Icons.Default.ArrowBack, null) } },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(16.dp).verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+    Column(
+        Modifier.fillMaxSize().background(Color(0xFFF2F4F7))
+        .verticalScroll(rememberScrollState())
+    ) {
+        Box(
+            Modifier.fillMaxWidth()
+            .background(Brush.linearGradient(listOf(Violet500, Cyan500)))
+            .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
         ) {
-            // ── Customer Dropdown ──
-            ExposedDropdownMenuBox(expanded = customerExpanded, onExpandedChange = { customerExpanded = it }) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onNavigateUp) {
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                }
+                Text(if (uiState.isEditMode) "تعديل العملية" else "إضافة عملية",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold, color = Color.White, modifier = Modifier.weight(1f))
+            }
+        }
+
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+
+            // ── الزبون ──────────────────────────────────────────────
+            ExposedDropdownMenuBox(expanded = customerExpanded, onExpandedChange = {
+                customerExpanded = it
+            }) {
                 OutlinedTextField(
                     value = uiState.selectedCustomer?.name ?: "",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("الزبون") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = customerExpanded) },
+                    onValueChange = {}, readOnly = true, label = {
+                        Text("الزبون *")
+                    },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = customerExpanded)
+                    },
                     modifier = Modifier.fillMaxWidth().menuAnchor(),
-                    isError = uiState.error == "اختر الزبون"
+                    isError = uiState.error == "اختر الزبون",
+                    leadingIcon = {
+                        Icon(Icons.Rounded.Person, null)
+                    }
                 )
-                ExposedDropdownMenu(expanded = customerExpanded, onDismissRequest = { customerExpanded = false }) {
-                    uiState.customers.forEach { customer ->
-                        DropdownMenuItem(text = { Text(customer.name) }, onClick = { viewModel.selectCustomer(customer); customerExpanded = false })
+                ExposedDropdownMenu(expanded = customerExpanded, onDismissRequest = {
+                    customerExpanded = false
+                }) {
+                    uiState.customers.forEach {
+                        customer ->
+                        DropdownMenuItem(text = {
+                            Text(customer.name)
+                        },
+                            onClick = {
+                                viewModel.selectCustomer(customer); customerExpanded = false
+                            })
                     }
                 }
             }
 
-            // ── Amount ──
-            OutlinedTextField(
-                value = uiState.amount,
-                onValueChange = viewModel::updateAmount,
-                label = { Text("المبلغ") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                isError = uiState.error == "أدخل مبلغ صحيح"
-            )
-
-            // ── Payment Status ──
-            Text("حالة الدفع", style = MaterialTheme.typography.labelLarge)
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                FilterChip(selected = uiState.isPaid,  onClick = { viewModel.updateIsPaid(true)  }, label = { Text("مدفوع") })
-                FilterChip(selected = !uiState.isPaid, onClick = { viewModel.updateIsPaid(false) }, label = { Text("غير مدفوع") })
+            // ── أصناف الفاتورة ───────────────────────────────────────
+            if (!uiState.isEditMode) {
+                OutlinedButton(
+                    onClick = {
+                        onNavigateToInvoiceItems(uiState.selectedCustomer?.name ?: "زبون")
+                    },
+                    modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
+                    border = ButtonDefaults.outlinedButtonBorder(true).copy(
+                        brush = androidx.compose.ui.graphics.SolidColor(
+                            if (uiState.hasItems) Emerald500 else Color(0xFFCBD5E1))
+                    )
+                ) {
+                    Icon(if (uiState.hasItems) Icons.Rounded.CheckCircle else Icons.Rounded.ShoppingCart,
+                        null, tint = if (uiState.hasItems) Emerald500 else Color(0xFF94A3B8),
+                        modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        if (uiState.hasItems) "أصناف الفاتورة ✓ (${uiState.pendingLines.size} صنف)"
+                        else "إضافة أصناف من المخزن (اختياري)",
+                        color = if (uiState.hasItems) Emerald500 else Color(0xFF94A3B8)
+                    )
+                }
+                AnimatedVisibility(uiState.hasItems) {
+                    Card(shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Emerald500.copy(0.06f))) {
+                        Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            uiState.pendingLines.forEach {
+                                line ->
+                                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                    Text("${line.product.product.name} × ${line.quantity}",
+                                        style = MaterialTheme.typography.bodySmall)
+                                    Text("₪${String.format("%.2f", line.totalPrice)}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        fontWeight = FontWeight.SemiBold, color = Emerald500)
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            // ── Payment Method Dropdown ──
-            ExposedDropdownMenuBox(expanded = paymentExpanded, onExpandedChange = { paymentExpanded = it }) {
+            // ── المبلغ ───────────────────────────────────────────────
+            OutlinedTextField(
+                value = uiState.amount, onValueChange = viewModel::updateAmount,
+                label = {
+                    Text("المبلغ الإجمالي ₪ *")
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth(), singleLine = true,
+                isError = uiState.error == "أدخل مبلغ صحيح",
+                leadingIcon = {
+                    Icon(Icons.Rounded.AttachMoney, null)
+                }
+            )
+
+            // ── نوع الدفع ────────────────────────────────────────────
+            Text("نوع الدفع", style = MaterialTheme.typography.labelLarge,
+                color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                listOf(PaymentType.DEBT to "دين", PaymentType.CASH to "كاش").forEach {
+                    (type, label) ->
+                    FilterChip(selected = uiState.paymentType == type,
+                        onClick = {
+                            viewModel.updatePaymentType(type)
+                        }, label = {
+                            Text(label)
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = if (type == PaymentType.CASH) PaidGreen.copy(0.15f) else Violet500.copy(0.15f),
+                            selectedLabelColor = if (type == PaymentType.CASH) PaidGreen else Violet500))
+                }
+            }
+
+            // ── حالة الدفع ───────────────────────────────────────────
+            Text("حالة الدفع", style = MaterialTheme.typography.labelLarge,
+                color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(selected = uiState.isPaid, onClick = {
+                    viewModel.updateIsPaid(true)
+                },
+                    label = {
+                        Text("مدفوع")
+                    },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = PaidGreen.copy(0.15f), selectedLabelColor = PaidGreen))
+                FilterChip(selected = !uiState.isPaid, onClick = {
+                    viewModel.updateIsPaid(false)
+                },
+                    label = {
+                        Text("غير مدفوع")
+                    },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = DebtRed.copy(0.15f), selectedLabelColor = DebtRed))
+            }
+
+            // ── طريقة الدفع ──────────────────────────────────────────
+            ExposedDropdownMenuBox(expanded = paymentExpanded, onExpandedChange = {
+                paymentExpanded = it
+            }) {
                 OutlinedTextField(
                     value = uiState.selectedPaymentMethod?.name ?: "",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("طريقة الدفع") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = paymentExpanded) },
-                    modifier = Modifier.fillMaxWidth().menuAnchor()
+                    onValueChange = {}, readOnly = true, label = {
+                        Text("طريقة الدفع")
+                    },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = paymentExpanded)
+                    },
+                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    leadingIcon = {
+                        Icon(Icons.Rounded.CreditCard, null)
+                    }
                 )
-                ExposedDropdownMenu(expanded = paymentExpanded, onDismissRequest = { paymentExpanded = false }) {
-                    uiState.paymentMethods.forEach { method ->
-                        DropdownMenuItem(text = { Text(method.name) }, onClick = { viewModel.selectPaymentMethod(method); paymentExpanded = false })
+                ExposedDropdownMenu(expanded = paymentExpanded, onDismissRequest = {
+                    paymentExpanded = false
+                }) {
+                    uiState.paymentMethods.forEach {
+                        method ->
+                        DropdownMenuItem(text = {
+                            Text(method.name)
+                        },
+                            onClick = {
+                                viewModel.selectPaymentMethod(method); paymentExpanded = false
+                            })
                     }
                 }
             }
 
-            // ── Note ──
+            // ── ملاحظة ───────────────────────────────────────────────
             OutlinedTextField(
-                value = uiState.note,
-                onValueChange = viewModel::updateNote,
-                label = { Text("ملاحظة (اختياري)") },
-                modifier = Modifier.fillMaxWidth(),
-                maxLines = 3
+                value = uiState.note, onValueChange = viewModel::updateNote,
+                label = {
+                    Text("ملاحظة (اختياري)")
+                },
+                modifier = Modifier.fillMaxWidth(), maxLines = 3,
+                leadingIcon = {
+                    Icon(Icons.Rounded.Notes, null)
+                }
             )
 
-            uiState.error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+            uiState.error?.let {
+                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            }
 
             Button(
-                onClick = viewModel::save,
-                enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth().height(52.dp)
+                onClick = viewModel::save, enabled = !uiState.isLoading,
+                modifier = Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Violet500)
             ) {
-                if (uiState.isLoading) CircularProgressIndicator(modifier = Modifier.size(20.dp), color = MaterialTheme.colorScheme.onPrimary)
-                else Text("حفظ العملية", style = MaterialTheme.typography.bodyLarge)
+                if (uiState.isLoading)
+                    CircularProgressIndicator(Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp)
+                else {
+                    Icon(Icons.Rounded.Save, null, modifier = Modifier.size(20.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("حفظ العملية", fontWeight = FontWeight.Bold)
+                }
             }
+            Spacer(Modifier.height(24.dp))
         }
     }
 }

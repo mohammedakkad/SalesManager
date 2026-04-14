@@ -169,6 +169,7 @@ fun TransactionDetailsScreen(
                     com.trader.core.domain.model.PaymentType.DEBT   -> "دين 📋"
                     com.trader.core.domain.model.PaymentType.BANK   -> "بنك 🏦"
                     com.trader.core.domain.model.PaymentType.WALLET -> "محفظة 💳"
+                    com.trader.core.domain.model.PaymentType.OTHER  -> "أخرى 💰"
                 }
                 DetailRow(Icons.Rounded.Payment,        "نوع الدفع",    paymentTypeLabel,                        UnpaidAmber)
                 if (t.note.isNotEmpty())

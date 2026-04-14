@@ -62,6 +62,7 @@ object InvoiceSharer {
                 PaymentType.DEBT   -> "📋 دين"
                 PaymentType.BANK   -> "🏦 بنك"
                 PaymentType.WALLET -> "💳 محفظة"
+                PaymentType.OTHER  -> "💰 أخرى"
             }
             appendLine("💳 *طريقة الدفع:* $paymentStr")
 
