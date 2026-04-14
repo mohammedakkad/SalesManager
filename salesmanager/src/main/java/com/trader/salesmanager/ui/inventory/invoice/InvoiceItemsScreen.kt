@@ -273,7 +273,7 @@ private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) 
     Column {
         if (product.units.size == 1) {
             Row(
-                mpdifier = Modifier.fillMaxWidth().clickable {
+                modifier = Modifier.fillMaxWidth().clickable {
                     onSelect(product.units.first())
                 }
                 .padding(horizontal = 14.dp, vertical = 10.dp),
