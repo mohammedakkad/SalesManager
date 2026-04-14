@@ -193,9 +193,9 @@ fun InvoiceItemsScreen(
             // ── ملخص ──────────────────────────────────────────────
             AnimatedVisibility(state.lines.isNotEmpty()) {
                 Row(
-                    Modifier.fillMaxWidth().background(Color.White)
+                    modifier = Modifier.fillMaxWidth().background(Color.White)
                     .padding(horizontal = 16.dp, vertical = 10.dp),
-                    Arrangement.SpaceBetween, Alignment.CenterVertically
+                  horizontalArrangement =  Arrangement.SpaceBetween, verticalAlignment =Alignment.CenterVertically
                 ) {
                     Text("${state.lines.size} صنف  •  ${state.totalItems} قطعة",
                         style = MaterialTheme.typography.bodySmall, color = Color(0xFF64748B))
@@ -289,7 +289,7 @@ private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) 
                 fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
             product.units.forEach {
                 unit ->
-                Row(Modifier.fillMaxWidth().clickable {
+                Row(modifier = Modifier.fillMaxWidth().clickable {
                     onSelect(unit)
                 }
                     .padding(horizontal = 24.dp, vertical = 6.dp),
@@ -324,7 +324,7 @@ private fun InvoiceLineCard(
                 Text("₪${String.format("%.2f", line.effectivePrice)} / ${line.selectedUnit.unitLabel}",
                     style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8))
             }
-            Row(Alignment.CenterVertically, Arrangement.spacedBy(6.dp)) {
+            Row(verticalAlignment =Alignment.CenterVertically,horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 IconButton(onClick = onDecrement, modifier = Modifier.size(32.dp)) {
                     Icon(Icons.Rounded.Remove, null, tint = DebtRed, modifier = Modifier.size(18.dp))
                 }
