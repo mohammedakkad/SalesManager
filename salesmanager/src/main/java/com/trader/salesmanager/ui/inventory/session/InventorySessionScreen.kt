@@ -32,18 +32,30 @@ fun InventorySessionScreen(
     onNavigateUp: () -> Unit,
     viewModel: InventorySessionViewModel = koinViewModel()
 ) {
-    val state   by viewModel.uiState.collectAsState()
-    val items   by viewModel.sessionItems.collectAsState()
+    val state by viewModel.uiState.collectAsState()
+    val items by viewModel.sessionItems.collectAsState()
 
-    var showFinishDialog by remember { mutableStateOf(false) }
-    var showCancelDialog by remember { mutableStateOf(false) }
-    var editingItem      by remember { mutableStateOf<InventorySessionItem?>(null) }
+    var showFinishDialog by remember {
+        mutableStateOf(false)
+    }
+    var showCancelDialog by remember {
+        mutableStateOf(false)
+    }
+    var editingItem by remember {
+        mutableStateOf<InventorySessionItem?>(null)
+    }
 
     if (showFinishDialog) {
         AlertDialog(
-            onDismissRequest = { showFinishDialog = false },
-            icon = { Icon(Icons.Rounded.Inventory2, null, tint = Emerald500) },
-            title = { Text("إنهاء الجرد", fontWeight = FontWeight.Bold) },
+            onDismissRequest = {
+                showFinishDialog = false
+            },
+            icon = {
+                Icon(Icons.Rounded.Inventory2, null, tint = Emerald500)
+            },
+            title = {
+                Text("إنهاء الجرد", fontWeight = FontWeight.Bold)
+            },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("سيتم تطبيق التعديلات على المخزن:")
@@ -56,54 +68,88 @@ fun InventorySessionScreen(
                     }
                     if (viewModel.totalItems - viewModel.countedItems > 0)
                         Text("⚠️ الأصناف غير المعدودة لن يتم تعديل كمياتها.",
-                            style = MaterialTheme.typography.bodySmall, color = UnpaidAmber)
+                        style = MaterialTheme.typography.bodySmall, color = UnpaidAmber)
                 }
             },
             confirmButton = {
-                Button(onClick = { viewModel.finishSession(); showFinishDialog = false },
+                Button(onClick = {
+                    viewModel.finishSession(); showFinishDialog = false
+                },
                     colors = ButtonDefaults.buttonColors(containerColor = Emerald500),
                     enabled = !state.isFinishing) {
                     if (state.isFinishing) CircularProgressIndicator(Modifier.size(16.dp), color = Color.White, strokeWidth = 2.dp)
                     else Text("تطبيق وإنهاء")
                 }
             },
-            dismissButton = { OutlinedButton(onClick = { showFinishDialog = false }) { Text("إلغاء") } },
+            dismissButton = {
+                OutlinedButton(onClick = {
+                    showFinishDialog = false
+                }) {
+                    Text("إلغاء")
+                }
+            },
             shape = RoundedCornerShape(20.dp)
         )
     }
 
     if (showCancelDialog) {
         AlertDialog(
-            onDismissRequest = { showCancelDialog = false },
-            icon = { Icon(Icons.Rounded.Cancel, null, tint = DebtRed) },
-            title = { Text("إلغاء الجرد", fontWeight = FontWeight.Bold) },
-            text = { Text("سيتم إلغاء جلسة الجرد الحالية دون تطبيق أي تغييرات.") },
-            confirmButton = {
-                Button(onClick = { viewModel.cancelSession(); showCancelDialog = false },
-                    colors = ButtonDefaults.buttonColors(containerColor = DebtRed)) { Text("إلغاء الجرد") }
+            onDismissRequest = {
+                showCancelDialog = false
             },
-            dismissButton = { OutlinedButton(onClick = { showCancelDialog = false }) { Text("رجوع") } },
+            icon = {
+                Icon(Icons.Rounded.Cancel, null, tint = DebtRed)
+            },
+            title = {
+                Text("إلغاء الجرد", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text("سيتم إلغاء جلسة الجرد الحالية دون تطبيق أي تغييرات.")
+            },
+            confirmButton = {
+                Button(onClick = {
+                    viewModel.cancelSession(); showCancelDialog = false
+                },
+                    colors = ButtonDefaults.buttonColors(containerColor = DebtRed)) {
+                    Text("إلغاء الجرد")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = {
+                    showCancelDialog = false
+                }) {
+                    Text("رجوع")
+                }
+            },
             shape = RoundedCornerShape(20.dp)
         )
     }
 
-    editingItem?.let { item ->
+    editingItem?.let {
+        item ->
         CountInputDialog(
             item = item,
-            onConfirm = { qty -> viewModel.updateItemCount(item, qty); editingItem = null },
-            onClear   = { viewModel.clearItemCount(item); editingItem = null },
-            onDismiss = { editingItem = null }
+            onConfirm = {
+                qty -> viewModel.updateItemCount(item, qty); editingItem = null
+            },
+            onClear = {
+                viewModel.clearItemCount(item); editingItem = null
+            },
+            onDismiss = {
+                editingItem = null
+            }
         )
     }
 
-    Scaffold(containerColor = Color(0xFFF2F4F7)) { padding ->
+    Scaffold(containerColor = Color(0xFFF2F4F7)) {
+        padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
 
             // ── Header ──────────────────────────────────────────────
             Box(
                 Modifier.fillMaxWidth()
-                    .background(Brush.linearGradient(listOf(Color(0xFF0F766E), Emerald500)))
-                    .padding(top = 48.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                .background(Brush.linearGradient(listOf(Color(0xFF0F766E), Emerald500)))
+                .padding(top = 48.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -114,9 +160,13 @@ fun InventorySessionScreen(
                             color = Color.White, style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier.weight(1f))
                         if (state.activeSession != null) {
-                            IconButton(onClick = { showCancelDialog = true },
+                            IconButton(onClick = {
+                                showCancelDialog = true
+                            },
                                 modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                            ) { Icon(Icons.Rounded.Cancel, null, tint = Color.White) }
+                            ) {
+                                Icon(Icons.Rounded.Cancel, null, tint = Color.White)
+                            }
                         }
                     }
 
@@ -131,7 +181,9 @@ fun InventorySessionScreen(
                                     style = MaterialTheme.typography.bodySmall)
                             }
                             LinearProgressIndicator(
-                                progress = { viewModel.progressPercent },
+                                progress = {
+                                    viewModel.progressPercent
+                                },
                                 modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
                                 color = Color.White, trackColor = Color.White.copy(0.3f)
                             )
@@ -139,14 +191,20 @@ fun InventorySessionScreen(
                         Spacer(Modifier.height(10.dp))
                         OutlinedTextField(
                             value = state.searchQuery, onValueChange = viewModel::setSearch,
-                            placeholder = { Text("بحث بالاسم...", color = Color.White.copy(0.5f)) },
-                            leadingIcon = { Icon(Icons.Rounded.Search, null, tint = Color.White.copy(0.7f)) },
+                            placeholder = {
+                                Text("بحث بالاسم...", color = Color.White.copy(0.5f))
+                            },
+                            leadingIcon = {
+                                Icon(Icons.Rounded.Search, null, tint = Color.White.copy(0.7f))
+                            },
                             trailingIcon = {
                                 Row {
                                     if (state.searchQuery.isNotEmpty())
-                                        IconButton(onClick = { viewModel.setSearch("") }) {
-                                            Icon(Icons.Rounded.Close, null, tint = Color.White.copy(0.7f))
-                                        }
+                                        IconButton(onClick = {
+                                        viewModel.setSearch("")
+                                    }) {
+                                        Icon(Icons.Rounded.Close, null, tint = Color.White.copy(0.7f))
+                                    }
                                     IconButton(onClick = viewModel::togglePendingOnly) {
                                         Icon(Icons.Rounded.FilterList, null,
                                             tint = if (state.showOnlyPending) UnpaidAmber else Color.White.copy(0.7f))
@@ -176,9 +234,10 @@ fun InventorySessionScreen(
                 )
 
                 else -> {
-                    val filtered = items.filter { item ->
+                    val filtered = items.filter {
+                        item ->
                         val matchQuery = state.searchQuery.isEmpty() ||
-                            item.productName.contains(state.searchQuery, ignoreCase = true)
+                        item.productName.contains(state.searchQuery, ignoreCase = true)
                         val matchPending = if (state.showOnlyPending) item.actualQuantity == null else true
                         matchQuery && matchPending
                     }
@@ -199,23 +258,35 @@ fun InventorySessionScreen(
                                 }
                             }
                         }
-                        val grouped = filtered.groupBy { it.productName }
-                        grouped.forEach { (productName, productItems) ->
+                        val grouped = filtered.groupBy {
+                            it.productName
+                        }
+                        grouped.forEach {
+                            (productName, productItems) ->
                             item(key = "header_$productName") {
                                 Text(productName, style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.Bold, color = Color(0xFF475569),
                                     modifier = Modifier.padding(vertical = 4.dp, horizontal = 2.dp))
                             }
-                            items(productItems, key = { it.id }) { item ->
-                                InventoryItemCard(item = item, onClick = { editingItem = item })
+                            items(productItems, key = {
+                                it.id
+                            }) {
+                                item ->
+                                InventoryItemCard(item = item, onClick = {
+                                    editingItem = item
+                                })
                             }
                         }
-                        item { Spacer(Modifier.height(80.dp)) }
+                        item {
+                            Spacer(Modifier.height(80.dp))
+                        }
                     }
 
                     Surface(Modifier.fillMaxWidth(), shadowElevation = 8.dp, color = Color.White) {
                         Button(
-                            onClick = { showFinishDialog = true },
+                            onClick = {
+                                showFinishDialog = true
+                            },
                             modifier = Modifier.fillMaxWidth().padding(16.dp).height(52.dp),
                             shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = Emerald500),
@@ -242,22 +313,29 @@ private fun InventoryItemCard(item: InventorySessionItem, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(1.dp),
         colors = CardDefaults.cardColors(containerColor = when {
             isCounted && hasDiff -> UnpaidAmber.copy(0.06f)
-            isCounted            -> PaidGreen.copy(0.04f)
-            else                 -> Color.White
+            isCounted -> PaidGreen.copy(0.04f)
+            else -> Color.White
         })
     ) {
-        Row(Modifier.fillMaxWidth().padding(14.dp), Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             Box(Modifier.size(40.dp).clip(CircleShape).background(when {
                 isCounted && hasDiff -> UnpaidAmber.copy(0.15f)
-                isCounted            -> PaidGreen.copy(0.15f)
-                else                 -> Color(0xFFF1F5F9)
+                isCounted -> PaidGreen.copy(0.15f)
+                else -> Color(0xFFF1F5F9)
             }), contentAlignment = Alignment.Center) {
-                Icon(when { isCounted && hasDiff -> Icons.Rounded.SwapVert
-                            isCounted            -> Icons.Rounded.CheckCircle
-                            else                 -> Icons.Rounded.RadioButtonUnchecked },
+                Icon(when {
+                    isCounted && hasDiff -> Icons.Rounded.SwapVert
+                    isCounted -> Icons.Rounded.CheckCircle
+                    else -> Icons.Rounded.RadioButtonUnchecked
+                },
                     null,
-                    tint = when { isCounted && hasDiff -> UnpaidAmber; isCounted -> PaidGreen; else -> Color(0xFFCBD5E1) },
+                    tint = when {
+                        isCounted && hasDiff -> UnpaidAmber; isCounted -> PaidGreen; else -> Color(0xFFCBD5E1)
+                    },
                     modifier = Modifier.size(22.dp))
             }
             Column(Modifier.weight(1f)) {
@@ -286,12 +364,22 @@ private fun CountInputDialog(
     item: InventorySessionItem,
     onConfirm: (Double) -> Unit, onClear: () -> Unit, onDismiss: () -> Unit
 ) {
-    var input by remember { mutableStateOf(item.actualQuantity?.let { formatQty(it) } ?: "") }
+    var input by remember {
+        mutableStateOf(item.actualQuantity?.let {
+            formatQty(it)
+        } ?: "")
+    }
     AlertDialog(
         onDismissRequest = onDismiss, shape = RoundedCornerShape(20.dp),
-        icon = { Icon(Icons.Rounded.Calculate, null, tint = Emerald500) },
-        title = { Column { Text(item.productName, fontWeight = FontWeight.Bold)
-            Text(item.unitLabel, style = MaterialTheme.typography.bodySmall, color = Color(0xFF94A3B8)) } },
+        icon = {
+            Icon(Icons.Rounded.Calculate, null, tint = Emerald500)
+        },
+        title = {
+            Column {
+                Text(item.productName, fontWeight = FontWeight.Bold)
+                Text(item.unitLabel, style = MaterialTheme.typography.bodySmall, color = Color(0xFF94A3B8))
+            }
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(Color(0xFFF1F5F9)).padding(10.dp),
@@ -299,11 +387,16 @@ private fun CountInputDialog(
                     Text("كمية النظام:", style = MaterialTheme.typography.bodySmall, color = Color(0xFF64748B))
                     Text(formatQty(item.systemQuantity), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall)
                 }
-                OutlinedTextField(value = input, onValueChange = { input = it },
-                    label = { Text("الكمية الفعلية") },
+                OutlinedTextField(value = input, onValueChange = {
+                    input = it
+                },
+                    label = {
+                        Text("الكمية الفعلية")
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true, modifier = Modifier.fillMaxWidth())
-                input.toDoubleOrNull()?.let { qty ->
+                input.toDoubleOrNull()?.let {
+                    qty ->
                     val diff = qty - item.systemQuantity
                     val hasDiff = kotlin.math.abs(diff) > 0.001
                     Surface(shape = RoundedCornerShape(10.dp),
@@ -312,22 +405,34 @@ private fun CountInputDialog(
                             Text("الفرق:", style = MaterialTheme.typography.bodySmall)
                             Text(if (hasDiff) "${if (diff > 0) "+" else ""}${formatQty(diff)}" else "لا يوجد فرق ✓",
                                 fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodySmall,
-                                color = when { !hasDiff -> PaidGreen; diff > 0 -> Color(0xFF16A34A); else -> DebtRed })
+                                color = when {
+                                    !hasDiff -> PaidGreen; diff > 0 -> Color(0xFF16A34A); else -> DebtRed
+                                })
                         }
                     }
                 }
             }
         },
         confirmButton = {
-            Button(onClick = { input.toDoubleOrNull()?.let { onConfirm(it) } },
+            Button(onClick = {
+                input.toDoubleOrNull()?.let {
+                    onConfirm(it)
+                }
+            },
                 enabled = input.toDoubleOrNull() != null,
-                colors = ButtonDefaults.buttonColors(containerColor = Emerald500)) { Text("تأكيد") }
+                colors = ButtonDefaults.buttonColors(containerColor = Emerald500)) {
+                Text("تأكيد")
+            }
         },
         dismissButton = {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (item.actualQuantity != null)
-                    TextButton(onClick = onClear) { Text("مسح العدّ", color = DebtRed) }
-                OutlinedButton(onClick = onDismiss) { Text("إلغاء") }
+                    TextButton(onClick = onClear) {
+                    Text("مسح العدّ", color = DebtRed)
+                }
+                OutlinedButton(onClick = onDismiss) {
+                    Text("إلغاء")
+                }
             }
         }
     )
@@ -361,14 +466,22 @@ private fun NoActiveSession(pastSessions: List<InventorySession>, onStart: () ->
             }
         }
         if (pastSessions.isNotEmpty()) {
-            item { Text("جلسات سابقة", fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleSmall, color = Color(0xFF64748B)) }
-            items(pastSessions, key = { it.id }) { session ->
+            item {
+                Text("جلسات سابقة", fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleSmall, color = Color(0xFF64748B))
+            }
+            items(pastSessions, key = {
+                it.id
+            }) {
+                session ->
                 Card(shape = RoundedCornerShape(14.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(1.dp)) {
-                    Row(Modifier.fillMaxWidth().padding(14.dp), Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         Box(Modifier.size(40.dp).clip(CircleShape).background(Emerald500.copy(0.1f)),
                             contentAlignment = Alignment.Center) {
                             Icon(Icons.Rounded.History, null, tint = Emerald500, modifier = Modifier.size(20.dp))
@@ -400,5 +513,5 @@ private fun StatItem(value: String, label: String, color: Color) {
 }
 
 private fun formatQty(qty: Double): String =
-    if (qty == qty.toLong().toDouble()) qty.toLong().toString()
-    else String.format("%.3f", qty).trimEnd('0').trimEnd('.')
+if (qty == qty.toLong().toDouble()) qty.toLong().toString()
+else String.format("%.3f", qty).trimEnd('0').trimEnd('.')

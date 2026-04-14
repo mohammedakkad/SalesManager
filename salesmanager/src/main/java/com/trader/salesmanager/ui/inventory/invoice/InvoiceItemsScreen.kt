@@ -36,52 +36,92 @@ fun InvoiceItemsScreen(
     viewModel: InvoiceItemsViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    var showScanner      by remember { mutableStateOf(false) }
-    var showSearch       by remember { mutableStateOf(false) }
-    var editingLine      by remember { mutableStateOf<Pair<Int, InvoiceLineItem>?>(null) }
-    var barcodeNotFound  by remember { mutableStateOf<String?>(null) }
+    var showScanner by remember {
+        mutableStateOf(false)
+    }
+    var showSearch by remember {
+        mutableStateOf(false)
+    }
+    var editingLine by remember {
+        mutableStateOf<Pair<Int, InvoiceLineItem>?>(null)
+    }
+    var barcodeNotFound by remember {
+        mutableStateOf<String?>(null)
+    }
 
-    barcodeNotFound?.let { barcode ->
+    barcodeNotFound?.let {
+        barcode ->
         AlertDialog(
-            onDismissRequest = { barcodeNotFound = null },
-            icon = { Icon(Icons.Rounded.QrCodeScanner, null, tint = UnpaidAmber) },
-            title = { Text("باركود غير موجود", fontWeight = FontWeight.Bold) },
-            text = { Text("\"$barcode\" غير موجود في المخزن.") },
-            confirmButton = { Button(onClick = { barcodeNotFound = null }) { Text("حسناً") } },
+            onDismissRequest = {
+                barcodeNotFound = null
+            },
+            icon = {
+                Icon(Icons.Rounded.QrCodeScanner, null, tint = UnpaidAmber)
+            },
+            title = {
+                Text("باركود غير موجود", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text("\"$barcode\" غير موجود في المخزن.")
+            },
+            confirmButton = {
+                Button(onClick = {
+                    barcodeNotFound = null
+                }) {
+                    Text("حسناً")
+                }
+            },
             shape = RoundedCornerShape(20.dp)
         )
     }
 
-    editingLine?.let { (index, line) ->
+    editingLine?.let {
+        (index, line) ->
         EditLineDialog(
             line = line,
-            onUpdateQty   = { viewModel.updateQuantity(index, it) },
-            onUpdatePrice = { viewModel.updatePrice(index, it) },
-            onUpdateUnit  = { viewModel.updateUnit(index, it) },
-            onRemove      = { viewModel.removeLine(index) },
-            onDismiss     = { editingLine = null }
+            onUpdateQty = {
+                viewModel.updateQuantity(index, it)
+            },
+            onUpdatePrice = {
+                viewModel.updatePrice(index, it)
+            },
+            onUpdateUnit = {
+                viewModel.updateUnit(index, it)
+            },
+            onRemove = {
+                viewModel.removeLine(index)
+            },
+            onDismiss = {
+                editingLine = null
+            }
         )
     }
 
     if (showScanner) {
         BarcodeScannerScreen(
-            onBarcodeDetected = { barcode ->
+            onBarcodeDetected = {
+                barcode ->
                 showScanner = false
-                viewModel.onBarcodeScanned(barcode, onNotFound = { barcodeNotFound = it })
+                viewModel.onBarcodeScanned(barcode, onNotFound = {
+                    barcodeNotFound = it
+                })
             },
-            onDismiss = { showScanner = false }
+            onDismiss = {
+                showScanner = false
+            }
         )
         return
     }
 
-    Scaffold(containerColor = Color(0xFFF2F4F7)) { padding ->
+    Scaffold(containerColor = Color(0xFFF2F4F7)) {
+        padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
 
             // ── Header ──────────────────────────────────────────────
             Box(
                 Modifier.fillMaxWidth()
-                    .background(Brush.linearGradient(listOf(Violet500, Cyan500)))
-                    .padding(top = 48.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                .background(Brush.linearGradient(listOf(Violet500, Cyan500)))
+                .padding(top = 48.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -94,12 +134,20 @@ fun InvoiceItemsScreen(
                             Text("الزبون: $customerName", color = Color.White.copy(0.75f),
                                 style = MaterialTheme.typography.bodySmall)
                         }
-                        IconButton(onClick = { showScanner = true },
+                        IconButton(onClick = {
+                            showScanner = true
+                        },
                             modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                        ) { Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White) }
-                        IconButton(onClick = { showSearch = !showSearch },
+                        ) {
+                            Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White)
+                        }
+                        IconButton(onClick = {
+                            showSearch = !showSearch
+                        },
                             modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                        ) { Icon(Icons.Rounded.Search, null, tint = if (showSearch) Cyan500 else Color.White) }
+                        ) {
+                            Icon(Icons.Rounded.Search, null, tint = if (showSearch) Cyan500 else Color.White)
+                        }
                     }
 
                     AnimatedVisibility(showSearch) {
@@ -108,7 +156,9 @@ fun InvoiceItemsScreen(
                             OutlinedTextField(
                                 value = state.searchQuery,
                                 onValueChange = viewModel::setQuery,
-                                placeholder = { Text("ابحث عن صنف...", color = Color.White.copy(0.5f)) },
+                                placeholder = {
+                                    Text("ابحث عن صنف...", color = Color.White.copy(0.5f))
+                                },
                                 singleLine = true,
                                 shape = RoundedCornerShape(14.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
@@ -125,8 +175,10 @@ fun InvoiceItemsScreen(
                                     shape = RoundedCornerShape(12.dp),
                                     colors = CardDefaults.cardColors(containerColor = Color.White)
                                 ) {
-                                    state.searchResults.forEach { product ->
-                                        SearchResultItem(product = product, onSelect = { unit ->
+                                    state.searchResults.forEach {
+                                        product ->
+                                        SearchResultItem(product = product, onSelect = {
+                                            unit ->
                                             viewModel.addProductWithUnit(product, unit)
                                             showSearch = false
                                         })
@@ -142,7 +194,7 @@ fun InvoiceItemsScreen(
             AnimatedVisibility(state.lines.isNotEmpty()) {
                 Row(
                     Modifier.fillMaxWidth().background(Color.White)
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
                     Arrangement.SpaceBetween, Alignment.CenterVertically
                 ) {
                     Text("${state.lines.size} صنف  •  ${state.totalItems} قطعة",
@@ -169,22 +221,35 @@ fun InvoiceItemsScreen(
                 LazyColumn(Modifier.weight(1f),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    itemsIndexed(state.lines, key = { _, l -> l.tempId }) { index, line ->
+                    itemsIndexed(state.lines, key = {
+                        _, l -> l.tempId
+                    }) {
+                        index, line ->
                         InvoiceLineCard(
                             line = line,
-                            onEdit      = { editingLine = index to line },
-                            onIncrement = { viewModel.updateQuantity(index, line.quantity + 1) },
-                            onDecrement = { viewModel.updateQuantity(index, line.quantity - 1) }
+                            onEdit = {
+                                editingLine = index to line
+                            },
+                            onIncrement = {
+                                viewModel.updateQuantity(index, line.quantity + 1)
+                            },
+                            onDecrement = {
+                                viewModel.updateQuantity(index, line.quantity - 1)
+                            }
                         )
                     }
-                    item { Spacer(Modifier.height(80.dp)) }
+                    item {
+                        Spacer(Modifier.height(80.dp))
+                    }
                 }
             }
 
             // ── زر التأكيد ────────────────────────────────────────
             Surface(Modifier.fillMaxWidth(), shadowElevation = 8.dp, color = Color.White) {
                 Button(
-                    onClick = { onConfirm(state.lines, state.totalAmount) },
+                    onClick = {
+                        onConfirm(state.lines, state.totalAmount)
+                    },
                     modifier = Modifier.fillMaxWidth().padding(16.dp).height(52.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Violet500),
@@ -208,9 +273,11 @@ private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) 
     Column {
         if (product.units.size == 1) {
             Row(
-                Modifier.fillMaxWidth().clickable { onSelect(product.units.first()) }
-                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                Alignment.CenterVertically, Arrangement.spacedBy(10.dp)
+                mpdifier = Modifier.fillMaxWidth().clickable {
+                    onSelect(product.units.first())
+                }
+                .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(product.product.name, Modifier.weight(1f), fontWeight = FontWeight.Medium,
                     style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -220,8 +287,11 @@ private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) 
         } else {
             Text(product.product.name, Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
                 fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-            product.units.forEach { unit ->
-                Row(Modifier.fillMaxWidth().clickable { onSelect(unit) }
+            product.units.forEach {
+                unit ->
+                Row(Modifier.fillMaxWidth().clickable {
+                    onSelect(unit)
+                }
                     .padding(horizontal = 24.dp, vertical = 6.dp),
                     horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(unit.unitLabel, color = Color(0xFF64748B), style = MaterialTheme.typography.bodySmall)
@@ -242,7 +312,7 @@ private fun InvoiceLineCard(
     Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)) {
-        Row(Modifier.fillMaxWidth().padding(12.dp), Alignment.CenterVertically) {
+        Row(modifier = Modifier.fillMaxWidth().padding(12.dp),verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(line.product.product.name, fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -285,48 +355,80 @@ private fun EditLineDialog(
     onUpdateQty: (Double) -> Unit, onUpdatePrice: (Double?) -> Unit,
     onUpdateUnit: (ProductUnit) -> Unit, onRemove: () -> Unit, onDismiss: () -> Unit
 ) {
-    var qtyInput   by remember { mutableStateOf(
-        if (line.quantity == line.quantity.toLong().toDouble()) line.quantity.toLong().toString()
-        else String.format("%.3f", line.quantity)
-    )}
-    var priceInput by remember { mutableStateOf(line.customPrice?.let { String.format("%.2f", it) } ?: "") }
+    var qtyInput by remember {
+        mutableStateOf(
+            if (line.quantity == line.quantity.toLong().toDouble()) line.quantity.toLong().toString()
+            else String.format("%.3f", line.quantity)
+        )}
+    var priceInput by remember {
+        mutableStateOf(line.customPrice?.let {
+            String.format("%.2f", it)
+        } ?: "")
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(20.dp),
-        title = { Text(line.product.product.name, fontWeight = FontWeight.Bold) },
+        title = {
+            Text(line.product.product.name, fontWeight = FontWeight.Bold)
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (line.product.units.size > 1) {
                     Text("الوحدة:", style = MaterialTheme.typography.labelLarge, color = Color(0xFF64748B))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        line.product.units.forEach { unit ->
+                        line.product.units.forEach {
+                            unit ->
                             FilterChip(selected = line.selectedUnit.id == unit.id,
-                                onClick = { onUpdateUnit(unit) }, label = { Text(unit.unitLabel) },
+                                onClick = {
+                                    onUpdateUnit(unit)
+                                }, label = {
+                                    Text(unit.unitLabel)
+                                },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = Violet500.copy(0.15f), selectedLabelColor = Violet500))
                         }
                     }
                 }
-                OutlinedTextField(value = qtyInput, onValueChange = { qtyInput = it },
-                    label = { Text("الكمية") },
+                OutlinedTextField(value = qtyInput, onValueChange = {
+                    qtyInput = it
+                },
+                    label = {
+                        Text("الكمية")
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = priceInput, onValueChange = { priceInput = it },
-                    label = { Text("سعر مخصص (فارغ = افتراضي ₪${String.format("%.2f", line.selectedUnit.price)})") },
+                OutlinedTextField(value = priceInput, onValueChange = {
+                    priceInput = it
+                },
+                    label = {
+                        Text("سعر مخصص (فارغ = افتراضي ₪${String.format("%.2f", line.selectedUnit.price)})")
+                    },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true, modifier = Modifier.fillMaxWidth())
             }
         },
         confirmButton = {
-            Button(onClick = { qtyInput.toDoubleOrNull()?.let { onUpdateQty(it) }; onUpdatePrice(priceInput.toDoubleOrNull()); onDismiss() },
+            Button(onClick = {
+                qtyInput.toDoubleOrNull()?.let {
+                    onUpdateQty(it)
+                }; onUpdatePrice(priceInput.toDoubleOrNull()); onDismiss()
+            },
                 enabled = qtyInput.toDoubleOrNull() != null,
-                colors = ButtonDefaults.buttonColors(containerColor = Violet500)) { Text("تطبيق") }
+                colors = ButtonDefaults.buttonColors(containerColor = Violet500)) {
+                Text("تطبيق")
+            }
         },
         dismissButton = {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TextButton(onClick = { onRemove(); onDismiss() }) { Text("حذف", color = DebtRed) }
-                OutlinedButton(onClick = onDismiss) { Text("إلغاء") }
+                TextButton(onClick = {
+                    onRemove(); onDismiss()
+                }) {
+                    Text("حذف", color = DebtRed)
+                }
+                OutlinedButton(onClick = onDismiss) {
+                    Text("إلغاء")
+                }
             }
         }
     )
