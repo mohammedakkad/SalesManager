@@ -57,11 +57,7 @@ camerax-core          = { group = "androidx.camera", name = "camera-core", versi
 camerax-camera2       = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera2" }
 camerax-lifecycle     = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera2" }
 camerax-view          = { group = "androidx.camera", name = "camera-view", version.ref = "camera2" }
-mlkit-barcode         = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkitBarcode" }
-camerax-core          = { group = "androidx.camera", name = "camera-core", version.ref = "cameraX" }
-camerax-camera2       = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraX" }
-camerax-lifecycle     = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraX" }
-camerax-view          = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
+
 
 [plugins]
 android-application   = { id = "com.android.application", version.ref = "agp" }
