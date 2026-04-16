@@ -27,6 +27,7 @@ import com.trader.salesmanager.ui.reports.ReportsViewModel
 import com.trader.salesmanager.ui.reports.DayTransactionsViewModel
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel
 import com.trader.salesmanager.ui.transactions.list.TransactionsViewModel
+import com.trader.salesmanager.ui.activation.ActivationViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
