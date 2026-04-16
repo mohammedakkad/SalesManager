@@ -268,9 +268,7 @@ fun InventorySessionScreen(
                                     fontWeight = FontWeight.Bold, color = Color(0xFF475569),
                                     modifier = Modifier.padding(vertical = 4.dp, horizontal = 2.dp))
                             }
-                            items(productItems, key = {
-                                it.id
-                            }) {
+                            items(productItems, key = { "${it.productId}_${it.unitId}" }) {
                                 item ->
                                 InventoryItemCard(item = item, onClick = {
                                     editingItem = item

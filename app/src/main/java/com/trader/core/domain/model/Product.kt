@@ -31,10 +31,12 @@ data class ProductUnit(
     /** يحوّل الكمية المخزنة (بالكيلو دائماً) إلى وحدة العرض */
     fun displayQuantity(rawKg: Double): String = when {
         unitType != UnitType.WEIGHT -> rawKg.toInt().toString()
-        weightUnit == WeightUnit.KG -> String.format("%.3f", rawKg).trimEnd('0').trimEnd('.')
         else -> {
-            val oz = rawKg * WeightUnit.OZ.kgFactor.let { 1.0 / it }
-            String.format("%.1f", oz)
+            val displayValue = rawKg / weightUnit.kgFactor
+            if (displayValue == displayValue.toLong().toDouble())
+                displayValue.toLong().toString()
+            else
+                String.format("%.1f", displayValue)
         }
     }
 }
@@ -43,17 +45,27 @@ data class ProductWithUnits(
     val product: Product,
     val units: List<ProductUnit>
 ) {
-    val defaultUnit: ProductUnit? get() = units.firstOrNull { it.isDefault } ?: units.firstOrNull()
-    val isLowStock: Boolean get() = units.any { it.quantityInStock > 0 && it.quantityInStock <= it.lowStockThreshold }
-    val isOutOfStock: Boolean get() = units.all { it.quantityInStock <= 0 }
+    val defaultUnit: ProductUnit? get() = units.firstOrNull {
+        it.isDefault
+    } ?: units.firstOrNull()
+    val isLowStock: Boolean get() = units.any {
+        it.quantityInStock > 0 && it.quantityInStock <= it.lowStockThreshold
+    }
+    val isOutOfStock: Boolean get() = units.all {
+        it.quantityInStock <= 0
+    }
 }
 
-enum class UnitType { PIECE, CARTON, WEIGHT }
+enum class UnitType {
+    PIECE, CARTON, WEIGHT
+}
 
 /** وحدات الوزن — الكميات تُخزّن دائماً بالكيلو ثم تُحوَّل للعرض */
 enum class WeightUnit(val label: String, val kgFactor: Double) {
-    KG("كيلو",   1.0),
-    OZ("أوقية", 0.028349)   // 1 أوقية = 0.028349 كيلو
+    KG ("كيلو", 1.0),
+    OZ ("أوقية", 0.250),
+    GRAM("غرام", 0.001) // 1 غرام = 0.001 كيلو
 }
-
-enum class SyncStatus { PENDING, SYNCED, CONFLICT }
+enum class SyncStatus {
+    PENDING, SYNCED, CONFLICT
+}
