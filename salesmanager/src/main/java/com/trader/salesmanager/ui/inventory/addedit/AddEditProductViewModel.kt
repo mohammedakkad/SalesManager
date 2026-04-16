@@ -16,7 +16,8 @@ data class UnitDraft(
     val quantityInStock: String = "0",
     val itemsPerCarton: String = "",
     val lowStockThreshold: String = "5",
-    val isDefault: Boolean = false
+    val isDefault: Boolean = false,
+    val weightUnit: WeightUnit = WeightUnit.KG  // ← جديد
 )
 
 data class AddEditProductUiState(
@@ -64,7 +65,8 @@ class AddEditProductViewModel(
                             quantityInStock = u.quantityInStock.toString(),
                             itemsPerCarton = u.itemsPerCarton?.toString() ?: "",
                             lowStockThreshold = u.lowStockThreshold.toString(),
-                            isDefault = u.isDefault
+                            isDefault = u.isDefault,
+                            weightUnit = u.weightUnit
                         )
                     }
                 )
@@ -127,7 +129,8 @@ class AddEditProductViewModel(
                         quantityInStock = draft.quantityInStock.toDoubleOrNull() ?: 0.0,
                         itemsPerCarton = draft.itemsPerCarton.toIntOrNull(),
                         lowStockThreshold = draft.lowStockThreshold.toDoubleOrNull() ?: 5.0,
-                        isDefault = draft.isDefault
+                        isDefault = draft.isDefault,
+                        weightUnit = draft.weightUnit
                     )
                 }
                 productRepo.saveProduct(product, units)

@@ -7,15 +7,15 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 sealed class UpdateUiState {
-    object Idle                                : UpdateUiState()
-    object Checking                            : UpdateUiState()
-    data class UpdateAvailable(val info: AppUpdateInfo) : UpdateUiState()
-    data class Downloading(val percent: Int)   : UpdateUiState()
-    object ReadyToInstall                      : UpdateUiState()
-    object BackgroundDownloading               : UpdateUiState()  // downloading in bg, dialog closed
-    object NeedInstallPermission               : UpdateUiState()
-    data class DownloadError(val message: String, val canRetry: Boolean = true) : UpdateUiState()
-    object UpToDate                            : UpdateUiState()
+    object Idle                                          : UpdateUiState()
+    object Checking                                      : UpdateUiState()
+    data class UpdateAvailable(val info: AppUpdateInfo)  : UpdateUiState()
+    data class Downloading(val percent: Int)             : UpdateUiState()
+    object ReadyToInstall                                : UpdateUiState()
+    object BackgroundDownloading                         : UpdateUiState()
+    object NeedInstallPermission                         : UpdateUiState()
+    data class DownloadError(val message: String)        : UpdateUiState()
+    object UpToDate                                      : UpdateUiState()
 }
 
 class AppUpdateViewModel : ViewModel() {
@@ -25,11 +25,10 @@ class AppUpdateViewModel : ViewModel() {
 
     private var currentInfo: AppUpdateInfo? = null
     private var downloadedFile: java.io.File? = null
-
-    /** true أثناء تحضير الرابط أو التحميل — يمنع أي ضغطة إضافية */
     private var isDownloadInProgress = false
 
     fun checkForUpdate(currentVersionCode: Int) {
+        if (_state.value is UpdateUiState.Checking) return
         _state.value = UpdateUiState.Checking
         viewModelScope.launch {
             val info = AppUpdateChecker.check()
@@ -39,6 +38,7 @@ class AppUpdateViewModel : ViewModel() {
             }
             if (info.latestVersion > currentVersionCode) {
                 currentInfo = info
+                // ← لا نُظهر Dialog إجبارياً — فقط نُعلم بوجود تحديث
                 _state.value = UpdateUiState.UpdateAvailable(info)
             } else {
                 _state.value = UpdateUiState.UpToDate
@@ -46,56 +46,74 @@ class AppUpdateViewModel : ViewModel() {
         }
     }
 
-    fun startDownload(context: Context) {
-        // ❶ منع الضغط المتعدد — إذا كان التحميل جارياً نتجاهل الطلب
-        if (isDownloadInProgress) return
-
+    /**
+     * التحميل في الخلفية عبر WorkManager — يظهر في شريط الإشعارات
+     * ويبقى التطبيق قابلاً للاستخدام بشكل طبيعي.
+     */
+    fun startBackgroundDownload(context: Context) {
         val info = currentInfo ?: return
-        if (info.downloadUrl.isEmpty()) {
-            _state.value = UpdateUiState.DownloadError("رابط التحميل غير متوفر")
-            return
-        }
+        if (info.downloadUrl.isEmpty()) return
+        BackgroundUpdateWorker.schedule(context, info.downloadUrl, info.versionName)
+        _state.value = UpdateUiState.BackgroundDownloading
+    }
 
-        // ❷ التحقق من الإذن أولاً (قبل تشغيل أي coroutine)
+    /**
+     * تحميل مباشر (عندما يضغط المستخدم "تحميل الآن" من الإعدادات)
+     */
+    fun startDirectDownload(context: Context) {
+        if (isDownloadInProgress) return
+        val info = currentInfo ?: return
         if (!AppUpdateDownloader.canInstallUnknownSources(context)) {
             _state.value = UpdateUiState.NeedInstallPermission
             return
         }
-
-        // ❸ قفل الزر فوراً قبل أي عملية
         isDownloadInProgress = true
         _state.value = UpdateUiState.Downloading(0)
-
         viewModelScope.launch {
-            AppUpdateDownloader.downloadApk(context, info.downloadUrl)
-                .collect { downloadState ->
-                    when (downloadState) {
-                        is DownloadState.Progress -> _state.value = UpdateUiState.Downloading(downloadState.percent)
-                        is DownloadState.Success  -> {
-                            downloadedFile = downloadState.file
-                            isDownloadInProgress = false
-                            _state.value = UpdateUiState.ReadyToInstall
-                        }
-                        is DownloadState.Error    -> {
-                            isDownloadInProgress = false          // السماح بالمحاولة مجدداً عند الخطأ
-                            _state.value = UpdateUiState.DownloadError(downloadState.message)
-                        }
+            AppUpdateDownloader.downloadApk(context, info.downloadUrl).collect { ds ->
+                when (ds) {
+                    is DownloadState.Progress -> _state.value = UpdateUiState.Downloading(ds.percent)
+                    is DownloadState.Success  -> {
+                        downloadedFile = ds.file
+                        isDownloadInProgress = false
+                        _state.value = UpdateUiState.ReadyToInstall
+                    }
+                    is DownloadState.Error -> {
+                        isDownloadInProgress = false
+                        _state.value = UpdateUiState.DownloadError(ds.message)
                     }
                 }
+            }
         }
     }
 
+    // للتوافق مع الكود القديم
+    fun startDownload(context: Context) = startBackgroundDownload(context)
+
     fun install(context: Context) {
-        val file = downloadedFile ?: return
-        AppUpdateDownloader.installApk(context, file)
+        val file = downloadedFile
+        if (file != null) {
+            AppUpdateDownloader.installApk(context, file)
+            return
+        }
+        // التحقق من APK المحفوظ من WorkManager
+        val path = context.getSharedPreferences("update_prefs", Context.MODE_PRIVATE)
+            .getString("apk_path", null)
+        if (path != null) {
+            AppUpdateDownloader.installApk(context, java.io.File(path))
+        }
     }
 
     fun retryDownload(context: Context) {
-        isDownloadInProgress = false   // reset للسماح بالمحاولة الجديدة
-        startDownload(context)
+        isDownloadInProgress = false
+        startDirectDownload(context)
     }
 
     fun openInstallPermission(context: Context) {
         AppUpdateDownloader.openInstallPermissionSettings(context)
+    }
+
+    fun dismiss() {
+        _state.value = UpdateUiState.Idle
     }
 }

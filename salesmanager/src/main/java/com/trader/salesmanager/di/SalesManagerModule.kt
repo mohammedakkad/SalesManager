@@ -14,7 +14,7 @@ import com.trader.salesmanager.ui.inventory.detail.ProductDetailViewModel
 import com.trader.salesmanager.ui.inventory.session.InventorySessionViewModel
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceItemsViewModel
 import com.trader.salesmanager.ui.inventory.reports.StockReportsViewModel
-import com.trader.salesmanager.ui.activation.ActivationViewModel
+import com.trader.salesmanager.update.AppUpdateViewModel
 import com.trader.salesmanager.ui.activation.MerchantWatcherViewModel
 import com.trader.salesmanager.ui.chat.ChatViewModel
 import com.trader.salesmanager.ui.customers.addedit.AddEditCustomerViewModel
@@ -88,6 +88,7 @@ val salesManagerModule = module {
     viewModel { PaymentMethodsViewModel(get()) }
     viewModel { DebtsViewModel(get(), get()) }
     viewModel { ChatViewModel(get(), get(), get()) }
+    viewModel { AppUpdateViewModel() }
     // ── Inventory ─────────────────────────────────────────────────
     viewModel { InventoryListViewModel(get()) }
     viewModel { AddEditProductViewModel(get()) }

@@ -8,19 +8,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.runtime.*
 import androidx.core.content.ContextCompat
 import com.trader.salesmanager.service.NotificationService
 import com.trader.salesmanager.ui.navigation.AppNavigation
 import com.trader.salesmanager.ui.theme.SalesManagerTheme
-import com.trader.salesmanager.update.AppUpdateDialog
 import com.trader.salesmanager.update.AppUpdateViewModel
+import com.trader.salesmanager.update.BackgroundUpdateWorker
 import com.trader.salesmanager.update.UpdateUiState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val updateViewModel: AppUpdateViewModel by viewModels()
+    private val updateViewModel: AppUpdateViewModel by viewModel()
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
         NotificationService.createChannels(this)
         requestNotificationPermission()
 
-        // Check for update on startup
         val currentVersionCode = packageManager
             .getPackageInfo(packageName, 0)
             .let {
@@ -40,28 +39,37 @@ class MainActivity : ComponentActivity() {
                     it.longVersionCode.toInt()
                 else @Suppress("DEPRECATION") it.versionCode
             }
+
+        // التحقق من التحديث — يبدأ التحميل تلقائياً في الخلفية إذا وُجد
         updateViewModel.checkForUpdate(currentVersionCode)
 
         setContent {
             SalesManagerTheme {
                 val updateState by updateViewModel.state.collectAsState()
 
-                // Main app
-                AppNavigation()
-
-                // Update dialog — overlays everything, non-dismissible
-                AppUpdateDialog(
-                    state            = updateState,
-                    onStartDownload  = { ctx -> updateViewModel.startDownload(ctx) },
-                    onInstall        = { ctx -> updateViewModel.install(ctx) },
-                    onRetry          = { ctx -> updateViewModel.retryDownload(ctx) },
-                    onOpenPermission = { ctx ->
-                        updateViewModel.openInstallPermission(ctx)
-                        // Re-check permission after returning
-                        updateViewModel.startDownload(ctx)
+                // عند وجود تحديث — نبدأ التحميل في الخلفية تلقائياً (بدون Dialog إجباري)
+                LaunchedEffect(updateState) {
+                    if (updateState is UpdateUiState.UpdateAvailable) {
+                        val info = (updateState as UpdateUiState.UpdateAvailable).info
+                        BackgroundUpdateWorker.schedule(
+                            this@MainActivity,
+                            info.downloadUrl,
+                            info.versionName
+                        )
                     }
-                )
+                }
+
+                // التطبيق الرئيسي — يعمل بشكل طبيعي دون Dialog إجباري
+                AppNavigation()
             }
+        }
+    }
+
+    // يُستدعى عند الضغط على إشعار "جاهز للتثبيت"
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra("install_update", false)) {
+            updateViewModel.install(this)
         }
     }
 

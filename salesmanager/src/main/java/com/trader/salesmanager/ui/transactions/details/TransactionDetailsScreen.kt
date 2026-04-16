@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.trader.core.data.local.appDataStore
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.InvoiceItemRepository
@@ -28,6 +29,7 @@ import com.trader.core.util.DateUtils.toDateTimeString
 import com.trader.salesmanager.ui.components.StatusChip
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.util.InvoiceSharer
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -44,6 +46,11 @@ fun TransactionDetailsScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    // اسم المحل من DataStore
+    val storeName by context.appDataStore.data
+        .map { it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: "" }
+        .collectAsState(initial = "")
 
     // أصناف الفاتورة
     val invoiceItems by invoiceItemRepo
@@ -111,7 +118,7 @@ fun TransactionDetailsScreen(
                                     context = context,
                                     transaction = t,
                                     items = invoiceItems,
-                                    merchantName = "المتجر"
+                                    storeName = storeName
                                 )
                             },
                             modifier = Modifier.clip(CircleShape)
@@ -229,7 +236,7 @@ fun TransactionDetailsScreen(
                         context = context,
                         transaction = t,
                         items = invoiceItems,
-                        merchantName = "المتجر"
+                        storeName = storeName
                     )
                 },
                 modifier = Modifier.fillMaxWidth()

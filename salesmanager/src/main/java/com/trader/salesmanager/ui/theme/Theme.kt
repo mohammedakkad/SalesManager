@@ -1,11 +1,11 @@
 package com.trader.salesmanager.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val LightColors = lightColorScheme(
+// نستخدم Light فقط لتجنب مشاكل النص غير المرئي على أجهزة Dark Mode
+private val AppColors = lightColorScheme(
     primary            = Emerald500,
     onPrimary          = Color(0xFFFFFFFF),
     primaryContainer   = Emerald100,
@@ -16,7 +16,7 @@ private val LightColors = lightColorScheme(
     background         = Slate50,
     onBackground       = Slate900,
     surface            = Color(0xFFFFFFFF),
-    onSurface          = Slate800,
+    onSurface          = Slate800,        // ← نص داكن دائماً على Surface
     surfaceVariant     = Slate100,
     onSurfaceVariant   = Slate600,
     outline            = Slate200,
@@ -24,32 +24,12 @@ private val LightColors = lightColorScheme(
     onError            = Color(0xFFFFFFFF),
 )
 
-private val DarkColors = darkColorScheme(
-    primary            = Emerald400,
-    onPrimary          = Emerald900,
-    primaryContainer   = Emerald700,
-    onPrimaryContainer = Emerald100,
-    secondary          = Cyan400,
-    onSecondary        = Dark900,
-    tertiary           = Color(0xFFA78BFA),
-    background         = Dark950,
-    onBackground       = Slate100,
-    surface            = Dark900,
-    onSurface          = Slate100,
-    surfaceVariant     = Dark800,
-    onSurfaceVariant   = Slate400,
-    outline            = Dark700,
-    error              = Color(0xFFF87171),
-    onError            = Color(0xFF7F1D1D),
-)
-
 @Composable
-fun SalesManagerTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun SalesManagerTheme(content: @Composable () -> Unit) {
+    // نثبّت Light دائماً بغض النظر عن إعداد الجهاز
+    // هذا يحل مشكلة النص غير المرئي في TextField على بعض الأجهزة
     MaterialTheme(
-        colorScheme = if (darkTheme) DarkColors else LightColors,
+        colorScheme = AppColors,
         typography  = Typography,
         content     = content
     )

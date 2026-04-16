@@ -71,7 +71,7 @@ object AppUpdateChecker {
                     versionName   = versionName,
                     downloadUrl   = apkUrl,
                     changelog     = changelog,
-                    isForce       = true
+                    isForce       = false   // ← التحديث اختياري — يحمّل في الخلفية
                 )
             }
             null

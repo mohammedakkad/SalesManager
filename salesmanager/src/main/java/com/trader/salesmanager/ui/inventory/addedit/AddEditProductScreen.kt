@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.trader.core.domain.model.UnitType
+import com.trader.core.domain.model.WeightUnit
 import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
@@ -273,6 +274,27 @@ private fun UnitEditor(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true, modifier = Modifier.fillMaxWidth()
             )
+        }
+
+        // وحدة الوزن (فقط لو WEIGHT)
+        AnimatedVisibility(unit.unitType == UnitType.WEIGHT) {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text("وحدة الوزن:", style = MaterialTheme.typography.labelLarge,
+                    color = Color(0xFF64748B))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    WeightUnit.entries.forEach { wu ->
+                        FilterChip(
+                            selected = unit.weightUnit == wu,
+                            onClick = { onUpdate(unit.copy(weightUnit = wu)) },
+                            label = { Text(wu.label) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Emerald500.copy(0.15f),
+                                selectedLabelColor = Emerald500
+                            )
+                        )
+                    }
+                }
+            }
         }
 
         // حد التنبيه

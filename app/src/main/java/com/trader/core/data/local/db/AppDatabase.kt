@@ -21,7 +21,7 @@ import com.trader.core.domain.model.PaymentType
         InventorySessionEntity::class,
         InventorySessionItemEntity::class
     ],
-    version = 5,   // ← bumped from 4 to 5
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -170,9 +170,16 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // إضافة وحدة الوزن (كيلو افتراضياً للصنف الحالية)
+                db.execSQL("ALTER TABLE product_units ADD COLUMN weightUnit TEXT NOT NULL DEFAULT 'KG'")
+            }
+        }
+
         fun build(context: Context) =
             Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")

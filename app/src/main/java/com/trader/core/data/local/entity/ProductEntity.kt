@@ -1,13 +1,7 @@
 package com.trader.core.data.local.entity
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
-import com.trader.core.domain.model.Product
-import com.trader.core.domain.model.ProductUnit
-import com.trader.core.domain.model.SyncStatus
-import com.trader.core.domain.model.UnitType
+import androidx.room.*
+import com.trader.core.domain.model.*
 
 @Entity(tableName = "products")
 data class ProductEntity(
@@ -19,7 +13,7 @@ data class ProductEntity(
     val merchantId: String,
     val createdAt: Long,
     val updatedAt: Long,
-    val syncStatus: String   // SyncStatus.name
+    val syncStatus: String
 ) {
     fun toDomain() = Product(
         id = id, barcode = barcode, name = name, category = category,
@@ -49,13 +43,14 @@ fun Product.toEntity() = ProductEntity(
 data class ProductUnitEntity(
     @PrimaryKey val id: String,
     val productId: String,
-    val unitType: String,       // UnitType.name
+    val unitType: String,
     val unitLabel: String,
     val price: Double,
     val quantityInStock: Double,
     val itemsPerCarton: Int?,
     val lowStockThreshold: Double,
     val isDefault: Boolean,
+    val weightUnit: String = WeightUnit.KG.name,  // ← v2.1
     val createdAt: Long,
     val updatedAt: Long,
     val syncStatus: String
@@ -68,6 +63,7 @@ data class ProductUnitEntity(
         itemsPerCarton = itemsPerCarton,
         lowStockThreshold = lowStockThreshold,
         isDefault = isDefault,
+        weightUnit = runCatching { WeightUnit.valueOf(weightUnit) }.getOrDefault(WeightUnit.KG),
         createdAt = createdAt, updatedAt = updatedAt,
         syncStatus = SyncStatus.valueOf(syncStatus)
     )
@@ -80,6 +76,7 @@ fun ProductUnit.toEntity() = ProductUnitEntity(
     itemsPerCarton = itemsPerCarton,
     lowStockThreshold = lowStockThreshold,
     isDefault = isDefault,
+    weightUnit = weightUnit.name,
     createdAt = createdAt, updatedAt = updatedAt,
     syncStatus = syncStatus.name
 )
