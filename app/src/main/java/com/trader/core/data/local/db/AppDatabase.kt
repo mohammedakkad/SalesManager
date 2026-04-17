@@ -37,6 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val DB_NAME = "sales_manager.db"
 
+        // ===================== MAIGRATIONS =====================
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE customers ADD COLUMN phone TEXT NOT NULL DEFAULT ''")
@@ -94,7 +95,6 @@ abstract class AppDatabase : RoomDatabase() {
                         FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
                     )
                 """.trimIndent())
-                // ⚠️ Wrong index name — fixed in MIGRATION_4_5
                 db.execSQL("CREATE INDEX IF NOT EXISTS idx_pu_productId ON product_units(productId)")
 
                 db.execSQL("""
@@ -159,10 +159,6 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        // ✅ FIX: rename wrong index to match what Room expects
-        // Room auto-generates: index_{tableName}_{columnName}
-        // Migration 3→4 created: idx_pu_productId  ← wrong
-        // Room expects:           index_product_units_productId ← correct
         val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("DROP INDEX IF EXISTS idx_pu_productId")
@@ -172,20 +168,29 @@ abstract class AppDatabase : RoomDatabase() {
 
         val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // إضافة وحدة الوزن (كيلو افتراضياً للصنف الحالية)
                 db.execSQL("ALTER TABLE product_units ADD COLUMN weightUnit TEXT NOT NULL DEFAULT 'KG'")
             }
         }
 
+        // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
-            Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")
-                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('بنك', '${PaymentType.BANK.name}')")
-                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('محفظة', '${PaymentType.WALLET.name}')")
-                    }
-                }).build()
+        Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+        .addCallback(object : Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+
+                // ⚡ إضافة الزبون الزائر أولاً
+                db.execSQL(
+                    "INSERT OR IGNORE INTO customers (id, name, phone, createdAt) VALUES (-1, 'زبون زائر', '', 0)"
+                )
+
+                // إضافة طرق الدفع
+                db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")
+                db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('بنك', '${PaymentType.BANK.name}')")
+                db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('محفظة', '${PaymentType.WALLET.name}')")
+            }
+        })
+        .build()
     }
 }
