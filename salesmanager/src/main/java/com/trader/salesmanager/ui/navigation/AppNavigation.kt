@@ -282,16 +282,30 @@ fun AppNavigation() {
         }
         composable(
             Screen.EditTransaction.route,
-            listOf(navArgument("transactionId") {
-                type = NavType.LongType
-            })
-        ) {
-            AddEditTransactionScreen(
-                transactionId = it.arguments!!.getLong("transactionId"),
-                preselectedCustomerId = null,
-                onNavigateUp = {
-                    navController.navigateUp()
+            listOf(navArgument("transactionId") { type = NavType.LongType })
+        ) { back ->
+            // ✅ استقبال الأصناف من شاشة الفاتورة عند التعديل
+            val editInvoiceVm: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
+                org.koin.androidx.compose.koinViewModel()
+            val linesJson2  = back.savedStateHandle.get<String>("invoice_lines_json")
+            val invoiceTotal2 = back.savedStateHandle.get<Double>("invoice_total")
+
+            LaunchedEffect(linesJson2) {
+                if (linesJson2 != null && invoiceTotal2 != null) {
+                    editInvoiceVm.applyInvoiceLinesFromJson(linesJson2, invoiceTotal2)
+                    back.savedStateHandle.remove<String>("invoice_lines_json")
+                    back.savedStateHandle.remove<Double>("invoice_total")
                 }
+            }
+
+            AddEditTransactionScreen(
+                transactionId = back.arguments!!.getLong("transactionId"),
+                preselectedCustomerId = null,
+                onNavigateUp = { navController.navigateUp() },
+                onNavigateToInvoiceItems = { customerName ->
+                    navController.navigate(Screen.InvoiceItems.createRoute(customerName))
+                },
+                viewModel = editInvoiceVm
             )
         }
         composable(

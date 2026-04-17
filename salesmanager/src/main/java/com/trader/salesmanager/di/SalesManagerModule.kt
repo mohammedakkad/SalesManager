@@ -27,7 +27,6 @@ import com.trader.salesmanager.ui.reports.ReportsViewModel
 import com.trader.salesmanager.ui.reports.DayTransactionsViewModel
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel
 import com.trader.salesmanager.ui.transactions.list.TransactionsViewModel
-import com.trader.salesmanager.ui.activation.ActivationViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -83,7 +82,7 @@ val salesManagerModule = module {
     viewModel { AddEditCustomerViewModel(get()) }
     viewModel { params -> CustomerDetailsViewModel(get(), get(), params.get()) }
     viewModel { TransactionsViewModel(get()) }
-    viewModel { AddEditTransactionViewModel(get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId"))) }
+    viewModel { AddEditTransactionViewModel(get(), get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId"))) }
     viewModel { ReportsViewModel(get(), get()) }
     viewModel { params -> DayTransactionsViewModel(get(), params.get()) }
     viewModel { PaymentMethodsViewModel(get()) }
