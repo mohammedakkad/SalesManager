@@ -311,7 +311,7 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                         else "${qty.toInt()} ${unit.unitLabel}"
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = Color.WhiteVariant
+                            color = appColors.divider
                         ) {
                             Text(
                                 qtyText,

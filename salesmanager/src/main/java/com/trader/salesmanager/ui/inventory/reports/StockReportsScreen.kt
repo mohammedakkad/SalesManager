@@ -174,7 +174,7 @@ private fun LazyListScope.cashTab(state: StockReportsUiState) {
                 CashRow("الأسبوع الماضي", state.cashSummary.weekCash, Cyan500)
                 CashRow("آخر 30 يوم", state.cashSummary.monthCash, Violet500)
 
-                HorizontalDivider(color = Color.WhiteVariant)
+                HorizontalDivider(color = appColors.divider)
 
                 CashRow("إجمالي الديون غير المسددة",
                     state.cashSummary.totalDebt, DebtRed)

@@ -301,7 +301,7 @@ private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) 
                 }
             }
         }
-        HorizontalDivider(color = Color.WhiteVariant)
+        HorizontalDivider(color = appColors.divider)
     }
 }
 

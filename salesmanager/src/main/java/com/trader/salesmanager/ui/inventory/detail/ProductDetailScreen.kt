@@ -263,7 +263,7 @@ private fun UnitCard(
             // أزرار التعديل + سجل الحركات (عند التوسيع)
             AnimatedVisibility(isExpanded) {
                 Column {
-                    HorizontalDivider(color = Color.WhiteVariant)
+                    HorizontalDivider(color = appColors.divider)
                     // أزرار التعديل
                     Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -293,7 +293,7 @@ private fun UnitCard(
 
                     // سجل الحركات
                     if (movements.isNotEmpty()) {
-                        HorizontalDivider(color = Color.WhiteVariant)
+                        HorizontalDivider(color = appColors.divider)
                         Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text("سجل الحركات", fontWeight = FontWeight.SemiBold,

@@ -207,7 +207,7 @@ fun TransactionDetailsScreen(
                         invoiceItems.forEachIndexed { index, item ->
                             InvoiceItemRow(item)
                             if (index < invoiceItems.lastIndex)
-                                HorizontalDivider(color = Color.WhiteVariant)
+                                HorizontalDivider(color = appColors.divider)
                         }
                         // الإجمالي
                         HorizontalDivider(color = appColors.border, thickness = 1.dp)

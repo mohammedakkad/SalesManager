@@ -129,7 +129,7 @@ fun AddEditProductScreen(
                         onSetDefault = { viewModel.setDefaultUnit(index) }
                     )
                     if (index < state.units.lastIndex) {
-                        HorizontalDivider(Modifier.padding(vertical = 12.dp), color = Color.WhiteVariant)
+                        HorizontalDivider(Modifier.padding(vertical = 12.dp), color = appColors.divider)
                     }
                 }
                 Spacer(Modifier.height(8.dp))
