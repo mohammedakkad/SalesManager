@@ -7,11 +7,12 @@ import com.trader.core.domain.repository.*
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceLineItem
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 data class AddEditTransactionUiState(
     val customers: List<Customer> = emptyList(),
     val paymentMethods: List<PaymentMethod> = emptyList(),
-    val selectedCustomer: Customer? = WALK_IN_CUSTOMER, // ✅ زبون زائر افتراضي
+    val selectedCustomer: Customer? = WALK_IN_CUSTOMER,
     val amount: String = "",
     val isPaid: Boolean = true,
     val paymentType: PaymentType = PaymentType.DEBT,
@@ -78,7 +79,6 @@ class AddEditTransactionViewModel(
         editingId = transactionId
         viewModelScope.launch {
             val t = transactionRepo.getTransactionById(transactionId) ?: return@launch
-            // Walk-in customer has id = -1, no DB lookup needed
             val customer = if (t.customerId == WALK_IN_CUSTOMER.id) WALK_IN_CUSTOMER
             else customerRepo.getCustomerById(t.customerId)
             _uiState.update {
@@ -121,8 +121,6 @@ class AddEditTransactionViewModel(
     fun selectCustomer(c: Customer) = _uiState.update {
         it.copy(selectedCustomer = c, error = null)
     }
-
-    /** ✅ تحويل الأرقام العربية/الفارسية إلى لاتينية قبل الحفظ */
     fun updateAmount(a: String) = _uiState.update {
         it.copy(amount = a.toLatinDigits(), error = null)
     }
@@ -168,61 +166,95 @@ class AddEditTransactionViewModel(
                 hasItems = state.hasItems
             )
 
-            val savedId = if (editingId == null) transactionRepo.insertTransaction(transaction)
-            else {
-                transactionRepo.updateTransaction(transaction); editingId!!
-            }
+            if (editingId == null) {
+                // ────── حالة الإضافة ──────────────────────────────────
+                val savedId = transactionRepo.insertTransaction(transaction)
 
-            // ✅ خصم المخزون وحفظ أصناف الفاتورة
-            if (state.pendingLines.isNotEmpty() && editingId == null) {
-                val items = state.pendingLines.map {
-                    line ->
-                    InvoiceItem(
-                        id = java.util.UUID.randomUUID().toString(),
-                        transactionId = savedId,
-                        productId = line.product.product.id,
-                        productName = line.product.product.name,
-                        unitId = line.selectedUnit.id,
-                        unitLabel = line.selectedUnit.unitLabel,
-                        quantity = line.quantity,
-                        pricePerUnit = line.effectivePrice,
-                        totalPrice = line.totalPrice,
-                        merchantId = merchantId
-                    )
-                }
-                // حفظ الأصناف محلياً + مزامنة
-                invoiceRepo.saveItems(items)
-
-                // خصم المخزون لكل صنف
-                state.pendingLines.forEach {
-                    line ->
-                    stockRepo.deductStock(
-                        productId = line.product.product.id,
-                        unitId = line.selectedUnit.id,
-                        quantity = line.quantity,
-                        transactionId = savedId,
-                        productName = line.product.product.name,
-                        unitLabel = line.selectedUnit.unitLabel
-                    )
+                if (state.pendingLines.isNotEmpty()) {
+                    saveItemsAndDeductStock(savedId, state.pendingLines)
                 }
 
-                // مزامنة المخزون مع Firebase
-                stockRepo.syncPendingMovements()
-            }
+                _uiState.update {
+                    it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
+                }
 
-            _uiState.update {
-                it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
+            } else {
+                // ────── حالة التعديل ──────────────────────────────────
+                transactionRepo.updateTransaction(transaction)
+                val txId = editingId!!
+
+                if (state.pendingLines.isNotEmpty()) {
+                    // 1. جلب الأصناف القديمة قبل الحذف
+                    val oldItems = invoiceRepo.getItemsForTransactionOnce(txId)
+
+                    // 2. إرجاع المخزون للأصناف القديمة
+                    oldItems.forEach {
+                        old ->
+                        stockRepo.returnStock(
+                            productId = old.productId,
+                            unitId = old.unitId,
+                            quantity = old.quantity,
+                            transactionId = txId,
+                            productName = old.productName,
+                            unitLabel = old.unitLabel
+                        )
+                    }
+
+                    // 3. حذف الأصناف القديمة وحفظ الجديدة مع خصم المخزون
+                    invoiceRepo.deleteItemsForTransaction(txId)
+                    saveItemsAndDeductStock(txId, state.pendingLines)
+                }
+                // إذا لم يغيّر المستخدم الأصناف (pendingLines فارغ) → لا تعديل على المخزون
+
+                _uiState.update {
+                    it.copy(isLoading = false, isSaved = true, savedTransactionId = txId)
+                }
             }
         }
+    }
+
+    // ── مساعد مشترك: حفظ الأصناف + خصم المخزون + مزامنة ──────────
+    private suspend fun saveItemsAndDeductStock(transactionId: Long, lines: List<InvoiceLineItem>) {
+        val items = lines.map {
+            line ->
+            InvoiceItem(
+                id = UUID.randomUUID().toString(),
+                transactionId = transactionId,
+                productId = line.product.product.id,
+                productName = line.product.product.name,
+                unitId = line.selectedUnit.id,
+                unitLabel = line.selectedUnit.unitLabel,
+                quantity = line.quantity,
+                pricePerUnit = line.effectivePrice,
+                totalPrice = line.totalPrice,
+                merchantId = merchantId
+            )
+        }
+        invoiceRepo.saveItems(items)
+
+        lines.forEach {
+            line ->
+            stockRepo.deductStock(
+                productId = line.product.product.id,
+                unitId = line.selectedUnit.id,
+                quantity = line.quantity,
+                transactionId = transactionId,
+                productName = line.product.product.name,
+                unitLabel = line.selectedUnit.unitLabel
+            )
+        }
+
+        // مزامنة الكميات مع Firebase
+        stockRepo.syncPendingMovements()
     }
 }
 
 /** تحويل الأرقام العربية/الفارسية إلى أرقام لاتينية */
 private fun String.toLatinDigits(): String = this
-.replace('٠', '0').replace('١', '1').replace('٢', '2')
-.replace('٣', '3').replace('٤', '4').replace('٥', '5')
-.replace('٦', '6').replace('٧', '7').replace('٨', '8')
-.replace('٩', '9').replace('۰', '0').replace('۱', '1')
-.replace('۲', '2').replace('۳', '3').replace('۴', '4')
-.replace('۵', '5').replace('۶', '6').replace('۷', '7')
-.replace('۸', '8').replace('۹', '9')
+.replace('٠','0').replace('١','1').replace('٢','2')
+.replace('٣','3').replace('٤','4').replace('٥','5')
+.replace('٦','6').replace('٧','7').replace('٨','8')
+.replace('٩','9').replace('۰','0').replace('۱','1')
+.replace('۲','2').replace('۳','3').replace('۴','4')
+.replace('۵','5').replace('۶','6').replace('۷','7')
+.replace('۸','8').replace('۹','9')

@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 interface InvoiceItemRepository {
     fun getItemsForTransaction(transactionId: Long): Flow<List<InvoiceItem>>
     suspend fun saveItems(items: List<InvoiceItem>)
+    /** قراءة آنية — لمعرفة الأصناف القديمة قبل التعديل */
+    suspend fun getItemsForTransactionOnce(transactionId: Long): List<InvoiceItem>
     suspend fun deleteItemsForTransaction(transactionId: Long)
     suspend fun syncPendingItems()
 }

@@ -15,11 +15,24 @@ class InvoiceItemRepositoryImpl(
 ) : InvoiceItemRepository {
 
     override fun getItemsForTransaction(transactionId: Long): Flow<List<InvoiceItem>> =
-        dao.getForTransaction(transactionId).map { it.map { e -> e.toDomain() } }
+    dao.getForTransaction(transactionId).map {
+        it.map {
+            e -> e.toDomain()
+        }
+    }
 
     override suspend fun saveItems(items: List<InvoiceItem>) {
-        dao.insertAll(items.map { it.toEntity() })
-        try { remote.uploadInvoiceItems(merchantId, items) } catch (_: Exception) {}
+        dao.insertAll(items.map {
+            it.toEntity()
+        })
+        try {
+            remote.uploadInvoiceItems(merchantId, items)
+        } catch (_: Exception) {}
+    }
+
+    override suspend fun getItemsForTransactionOnce(transactionId: Long): List<InvoiceItem> =
+    dao.getForTransactionOnce(transactionId).map {
+        it.toDomain()
     }
 
     override suspend fun deleteItemsForTransaction(transactionId: Long) {
@@ -30,8 +43,12 @@ class InvoiceItemRepositoryImpl(
         val pending = dao.getPending()
         if (pending.isEmpty()) return
         try {
-            remote.uploadInvoiceItems(merchantId, pending.map { it.toDomain() })
-            pending.forEach { dao.markSynced(it.id) }
+            remote.uploadInvoiceItems(merchantId, pending.map {
+                it.toDomain()
+            })
+            pending.forEach {
+                dao.markSynced(it.id)
+            }
         } catch (_: Exception) {}
     }
 }

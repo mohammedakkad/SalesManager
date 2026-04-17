@@ -17,6 +17,10 @@ interface InvoiceItemDao {
     @Query("SELECT * FROM invoice_items WHERE transactionId = :transactionId ORDER BY rowid ASC")
     fun getForTransaction(transactionId: Long): Flow<List<InvoiceItemEntity>>
 
+    /** للقراءة الآنية عند تعديل العملية — يُستخدم لمعرفة الأصناف القديمة قبل الحذف */
+    @Query("SELECT * FROM invoice_items WHERE transactionId = :transactionId ORDER BY rowid ASC")
+    suspend fun getForTransactionOnce(transactionId: Long): List<InvoiceItemEntity>
+
     @Query("DELETE FROM invoice_items WHERE transactionId = :transactionId")
     suspend fun deleteForTransaction(transactionId: Long)
 
@@ -57,4 +61,4 @@ interface InventoryDao {
 
     @Query("SELECT * FROM inventory_session_items WHERE sessionId = :sessionId")
     suspend fun getSessionItemsOnce(sessionId: String): List<InventorySessionItemEntity>
-}
+    }
