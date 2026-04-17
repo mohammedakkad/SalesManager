@@ -26,6 +26,7 @@ import com.trader.core.domain.model.*
 import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
+import com.trader.salesmanager.ui.inventory.invoice.toLatinDigits
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -392,7 +393,7 @@ private fun EditLineDialog(
                     }
                 }
                 OutlinedTextField(value = qtyInput, onValueChange = {
-                    qtyInput = it
+                    qtyInput = it.toLatinDigits()
                 },
                     label = {
                         Text("الكمية")
@@ -400,7 +401,7 @@ private fun EditLineDialog(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true, modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = priceInput, onValueChange = {
-                    priceInput = it
+                    priceInput = it.toLatinDigits()
                 },
                     label = {
                         Text("سعر مخصص (فارغ = افتراضي ₪${String.format("%.2f", line.selectedUnit.price)})")
@@ -411,11 +412,11 @@ private fun EditLineDialog(
         },
         confirmButton = {
             Button(onClick = {
-                qtyInput.toDoubleOrNull()?.let {
+                qtyInput.toLatinDigits().toDoubleOrNull()?.let {
                     onUpdateQty(it)
-                }; onUpdatePrice(priceInput.toDoubleOrNull()); onDismiss()
+                }; onUpdatePrice(priceInput.toLatinDigits().toDoubleOrNull()); onDismiss()
             },
-                enabled = qtyInput.toDoubleOrNull() != null,
+                enabled = qtyInput.toLatinDigits().toDoubleOrNull() != null,
                 colors = ButtonDefaults.buttonColors(containerColor = Violet500)) {
                 Text("تطبيق")
             }

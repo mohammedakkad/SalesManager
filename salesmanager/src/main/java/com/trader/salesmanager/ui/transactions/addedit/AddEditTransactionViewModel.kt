@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 data class AddEditTransactionUiState(
     val customers: List<Customer> = emptyList(),
     val paymentMethods: List<PaymentMethod> = emptyList(),
-    val selectedCustomer: Customer? = null,
+    val selectedCustomer: Customer? = WALK_IN_CUSTOMER, // ✅ زبون زائر افتراضي
     val amount: String = "",
     val isPaid: Boolean = true,
     val paymentType: PaymentType = PaymentType.DEBT,
@@ -28,7 +28,10 @@ data class AddEditTransactionUiState(
 
 class AddEditTransactionViewModel(
     private val transactionRepo: TransactionRepository,
-    private val customerRepo: CustomerRepository
+    private val customerRepo: CustomerRepository,
+    private val stockRepo: StockRepository,
+    private val invoiceRepo: InvoiceItemRepository,
+    private val merchantId: String
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
@@ -54,7 +57,8 @@ class AddEditTransactionViewModel(
                     it.copy(
                         paymentMethods = methods,
                         selectedPaymentMethod = it.selectedPaymentMethod ?: methods.firstOrNull()
-                    )}
+                    )
+                }
             }
         }
     }
@@ -74,7 +78,9 @@ class AddEditTransactionViewModel(
         editingId = transactionId
         viewModelScope.launch {
             val t = transactionRepo.getTransactionById(transactionId) ?: return@launch
-            val customer = customerRepo.getCustomerById(t.customerId)
+            // Walk-in customer has id = -1, no DB lookup needed
+            val customer = if (t.customerId == WALK_IN_CUSTOMER.id) WALK_IN_CUSTOMER
+            else customerRepo.getCustomerById(t.customerId)
             _uiState.update {
                 state ->
                 state.copy(
@@ -96,7 +102,8 @@ class AddEditTransactionViewModel(
                 pendingLines = lines,
                 hasItems = lines.isNotEmpty(),
                 amount = if (lines.isNotEmpty()) String.format("%.2f", total) else it.amount
-            )}
+            )
+        }
     }
 
     fun applyInvoiceLinesFromJson(json: String, total: Double) {
@@ -106,15 +113,18 @@ class AddEditTransactionViewModel(
                 it.copy(
                     hasItems = arr.length() > 0,
                     amount = if (arr.length() > 0) String.format("%.2f", total) else it.amount
-                )}
+                )
+            }
         } catch (_: Exception) {}
     }
 
     fun selectCustomer(c: Customer) = _uiState.update {
         it.copy(selectedCustomer = c, error = null)
     }
+
+    /** ✅ تحويل الأرقام العربية/الفارسية إلى لاتينية قبل الحفظ */
     fun updateAmount(a: String) = _uiState.update {
-        it.copy(amount = a, error = null)
+        it.copy(amount = a.toLatinDigits(), error = null)
     }
     fun updateIsPaid(v: Boolean) = _uiState.update {
         it.copy(isPaid = v)
@@ -131,23 +141,21 @@ class AddEditTransactionViewModel(
 
     fun save() {
         val state = _uiState.value
-        val customer = state.selectedCustomer
-        val amount = state.amount.toDoubleOrNull()
-        if (customer == null) {
-            _uiState.update {
-                it.copy(error = "اختر الزبون")
-            }; return
-        }
+        val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
+        val amount = state.amount.toLatinDigits().toDoubleOrNull()
+
         if (amount == null || amount <= 0) {
             _uiState.update {
                 it.copy(error = "أدخل مبلغ صحيح")
-            }; return
+            }
+            return
         }
 
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
+
             val transaction = Transaction(
                 id = editingId ?: 0,
                 customerId = customer.id,
@@ -159,13 +167,62 @@ class AddEditTransactionViewModel(
                 paidAt = if (state.isPaid) System.currentTimeMillis() else null,
                 hasItems = state.hasItems
             )
+
             val savedId = if (editingId == null) transactionRepo.insertTransaction(transaction)
             else {
                 transactionRepo.updateTransaction(transaction); editingId!!
             }
+
+            // ✅ خصم المخزون وحفظ أصناف الفاتورة
+            if (state.pendingLines.isNotEmpty() && editingId == null) {
+                val items = state.pendingLines.map {
+                    line ->
+                    InvoiceItem(
+                        id = java.util.UUID.randomUUID().toString(),
+                        transactionId = savedId,
+                        productId = line.product.product.id,
+                        productName = line.product.product.name,
+                        unitId = line.selectedUnit.id,
+                        unitLabel = line.selectedUnit.unitLabel,
+                        quantity = line.quantity,
+                        pricePerUnit = line.effectivePrice,
+                        totalPrice = line.totalPrice,
+                        merchantId = merchantId
+                    )
+                }
+                // حفظ الأصناف محلياً + مزامنة
+                invoiceRepo.saveItems(items)
+
+                // خصم المخزون لكل صنف
+                state.pendingLines.forEach {
+                    line ->
+                    stockRepo.deductStock(
+                        productId = line.product.product.id,
+                        unitId = line.selectedUnit.id,
+                        quantity = line.quantity,
+                        transactionId = savedId,
+                        productName = line.product.product.name,
+                        unitLabel = line.selectedUnit.unitLabel
+                    )
+                }
+
+                // مزامنة المخزون مع Firebase
+                stockRepo.syncPendingMovements()
+            }
+
             _uiState.update {
                 it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
             }
         }
     }
 }
+
+/** تحويل الأرقام العربية/الفارسية إلى أرقام لاتينية */
+private fun String.toLatinDigits(): String = this
+.replace('٠', '0').replace('١', '1').replace('٢', '2')
+.replace('٣', '3').replace('٤', '4').replace('٥', '5')
+.replace('٦', '6').replace('٧', '7').replace('٨', '8')
+.replace('٩', '9').replace('۰', '0').replace('۱', '1')
+.replace('۲', '2').replace('۳', '3').replace('۴', '4')
+.replace('۵', '5').replace('۶', '6').replace('۷', '7')
+.replace('۸', '8').replace('۹', '9')

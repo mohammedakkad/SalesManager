@@ -6,3 +6,6 @@ data class Customer(
     val phone: String = "",
     val createdAt: Long = System.currentTimeMillis()
 )
+
+/** زبون زائر — يُستخدم افتراضياً عند إضافة عملية بدون تحديد زبون */
+val WALK_IN_CUSTOMER = Customer(id = -1L, name = "زبون زائر", phone = "")

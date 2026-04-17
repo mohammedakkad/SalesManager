@@ -151,7 +151,7 @@ fun AddEditTransactionScreen(
 
             // ── المبلغ ───────────────────────────────────────────────
             OutlinedTextField(
-                value = uiState.amount, onValueChange = viewModel::updateAmount,
+                value = uiState.amount, onValueChange = { v -> viewModel.updateAmount(v.filter { it.isDigit() || it == '.' || it in '٠'..'٩' || it in '۰'..'۹' }) },
                 label = {
                     Text("المبلغ الإجمالي ₪ *")
                 },
