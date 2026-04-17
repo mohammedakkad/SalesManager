@@ -21,6 +21,7 @@ import com.trader.core.domain.model.UnitType
 import com.trader.core.domain.model.WeightUnit
 import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -50,7 +51,7 @@ fun AddEditProductScreen(
     }
 
     Column(
-        Modifier.fillMaxSize().background(Color(0xFFF2F4F7))
+        Modifier.fillMaxSize().background(appColors.screenBackground)
             .verticalScroll(rememberScrollState())
     ) {
         // ── Header ────────────────────────────────────────────────
@@ -128,7 +129,7 @@ fun AddEditProductScreen(
                         onSetDefault = { viewModel.setDefaultUnit(index) }
                     )
                     if (index < state.units.lastIndex) {
-                        HorizontalDivider(Modifier.padding(vertical = 12.dp), color = Color(0xFFF1F5F9))
+                        HorizontalDivider(Modifier.padding(vertical = 12.dp), color = Color.WhiteVariant)
                     }
                 }
                 Spacer(Modifier.height(8.dp))
@@ -280,7 +281,7 @@ private fun UnitEditor(
         AnimatedVisibility(unit.unitType == UnitType.WEIGHT) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text("وحدة الوزن:", style = MaterialTheme.typography.labelLarge,
-                    color = Color(0xFF64748B))
+                    color = appColors.textSecondary)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     WeightUnit.entries.forEach { wu ->
                         FilterChip(
@@ -318,7 +319,7 @@ private fun SectionCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(1.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
     ) {
         Column(Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {

@@ -27,6 +27,7 @@ import com.trader.core.domain.model.ChatMessage
 import com.trader.core.domain.model.MessageStatus
 import com.trader.core.domain.model.SENDER_ADMIN
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,6 +57,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             ChatInputBar(
                 state     = state,
@@ -78,7 +80,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color(0xFF1E293B))
+                            .background(appColors.textPrimary)
                             .statusBarsPadding()
                             .padding(horizontal = 8.dp, vertical = 12.dp)
                     ) {
@@ -429,8 +431,8 @@ private fun ChatBubble(
 private fun ReadReceipt(status: MessageStatus) {
     val color = when (status) {
         MessageStatus.READ    -> Color(0xFF06B6D4)  // أزرق = مقروء
-        MessageStatus.SENT    -> Color(0xFF94A3B8)  // رمادي = وصلت
-        MessageStatus.SENDING -> Color(0xFF94A3B8)
+        MessageStatus.SENT    -> appColors.textSubtle  // رمادي = وصلت
+        MessageStatus.SENDING -> appColors.textSubtle
     }
     when (status) {
         MessageStatus.SENT, MessageStatus.SENDING -> {

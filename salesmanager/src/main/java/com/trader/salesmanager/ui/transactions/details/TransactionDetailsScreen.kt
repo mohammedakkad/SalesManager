@@ -28,6 +28,7 @@ import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.DateUtils.toDateTimeString
 import com.trader.salesmanager.ui.components.StatusChip
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.InvoiceSharer
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -91,7 +92,7 @@ fun TransactionDetailsScreen(
         return
     }
 
-    LazyColumn(Modifier.fillMaxSize().background(Color(0xFFF2F4F7))) {
+    LazyColumn(Modifier.fillMaxSize().background(appColors.screenBackground)) {
 
         // ── Header ────────────────────────────────────────────────
         item {
@@ -191,7 +192,7 @@ fun TransactionDetailsScreen(
                     "أصناف الفاتورة",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color(0xFF64748B),
+                    color = appColors.textSecondary,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                 )
             }
@@ -199,17 +200,17 @@ fun TransactionDetailsScreen(
                 Card(
                     Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = appColors.cardBackground),
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     Column(Modifier.fillMaxWidth()) {
                         invoiceItems.forEachIndexed { index, item ->
                             InvoiceItemRow(item)
                             if (index < invoiceItems.lastIndex)
-                                HorizontalDivider(color = Color(0xFFF1F5F9))
+                                HorizontalDivider(color = Color.WhiteVariant)
                         }
                         // الإجمالي
-                        HorizontalDivider(color = Color(0xFFE2E8F0), thickness = 1.dp)
+                        HorizontalDivider(color = appColors.border, thickness = 1.dp)
                         Row(
                             Modifier.fillMaxWidth().padding(14.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
@@ -281,7 +282,7 @@ private fun InvoiceItemRow(item: InvoiceItem) {
             Text(
                 "$qtyStr ${item.unitLabel}  ×  ₪${String.format("%.2f", item.pricePerUnit)}",
                 style = MaterialTheme.typography.labelSmall,
-                color = Color(0xFF94A3B8)
+                color = appColors.textSubtle
             )
         }
         Text(

@@ -52,6 +52,7 @@ fun HomeScreen(
     val scrollState = rememberScrollState()
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick        = onAddTransaction,

@@ -52,6 +52,7 @@ fun CustomersScreen(
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddCustomer,

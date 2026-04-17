@@ -21,6 +21,7 @@ import com.trader.core.domain.model.Transaction
 import com.trader.core.util.DateUtils.toDateString
 import com.trader.salesmanager.ui.components.StatusChip
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -33,6 +34,7 @@ fun TransactionsScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddTransaction,

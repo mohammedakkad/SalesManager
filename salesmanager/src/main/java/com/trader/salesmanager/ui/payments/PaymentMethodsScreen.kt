@@ -32,6 +32,7 @@ fun PaymentMethodsScreen(onNavigateUp: () -> Unit, viewModel: PaymentMethodsView
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text("طرق الدفع", fontWeight = FontWeight.Bold) },

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.trader.core.domain.model.*
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -62,7 +63,7 @@ fun InventorySessionScreen(
                     Surface(shape = RoundedCornerShape(12.dp), color = Emerald500.copy(0.08f)) {
                         Row(Modifier.fillMaxWidth().padding(12.dp), Arrangement.SpaceEvenly) {
                             StatItem("${viewModel.countedItems}", "تم عدّه", Emerald500)
-                            StatItem("${viewModel.totalItems - viewModel.countedItems}", "لم يُعدّ", Color(0xFF94A3B8))
+                            StatItem("${viewModel.totalItems - viewModel.countedItems}", "لم يُعدّ", appColors.textSubtle)
                             StatItem("${viewModel.adjustmentsCount}", "تعديل", UnpaidAmber)
                         }
                     }
@@ -141,7 +142,7 @@ fun InventorySessionScreen(
         )
     }
 
-    Scaffold(containerColor = Color(0xFFF2F4F7)) {
+    Scaffold(containerColor = appColors.screenBackground) {
         padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
 
@@ -265,7 +266,7 @@ fun InventorySessionScreen(
                             (productName, productItems) ->
                             item(key = "header_$productName") {
                                 Text(productName, style = MaterialTheme.typography.labelLarge,
-                                    fontWeight = FontWeight.Bold, color = Color(0xFF475569),
+                                    fontWeight = FontWeight.Bold, color = appColors.textSecondary,
                                     modifier = Modifier.padding(vertical = 4.dp, horizontal = 2.dp))
                             }
                             items(productItems, key = { "${it.productId}_${it.unitId}" }) {
@@ -323,7 +324,7 @@ private fun InventoryItemCard(item: InventorySessionItem, onClick: () -> Unit) {
             Box(Modifier.size(40.dp).clip(CircleShape).background(when {
                 isCounted && hasDiff -> UnpaidAmber.copy(0.15f)
                 isCounted -> PaidGreen.copy(0.15f)
-                else -> Color(0xFFF1F5F9)
+                else -> appColors.cardBackgroundVariant
             }), contentAlignment = Alignment.Center) {
                 Icon(when {
                     isCounted && hasDiff -> Icons.Rounded.SwapVert
@@ -332,13 +333,13 @@ private fun InventoryItemCard(item: InventorySessionItem, onClick: () -> Unit) {
                 },
                     null,
                     tint = when {
-                        isCounted && hasDiff -> UnpaidAmber; isCounted -> PaidGreen; else -> Color(0xFFCBD5E1)
+                        isCounted && hasDiff -> UnpaidAmber; isCounted -> PaidGreen; else -> appColors.divider
                     },
                     modifier = Modifier.size(22.dp))
             }
             Column(Modifier.weight(1f)) {
                 Text(item.unitLabel, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                Text("النظام: ${formatQty(item.systemQuantity)}", style = MaterialTheme.typography.bodySmall, color = Color(0xFF94A3B8))
+                Text("النظام: ${formatQty(item.systemQuantity)}", style = MaterialTheme.typography.bodySmall, color = appColors.textSubtle)
             }
             Column(horizontalAlignment = Alignment.End) {
                 if (isCounted) {
@@ -349,9 +350,9 @@ private fun InventoryItemCard(item: InventorySessionItem, onClick: () -> Unit) {
                         style = MaterialTheme.typography.labelSmall,
                         color = if (diff > 0) PaidGreen else DebtRed, fontWeight = FontWeight.Bold)
                 } else {
-                    Text("لم يُعدّ", style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1))
+                    Text("لم يُعدّ", style = MaterialTheme.typography.labelSmall, color = appColors.divider)
                 }
-                Icon(Icons.Rounded.Edit, null, tint = Color(0xFFCBD5E1), modifier = Modifier.size(14.dp))
+                Icon(Icons.Rounded.Edit, null, tint = appColors.divider, modifier = Modifier.size(14.dp))
             }
         }
     }
@@ -375,14 +376,14 @@ private fun CountInputDialog(
         title = {
             Column {
                 Text(item.productName, fontWeight = FontWeight.Bold)
-                Text(item.unitLabel, style = MaterialTheme.typography.bodySmall, color = Color(0xFF94A3B8))
+                Text(item.unitLabel, style = MaterialTheme.typography.bodySmall, color = appColors.textSubtle)
             }
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(Color(0xFFF1F5F9)).padding(10.dp),
+                Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(10.dp)).background(appColors.cardBackgroundVariant).padding(10.dp),
                     Arrangement.SpaceBetween) {
-                    Text("كمية النظام:", style = MaterialTheme.typography.bodySmall, color = Color(0xFF64748B))
+                    Text("كمية النظام:", style = MaterialTheme.typography.bodySmall, color = appColors.textSecondary)
                     Text(formatQty(item.systemQuantity), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall)
                 }
                 OutlinedTextField(value = input, onValueChange = {
@@ -442,7 +443,7 @@ private fun NoActiveSession(pastSessions: List<InventorySession>, onStart: () ->
     LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         item {
             Card(shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = appColors.cardBackground),
                 elevation = CardDefaults.cardElevation(2.dp)) {
                 Column(Modifier.fillMaxWidth().padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -451,7 +452,7 @@ private fun NoActiveSession(pastSessions: List<InventorySession>, onStart: () ->
                     Text("لا توجد جلسة جرد نشطة", fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleMedium)
                     Text("ابدأ جلسة جرد جديدة لمطابقة الكميات الفعلية مع النظام",
-                        style = MaterialTheme.typography.bodyMedium, color = Color(0xFF94A3B8),
+                        style = MaterialTheme.typography.bodyMedium, color = appColors.textSubtle,
                         textAlign = TextAlign.Center)
                     Button(onClick = onStart, modifier = Modifier.fillMaxWidth().height(52.dp),
                         shape = RoundedCornerShape(14.dp),
@@ -466,14 +467,14 @@ private fun NoActiveSession(pastSessions: List<InventorySession>, onStart: () ->
         if (pastSessions.isNotEmpty()) {
             item {
                 Text("جلسات سابقة", fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleSmall, color = Color(0xFF64748B))
+                    style = MaterialTheme.typography.titleSmall, color = appColors.textSecondary)
             }
             items(pastSessions, key = {
                 it.id
             }) {
                 session ->
                 Card(shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = appColors.cardBackground),
                     elevation = CardDefaults.cardElevation(1.dp)) {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(14.dp),
@@ -488,7 +489,7 @@ private fun NoActiveSession(pastSessions: List<InventorySession>, onStart: () ->
                             Text(fmt.format(Date(session.startedAt)),
                                 style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
                             Text("${session.totalAdjustments} تعديل",
-                                style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8))
+                                style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
                         }
                         Surface(shape = RoundedCornerShape(20.dp), color = PaidGreen.copy(0.12f)) {
                             Text("مكتمل", Modifier.padding(horizontal = 8.dp, vertical = 4.dp),

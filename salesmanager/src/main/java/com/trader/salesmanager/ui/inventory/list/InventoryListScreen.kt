@@ -27,6 +27,7 @@ import com.trader.core.domain.model.ProductWithUnits
 import com.trader.core.domain.model.UnitType
 import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +77,7 @@ fun InventoryListScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFFF2F4F7),
+        containerColor = appColors.screenBackground,
         floatingActionButton = {
             Column(
                 horizontalAlignment = Alignment.End,
@@ -193,7 +194,7 @@ fun InventoryListScreen(
                                 StockFilter.LOW -> UnpaidAmber
                                 StockFilter.OUT -> DebtRed
                             },
-                            containerColor = Color(0xFFF1F5F9)
+                            containerColor = appColors.cardBackgroundVariant
                         )
                     )
                 }
@@ -212,11 +213,11 @@ fun InventoryListScreen(
                     empty -> Box(Modifier.fillMaxSize(), Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(Icons.Rounded.Inventory2, null,
-                                Modifier.size(64.dp), tint = Color(0xFFCBD5E1))
+                                Modifier.size(64.dp), tint = appColors.divider)
                             Spacer(Modifier.height(12.dp))
                             Text(
                                 if (state.query.isNotEmpty()) "لا توجد نتائج" else "المخزن فارغ\nأضف أصنافك الآن",
-                                color = Color(0xFF94A3B8), textAlign = TextAlign.Center
+                                color = appColors.textSubtle, textAlign = TextAlign.Center
                             )
                         }
                     }
@@ -227,7 +228,7 @@ fun InventoryListScreen(
                         item {
                             Text("${state.filtered.size} صنف",
                                 style = MaterialTheme.typography.labelMedium,
-                                color = Color(0xFF94A3B8),
+                                color = appColors.textSubtle,
                                 modifier = Modifier.padding(bottom = 4.dp))
                         }
                         items(state.filtered, key = { it.product.id }) { item ->
@@ -280,7 +281,7 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
     ) {
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             // أيقونة الصنف
@@ -298,7 +299,7 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                     overflow = TextOverflow.Ellipsis)
                 if (item.product.category.isNotEmpty()) {
                     Text(item.product.category, style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF94A3B8))
+                        color = appColors.textSubtle)
                 }
                 Spacer(Modifier.height(6.dp))
                 // وحدات الصنف
@@ -310,13 +311,13 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                         else "${qty.toInt()} ${unit.unitLabel}"
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = Color(0xFFF1F5F9)
+                            color = Color.WhiteVariant
                         ) {
                             Text(
                                 qtyText,
                                 Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = Color(0xFF475569)
+                                color = appColors.textSecondary
                             )
                         }
                     }
@@ -340,10 +341,10 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                     Text("₪${String.format("%.2f", unit.price)}",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B))
+                        color = appColors.textPrimary)
                 }
                 Icon(Icons.Rounded.ChevronRight, null,
-                    tint = Color(0xFFCBD5E1), modifier = Modifier.size(18.dp))
+                    tint = appColors.divider, modifier = Modifier.size(18.dp))
             }
         }
     }

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.trader.core.domain.model.ProductWithUnits
 import com.trader.core.domain.model.UnitType
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -36,7 +37,7 @@ fun StockReportsScreen(
     var selectedTab by remember { mutableIntStateOf(0) }
 
     LazyColumn(
-        Modifier.fillMaxSize().background(Color(0xFFF2F4F7))
+        Modifier.fillMaxSize().background(appColors.screenBackground)
     ) {
         // ── Header ────────────────────────────────────────────────
         item {
@@ -137,7 +138,7 @@ private fun LazyListScope.stockTab(state: StockReportsUiState) {
             Text("تفاصيل المخزن",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleSmall,
-                color = Color(0xFF64748B),
+                color = appColors.textSecondary,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
         }
         items(state.stockItems, key = { "${it.productName}_${it.unitLabel}" }) { item ->
@@ -161,7 +162,7 @@ private fun LazyListScope.cashTab(state: StockReportsUiState) {
         Card(
             Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = appColors.cardBackground),
             elevation = CardDefaults.cardElevation(2.dp)
         ) {
             Column(Modifier.fillMaxWidth().padding(16.dp),
@@ -173,7 +174,7 @@ private fun LazyListScope.cashTab(state: StockReportsUiState) {
                 CashRow("الأسبوع الماضي", state.cashSummary.weekCash, Cyan500)
                 CashRow("آخر 30 يوم", state.cashSummary.monthCash, Violet500)
 
-                HorizontalDivider(color = Color(0xFFF1F5F9))
+                HorizontalDivider(color = Color.WhiteVariant)
 
                 CashRow("إجمالي الديون غير المسددة",
                     state.cashSummary.totalDebt, DebtRed)
@@ -273,7 +274,7 @@ private fun StockItemRow(item: StockReportItem) {
     Card(
         Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 3.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Row(
@@ -300,7 +301,7 @@ private fun StockItemRow(item: StockReportItem) {
                     style = MaterialTheme.typography.bodySmall,
                     maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(item.unitLabel, style = MaterialTheme.typography.labelSmall,
-                    color = Color(0xFF94A3B8))
+                    color = appColors.textSubtle)
             }
             val qtyStr = when (item.unitType) {
                 UnitType.WEIGHT -> "${String.format("%.3f", item.currentQty).trimEnd('0').trimEnd('.')} كجم"
@@ -310,7 +311,7 @@ private fun StockItemRow(item: StockReportItem) {
                 style = MaterialTheme.typography.bodySmall,
                 color = when {
                     item.currentQty <= 0 -> DebtRed
-                    else                 -> Color(0xFF1E293B)
+                    else                 -> appColors.textPrimary
                 })
         }
     }
@@ -320,7 +321,7 @@ private fun StockItemRow(item: StockReportItem) {
 private fun CashRow(label: String, amount: Double, color: Color) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically) {
-        Text(label, style = MaterialTheme.typography.bodySmall, color = Color(0xFF64748B))
+        Text(label, style = MaterialTheme.typography.bodySmall, color = appColors.textSecondary)
         Text("₪${String.format("%,.2f", amount)}",
             fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium,
             color = color)

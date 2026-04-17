@@ -27,6 +27,7 @@ import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.TransactionRepository
 import com.trader.salesmanager.ui.components.StatusChip
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import org.koin.androidx.compose.koinViewModel
@@ -124,7 +125,7 @@ fun DayTransactionsScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFFF2F4F7)
+        containerColor = appColors.screenBackground
     ) { padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
 
@@ -216,11 +217,11 @@ fun DayTransactionsScreen(
                     empty -> Box(Modifier.fillMaxSize(), Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Icon(Icons.Rounded.SearchOff, null,
-                                modifier = Modifier.size(56.dp), tint = Color(0xFFCBD5E1))
+                                modifier = Modifier.size(56.dp), tint = appColors.divider)
                             Spacer(Modifier.height(8.dp))
                             Text(if (state.query.isNotEmpty()) "لا توجد نتائج للبحث"
                                  else "لا توجد عمليات في هذا اليوم",
-                                color = Color(0xFF94A3B8), textAlign = TextAlign.Center)
+                                color = appColors.textSubtle, textAlign = TextAlign.Center)
                         }
                     }
                     else -> LazyColumn(
@@ -230,7 +231,7 @@ fun DayTransactionsScreen(
                         item {
                             Text("${state.filtered.size} عملية",
                                 style = MaterialTheme.typography.labelMedium,
-                                color = Color(0xFF94A3B8),
+                                color = appColors.textSubtle,
                                 modifier = Modifier.padding(bottom = 4.dp))
                         }
                         itemsIndexed(state.filtered, key = { _, t -> t.id }) { index, tx ->
@@ -257,7 +258,7 @@ fun DayTransactionsScreen(
 private fun SummaryChip(modifier: Modifier, label: String, value: Double, color: Color) {
     val animated by animateFloatAsState(value.toFloat(), spring(Spring.DampingRatioMediumBouncy), label = "v")
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8))
+        Text(label, style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
         Spacer(Modifier.height(2.dp))
         Text(
             "₪${String.format("%,.0f", animated)}",
@@ -278,7 +279,7 @@ private fun DayTxCard(tx: Transaction, onClick: () -> Unit) {
         shape = RoundedCornerShape(16.dp),
         onClick = onClick,
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
     ) {
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -294,15 +295,15 @@ private fun DayTxCard(tx: Transaction, onClick: () -> Unit) {
                     style = MaterialTheme.typography.bodyMedium)
                 if (tx.paymentMethodName.isNotEmpty())
                     Text(tx.paymentMethodName, style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF94A3B8))
+                        color = appColors.textSubtle)
                 if (tx.note.isNotEmpty())
                     Text(tx.note, style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF94A3B8), maxLines = 1)
+                        color = appColors.textSubtle, maxLines = 1)
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text("₪${String.format("%,.0f", tx.amount)}",
                     style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
-                    color = if (tx.isPaid) PaidGreen else Color(0xFF1E293B))
+                    color = if (tx.isPaid) PaidGreen else appColors.textPrimary)
                 Spacer(Modifier.height(4.dp))
                 StatusChip(isPaid = tx.isPaid)
             }
@@ -321,7 +322,7 @@ private fun FilterBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = Color.White,
+        containerColor = appColors.cardBackground,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
         Column(
@@ -343,7 +344,7 @@ private fun FilterBottomSheet(
             // Paid filter
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("حالة الدفع", style = MaterialTheme.typography.labelLarge,
-                    color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
+                    color = appColors.textSecondary, fontWeight = FontWeight.SemiBold)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(null to "الكل", true to "مدفوع", false to "غير مدفوع")
                         .forEach { (value, label) ->
@@ -359,8 +360,8 @@ private fun FilterBottomSheet(
                                     selectedLabelColor = if (value == true) PaidGreen
                                                         else if (value == false) DebtRed
                                                         else Violet500,
-                                    containerColor = Color(0xFFF1F5F9),
-                                    labelColor = Color(0xFF475569)
+                                    containerColor = appColors.cardBackgroundVariant,
+                                    labelColor = appColors.textSecondary
                                 ),
                                 leadingIcon = if (sel) ({
                                     Icon(Icons.Rounded.Check, null,
@@ -378,7 +379,7 @@ private fun FilterBottomSheet(
             if (state.paymentMethods.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("طريقة الدفع", style = MaterialTheme.typography.labelLarge,
-                        color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
+                        color = appColors.textSecondary, fontWeight = FontWeight.SemiBold)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.horizontalScroll(
                         rememberScrollState())) {
                         // All
@@ -389,7 +390,7 @@ private fun FilterBottomSheet(
                             colors   = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = Cyan500.copy(0.12f),
                                 selectedLabelColor     = Cyan500,
-                                containerColor = Color(0xFFF1F5F9)
+                                containerColor = appColors.cardBackgroundVariant
                             )
                         )
                         state.paymentMethods.forEach { method ->
@@ -401,7 +402,7 @@ private fun FilterBottomSheet(
                                 colors   = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = Cyan500.copy(0.12f),
                                     selectedLabelColor     = Cyan500,
-                                    containerColor = Color(0xFFF1F5F9)
+                                    containerColor = appColors.cardBackgroundVariant
                                 )
                             )
                         }

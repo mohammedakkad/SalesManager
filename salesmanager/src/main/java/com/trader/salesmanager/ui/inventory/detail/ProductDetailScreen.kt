@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trader.core.domain.model.*
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -119,7 +120,7 @@ fun ProductDetailScreen(
     val bgColors = listOf(Emerald500, Cyan500, Violet500, UnpaidAmber)
     val bg = bgColors[p.product.name.length % bgColors.size]
 
-    LazyColumn(Modifier.fillMaxSize().background(Color(0xFFF2F4F7))) {
+    LazyColumn(Modifier.fillMaxSize().background(appColors.screenBackground)) {
 
         // ── Header ────────────────────────────────────────────────
         item {
@@ -171,7 +172,7 @@ fun ProductDetailScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("الوحدات والمخزون", fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color(0xFF64748B))
+                    color = appColors.textSecondary)
                 p.units.forEach { unit ->
                     UnitCard(
                         unit = unit,
@@ -206,7 +207,7 @@ private fun UnitCard(
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
     ) {
         Column(Modifier.fillMaxWidth()) {
             // رأس الوحدة
@@ -245,24 +246,24 @@ private fun UnitCard(
                         style = MaterialTheme.typography.bodySmall)
                     if (unit.unitType == UnitType.CARTON && unit.itemsPerCarton != null)
                         Text("${unit.itemsPerCarton} قطعة/كرتون", style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF94A3B8))
+                            color = appColors.textSubtle)
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text("₪${String.format("%.2f", unit.price)}",
                         fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
                     Text("تنبيه < ${unit.lowStockThreshold.let { if (unit.unitType == UnitType.WEIGHT) String.format("%.1f", it) else it.toInt().toString() }}",
-                        style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8))
+                        style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
                 }
                 Icon(
                     if (isExpanded) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore,
-                    null, tint = Color(0xFFCBD5E1), modifier = Modifier.size(20.dp)
+                    null, tint = appColors.divider, modifier = Modifier.size(20.dp)
                 )
             }
 
             // أزرار التعديل + سجل الحركات (عند التوسيع)
             AnimatedVisibility(isExpanded) {
                 Column {
-                    HorizontalDivider(color = Color(0xFFF1F5F9))
+                    HorizontalDivider(color = Color.WhiteVariant)
                     // أزرار التعديل
                     Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -292,19 +293,19 @@ private fun UnitCard(
 
                     // سجل الحركات
                     if (movements.isNotEmpty()) {
-                        HorizontalDivider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = Color.WhiteVariant)
                         Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text("سجل الحركات", fontWeight = FontWeight.SemiBold,
                                 style = MaterialTheme.typography.labelLarge,
-                                color = Color(0xFF64748B))
+                                color = appColors.textSecondary)
                             movements.take(10).forEach { mov ->
                                 MovementRow(mov)
                             }
                             if (movements.size > 10) {
                                 Text("+ ${movements.size - 10} حركة أخرى",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = Color(0xFF94A3B8),
+                                    color = appColors.textSubtle,
                                     modifier = Modifier.fillMaxWidth(),
                                     textAlign = TextAlign.Center)
                             }
@@ -349,8 +350,8 @@ private fun MovementRow(mov: StockMovement) {
         Column(Modifier.weight(1f)) {
             Text(typeLabel, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
             if (mov.note.isNotEmpty())
-                Text(mov.note, style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8))
-            Text(timeStr, style = MaterialTheme.typography.labelSmall, color = Color(0xFFCBD5E1),
+                Text(mov.note, style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
+            Text(timeStr, style = MaterialTheme.typography.labelSmall, color = appColors.divider,
                 fontSize = 10.sp)
         }
         Column(horizontalAlignment = Alignment.End) {
@@ -361,7 +362,7 @@ private fun MovementRow(mov: StockMovement) {
             )
             Text(
                 "${String.format("%.2f", mov.quantityBefore)} → ${String.format("%.2f", mov.quantityAfter)}",
-                style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8),
+                style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle,
                 fontSize = 9.sp
             )
         }

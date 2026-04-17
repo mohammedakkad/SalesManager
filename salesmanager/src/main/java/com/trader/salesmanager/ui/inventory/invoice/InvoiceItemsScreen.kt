@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.trader.core.domain.model.*
 import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -113,7 +114,7 @@ fun InvoiceItemsScreen(
         return
     }
 
-    Scaffold(containerColor = Color(0xFFF2F4F7)) {
+    Scaffold(containerColor = appColors.screenBackground) {
         padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
 
@@ -173,7 +174,7 @@ fun InvoiceItemsScreen(
                             AnimatedVisibility(state.searchResults.isNotEmpty()) {
                                 Card(Modifier.fillMaxWidth().padding(top = 4.dp),
                                     shape = RoundedCornerShape(12.dp),
-                                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                                    colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
                                 ) {
                                     state.searchResults.forEach {
                                         product ->
@@ -198,7 +199,7 @@ fun InvoiceItemsScreen(
                   horizontalArrangement =  Arrangement.SpaceBetween, verticalAlignment =Alignment.CenterVertically
                 ) {
                     Text("${state.lines.size} صنف  •  ${state.totalItems} قطعة",
-                        style = MaterialTheme.typography.bodySmall, color = Color(0xFF64748B))
+                        style = MaterialTheme.typography.bodySmall, color = appColors.textSecondary)
                     Text("الإجمالي: ₪${String.format("%.2f", state.totalAmount)}",
                         fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall,
                         color = Violet500)
@@ -210,11 +211,11 @@ fun InvoiceItemsScreen(
                 Box(Modifier.weight(1f).fillMaxWidth(), Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Rounded.ShoppingCart, null,
-                            Modifier.size(64.dp), tint = Color(0xFFCBD5E1))
+                            Modifier.size(64.dp), tint = appColors.divider)
                         Spacer(Modifier.height(12.dp))
-                        Text("لا توجد أصناف بعد", color = Color(0xFF94A3B8))
+                        Text("لا توجد أصناف بعد", color = appColors.textSubtle)
                         Text("امسح باركود أو ابحث عن صنف",
-                            style = MaterialTheme.typography.bodySmall, color = Color(0xFFCBD5E1))
+                            style = MaterialTheme.typography.bodySmall, color = appColors.divider)
                     }
                 }
             } else {
@@ -294,13 +295,13 @@ private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) 
                 }
                     .padding(horizontal = 24.dp, vertical = 6.dp),
                     horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(unit.unitLabel, color = Color(0xFF64748B), style = MaterialTheme.typography.bodySmall)
+                    Text(unit.unitLabel, color = appColors.textSecondary, style = MaterialTheme.typography.bodySmall)
                     Text("₪${String.format("%.2f", unit.price)}", color = Violet500,
                         fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
-        HorizontalDivider(color = Color(0xFFF1F5F9))
+        HorizontalDivider(color = Color.WhiteVariant)
     }
 }
 
@@ -311,18 +312,18 @@ private fun InvoiceLineCard(
 ) {
     Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)) {
+        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)) {
         Row(modifier = Modifier.fillMaxWidth().padding(12.dp),verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 Text(line.product.product.name, fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(line.selectedUnit.unitLabel, style = MaterialTheme.typography.bodySmall, color = Color(0xFF64748B))
+                    Text(line.selectedUnit.unitLabel, style = MaterialTheme.typography.bodySmall, color = appColors.textSecondary)
                     if (line.customPrice != null)
                         Text("• سعر معدّل", style = MaterialTheme.typography.labelSmall, color = UnpaidAmber)
                 }
                 Text("₪${String.format("%.2f", line.effectivePrice)} / ${line.selectedUnit.unitLabel}",
-                    style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8))
+                    style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
             }
             Row(verticalAlignment =Alignment.CenterVertically,horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 IconButton(onClick = onDecrement, modifier = Modifier.size(32.dp)) {
@@ -342,7 +343,7 @@ private fun InvoiceLineCard(
                 Text("₪${String.format("%.2f", line.totalPrice)}",
                     fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall, color = Violet500)
                 IconButton(onClick = onEdit, modifier = Modifier.size(28.dp)) {
-                    Icon(Icons.Rounded.Edit, null, tint = Color(0xFFCBD5E1), modifier = Modifier.size(14.dp))
+                    Icon(Icons.Rounded.Edit, null, tint = appColors.divider, modifier = Modifier.size(14.dp))
                 }
             }
         }
@@ -375,7 +376,7 @@ private fun EditLineDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (line.product.units.size > 1) {
-                    Text("الوحدة:", style = MaterialTheme.typography.labelLarge, color = Color(0xFF64748B))
+                    Text("الوحدة:", style = MaterialTheme.typography.labelLarge, color = appColors.textSecondary)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         line.product.units.forEach {
                             unit ->

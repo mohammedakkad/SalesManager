@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 
 // ── Splash / Checking Screen ──────────────────────────────────────────
 @Composable
@@ -79,7 +80,7 @@ fun BlockedScreen(message: String, canRetry: Boolean, onRetry: () -> Unit) {
                 .fillMaxWidth()
                 .padding(32.dp),
             shape = RoundedCornerShape(28.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B)),
+            colors = CardDefaults.cardColors(containerColor = appColors.textPrimary),
             elevation = CardDefaults.cardElevation(0.dp)
         ) {
             Column(
@@ -105,7 +106,7 @@ fun BlockedScreen(message: String, canRetry: Boolean, onRetry: () -> Unit) {
                 lines.forEach { line ->
                     Text(line,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF94A3B8),
+                        color = appColors.textSubtle,
                         textAlign = TextAlign.Center)
                 }
                 Spacer(Modifier.height(28.dp))
@@ -123,7 +124,7 @@ fun BlockedScreen(message: String, canRetry: Boolean, onRetry: () -> Unit) {
                             tint = Cyan500, modifier = Modifier.size(20.dp))
                         Text("تواصل مع الإدارة عبر تطبيق الدعم",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF94A3B8))
+                            color = appColors.textSubtle)
                     }
                 }
                 if (canRetry) {

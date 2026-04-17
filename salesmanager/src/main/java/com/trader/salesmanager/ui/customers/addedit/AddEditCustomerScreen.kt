@@ -23,6 +23,7 @@ fun AddEditCustomerScreen(
     LaunchedEffect(uiState.isSaved) { if (uiState.isSaved) onNavigateUp() }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text(if (uiState.isEditMode) "تعديل زبون" else "إضافة زبون") },

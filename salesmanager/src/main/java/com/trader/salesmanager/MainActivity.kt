@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
         updateViewModel.checkForUpdate(currentVersionCode)
 
         setContent {
-            SalesManagerTheme {
+            SalesManagerTheme(context = this@MainActivity) {
                 val updateState by updateViewModel.state.collectAsState()
 
                 // عند وجود تحديث — نبدأ التحميل في الخلفية تلقائياً (بدون Dialog إجباري)

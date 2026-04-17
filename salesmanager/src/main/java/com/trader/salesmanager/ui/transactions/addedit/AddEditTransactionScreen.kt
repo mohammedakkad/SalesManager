@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.repository.PaymentMethodRepository
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -54,7 +55,7 @@ fun AddEditTransactionScreen(
     }
 
     Column(
-        Modifier.fillMaxSize().background(Color(0xFFF2F4F7))
+        Modifier.fillMaxSize().background(appColors.screenBackground)
         .verticalScroll(rememberScrollState())
     ) {
         Box(
@@ -116,17 +117,17 @@ fun AddEditTransactionScreen(
                     modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
                     border = ButtonDefaults.outlinedButtonBorder(true).copy(
                         brush = androidx.compose.ui.graphics.SolidColor(
-                            if (uiState.hasItems) Emerald500 else Color(0xFFCBD5E1))
+                            if (uiState.hasItems) Emerald500 else appColors.divider)
                     )
                 ) {
                     Icon(if (uiState.hasItems) Icons.Rounded.CheckCircle else Icons.Rounded.ShoppingCart,
-                        null, tint = if (uiState.hasItems) Emerald500 else Color(0xFF94A3B8),
+                        null, tint = if (uiState.hasItems) Emerald500 else appColors.textSubtle,
                         modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
                         if (uiState.hasItems) "أصناف الفاتورة ✓ (${uiState.pendingLines.size} صنف)"
                         else "إضافة أصناف من المخزن (اختياري)",
-                        color = if (uiState.hasItems) Emerald500 else Color(0xFF94A3B8)
+                        color = if (uiState.hasItems) Emerald500 else appColors.textSubtle
                     )
                 }
                 AnimatedVisibility(uiState.hasItems) {
@@ -164,7 +165,7 @@ fun AddEditTransactionScreen(
 
             // ── نوع الدفع ────────────────────────────────────────────
             Text("نوع الدفع", style = MaterialTheme.typography.labelLarge,
-                color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
+                color = appColors.textSecondary, fontWeight = FontWeight.SemiBold)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf(PaymentType.DEBT to "دين", PaymentType.CASH to "كاش").forEach {
                     (type, label) ->
@@ -182,7 +183,7 @@ fun AddEditTransactionScreen(
 
             // ── حالة الدفع ───────────────────────────────────────────
             Text("حالة الدفع", style = MaterialTheme.typography.labelLarge,
-                color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
+                color = appColors.textSecondary, fontWeight = FontWeight.SemiBold)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(selected = uiState.isPaid, onClick = {
                     viewModel.updateIsPaid(true)

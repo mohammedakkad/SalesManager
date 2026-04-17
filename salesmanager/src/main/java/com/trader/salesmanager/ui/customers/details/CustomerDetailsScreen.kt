@@ -51,6 +51,7 @@ fun CustomerDetailsScreen(
     val rawPhone = phone.filter { it.isDigit() }.trimStart('0')
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddTransaction,

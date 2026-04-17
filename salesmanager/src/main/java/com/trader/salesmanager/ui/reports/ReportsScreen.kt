@@ -47,6 +47,7 @@ fun ReportsScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text("التقارير", fontWeight = FontWeight.Bold) },

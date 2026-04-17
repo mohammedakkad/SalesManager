@@ -27,6 +27,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.trader.core.data.local.appDataStore
 import com.trader.salesmanager.ui.theme.*
+import com.trader.salesmanager.ui.theme.isDarkTheme
+import com.trader.salesmanager.ui.theme.toggleTheme
+import com.trader.salesmanager.ui.theme.Violet400
 import com.trader.salesmanager.update.*
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -122,6 +125,9 @@ fun SettingsScreen(
                     onClick  = { showStoreNameDialog = true }
                 )
 
+                // ── الوضع الليلي ───────────────────────────────────
+                DarkModeSettingItem()
+
                 // ── طرق الدفع ──────────────────────────────────────
                 SettingItem(
                     icon     = Icons.Rounded.Payment,
@@ -190,6 +196,61 @@ private fun StoreNameDialog(
         dismissButton = { OutlinedButton(onClick = onDismiss) { Text("إلغاء") } },
         shape = RoundedCornerShape(20.dp)
     )
+}
+
+@Composable
+private fun DarkModeSettingItem() {
+    val isDark   = isDarkTheme
+    val toggle   = toggleTheme
+
+    Card(
+        modifier  = Modifier.fillMaxWidth(),
+        shape     = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(1.dp)
+    ) {
+        Row(
+            Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                Modifier.size(44.dp).clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (isDark) Color(0xFF312E81).copy(0.3f)
+                        else Color(0xFFFEF9C3)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    if (isDark) Icons.Rounded.DarkMode else Icons.Rounded.LightMode,
+                    null,
+                    tint = if (isDark) Violet400 else UnpaidAmber
+                )
+            }
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    "المظهر",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    if (isDark) "الوضع الليلي مفعّل" else "الوضع النهاري مفعّل",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Switch(
+                checked = isDark,
+                onCheckedChange = { toggle() },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor       = Color.White,
+                    checkedTrackColor       = Violet500,
+                    uncheckedThumbColor     = Color.White,
+                    uncheckedTrackColor     = Slate400
+                )
+            )
+        }
+    }
 }
 
 @Composable
