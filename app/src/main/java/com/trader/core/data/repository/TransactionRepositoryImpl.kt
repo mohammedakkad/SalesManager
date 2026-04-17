@@ -19,7 +19,9 @@ class TransactionRepositoryImpl(
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    init { startRealtimeSync() }
+    init {
+        startRealtimeSync()
+    }
 
     /**
      * FIX: Watch for merchant code via Flow instead of reading once.
@@ -31,35 +33,64 @@ class TransactionRepositoryImpl(
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
-                .filter { it.isNotEmpty() }  // wait for activation
-                .distinctUntilChanged()
-                .collectLatest { code ->
-                    // collectLatest cancels previous collector when code changes
-                    sync.observeTransactions(code).collect { list ->
-                        list.forEach { transactionDao.insertTransaction(TransactionEntity.fromDomain(it)) }
+            .filter {
+                it.isNotEmpty()
+            } // wait for activation
+            .distinctUntilChanged()
+            .collectLatest {
+                code ->
+                // collectLatest cancels previous collector when code changes
+                sync.observeTransactions(code).collect {
+                    list ->
+                    list.forEach {
+                        t ->
+                        try {
+                            transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
+                        } catch (e: android.database.sqlite.SQLiteConstraintException) {
+                            // Customer not synced yet — skip silently
+                        }
                     }
                 }
+            }
         }
     }
 
     private suspend fun code() = activationRepo.getMerchantCode()
 
     private suspend fun TransactionEntity.enrich() = toDomain(
-        customerName      = customerDao.getCustomerById(customerId)?.name ?: "",
-        paymentMethodName = paymentMethodId?.let { paymentMethodDao.getPaymentMethodById(it)?.name } ?: ""
+        customerName = customerDao.getCustomerById(customerId)?.name ?: "",
+        paymentMethodName = paymentMethodId?.let {
+            paymentMethodDao.getPaymentMethodById(it)?.name
+        } ?: ""
     )
 
     override fun getAllTransactions(): Flow<List<Transaction>> =
-        transactionDao.getAllTransactions().map { it.map { e -> e.enrich() } }
+    transactionDao.getAllTransactions().map {
+        it.map {
+            e -> e.enrich()
+        }
+    }
 
     override fun getTransactionsByCustomer(cid: Long) =
-        transactionDao.getTransactionsByCustomer(cid).map { it.map { e -> e.enrich() } }
+    transactionDao.getTransactionsByCustomer(cid).map {
+        it.map {
+            e -> e.enrich()
+        }
+    }
 
     override fun getTransactionsByDate(s: Long, e: Long) =
-        transactionDao.getTransactionsByDate(s, e).map { it.map { en -> en.enrich() } }
+    transactionDao.getTransactionsByDate(s, e).map {
+        it.map {
+            en -> en.enrich()
+        }
+    }
 
     override fun getUnpaidTransactions() =
-        transactionDao.getUnpaidTransactions().map { it.map { e -> e.enrich() } }
+    transactionDao.getUnpaidTransactions().map {
+        it.map {
+            e -> e.enrich()
+        }
+    }
 
     override suspend fun getTransactionById(id: Long) = transactionDao.getTransactionById(id)?.enrich()
 
@@ -80,6 +111,6 @@ class TransactionRepositoryImpl(
     }
 
     override suspend fun getTotalAmountByDate(s: Long, e: Long) = transactionDao.getTotalAmountByDate(s, e)
-    override suspend fun getPaidAmountByDate(s: Long, e: Long)  = transactionDao.getPaidAmountByDate(s, e)
-    override suspend fun getUnpaidAmountByCustomer(cid: Long)   = transactionDao.getUnpaidAmountByCustomer(cid)
+    override suspend fun getPaidAmountByDate(s: Long, e: Long) = transactionDao.getPaidAmountByDate(s, e)
+    override suspend fun getUnpaidAmountByCustomer(cid: Long) = transactionDao.getUnpaidAmountByCustomer(cid)
 }
