@@ -21,29 +21,43 @@ class CustomerRepositoryImpl(
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    init { startRealtimeSync() }
+    init {
+        startRealtimeSync()
+    }
 
     /** Same fix as TransactionRepositoryImpl — waits for code via Flow */
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
-                .filter { it.isNotEmpty() }
-                .distinctUntilChanged()
-                .collectLatest { code ->
-                    sync.observeCustomers(code).collect { list ->
-                        list.forEach { dao.upsertCustomer(CustomerEntity.fromDomain(it)) }
+            .filter {
+                it.isNotEmpty()
+            }
+            .distinctUntilChanged()
+            .collectLatest {
+                code ->
+                sync.observeCustomers(code).collect {
+                    list ->
+                    list.forEach {
+                        if (it.id != -1L) {
+                            dao.upsertCustomer(CustomerEntity.fromDomain(it))
+                        }
                     }
                 }
+            }
         }
     }
 
     private suspend fun code() = activationRepo.getMerchantCode()
 
     override fun getAllCustomers() =
-        dao.getAllCustomers().map { it.map(CustomerEntity::toDomain) }
+    dao.getAllCustomers().map {
+        it.map(CustomerEntity::toDomain)
+    }
 
     override fun searchCustomers(q: String) =
-        dao.searchCustomers(q).map { it.map(CustomerEntity::toDomain) }
+    dao.searchCustomers(q).map {
+        it.map(CustomerEntity::toDomain)
+    }
 
     override suspend fun getCustomerById(id: Long) = dao.getCustomerById(id)?.toDomain()
 

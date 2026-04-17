@@ -180,15 +180,23 @@ abstract class AppDatabase : RoomDatabase() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
 
-                // ⚡ إضافة الزبون الزائر أولاً
-                db.execSQL(
-                    "INSERT OR IGNORE INTO customers (id, name, phone, createdAt) VALUES (-1, 'زبون زائر', '', 0)"
-                )
-
+                insertGuestCustomer(db)
                 // إضافة طرق الدفع
                 db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")
                 db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('بنك', '${PaymentType.BANK.name}')")
                 db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('محفظة', '${PaymentType.WALLET.name}')")
+            }
+
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                // هذا السطر هو الضمان الهندسي للمستخدمين القدامى
+                insertGuestCustomer(db)
+            }
+
+            private fun insertGuestCustomer(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "INSERT OR IGNORE INTO customers (id, name, phone, createdAt) VALUES (-1, 'زبون زائر', '', 0)"
+                )
             }
         })
         .build()
