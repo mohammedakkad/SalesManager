@@ -73,6 +73,8 @@ class CustomerRepositoryImpl(
     }
 
     override suspend fun deleteCustomer(c: Customer) {
+        // لا تحذف الزبون الزائر أبداً
+        if (c.id == -1L) return
         dao.deleteCustomer(CustomerEntity.fromDomain(c))
         sync.deleteCustomer(code(), c.id)
     }

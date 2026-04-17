@@ -43,8 +43,13 @@ class AddEditTransactionViewModel(
         viewModelScope.launch {
             customerRepo.getAllCustomers().collect {
                 customers ->
+                // ✅ الزبون الزائر يكون دائماً في أعلى القائمة
+                val withGuest = listOf(WALK_IN_CUSTOMER) +
+                customers.filter {
+                    it.id != WALK_IN_CUSTOMER.id
+                }
                 _uiState.update {
-                    it.copy(customers = customers)
+                    it.copy(customers = withGuest)
                 }
             }
         }

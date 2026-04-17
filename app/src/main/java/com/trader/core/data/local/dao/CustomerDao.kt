@@ -33,5 +33,6 @@ interface CustomerDao {
     @Delete
     suspend fun deleteCustomer(customer: CustomerEntity)
     
-    @Query("DELETE FROM customers") suspend fun deleteAll()
+    /** حذف جميع الزبائن ماعدا الزبون الزائر (id=-1) — يُستدعى عند إلغاء التفعيل */
+    @Query("DELETE FROM customers WHERE id != -1") suspend fun deleteAll()
 }
