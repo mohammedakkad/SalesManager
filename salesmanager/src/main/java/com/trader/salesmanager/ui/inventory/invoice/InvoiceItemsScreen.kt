@@ -38,92 +38,53 @@ fun InvoiceItemsScreen(
     viewModel: InvoiceItemsViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    var showScanner by remember {
-        mutableStateOf(false)
-    }
-    var showSearch by remember {
-        mutableStateOf(false)
-    }
-    var editingLine by remember {
-        mutableStateOf<Pair<Int, InvoiceLineItem>?>(null)
-    }
-    var barcodeNotFound by remember {
-        mutableStateOf<String?>(null)
-    }
+    var showScanner  by remember { mutableStateOf(false) }
+    var showSearch   by remember { mutableStateOf(false) }
+    var editingLine  by remember { mutableStateOf<Pair<Int, InvoiceLineItem>?>(null) }
+    var barcodeNotFound by remember { mutableStateOf<String?>(null) }
 
-    barcodeNotFound?.let {
-        barcode ->
+    barcodeNotFound?.let { barcode ->
         AlertDialog(
-            onDismissRequest = {
-                barcodeNotFound = null
-            },
-            icon = {
-                Icon(Icons.Rounded.QrCodeScanner, null, tint = UnpaidAmber)
-            },
-            title = {
-                Text("باركود غير موجود", fontWeight = FontWeight.Bold)
-            },
-            text = {
-                Text("\"$barcode\" غير موجود في المخزن.")
-            },
-            confirmButton = {
-                Button(onClick = {
-                    barcodeNotFound = null
-                }) {
-                    Text("حسناً")
-                }
-            },
+            onDismissRequest = { barcodeNotFound = null },
+            icon  = { Icon(Icons.Rounded.QrCodeScanner, null, tint = UnpaidAmber) },
+            title = { Text("باركود غير موجود", fontWeight = FontWeight.Bold) },
+            text  = { Text("\"$barcode\" غير موجود في المخزن.") },
+            confirmButton = { Button(onClick = { barcodeNotFound = null }) { Text("حسناً") } },
             shape = RoundedCornerShape(20.dp)
         )
     }
 
-    editingLine?.let {
-        (index, line) ->
+    editingLine?.let { (index, line) ->
         EditLineDialog(
-            line = line,
-            onUpdateQty = {
-                viewModel.updateQuantity(index, it)
-            },
-            onUpdatePrice = {
-                viewModel.updatePrice(index, it)
-            },
-            onUpdateUnit = {
-                viewModel.updateUnit(index, it)
-            },
-            onRemove = {
-                viewModel.removeLine(index)
-            },
-            onDismiss = {
-                editingLine = null
-            }
+            line          = line,
+            onUpdateQty   = { viewModel.updateDisplayQty(index, it) },
+            onUpdatePrice = { viewModel.updatePrice(index, it) },
+            onUpdateUnit  = { viewModel.updateUnit(index, it) },
+            onUpdateWeightUnit = { viewModel.updateWeightUnit(index, it) },
+            onRemove      = { viewModel.removeLine(index) },
+            onDismiss     = { editingLine = null }
         )
     }
 
     if (showScanner) {
         BarcodeScannerScreen(
-            onBarcodeDetected = {
-                barcode ->
+            onBarcodeDetected = { barcode ->
                 showScanner = false
-                viewModel.onBarcodeScanned(barcode, onNotFound = {
-                    barcodeNotFound = it
-                })
+                viewModel.onBarcodeScanned(barcode, onNotFound = { barcodeNotFound = it })
             },
-            onDismiss = {
-                showScanner = false
-            }
+            onDismiss = { showScanner = false }
         )
         return
     }
 
-    Scaffold(containerColor = appColors.screenBackground) {
-        padding ->
+    Scaffold(containerColor = appColors.screenBackground) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
 
             // ── Header ──────────────────────────────────────────────
             Box(
                 Modifier.fillMaxWidth()
-                .background(Brush.linearGradient(listOf(Violet500, Cyan500)))
-                .padding(top = 48.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
+                    .background(Brush.linearGradient(listOf(Violet500, Cyan500)))
+                    .padding(top = 48.dp, bottom = 16.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -136,20 +97,14 @@ fun InvoiceItemsScreen(
                             Text("الزبون: $customerName", color = Color.White.copy(0.75f),
                                 style = MaterialTheme.typography.bodySmall)
                         }
-                        IconButton(onClick = {
-                            showScanner = true
-                        },
+                        IconButton(
+                            onClick = { showScanner = true },
                             modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                        ) {
-                            Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White)
-                        }
-                        IconButton(onClick = {
-                            showSearch = !showSearch
-                        },
+                        ) { Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White) }
+                        IconButton(
+                            onClick = { showSearch = !showSearch },
                             modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                        ) {
-                            Icon(Icons.Rounded.Search, null, tint = if (showSearch) Cyan500 else Color.White)
-                        }
+                        ) { Icon(Icons.Rounded.Search, null, tint = if (showSearch) Cyan500 else Color.White) }
                     }
 
                     AnimatedVisibility(showSearch) {
@@ -158,9 +113,7 @@ fun InvoiceItemsScreen(
                             OutlinedTextField(
                                 value = state.searchQuery,
                                 onValueChange = viewModel::setQuery,
-                                placeholder = {
-                                    Text("ابحث عن صنف...", color = Color.White.copy(0.5f))
-                                },
+                                placeholder = { Text("ابحث عن صنف...", color = Color.White.copy(0.5f)) },
                                 singleLine = true,
                                 shape = RoundedCornerShape(14.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
@@ -173,14 +126,13 @@ fun InvoiceItemsScreen(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             AnimatedVisibility(state.searchResults.isNotEmpty()) {
-                                Card(Modifier.fillMaxWidth().padding(top = 4.dp),
+                                Card(
+                                    Modifier.fillMaxWidth().padding(top = 4.dp),
                                     shape = RoundedCornerShape(12.dp),
                                     colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
                                 ) {
-                                    state.searchResults.forEach {
-                                        product ->
-                                        SearchResultItem(product = product, onSelect = {
-                                            unit ->
+                                    state.searchResults.forEach { product ->
+                                        SearchResultItem(product = product, onSelect = { unit ->
                                             viewModel.addProductWithUnit(product, unit)
                                             showSearch = false
                                         })
@@ -196,12 +148,13 @@ fun InvoiceItemsScreen(
             AnimatedVisibility(state.lines.isNotEmpty()) {
                 Row(
                     modifier = Modifier.fillMaxWidth().background(Color.White)
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-                  horizontalArrangement =  Arrangement.SpaceBetween, verticalAlignment =Alignment.CenterVertically
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("${state.lines.size} صنف  •  ${state.totalItems} قطعة",
+                    Text("${state.lines.size} صنف",
                         style = MaterialTheme.typography.bodySmall, color = appColors.textSecondary)
-                    Text("الإجمالي: ₪${String.format("%.2f", state.totalAmount)}",
+                    Text("الإجمالي: ₪${state.totalAmount.formatAmount()}",
                         fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall,
                         color = Violet500)
                 }
@@ -220,48 +173,37 @@ fun InvoiceItemsScreen(
                     }
                 }
             } else {
-                LazyColumn(Modifier.weight(1f),
+                LazyColumn(
+                    Modifier.weight(1f),
                     contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    itemsIndexed(state.lines, key = {
-                        _, l -> l.tempId
-                    }) {
-                        index, line ->
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    itemsIndexed(state.lines, key = { _, l -> l.tempId }) { index, line ->
                         InvoiceLineCard(
-                            line = line,
-                            onEdit = {
-                                editingLine = index to line
-                            },
-                            onIncrement = {
-                                viewModel.updateQuantity(index, line.quantity + 1)
-                            },
-                            onDecrement = {
-                                viewModel.updateQuantity(index, line.quantity - 1)
-                            }
+                            line        = line,
+                            onEdit      = { editingLine = index to line },
+                            onIncrement = { viewModel.updateDisplayQty(index, line.displayQty + 1) },
+                            onDecrement = { viewModel.updateDisplayQty(index, line.displayQty - 1) }
                         )
                     }
-                    item {
-                        Spacer(Modifier.height(80.dp))
-                    }
+                    item { Spacer(Modifier.height(80.dp)) }
                 }
             }
 
             // ── زر التأكيد ────────────────────────────────────────
             Surface(Modifier.fillMaxWidth(), shadowElevation = 8.dp, color = Color.White) {
                 Button(
-                    onClick = {
-                        onConfirm(state.lines, state.totalAmount)
-                    },
+                    onClick  = { onConfirm(state.lines, state.totalAmount) },
                     modifier = Modifier.fillMaxWidth().padding(16.dp).height(52.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Violet500),
-                    enabled = state.lines.isNotEmpty()
+                    shape    = RoundedCornerShape(14.dp),
+                    colors   = ButtonDefaults.buttonColors(containerColor = Violet500),
+                    enabled  = state.lines.isNotEmpty()
                 ) {
                     Icon(Icons.Rounded.CheckCircle, null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
                         if (state.lines.isEmpty()) "أضف أصناف أولاً"
-                        else "تأكيد  ₪${String.format("%.2f", state.totalAmount)}",
+                        else "تأكيد  ₪${state.totalAmount.formatAmount()}",
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -270,34 +212,108 @@ fun InvoiceItemsScreen(
     }
 }
 
+// ── بطاقة صنف واحد ───────────────────────────────────────────────
+@Composable
+private fun InvoiceLineCard(
+    line: InvoiceLineItem,
+    onEdit: () -> Unit,
+    onIncrement: () -> Unit,
+    onDecrement: () -> Unit
+) {
+    Card(
+        Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(line.product.product.name, fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(line.selectedUnit.unitLabel,
+                        style = MaterialTheme.typography.bodySmall, color = appColors.textSecondary)
+                    // إذا كانت وحدة مختلفة عن الكيلو أظهر الكمية بالكيلو
+                    if (line.kgLabel.isNotEmpty())
+                        Text(line.kgLabel,
+                            style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
+                    if (line.customPrice != null)
+                        Text("• سعر معدّل",
+                            style = MaterialTheme.typography.labelSmall, color = UnpaidAmber)
+                }
+                Text("₪${line.effectivePrice.formatAmount()} / ${line.selectedUnit.unitLabel}",
+                    style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
+            }
+
+            // أزرار الكمية
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                IconButton(onClick = onDecrement, modifier = Modifier.size(32.dp)) {
+                    Icon(Icons.Rounded.Remove, null, tint = DebtRed, modifier = Modifier.size(18.dp))
+                }
+                // عرض الكمية بوحدة البائع
+                Text(
+                    line.displayQtyLabel,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.widthIn(min = 48.dp),
+                    textAlign = TextAlign.Center
+                )
+                IconButton(onClick = onIncrement, modifier = Modifier.size(32.dp)) {
+                    Icon(Icons.Rounded.Add, null, tint = PaidGreen, modifier = Modifier.size(18.dp))
+                }
+            }
+
+            Column(horizontalAlignment = Alignment.End) {
+                Text("₪${line.totalPrice.formatAmount()}",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleSmall, color = Violet500)
+                IconButton(onClick = onEdit, modifier = Modifier.size(28.dp)) {
+                    Icon(Icons.Rounded.Edit, null,
+                        tint = appColors.divider, modifier = Modifier.size(14.dp))
+                }
+            }
+        }
+    }
+}
+
+// ── نتيجة بحث ────────────────────────────────────────────────────
 @Composable
 private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) -> Unit) {
     Column {
         if (product.units.size == 1) {
             Row(
-                modifier = Modifier.fillMaxWidth().clickable {
-                    onSelect(product.units.first())
-                }
-                .padding(horizontal = 14.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)
+                modifier = Modifier.fillMaxWidth()
+                    .clickable { onSelect(product.units.first()) }
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(product.product.name, Modifier.weight(1f), fontWeight = FontWeight.Medium,
-                    style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text("₪${String.format("%.2f", product.units.first().price)}",
-                    color = Violet500, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodySmall)
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text("₪${product.units.first().price.formatAmount()}",
+                    color = Violet500, fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodySmall)
             }
         } else {
             Text(product.product.name, Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
                 fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-            product.units.forEach {
-                unit ->
-                Row(modifier = Modifier.fillMaxWidth().clickable {
-                    onSelect(unit)
-                }
-                    .padding(horizontal = 24.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(unit.unitLabel, color = appColors.textSecondary, style = MaterialTheme.typography.bodySmall)
-                    Text("₪${String.format("%.2f", unit.price)}", color = Violet500,
+            product.units.forEach { unit ->
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable { onSelect(unit) }
+                        .padding(horizontal = 24.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(unit.unitLabel, color = appColors.textSecondary,
+                        style = MaterialTheme.typography.bodySmall)
+                    Text("₪${unit.price.formatAmount()}", color = Violet500,
                         fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodySmall)
                 }
             }
@@ -306,132 +322,139 @@ private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) 
     }
 }
 
-@Composable
-private fun InvoiceLineCard(
-    line: InvoiceLineItem, onEdit: () -> Unit,
-    onIncrement: () -> Unit, onDecrement: () -> Unit
-) {
-    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp),
-        elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(12.dp),verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f)) {
-                Text(line.product.product.name, fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(line.selectedUnit.unitLabel, style = MaterialTheme.typography.bodySmall, color = appColors.textSecondary)
-                    if (line.customPrice != null)
-                        Text("• سعر معدّل", style = MaterialTheme.typography.labelSmall, color = UnpaidAmber)
-                }
-                Text("₪${String.format("%.2f", line.effectivePrice)} / ${line.selectedUnit.unitLabel}",
-                    style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
-            }
-            Row(verticalAlignment =Alignment.CenterVertically,horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                IconButton(onClick = onDecrement, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Rounded.Remove, null, tint = DebtRed, modifier = Modifier.size(18.dp))
-                }
-                Text(
-                    if (line.quantity == line.quantity.toLong().toDouble()) line.quantity.toLong().toString()
-                    else String.format("%.2f", line.quantity),
-                    fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.widthIn(min = 28.dp), textAlign = TextAlign.Center
-                )
-                IconButton(onClick = onIncrement, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Rounded.Add, null, tint = PaidGreen, modifier = Modifier.size(18.dp))
-                }
-            }
-            Column(horizontalAlignment = Alignment.End) {
-                Text("₪${String.format("%.2f", line.totalPrice)}",
-                    fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall, color = Violet500)
-                IconButton(onClick = onEdit, modifier = Modifier.size(28.dp)) {
-                    Icon(Icons.Rounded.Edit, null, tint = appColors.divider, modifier = Modifier.size(14.dp))
-                }
-            }
-        }
-    }
-}
-
+// ── نافذة تعديل الصنف ────────────────────────────────────────────
 @Composable
 private fun EditLineDialog(
     line: InvoiceLineItem,
-    onUpdateQty: (Double) -> Unit, onUpdatePrice: (Double?) -> Unit,
-    onUpdateUnit: (ProductUnit) -> Unit, onRemove: () -> Unit, onDismiss: () -> Unit
+    onUpdateQty: (Double) -> Unit,
+    onUpdatePrice: (Double?) -> Unit,
+    onUpdateUnit: (ProductUnit) -> Unit,
+    onUpdateWeightUnit: (SaleWeightUnit) -> Unit,
+    onRemove: () -> Unit,
+    onDismiss: () -> Unit
 ) {
     var qtyInput by remember {
-        mutableStateOf(
-            if (line.quantity == line.quantity.toLong().toDouble()) line.quantity.toLong().toString()
-            else String.format("%.3f", line.quantity)
-        )}
-    var priceInput by remember {
-        mutableStateOf(line.customPrice?.let {
-            String.format("%.2f", it)
-        } ?: "")
+        mutableStateOf(line.displayQty.formatQty())
     }
+    var priceInput by remember {
+        mutableStateOf(line.customPrice?.let { it.formatAmount() } ?: "")
+    }
+    val isWeightProduct = line.selectedUnit.unitType == UnitType.WEIGHT
 
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(20.dp),
-        title = {
-            Text(line.product.product.name, fontWeight = FontWeight.Bold)
-        },
+        title = { Text(line.product.product.name, fontWeight = FontWeight.Bold) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+
+                // ── اختيار وحدة المنتج (كيلو / كرتون / حبة) ────────
                 if (line.product.units.size > 1) {
-                    Text("الوحدة:", style = MaterialTheme.typography.labelLarge, color = appColors.textSecondary)
+                    Text("الوحدة:", style = MaterialTheme.typography.labelLarge,
+                        color = appColors.textSecondary)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        line.product.units.forEach {
-                            unit ->
-                            FilterChip(selected = line.selectedUnit.id == unit.id,
-                                onClick = {
-                                    onUpdateUnit(unit)
-                                }, label = {
-                                    Text(unit.unitLabel)
-                                },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = Violet500.copy(0.15f), selectedLabelColor = Violet500))
+                        line.product.units.forEach { unit ->
+                            FilterChip(
+                                selected = line.selectedUnit.id == unit.id,
+                                onClick  = { onUpdateUnit(unit) },
+                                label    = { Text(unit.unitLabel) },
+                                colors   = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = Violet500.copy(0.15f),
+                                    selectedLabelColor = Violet500)
+                            )
                         }
                     }
                 }
-                OutlinedTextField(value = qtyInput, onValueChange = {
-                    qtyInput = it.toLatinDigits()
-                },
+
+                // ── اختيار وحدة الوزن (فقط للمنتجات الوزنية) ────────
+                if (isWeightProduct) {
+                    Text("وحدة الكمية:", style = MaterialTheme.typography.labelLarge,
+                        color = appColors.textSecondary)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.horizontalScroll(rememberScrollState())
+                    ) {
+                        SaleWeightUnit.entries.forEach { wu ->
+                            FilterChip(
+                                selected = line.displayWeightUnit == wu,
+                                onClick  = {
+                                    onUpdateWeightUnit(wu)
+                                    // نحدّث qtyInput ليعكس الوحدة الجديدة
+                                    val currentKg   = line.quantity
+                                    val newDisplay  = fromKgQuantity(currentKg, wu)
+                                    qtyInput = newDisplay.formatQty()
+                                },
+                                label = { Text(wu.labelAr) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = Cyan500.copy(0.15f),
+                                    selectedLabelColor     = Cyan500
+                                )
+                            )
+                        }
+                    }
+                    // تلميح: يظهر الكيلو المكافئ أثناء الإدخال
+                    val enteredQty = qtyInput.toSafeDouble()
+                    if (enteredQty != null && enteredQty > 0 && line.displayWeightUnit != SaleWeightUnit.KG) {
+                        val kgEquiv = toKgQuantity(enteredQty, line.displayWeightUnit)
+                        Text(
+                            "= ${kgEquiv.formatQty()} كيلو",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Cyan500
+                        )
+                    }
+                }
+
+                // ── إدخال الكمية ──────────────────────────────────────
+                OutlinedTextField(
+                    value        = qtyInput,
+                    onValueChange = { qtyInput = it.toLatinDigits() },
                     label = {
-                        Text("الكمية")
+                        Text(
+                            if (isWeightProduct)
+                                "الكمية (${line.displayWeightUnit.labelAr})"
+                            else
+                                "الكمية"
+                        )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = priceInput, onValueChange = {
-                    priceInput = it.toLatinDigits()
-                },
+                    singleLine = true,
+                    modifier   = Modifier.fillMaxWidth()
+                )
+
+                // ── سعر مخصص ─────────────────────────────────────────
+                OutlinedTextField(
+                    value = priceInput,
+                    onValueChange = { priceInput = it.toLatinDigits() },
                     label = {
-                        Text("سعر مخصص (فارغ = افتراضي ₪${String.format("%.2f", line.selectedUnit.price)})")
+                        Text("سعر مخصص (فارغ = افتراضي ₪${line.selectedUnit.price.formatAmount()})")
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    singleLine = true, modifier = Modifier.fillMaxWidth())
+                    singleLine = true,
+                    modifier   = Modifier.fillMaxWidth()
+                )
             }
         },
         confirmButton = {
-            Button(onClick = {
-                qtyInput.toLatinDigits().toDoubleOrNull()?.let {
-                    onUpdateQty(it)
-                }; onUpdatePrice(priceInput.toLatinDigits().toDoubleOrNull()); onDismiss()
-            },
-                enabled = qtyInput.toLatinDigits().toDoubleOrNull() != null,
-                colors = ButtonDefaults.buttonColors(containerColor = Violet500)) {
-                Text("تطبيق")
-            }
+            Button(
+                onClick = {
+                    qtyInput.toSafeDouble()?.let { onUpdateQty(it) }
+                    onUpdatePrice(priceInput.toSafeDouble())
+                    onDismiss()
+                },
+                enabled = qtyInput.toSafeDouble() != null && (qtyInput.toSafeDouble() ?: 0.0) > 0,
+                colors  = ButtonDefaults.buttonColors(containerColor = Violet500)
+            ) { Text("تطبيق") }
         },
         dismissButton = {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TextButton(onClick = {
-                    onRemove(); onDismiss()
-                }) {
+                TextButton(onClick = { onRemove(); onDismiss() }) {
                     Text("حذف", color = DebtRed)
                 }
-                OutlinedButton(onClick = onDismiss) {
-                    Text("إلغاء")
-                }
+                OutlinedButton(onClick = onDismiss) { Text("إلغاء") }
             }
         }
     )
 }
+
+@Composable
+private fun rememberScrollState() = androidx.compose.foundation.rememberScrollState()
