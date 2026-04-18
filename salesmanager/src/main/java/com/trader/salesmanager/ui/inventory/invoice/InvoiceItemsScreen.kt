@@ -448,19 +448,6 @@ private fun SearchResultItem(product: ProductWithUnits, onSelect: (ProductUnit) 
     }
 }
 
-// ── نافذة تعديل الصنف ────────────────────────────────────────────
-// ✅ الإصلاح الثاني:
-// المشكلة القديمة: editingLine كان Pair<Int, InvoiceLineItem> — يحفظ نسخة قديمة من line.
-// عند الضغط على وحدة الوزن:
-//   - onUpdateWeightUnit يُحدّث ViewModel ✅
-//   - لكن line.displayWeightUnit داخل الـ Dialog لا يتغير ❌
-//   - لأن line في الـ Dialog هي نسخة مجمّدة قديمة من وقت فتح الـ Dialog
-//
-// الحل: نجعل الـ Dialog يستقبل line محدثة من state.lines[index] دائماً
-// (يتم ذلك في الشاشة الرئيسية أعلاه عبر: val line = state.lines.getOrNull(index))
-//
-// داخل الـ Dialog: نستخدم line.displayWeightUnit المحدث كـ selected
-// و qtyInput تُحدث عند تغيير الوحدة عبر LaunchedEffect
 @Composable
 private fun EditLineDialog(
     line: InvoiceLineItem,
@@ -478,9 +465,17 @@ private fun EditLineDialog(
         mutableStateOf(line.customPrice?.formatAmount() ?: "")
     }
 
-    // ✅ عندما تتغير displayWeightUnit في ViewModel (line تتحدث)
-    // نحدّث qtyInput تلقائياً ليعكس الكمية بالوحدة الجديدة
+    // ── حالة محلية لوحدة الوزن لتحديث UI فوري عند الضغط ────────
+    var selectedWeightUnit by remember(line.tempId) {
+        mutableStateOf(line.displayWeightUnit)
+    }
+
+    // مزامنة مع ViewModel في حال تغيير خارجي
     LaunchedEffect(line.displayWeightUnit) {
+        if (selectedWeightUnit != line.displayWeightUnit) {
+            selectedWeightUnit = line.displayWeightUnit
+        }
+        // تحديث حقل الكمية ليعكس الوحدة الجديدة
         val currentKg = line.quantity
         val newDisplay = fromKgQuantity(currentKg, line.displayWeightUnit)
         qtyInput = newDisplay.formatQty()
@@ -535,10 +530,16 @@ private fun EditLineDialog(
                     ) {
                         SaleWeightUnit.entries.forEach {
                             wu ->
+                            val isSelected = selectedWeightUnit == wu
                             FilterChip(
-                                // ✅ يقرأ line.displayWeightUnit المحدث من ViewModel
-                                selected = line.displayWeightUnit == wu,
+                                selected = isSelected,
                                 onClick = {
+                                    // ① تحديث فوري للـ UI
+                                    selectedWeightUnit = wu
+                                    // ② تحديث حقل الكمية فوراً بالوحدة الجديدة
+                                    val currentKg = line.quantity
+                                    qtyInput = fromKgQuantity(currentKg, wu).formatQty()
+                                    // ③ تحديث ViewModel
                                     onUpdateWeightUnit(wu)
                                 },
                                 label = {
@@ -546,15 +547,17 @@ private fun EditLineDialog(
                                 },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = Cyan500.copy(0.15f),
-                                    selectedLabelColor = Cyan500
+                                    selectedLabelColor = Cyan500,
+                                    containerColor = appColors.cardBackground,
+                                    labelColor = appColors.textSecondary
                                 )
                             )
                         }
                     }
                     // تلميح: الكيلو المكافئ
                     val enteredQty = qtyInput.toSafeDouble()
-                    if (enteredQty != null && enteredQty > 0 && line.displayWeightUnit != SaleWeightUnit.KG) {
-                        val kgEquiv = toKgQuantity(enteredQty, line.displayWeightUnit)
+                    if (enteredQty != null && enteredQty > 0 && selectedWeightUnit != SaleWeightUnit.KG) {
+                        val kgEquiv = toKgQuantity(enteredQty, selectedWeightUnit)
                         Surface(
                             shape = RoundedCornerShape(8.dp),
                             color = Cyan500.copy(0.1f)
@@ -578,7 +581,7 @@ private fun EditLineDialog(
                     },
                     label = {
                         Text(
-                            if (isWeightProduct) "الكمية (${line.displayWeightUnit.labelAr})"
+                            if (isWeightProduct) "الكمية (${selectedWeightUnit.labelAr})"
                             else "الكمية"
                         )
                     },

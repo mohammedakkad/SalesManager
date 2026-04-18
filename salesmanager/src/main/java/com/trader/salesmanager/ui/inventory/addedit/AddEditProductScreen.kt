@@ -32,7 +32,9 @@ fun AddEditProductScreen(
     viewModel: AddEditProductViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    var showScanner by remember { mutableStateOf(false) }
+    var showScanner by remember {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(productId) {
         if (productId != null) viewModel.loadProduct(productId)
@@ -44,21 +46,25 @@ fun AddEditProductScreen(
 
     if (showScanner) {
         BarcodeScannerScreen(
-            onBarcodeDetected = { barcode -> viewModel.setBarcode(barcode); showScanner = false },
-            onDismiss = { showScanner = false }
+            onBarcodeDetected = {
+                barcode -> viewModel.setBarcode(barcode); showScanner = false
+            },
+            onDismiss = {
+                showScanner = false
+            }
         )
         return
     }
 
     Column(
         Modifier.fillMaxSize().background(appColors.screenBackground)
-            .verticalScroll(rememberScrollState())
+        .verticalScroll(rememberScrollState())
     ) {
         // ── Header ────────────────────────────────────────────────
         Box(
             Modifier.fillMaxWidth()
-                .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
-                .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+            .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
+            .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onNavigateUp) {
@@ -84,15 +90,23 @@ fun AddEditProductScreen(
                     OutlinedTextField(
                         value = state.barcode,
                         onValueChange = viewModel::setBarcode,
-                        label = { Text("الباركود (اختياري)") },
-                        placeholder = { Text("6223001234567") },
+                        label = {
+                            Text("الباركود (اختياري)")
+                        },
+                        placeholder = {
+                            Text("6223001234567")
+                        },
                         singleLine = true,
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedIconButton(
-                        onClick = { showScanner = true },
+                        onClick = {
+                            showScanner = true
+                        },
                         modifier = Modifier.size(56.dp).align(Alignment.Bottom)
-                    ) { Icon(Icons.Rounded.QrCodeScanner, null, tint = Cyan500) }
+                    ) {
+                        Icon(Icons.Rounded.QrCodeScanner, null, tint = Cyan500)
+                    }
                 }
             }
 
@@ -101,7 +115,9 @@ fun AddEditProductScreen(
                 OutlinedTextField(
                     value = state.name,
                     onValueChange = viewModel::setName,
-                    label = { Text("اسم الصنف *") },
+                    label = {
+                        Text("اسم الصنف *")
+                    },
                     singleLine = true,
                     isError = state.name.isEmpty() && state.isSaving,
                     modifier = Modifier.fillMaxWidth()
@@ -110,8 +126,12 @@ fun AddEditProductScreen(
                 OutlinedTextField(
                     value = state.category,
                     onValueChange = viewModel::setCategory,
-                    label = { Text("الفئة (اختياري)") },
-                    placeholder = { Text("مشروبات، مواد غذائية...") },
+                    label = {
+                        Text("الفئة (اختياري)")
+                    },
+                    placeholder = {
+                        Text("مشروبات، مواد غذائية...")
+                    },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -119,14 +139,21 @@ fun AddEditProductScreen(
 
             // ── الوحدات ───────────────────────────────────────────
             SectionCard("الوحدات", Icons.Rounded.Scale, Violet500) {
-                state.units.forEachIndexed { index, unit ->
+                state.units.forEachIndexed {
+                    index, unit ->
                     UnitEditor(
                         unit = unit,
                         index = index,
                         canDelete = state.units.size > 1,
-                        onUpdate = { viewModel.updateUnit(index, it) },
-                        onDelete = { viewModel.removeUnit(index) },
-                        onSetDefault = { viewModel.setDefaultUnit(index) }
+                        onUpdate = {
+                            viewModel.updateUnit(index, it)
+                        },
+                        onDelete = {
+                            viewModel.removeUnit(index)
+                        },
+                        onSetDefault = {
+                            viewModel.setDefaultUnit(index)
+                        }
                     )
                     if (index < state.units.lastIndex) {
                         HorizontalDivider(Modifier.padding(vertical = 12.dp), color = appColors.divider)
@@ -218,18 +245,24 @@ private fun UnitEditor(
 
         // نوع الوحدة
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            UnitType.entries.forEach { type ->
-                val label = when (type) { UnitType.PIECE -> "حبة"; UnitType.CARTON -> "كرتون"; UnitType.WEIGHT -> "وزن" }
+            UnitType.entries.forEach {
+                type ->
+                val label = when (type) {
+                    UnitType.PIECE -> "حبة"; UnitType.CARTON -> "كرتون"; UnitType.WEIGHT -> "كيلو"
+                }
                 val sel = unit.unitType == type
                 FilterChip(
                     selected = sel, onClick = {
                         onUpdate(unit.copy(
                             unitType = type,
                             unitLabel = label,
+                            weightUnit = WeightUnit.KG,
                             itemsPerCarton = if (type == UnitType.CARTON) unit.itemsPerCarton else ""
                         ))
                     },
-                    label = { Text(label) },
+                    label = {
+                        Text(label)
+                    },
                     modifier = Modifier.weight(1f),
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Emerald500.copy(0.15f),
@@ -242,9 +275,15 @@ private fun UnitEditor(
         // تسمية الوحدة
         OutlinedTextField(
             value = unit.unitLabel,
-            onValueChange = { onUpdate(unit.copy(unitLabel = it)) },
-            label = { Text("اسم الوحدة") },
-            placeholder = { Text("حبة / علبة / كيلو") },
+            onValueChange = {
+                onUpdate(unit.copy(unitLabel = it))
+            },
+            label = {
+                Text("اسم الوحدة")
+            },
+            placeholder = {
+                Text("حبة / علبة / كيلو")
+            },
             singleLine = true, modifier = Modifier.fillMaxWidth()
         )
 
@@ -252,15 +291,23 @@ private fun UnitEditor(
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedTextField(
                 value = unit.price,
-                onValueChange = { onUpdate(unit.copy(price = it)) },
-                label = { Text("السعر ₪") },
+                onValueChange = {
+                    onUpdate(unit.copy(price = it))
+                },
+                label = {
+                    Text("السعر ₪")
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true, modifier = Modifier.weight(1f)
             )
             OutlinedTextField(
                 value = unit.quantityInStock,
-                onValueChange = { onUpdate(unit.copy(quantityInStock = it)) },
-                label = { Text(if (unit.unitType == UnitType.WEIGHT) "الكمية (كجم)" else "الكمية") },
+                onValueChange = {
+                    onUpdate(unit.copy(quantityInStock = it))
+                },
+                label = {
+                    Text(if (unit.unitType == UnitType.WEIGHT) "الكمية (كجم)" else "الكمية")
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true, modifier = Modifier.weight(1f)
             )
@@ -270,30 +317,33 @@ private fun UnitEditor(
         AnimatedVisibility(unit.unitType == UnitType.CARTON) {
             OutlinedTextField(
                 value = unit.itemsPerCarton,
-                onValueChange = { onUpdate(unit.copy(itemsPerCarton = it)) },
-                label = { Text("عدد القطع في الكرتون") },
+                onValueChange = {
+                    onUpdate(unit.copy(itemsPerCarton = it))
+                },
+                label = {
+                    Text("عدد القطع في الكرتون")
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true, modifier = Modifier.fillMaxWidth()
             )
         }
 
-        // وحدة الوزن (فقط لو WEIGHT)
+        // وحدة الوزن (فقط لو WEIGHT) — دائماً كيلوغرام
         AnimatedVisibility(unit.unitType == UnitType.WEIGHT) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("وحدة الوزن:", style = MaterialTheme.typography.labelLarge,
-                    color = appColors.textSecondary)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    WeightUnit.entries.forEach { wu ->
-                        FilterChip(
-                            selected = unit.weightUnit == wu,
-                            onClick = { onUpdate(unit.copy(weightUnit = wu)) },
-                            label = { Text(wu.label) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Emerald500.copy(0.15f),
-                                selectedLabelColor = Emerald500
-                            )
-                        )
-                    }
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = Emerald500.copy(alpha = 0.1f)
+            ) {
+                Row(
+                    Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(Icons.Rounded.Scale, null,
+                        tint = Emerald500, modifier = Modifier.size(16.dp))
+                    Text("وحدة التخزين: كيلوغرام (كجم)",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = Emerald500)
                 }
             }
         }
@@ -301,12 +351,18 @@ private fun UnitEditor(
         // حد التنبيه
         OutlinedTextField(
             value = unit.lowStockThreshold,
-            onValueChange = { onUpdate(unit.copy(lowStockThreshold = it)) },
-            label = { Text("تنبيه عند نقص الكمية إلى") },
+            onValueChange = {
+                onUpdate(unit.copy(lowStockThreshold = it))
+            },
+            label = {
+                Text("تنبيه عند نقص الكمية إلى")
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true, modifier = Modifier.fillMaxWidth(),
-            leadingIcon = { Icon(Icons.Rounded.NotificationsActive, null,
-                tint = UnpaidAmber, modifier = Modifier.size(18.dp)) }
+            leadingIcon = {
+                Icon(Icons.Rounded.NotificationsActive, null,
+                    tint = UnpaidAmber, modifier = Modifier.size(18.dp))
+            }
         )
     }
 }
