@@ -17,7 +17,7 @@ import java.util.UUID
 class ProductRepositoryImpl(
     private val dao: ProductDao,
     private val remote: ProductFirestoreService,
-    private val activationRepo: ActivationRepository      // ✅ بدلاً من String ثابت
+    private val activationRepo: ActivationRepository
 ) : ProductRepository {
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -26,36 +26,28 @@ class ProductRepositoryImpl(
         startRealtimeSync()
     }
 
-    /**
-     * ✅ يراقب merchantCode عبر Flow — بمجرد توفّره يبدأ الاستماع لـ Firestore.
-     * هذا يحل مشكلة merchantId الفارغ عند أول تثبيت.
-     * collectLatest يُلغي الـ listener القديم تلقائياً إذا تغيّر الكود.
-     */
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
-            .filter {
-                it.isNotEmpty()
-            }
-            .distinctUntilChanged()
-            .collectLatest {
-                code ->
-                remote.observeProductsWithUnits(code).collect {
-                    items ->
-                    items.forEach {
-                        (product, units) ->
-                        dao.upsertProductWithUnits(
-                            product.toEntity(),
-                            units.map {
-                                it.toEntity()
+                .filter { it.isNotEmpty() }
+                .distinctUntilChanged()
+                .collectLatest { code ->
+                    // الوحدات أولاً دائماً
+                    launch {
+                        remote.observeUnits(code).collect { units ->
+                            units.forEach { unit ->
+                                try { dao.insertUnit(unit.toEntity()) } catch (_: Exception) {}
                             }
-                        )
-                        dao.deleteRemovedUnits(product.id, units.map {
-                            it.id
-                        })
+                        }
+                    }
+                    // المنتجات بعد انتظار أول snapshot للوحدات
+                    launch {
+                        remote.observeUnits(code).take(1).collect {}
+                        remote.observeProducts(code).collect { products ->
+                            products.forEach { dao.insertProduct(it.toEntity()) }
+                        }
                     }
                 }
-            }
         }
     }
 
@@ -64,45 +56,27 @@ class ProductRepositoryImpl(
     // ── استعلامات ────────────────────────────────────────────────
 
     override fun getAllProducts(): Flow<List<ProductWithUnits>> =
-    dao.getAllWithUnits().map {
-        list -> list.map {
-            it.toDomainWithUnits()
-        }
-    }
+        dao.getAllWithUnits().map { list -> list.map { it.toDomainWithUnits() } }
 
     override fun searchProducts(query: String): Flow<List<ProductWithUnits>> =
-    dao.searchWithUnits(query).map {
-        list -> list.map {
-            it.toDomainWithUnits()
-        }
-    }
+        dao.searchWithUnits(query).map { list -> list.map { it.toDomainWithUnits() } }
 
     override fun getLowStockProducts(): Flow<List<ProductWithUnits>> =
-    getAllProducts().map {
-        list -> list.filter {
-            it.isLowStock
-        }
-    }
+        getAllProducts().map { list -> list.filter { it.isLowStock } }
 
     override fun getOutOfStockProducts(): Flow<List<ProductWithUnits>> =
-    getAllProducts().map {
-        list -> list.filter {
-            it.isOutOfStock
-        }
-    }
+        getAllProducts().map { list -> list.filter { it.isOutOfStock } }
 
     override suspend fun getProductByBarcode(barcode: String): ProductWithUnits? =
-    dao.getByBarcode(barcode)?.toDomainWithUnits()
+        dao.getByBarcode(barcode)?.toDomainWithUnits()
 
     override suspend fun getProductById(id: String): ProductWithUnits? =
-    dao.getById(id)?.toDomainWithUnits()
+        dao.getById(id)?.toDomainWithUnits()
 
-    // ── حفظ وتعديل — LOCAL FIRST ─────────────────────────────────
+    // ── حفظ وتعديل — LOCAL FIRST ──────────────────────────────────
 
     override suspend fun saveProduct(product: Product, units: List<ProductUnit>): String {
-        val id = product.id.ifEmpty {
-            UUID.randomUUID().toString()
-        }
+        val id = product.id.ifEmpty { UUID.randomUUID().toString() }
         val now = System.currentTimeMillis()
         val mid = merchantId()
 
@@ -112,44 +86,26 @@ class ProductRepositoryImpl(
             updatedAt = now,
             syncStatus = SyncStatus.PENDING
         )
-        val unitsToSave = units.mapIndexed {
-            index, unit ->
+        val unitsToSave = units.mapIndexed { index, unit ->
             unit.copy(
-                id = unit.id.ifEmpty {
-                    UUID.randomUUID().toString()
-                },
+                id = unit.id.ifEmpty { UUID.randomUUID().toString() },
                 productId = id,
-                isDefault = if (units.any {
-                    it.isDefault
-                }) unit.isDefault else index == 0,
+                isDefault = if (units.any { it.isDefault }) unit.isDefault else index == 0,
                 createdAt = if (unit.createdAt == 0L) now else unit.createdAt,
                 updatedAt = now,
                 syncStatus = SyncStatus.PENDING
             )
         }
 
-        // ✅ عملية ذرية واحدة
-        dao.upsertProductWithUnits(
-            productToSave.toEntity(),
-            unitsToSave.map {
-                it.toEntity()
-            }
-        )
-
-        // احذف الوحدات التي أزالها المستخدم
-        dao.deleteRemovedUnits(id, unitsToSave.map {
-            it.id
-        })
+        // الوحدات أولاً ثم المنتج — يضمن عدم ظهور المنتج بكمية 0
+        unitsToSave.forEach { dao.insertUnit(it.toEntity()) }
+        dao.insertProduct(productToSave.toEntity())
 
         syncInBackground {
             remote.uploadProduct(mid, productToSave.copy(syncStatus = SyncStatus.SYNCED))
-            unitsToSave.forEach {
-                remote.uploadUnit(mid, it.copy(syncStatus = SyncStatus.SYNCED))
-            }
+            unitsToSave.forEach { remote.uploadUnit(mid, it.copy(syncStatus = SyncStatus.SYNCED)) }
             dao.markProductSynced(id)
-            unitsToSave.forEach {
-                dao.markUnitSynced(it.id)
-            }
+            unitsToSave.forEach { dao.markUnitSynced(it.id) }
         }
 
         return id
@@ -161,7 +117,7 @@ class ProductRepositoryImpl(
             updatedAt = System.currentTimeMillis(),
             syncStatus = SyncStatus.PENDING
         )
-        dao.updateProduct(updated.toEntity()) // يعدّل المنتج فقط
+        dao.updateProduct(updated.toEntity())
         syncInBackground {
             remote.uploadProduct(mid, updated.copy(syncStatus = SyncStatus.SYNCED))
             dao.markProductSynced(updated.id)
@@ -179,9 +135,7 @@ class ProductRepositoryImpl(
     override suspend fun saveUnit(unit: ProductUnit) {
         val mid = merchantId()
         val toSave = unit.copy(
-            id = unit.id.ifEmpty {
-                UUID.randomUUID().toString()
-            },
+            id = unit.id.ifEmpty { UUID.randomUUID().toString() },
             updatedAt = System.currentTimeMillis(),
             syncStatus = SyncStatus.PENDING
         )
@@ -194,7 +148,10 @@ class ProductRepositoryImpl(
 
     override suspend fun updateUnit(unit: ProductUnit) {
         val mid = merchantId()
-        val updated = unit.copy(updatedAt = System.currentTimeMillis(), syncStatus = SyncStatus.PENDING)
+        val updated = unit.copy(
+            updatedAt = System.currentTimeMillis(),
+            syncStatus = SyncStatus.PENDING
+        )
         dao.updateUnit(updated.toEntity())
         syncInBackground {
             remote.uploadUnit(mid, updated.copy(syncStatus = SyncStatus.SYNCED))
@@ -213,15 +170,13 @@ class ProductRepositoryImpl(
     override suspend fun syncPendingProducts() {
         val mid = merchantId()
         if (mid.isEmpty()) return
-        dao.getPendingProducts().forEach {
-            entity ->
+        dao.getPendingProducts().forEach { entity ->
             try {
                 remote.uploadProduct(mid, entity.toDomain().copy(syncStatus = SyncStatus.SYNCED))
                 dao.markProductSynced(entity.id)
             } catch (_: Exception) {}
         }
-        dao.getPendingUnits().forEach {
-            entity ->
+        dao.getPendingUnits().forEach { entity ->
             try {
                 remote.uploadUnit(mid, entity.toDomain().copy(syncStatus = SyncStatus.SYNCED))
                 dao.markUnitSynced(entity.id)
@@ -231,18 +186,12 @@ class ProductRepositoryImpl(
 
     private fun syncInBackground(block: suspend () -> Unit) {
         syncScope.launch {
-            try {
-                block()
-            } catch (_: Exception) {
-                /* يُعاد لاحقاً عبر syncPendingProducts */
-            }
+            try { block() } catch (_: Exception) {}
         }
     }
 
     private fun ProductWithUnitsRelation.toDomainWithUnits() = ProductWithUnits(
         product = product.toDomain(),
-        units = units.map {
-            it.toDomain()
-        }
+        units = units.map { it.toDomain() }
     )
 }
