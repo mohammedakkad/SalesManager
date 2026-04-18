@@ -81,4 +81,6 @@ interface ProductDao {
 
     @Query("SELECT quantityInStock FROM product_units WHERE id = :unitId")
     suspend fun getQuantity(unitId: String): Double?
+
+    @Query("DELETE FROM products") suspend fun deleteAllProducts()
 }

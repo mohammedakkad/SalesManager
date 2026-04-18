@@ -11,6 +11,7 @@ import com.trader.core.data.local.appDataStore
 import com.google.firebase.firestore.FirebaseFirestore
 import com.trader.core.data.local.dao.*
 import com.trader.core.data.local.entity.*
+import com.trader.core.data.remote.ProductFirestoreService
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.repository.ActivationRepository
@@ -25,7 +26,9 @@ class ActivationRepositoryImpl(
     private val firebaseService: FirebaseSyncService,
     private val customerDao: CustomerDao,
     private val transactionDao: TransactionDao,
-    private val paymentMethodDao: PaymentMethodDao
+    private val paymentMethodDao: PaymentMethodDao,
+    private val productDao: ProductDao, // ✅ لجلب المنتجات عند التفعيل
+    private val productFirestoreService: ProductFirestoreService // ✅
 ) : ActivationRepository {
 
     private val IS_ACTIVATED = booleanPreferencesKey("is_activated")
@@ -45,14 +48,16 @@ class ActivationRepositoryImpl(
     context.appDataStore.data.map {
         it[MERCHANT_CODE] ?: ""
     }.first()
-    
+
     /**
      * Emits the current merchant code immediately and on every change.
      * Repositories use this to start realtime sync as soon as a code is available —
      * even if the user activates AFTER the repository was created.
      */
     override fun observeMerchantCode(): Flow<String> =
-        context.appDataStore.data.map { it[MERCHANT_CODE] ?: "" }.distinctUntilChanged()
+    context.appDataStore.data.map {
+        it[MERCHANT_CODE] ?: ""
+    }.distinctUntilChanged()
 
 
     override suspend fun saveActivationStatus(activated: Boolean, code: String) {
@@ -73,6 +78,8 @@ class ActivationRepositoryImpl(
         customerDao.deleteAll()
         transactionDao.deleteAll()
         paymentMethodDao.deleteAll()
+        // ✅ حذف المنتجات المحلية عند إلغاء التفعيل
+        productDao.deleteAllProducts()
     }
 
     /**
@@ -125,6 +132,7 @@ class ActivationRepositoryImpl(
 
     // ─────────────────────────────────────────────────────────────
     private suspend fun fetchAndStoreAllData(code: String) {
+        // ── بيانات العمليات (Realtime DB) ─────────────────────────
         val data = try {
             firebaseService.fetchAllData(code)
         } catch (e: Exception) {
@@ -148,6 +156,25 @@ class ActivationRepositoryImpl(
                 transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
             } catch (_: Exception) {}
         }
+
+        // ✅ ── المنتجات والوحدات (Firestore) ─────────────────────
+        // المخزن يُخزَّن في Firestore وليس Realtime DB
+        try {
+            val products = productFirestoreService.fetchAllProducts(code)
+            val units = productFirestoreService.fetchAllUnits(code)
+            products.forEach {
+                product ->
+                try {
+                    productDao.insertProduct(product.toEntity())
+                } catch (_: Exception) {}
+            }
+            units.forEach {
+                unit ->
+                try {
+                    productDao.insertUnit(unit.toEntity())
+                } catch (_: Exception) {}
+            }
+        } catch (_: Exception) {}
     }
 
     override suspend fun verifyStatusOnStartup(): StartupStatus {

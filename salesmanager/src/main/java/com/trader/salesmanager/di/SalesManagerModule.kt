@@ -37,64 +37,152 @@ import org.koin.dsl.module
 
 val salesManagerModule = module {
     // ── Database ─────────────────────────────────────────────────
-    single { AppDatabase.build(androidContext()) }
-    single { get<AppDatabase>().customerDao() }
-    single { get<AppDatabase>().transactionDao() }
-    single { get<AppDatabase>().paymentMethodDao() }
-    single { get<AppDatabase>().pendingMessageDao() }
-    single { get<AppDatabase>().productDao() }
-    single { get<AppDatabase>().stockMovementDao() }
-    single { get<AppDatabase>().invoiceItemDao() }
-    single { get<AppDatabase>().inventoryDao() }
+    single {
+        AppDatabase.build(androidContext())
+    }
+    single {
+        get<AppDatabase>().customerDao()
+    }
+    single {
+        get<AppDatabase>().transactionDao()
+    }
+    single {
+        get<AppDatabase>().paymentMethodDao()
+    }
+    single {
+        get<AppDatabase>().pendingMessageDao()
+    }
+    single {
+        get<AppDatabase>().productDao()
+    }
+    single {
+        get<AppDatabase>().stockMovementDao()
+    }
+    single {
+        get<AppDatabase>().invoiceItemDao()
+    }
+    single {
+        get<AppDatabase>().inventoryDao()
+    }
 
     // ── Remote ───────────────────────────────────────────────────
-    single { FirebaseSyncService() }
-    single { ChatService() }
-    single { ProductFirestoreService() }
-    single { NetworkMonitor(androidContext()) }
+    single {
+        FirebaseSyncService()
+    }
+    single {
+        ChatService()
+    }
+    single {
+        ProductFirestoreService()
+    }
+    single {
+        NetworkMonitor(androidContext())
+    }
 
     // ── merchantId helper ─────────────────────────────────────────
     // merchant_code = activationCode = merchantId المستخدم في Firestore
     single<String>(org.koin.core.qualifier.named("merchantId")) {
         runBlocking {
             androidContext().appDataStore.data
-                .map { prefs -> prefs[androidx.datastore.preferences.core.stringPreferencesKey("merchant_code")] ?: "" }
-                .first()
+            .map {
+                prefs -> prefs[androidx.datastore.preferences.core.stringPreferencesKey("merchant_code")] ?: ""
+            }
+            .first()
         }
     }
 
     // ── Repositories ─────────────────────────────────────────────
-    single<ActivationRepository>    { ActivationRepositoryImpl(androidContext(), get(), get(), get(), get()) }
-    single<CustomerRepository>      { CustomerRepositoryImpl(get(), get(), get()) }
-    single<TransactionRepository>   { TransactionRepositoryImpl(get(), get(), get(), get(), get()) }
-    single<PaymentMethodRepository> { PaymentMethodRepositoryImpl(get(), get(), get()) }
-    single<ChatRepository>          { ChatRepositoryImpl(get()) }
-    single<MerchantStatusRepository>{ MerchantStatusRepositoryImpl() }
-    single<ProductRepository>       { ProductRepositoryImpl(get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId"))) }
-    single<StockRepository>         { StockRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId"))) }
-    single<InvoiceItemRepository>   { InvoiceItemRepositoryImpl(get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId"))) }
-    single<InventoryRepository>     { InventoryRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId"))) }
+    single<ActivationRepository> {
+        ActivationRepositoryImpl(androidContext(), get(), get(), get(), get(), get(), get())
+    }
+    single<CustomerRepository> {
+        CustomerRepositoryImpl(get(), get(), get())
+    }
+    single<TransactionRepository> {
+        TransactionRepositoryImpl(get(), get(), get(), get(), get())
+    }
+    single<PaymentMethodRepository> {
+        PaymentMethodRepositoryImpl(get(), get(), get())
+    }
+    single<ChatRepository> {
+        ChatRepositoryImpl(get())
+    }
+    single<MerchantStatusRepository> {
+        MerchantStatusRepositoryImpl()
+    }
+    single<ProductRepository> {
+        ProductRepositoryImpl(get(), get(), get())
+    }
+    single<StockRepository> {
+        StockRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+    }
+    single<InvoiceItemRepository> {
+        InvoiceItemRepositoryImpl(get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+    }
+    single<InventoryRepository> {
+        InventoryRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+    }
 
     // ── ViewModels ───────────────────────────────────────────────
-    viewModel { ActivationViewModel(get(), get()) }
-    viewModel { MerchantWatcherViewModel(get(), get(), androidContext()) }
-    viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { CustomersViewModel(get()) }
-    viewModel { AddEditCustomerViewModel(get()) }
-    viewModel { params -> CustomerDetailsViewModel(get(), get(), params.get()) }
-    viewModel { TransactionsViewModel(get()) }
-    viewModel { AddEditTransactionViewModel(get(), get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId"))) }
-    viewModel { ReportsViewModel(get(), get()) }
-    viewModel { params -> DayTransactionsViewModel(get(), params.get()) }
-    viewModel { PaymentMethodsViewModel(get()) }
-    viewModel { DebtsViewModel(get(), get()) }
-    viewModel { ChatViewModel(get(), get(), get()) }
-    viewModel { AppUpdateViewModel() }
+    viewModel {
+        ActivationViewModel(get(), get())
+    }
+    viewModel {
+        MerchantWatcherViewModel(get(), get(), androidContext())
+    }
+    viewModel {
+        HomeViewModel(get(), get(), get())
+    }
+    viewModel {
+        CustomersViewModel(get())
+    }
+    viewModel {
+        AddEditCustomerViewModel(get())
+    }
+    viewModel {
+        params -> CustomerDetailsViewModel(get(), get(), params.get())
+    }
+    viewModel {
+        TransactionsViewModel(get())
+    }
+    viewModel {
+        AddEditTransactionViewModel(get(), get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+    }
+    viewModel {
+        ReportsViewModel(get(), get())
+    }
+    viewModel {
+        params -> DayTransactionsViewModel(get(), params.get())
+    }
+    viewModel {
+        PaymentMethodsViewModel(get())
+    }
+    viewModel {
+        DebtsViewModel(get(), get())
+    }
+    viewModel {
+        ChatViewModel(get(), get(), get())
+    }
+    viewModel {
+        AppUpdateViewModel()
+    }
     // ── Inventory ─────────────────────────────────────────────────
-    viewModel { InventoryListViewModel(get()) }
-    viewModel { AddEditProductViewModel(get()) }
-    viewModel { params -> ProductDetailViewModel(get(), get(), params.get()) }
-    viewModel { InventorySessionViewModel(get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId"))) }
-    viewModel { InvoiceItemsViewModel(get()) }
-    viewModel { StockReportsViewModel(get(), get()) }
+    viewModel {
+        InventoryListViewModel(get())
+    }
+    viewModel {
+        AddEditProductViewModel(get())
+    }
+    viewModel {
+        params -> ProductDetailViewModel(get(), get(), params.get())
+    }
+    viewModel {
+        InventorySessionViewModel(get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+    }
+    viewModel {
+        InvoiceItemsViewModel(get())
+    }
+    viewModel {
+        StockReportsViewModel(get(), get())
+    }
 }
