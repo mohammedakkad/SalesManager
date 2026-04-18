@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.*
 import com.trader.core.domain.repository.*
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceLineItem
+import com.trader.salesmanager.ui.inventory.invoice.SaleWeightUnit 
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -155,7 +156,7 @@ class AddEditTransactionViewModel(
                     it.copy(
                         pendingLines = rebuilt,
                         hasItems = rebuilt.isNotEmpty(),
-                        amount = if (rebuilt.isNotEmpty()) total.formatAmount() else it.amount
+                        amount = if (rebuilt.isNotEmpty()) String.format(Locale.US, "%.2f", total) else it.amount
                     )
                 }
             } catch (e: Exception) {
