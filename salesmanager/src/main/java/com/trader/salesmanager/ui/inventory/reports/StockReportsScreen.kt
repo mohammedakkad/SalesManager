@@ -141,7 +141,7 @@ private fun LazyListScope.stockTab(state: StockReportsUiState) {
                 color = appColors.textSecondary,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
         }
-        items(state.stockItems, key = { "${it.productName}_${it.unitLabel}" }) { item ->
+        items(state.stockItems, key = { it.unitId }) { item ->
             StockItemRow(item)
         }
     }

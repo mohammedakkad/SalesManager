@@ -50,13 +50,16 @@ class ProductRepositoryImpl(
                         }
                     }
                 }
-                // مراقبة الوحدات
+                // مراقبة الوحدات — try/catch لتجنب FOREIGN KEY crash
+                // إذا وصلت الوحدة قبل المنتج الأب، تُتجاهل وتُزامَن لاحقاً
                 launch {
                     remote.observeUnits(code).collect {
                         units ->
                         units.forEach {
                             unit ->
-                            dao.insertUnit(unit.toEntity())
+                            try {
+                                dao.insertUnit(unit.toEntity())
+                            } catch (_: Exception) {}
                         }
                     }
                 }
