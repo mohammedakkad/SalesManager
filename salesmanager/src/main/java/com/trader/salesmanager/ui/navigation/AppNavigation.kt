@@ -32,6 +32,7 @@ import com.trader.salesmanager.ui.inventory.addedit.AddEditProductScreen
 import com.trader.salesmanager.ui.inventory.detail.ProductDetailScreen
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceItemsScreen
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceLineItem
+import com.trader.salesmanager.ui.inventory.invoice.SaleWeightUnit
 import com.trader.salesmanager.ui.inventory.reports.StockReportsScreen
 import org.json.JSONArray
 import org.json.JSONObject
@@ -42,16 +43,19 @@ import com.trader.salesmanager.ui.transactions.list.TransactionsScreen
 import org.koin.androidx.compose.koinViewModel
 
 // تسلسل خطوط الفاتورة لنقلها عبر SavedStateHandle
+// ✅ يحفظ displayQty + displayWeightUnit حتى يتم إعادة بناء InvoiceLineItem بشكل صحيح
 private fun serializeLines(lines: List<InvoiceLineItem>): String {
     val arr = JSONArray()
     lines.forEach { line ->
         arr.put(JSONObject().apply {
-            put("productId",   line.product.product.id)
-            put("productName", line.product.product.name)
-            put("unitId",      line.selectedUnit.id)
-            put("unitLabel",   line.selectedUnit.unitLabel)
-            put("quantity",    line.quantity)
-            put("price",       line.effectivePrice)
+            put("productId",         line.product.product.id)
+            put("productName",       line.product.product.name)
+            put("unitId",            line.selectedUnit.id)
+            put("unitLabel",         line.selectedUnit.unitLabel)
+            put("displayQty",        line.displayQty)           // الكمية كما أدخلها البائع
+            put("displayWeightUnit", line.displayWeightUnit.name) // KG / GRAM / OZ / POUND
+            put("price",             line.effectivePrice)
+            // quantity (بالكيلو) لا نحفظها — تُحسب تلقائياً عند إعادة البناء
         })
     }
     return arr.toString()
@@ -255,19 +259,21 @@ fun AppNavigation() {
         ) { back ->
             val preselectedId = back.arguments!!.getLong("customerId").takeIf { it != -1L }
 
-            // استقبال الأصناف من شاشة الفاتورة
             val invoiceViewModel: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
                 org.koin.androidx.compose.koinViewModel()
-            val linesJson = back.savedStateHandle.get<String>("invoice_lines_json")
-            val invoiceTotal = back.savedStateHandle.get<Double>("invoice_total")
+
+            // ✅ نراقب SavedStateHandle بشكل مستمر لضمان استلام الأصناف دائماً
+            val linesJson by back.savedStateHandle.getStateFlow<String?>("invoice_lines_json", null)
+                .collectAsState()
+            val invoiceTotal by back.savedStateHandle.getStateFlow<Double?>("invoice_total", null)
+                .collectAsState()
 
             LaunchedEffect(linesJson) {
-                if (linesJson != null && invoiceTotal != null) {
-                    // نمرر الإجمالي للـ ViewModel كمبلغ
-                    invoiceViewModel.applyInvoiceLinesFromJson(linesJson, invoiceTotal)
-                    back.savedStateHandle.remove<String>("invoice_lines_json")
-                    back.savedStateHandle.remove<Double>("invoice_total")
-                }
+                val json  = linesJson   ?: return@LaunchedEffect
+                val total = invoiceTotal ?: return@LaunchedEffect
+                invoiceViewModel.applyInvoiceLinesFromJson(json, total)
+                back.savedStateHandle.remove<String>("invoice_lines_json")
+                back.savedStateHandle.remove<Double>("invoice_total")
             }
 
             AddEditTransactionScreen(
@@ -282,30 +288,16 @@ fun AppNavigation() {
         }
         composable(
             Screen.EditTransaction.route,
-            listOf(navArgument("transactionId") { type = NavType.LongType })
-        ) { back ->
-            // ✅ استقبال الأصناف من شاشة الفاتورة عند التعديل
-            val editInvoiceVm: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
-                org.koin.androidx.compose.koinViewModel()
-            val linesJson2  = back.savedStateHandle.get<String>("invoice_lines_json")
-            val invoiceTotal2 = back.savedStateHandle.get<Double>("invoice_total")
-
-            LaunchedEffect(linesJson2) {
-                if (linesJson2 != null && invoiceTotal2 != null) {
-                    editInvoiceVm.applyInvoiceLinesFromJson(linesJson2, invoiceTotal2)
-                    back.savedStateHandle.remove<String>("invoice_lines_json")
-                    back.savedStateHandle.remove<Double>("invoice_total")
-                }
-            }
-
+            listOf(navArgument("transactionId") {
+                type = NavType.LongType
+            })
+        ) {
             AddEditTransactionScreen(
-                transactionId = back.arguments!!.getLong("transactionId"),
+                transactionId = it.arguments!!.getLong("transactionId"),
                 preselectedCustomerId = null,
-                onNavigateUp = { navController.navigateUp() },
-                onNavigateToInvoiceItems = { customerName ->
-                    navController.navigate(Screen.InvoiceItems.createRoute(customerName))
-                },
-                viewModel = editInvoiceVm
+                onNavigateUp = {
+                    navController.navigateUp()
+                }
             )
         }
         composable(

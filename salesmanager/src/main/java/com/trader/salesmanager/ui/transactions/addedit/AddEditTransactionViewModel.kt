@@ -127,13 +127,14 @@ class AddEditTransactionViewModel(
                     val productWithUnits = productRepo.getProductById(productId) ?: continue
                     val unit = productWithUnits.units.firstOrNull { it.id == unitId } ?: continue
 
-                    rebuilt += InvoiceLineItem(
-                        product      = productWithUnits,
-                        selectedUnit = unit,
-                        quantity     = quantity,
-                        // نضع السعر المخصص فقط إذا كان مختلفاً عن سعر الوحدة
-                        customPrice  = if (price != unit.price) price else null
-                    )
+                    rebuilt += InvoiceLineItem(  
+                    product           = productWithUnits,  
+                    selectedUnit      = unit,  
+                    displayQty        = displayQty,          // ✅ الكمية كما أدخلها البائع  
+                    displayWeightUnit = displayUnit,          // ✅ وحدة البائع (كيلو/غرام/أوقية/رطل)  
+                    customPrice       = if (price != unit.price) price else null  
+                    // quantity (بالكيلو) تُحسب تلقائياً = displayQty × displayUnit.toKg  
+                )  
                 }
 
                 _uiState.update {

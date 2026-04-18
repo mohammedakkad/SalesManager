@@ -98,41 +98,12 @@ fun AddEditTransactionScreen(
                 }) {
                     uiState.customers.forEach {
                         customer ->
-                        if (customer.id == -1L) {
-                            // ── زبون زائر — مُمَيَّز بلون مختلف ──
-                            DropdownMenuItem(
-                                text = {
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            Icons.Rounded.PersonOff, null,
-                                            modifier = Modifier.size(16.dp),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Text(
-                                            customer.name,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-                                },
-                                onClick = {
-                                    viewModel.selectCustomer(customer); customerExpanded = false
-                                }
-                            )
-                            HorizontalDivider()
-                        } else {
-                            DropdownMenuItem(
-                                text = {
-                                    Text(customer.name)
-                                },
-                                onClick = {
-                                    viewModel.selectCustomer(customer); customerExpanded = false
-                                }
-                            )
-                        }
+                        DropdownMenuItem(text = {
+                            Text(customer.name)
+                        },
+                            onClick = {
+                                viewModel.selectCustomer(customer); customerExpanded = false
+                            })
                     }
                 }
             }
@@ -163,14 +134,17 @@ fun AddEditTransactionScreen(
                     Card(shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = Emerald500.copy(0.06f))) {
                         Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            uiState.pendingLines.forEach {
-                                line ->
+                            uiState.pendingLines.forEach { line ->
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("${line.product.product.name} × ${line.quantity}",
-                                        style = MaterialTheme.typography.bodySmall)
-                                    Text("₪${String.format(java.util.Locale.US, "%.2f", line.totalPrice)}",
+                                    Text(
+                                        "${line.product.product.name} × ${line.displayQtyLabel}",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                    Text(
+                                        "₪${String.format(java.util.Locale.US, "%.2f", line.totalPrice)}",
                                         style = MaterialTheme.typography.bodySmall,
-                                        fontWeight = FontWeight.SemiBold, color = Emerald500)
+                                        fontWeight = FontWeight.SemiBold, color = Emerald500
+                                    )
                                 }
                             }
                         }
@@ -180,11 +154,7 @@ fun AddEditTransactionScreen(
 
             // ── المبلغ ───────────────────────────────────────────────
             OutlinedTextField(
-                value = uiState.amount, onValueChange = {
-                    v -> viewModel.updateAmount(v.filter {
-                        it.isDigit() || it == '.' || it in '٠'..'٩' || it in '۰'..'۹'
-                    })
-                },
+                value = uiState.amount, onValueChange = { v -> viewModel.updateAmount(v.filter { it.isDigit() || it == '.' || it in '٠'..'٩' || it in '۰'..'۹' }) },
                 label = {
                     Text("المبلغ الإجمالي ₪ *")
                 },
