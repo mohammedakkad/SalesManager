@@ -1,42 +1,23 @@
 package com.trader.salesmanager.ui.transactions.addedit
 
-import java.util.Locale
 import androidx.compose.animation.AnimatedVisibility
-import java.util.Locale
 import androidx.compose.foundation.background
-import java.util.Locale
 import androidx.compose.foundation.layout.*
-import java.util.Locale
 import androidx.compose.foundation.rememberScrollState
-import java.util.Locale
 import androidx.compose.foundation.shape.RoundedCornerShape
-import java.util.Locale
 import androidx.compose.foundation.text.KeyboardOptions
-import java.util.Locale
 import androidx.compose.foundation.verticalScroll
-import java.util.Locale
 import androidx.compose.material.icons.Icons
-import java.util.Locale
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import java.util.Locale
 import androidx.compose.material.icons.rounded.*
-import java.util.Locale
 import androidx.compose.material3.*
-import java.util.Locale
 import androidx.compose.runtime.*
-import java.util.Locale
 import androidx.compose.ui.Alignment
-import java.util.Locale
 import androidx.compose.ui.Modifier
-import java.util.Locale
 import androidx.compose.ui.graphics.Brush
-import java.util.Locale
 import androidx.compose.ui.graphics.Color
-import java.util.Locale
 import androidx.compose.ui.text.font.FontWeight
-import java.util.Locale
 import androidx.compose.ui.text.input.KeyboardType
-import java.util.Locale
 import androidx.compose.ui.unit.dp
 import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.repository.PaymentMethodRepository
@@ -187,7 +168,7 @@ fun AddEditTransactionScreen(
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                     Text("${line.product.product.name} × ${line.quantity}",
                                         style = MaterialTheme.typography.bodySmall)
-                                    Text("₪${String.format(Locale.US, "%.2f", line.totalPrice)}",
+                                    Text("₪${String.format(java.util.Locale.US, "%.2f", line.totalPrice)}",
                                         style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.SemiBold, color = Emerald500)
                                 }
