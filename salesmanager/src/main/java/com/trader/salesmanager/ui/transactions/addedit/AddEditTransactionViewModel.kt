@@ -121,41 +121,32 @@ class AddEditTransactionViewModel(
         viewModelScope.launch {
             try {
                 val arr = org.json.JSONArray(json)
-                if (arr.length() == 0) return@launch
-
                 val rebuilt = mutableListOf<InvoiceLineItem>()
 
                 for (i in 0 until arr.length()) {
                     val obj = arr.getJSONObject(i)
                     val productId = obj.getString("productId")
                     val unitId = obj.getString("unitId")
-                    val quantity = obj.getDouble("quantity") // هذه هي الكمية الصافية بالكيلو
+                    val kgQuantity = obj.getDouble("quantity") // الكمية المخزنة بالكيلو
                     val price = obj.getDouble("price")
 
-                    // جلب اسم وحدة العرض من الـ JSON (مثلاً "OUZZA" أو "KG")
-                    // إذا لم تكن موجودة نفترض أنها "KG" للحفاظ على التوافق
-                    val displayUnitName = obj.optString("displayWeightUnit", "KG")
-                    val weightUnit = try {
-                        WeightUnit.valueOf(displayUnitName)
-                    } catch(_: Exception) {
-                        WeightUnit.KG
-                    }
+                    // استعادة الوحدة (نستخدم SaleWeightUnit)
+                    val unitName = obj.optString("displayWeightUnit", "KG")
+                    val weightUnit = SaleWeightUnit.valueOf(unitName)
 
-                    // جلب المنتج من قاعدة البيانات
                     val productWithUnits = productRepo.getProductById(productId) ?: continue
                     val unit = productWithUnits.units.firstOrNull {
                         it.id == unitId
                     } ?: continue
 
-                    // الحسبة العكسية: displayQty = الكمية بالكيلو / معامل الوحدة
-                    // مثال: إذا كان معك 0.5 كيلو والوحدة أوقية (0.25)، ستكون كمية العرض = 2
-                    val displayQty = quantity / weightUnit.factor
+                    // القسمة على toKg لتحويل الكيلو جرام إلى "رقم العرض" (مثلاً 2 أوقية)
+                    val displayQty = kgQuantity / weightUnit.toKg
 
                     rebuilt += InvoiceLineItem(
                         product = productWithUnits,
                         selectedUnit = unit,
-                        displayQty = displayQty, // القيمة التي ستظهر في حقل الإدخال
-                        displayWeightUnit = weightUnit, // الوحدة التي ستكون مختارة (كيلو/أوقية..)
+                        displayQty = displayQty,
+                        displayWeightUnit = weightUnit,
                         customPrice = if (price != unit.price) price else null
                     )
                 }
@@ -164,12 +155,17 @@ class AddEditTransactionViewModel(
                     it.copy(
                         pendingLines = rebuilt,
                         hasItems = rebuilt.isNotEmpty(),
-                        amount = if (rebuilt.isNotEmpty()) String.format(Locale.US, "%.2f", total) else it.amount
+                        amount = if (rebuilt.isNotEmpty()) total.formatAmount() else it.amount
                     )
                 }
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(error = "فشل استعادة البيانات: ${e.message}")
+                }
+            }
         }
     }
+
 
 
     fun selectCustomer(c: Customer) = _uiState.update {
