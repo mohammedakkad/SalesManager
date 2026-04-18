@@ -53,10 +53,28 @@ interface ProductDao {
     @Query("UPDATE products SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markProductSynced(id: String)
 
+    @Transaction
+    suspend fun upsertProductWithUnits(
+        product: ProductEntity,
+        units: List<ProductUnitEntity>
+    ) {
+        insertProduct(product) // REPLACE يتعامل مع التعديل تلقائياً
+        insertUnits(units) // REPLACE يتعامل مع التعديل تلقائياً
+        // لا حذف = لا flash = لا انبعاث وسطي فارغ
+    }
+
+
     // ── Units ─────────────────────────────────────────────────────
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUnit(unit: ProductUnitEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUnits(units: List<ProductUnitEntity>) // قائمة
+
+    // للحذف الحقيقي فقط عند تعديل الوحدات (أضاف أو حذف وحدة)
+    @Query("DELETE FROM product_units WHERE productId = :productId AND id NOT IN (:keepIds)")
+    suspend fun deleteRemovedUnits(productId: String, keepIds: List<String>)
 
     @Update
     suspend fun updateUnit(unit: ProductUnitEntity)

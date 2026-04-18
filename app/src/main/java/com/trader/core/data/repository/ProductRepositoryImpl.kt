@@ -40,27 +40,19 @@ class ProductRepositoryImpl(
             .distinctUntilChanged()
             .collectLatest {
                 code ->
-                // مراقبة المنتجات
-                launch {
-                    remote.observeProducts(code).collect {
-                        products ->
-                        products.forEach {
-                            product ->
-                            dao.insertProduct(product.toEntity())
-                        }
-                    }
-                }
-                // مراقبة الوحدات — try/catch لتجنب FOREIGN KEY crash
-                // إذا وصلت الوحدة قبل المنتج الأب، تُتجاهل وتُزامَن لاحقاً
-                launch {
-                    remote.observeUnits(code).collect {
-                        units ->
-                        units.forEach {
-                            unit ->
-                            try {
-                                dao.insertUnit(unit.toEntity())
-                            } catch (_: Exception) {}
-                        }
+                remote.observeProductsWithUnits(code).collect {
+                    items ->
+                    items.forEach {
+                        (product, units) ->
+                        dao.upsertProductWithUnits(
+                            product.toEntity(),
+                            units.map {
+                                it.toEntity()
+                            }
+                        )
+                        dao.deleteRemovedUnits(product.id, units.map {
+                            it.id
+                        })
                     }
                 }
             }
@@ -120,9 +112,6 @@ class ProductRepositoryImpl(
             updatedAt = now,
             syncStatus = SyncStatus.PENDING
         )
-
-        dao.insertProduct(productToSave.toEntity())
-
         val unitsToSave = units.mapIndexed {
             index, unit ->
             unit.copy(
@@ -138,11 +127,20 @@ class ProductRepositoryImpl(
                 syncStatus = SyncStatus.PENDING
             )
         }
-        unitsToSave.forEach {
-            dao.insertUnit(it.toEntity())
-        }
 
-        // رفع فوري لـ Firestore
+        // ✅ عملية ذرية واحدة
+        dao.upsertProductWithUnits(
+            productToSave.toEntity(),
+            unitsToSave.map {
+                it.toEntity()
+            }
+        )
+
+        // احذف الوحدات التي أزالها المستخدم
+        dao.deleteRemovedUnits(id, unitsToSave.map {
+            it.id
+        })
+
         syncInBackground {
             remote.uploadProduct(mid, productToSave.copy(syncStatus = SyncStatus.SYNCED))
             unitsToSave.forEach {
@@ -159,8 +157,11 @@ class ProductRepositoryImpl(
 
     override suspend fun updateProduct(product: Product) {
         val mid = merchantId()
-        val updated = product.copy(updatedAt = System.currentTimeMillis(), syncStatus = SyncStatus.PENDING)
-        dao.updateProduct(updated.toEntity())
+        val updated = product.copy(
+            updatedAt = System.currentTimeMillis(),
+            syncStatus = SyncStatus.PENDING
+        )
+        dao.updateProduct(updated.toEntity()) // يعدّل المنتج فقط
         syncInBackground {
             remote.uploadProduct(mid, updated.copy(syncStatus = SyncStatus.SYNCED))
             dao.markProductSynced(updated.id)
