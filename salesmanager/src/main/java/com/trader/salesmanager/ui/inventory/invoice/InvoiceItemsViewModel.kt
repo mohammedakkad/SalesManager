@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.inventory.invoice
 
+import java.util.Locale
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.*

@@ -7,6 +7,7 @@ import com.trader.core.domain.repository.*
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceLineItem
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.Locale
 import java.util.UUID
 
 data class AddEditTransactionUiState(
@@ -98,7 +99,7 @@ class AddEditTransactionViewModel(
             it.copy(
                 pendingLines = lines,
                 hasItems     = lines.isNotEmpty(),
-                amount       = if (lines.isNotEmpty()) String.format("%.2f", total) else it.amount
+                amount       = if (lines.isNotEmpty()) String.format(Locale.US, "%.2f", total) else it.amount
             )
         }
     }
@@ -139,7 +140,7 @@ class AddEditTransactionViewModel(
                     it.copy(
                         pendingLines = rebuilt,
                         hasItems     = rebuilt.isNotEmpty(),
-                        amount       = if (rebuilt.isNotEmpty()) String.format("%.2f", total) else it.amount
+                        amount       = if (rebuilt.isNotEmpty()) String.format(Locale.US, "%.2f", total) else it.amount
                     )
                 }
             } catch (_: Exception) {}
