@@ -17,31 +17,54 @@ import java.util.UUID
 class ProductRepositoryImpl(
     private val dao: ProductDao,
     private val remote: ProductFirestoreService,
-    private val activationRepo: ActivationRepository
+    private val activationRepo: ActivationRepository,
+    private val networkMonitor: NetworkMonitor
 ) : ProductRepository {
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
         startRealtimeSync()
+        startPendingSyncOnReconnect
+    }
+
+    private fun startPendingSyncOnReconnect() {
+        syncScope.launch {
+            networkMonitor.isOnlineFlow
+            .filter {
+                it
+            } // فقط عند عودة الإنترنت
+            .collect {
+                syncPendingProducts()
+            }
+        }
     }
 
     private fun startRealtimeSync() {
-    syncScope.launch {
-        activationRepo.observeMerchantCode()
-            .filter { it.isNotEmpty() }
+        syncScope.launch {
+            activationRepo.observeMerchantCode()
+            .filter {
+                it.isNotEmpty()
+            }
             .distinctUntilChanged()
-            .collectLatest { code ->
-                remote.observeProducts(code).collect { products ->
-                    products.forEach { product ->
+            .collectLatest {
+                code ->
+                remote.observeProducts(code).collect {
+                    products ->
+                    products.forEach {
+                        product ->
                         launch {
                             val units = remote.fetchUnitsForProduct(code, product.id)
                             if (units.isNotEmpty()) {
                                 dao.upsertProductWithUnits(
                                     product.toEntity(),
-                                    units.map { it.toEntity() }
+                                    units.map {
+                                        it.toEntity()
+                                    }
                                 )
-                                dao.deleteRemovedUnits(product.id, units.map { it.id })
+                                dao.deleteRemovedUnits(product.id, units.map {
+                                    it.id
+                                })
                             } else {
                                 // لا إنترنت أو subcollection فارغة — حدّث المنتج فقط بدون المساس بالوحدات
                                 dao.insertProduct(product.toEntity())
@@ -50,8 +73,8 @@ class ProductRepositoryImpl(
                     }
                 }
             }
+        }
     }
-}
 
     private suspend fun merchantId(): String = activationRepo.getMerchantCode()
 
