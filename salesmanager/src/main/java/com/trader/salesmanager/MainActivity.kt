@@ -17,6 +17,7 @@ import com.trader.salesmanager.update.AppUpdateViewModel
 import com.trader.salesmanager.update.BackgroundUpdateWorker
 import com.trader.salesmanager.update.UpdateUiState
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.trader.core.data.migration
 
 class MainActivity : ComponentActivity() {
 
@@ -24,21 +25,25 @@ class MainActivity : ComponentActivity() {
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { /* granted or denied */ }
+    ) {
+        /* granted or denied */
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         NotificationService.createChannels(this)
         requestNotificationPermission()
-
+        lifecycleScope.launch {
+            FirestoreMigrationHelper().migrateAll()
+        }
         val currentVersionCode = packageManager
-            .getPackageInfo(packageName, 0)
-            .let {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-                    it.longVersionCode.toInt()
-                else @Suppress("DEPRECATION") it.versionCode
-            }
+        .getPackageInfo(packageName, 0)
+        .let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                it.longVersionCode.toInt()
+            else @Suppress("DEPRECATION") it.versionCode
+        }
 
         // التحقق من التحديث — يبدأ التحميل تلقائياً في الخلفية إذا وُجد
         updateViewModel.checkForUpdate(currentVersionCode)
