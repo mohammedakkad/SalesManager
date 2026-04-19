@@ -17,7 +17,6 @@ import com.trader.salesmanager.update.AppUpdateViewModel
 import com.trader.salesmanager.update.BackgroundUpdateWorker
 import com.trader.salesmanager.update.UpdateUiState
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import com.trader.core.data.migration
 
 import androidx.lifecycle.lifecycleScope // حل مشكلة Unresolved reference 'lifecycleScope'
 import kotlinx.coroutines.launch
