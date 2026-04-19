@@ -208,8 +208,8 @@ suspend fun AppDatabase.upsertProductWithUnits(
     units: List<ProductUnitEntity>
 ) {
     withTransaction {
-        productDao().insertUnits(units) // الوحدات أولاً
-        productDao().insertProduct(product) // المنتج ثانياً — Flow ينبعث هنا فقط
+        productDao().insertProduct(product) // ✅ المنتج أولاً — Foreign Key يتحقق
+        productDao().insertUnits(units) // ✅ الوحدات ثانياً
     }
 }
 
@@ -218,8 +218,8 @@ suspend fun AppDatabase.upsertProductWithUnitsAndClean(
     units: List<ProductUnitEntity>
 ) {
     withTransaction {
-        productDao().insertUnits(units)
-        productDao().insertProduct(product)
+        productDao().insertProduct(product) // ✅ المنتج أولاً
+        productDao().insertUnits(units) // ✅ الوحدات ثانياً
         productDao().deleteRemovedUnits(product.id, units.map {
             it.id
         })
