@@ -19,6 +19,9 @@ import com.trader.salesmanager.update.UpdateUiState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.trader.core.data.migration
 
+import androidx.lifecycle.lifecycleScope // حل مشكلة Unresolved reference 'lifecycleScope'
+import kotlinx.coroutines.launch
+import com.trader.core.data.migration.FirestoreMigrationHelper // تأكد أن هذا المسار يطابق ملف الهيلبر
 class MainActivity : ComponentActivity() {
 
     private val updateViewModel: AppUpdateViewModel by viewModel()
