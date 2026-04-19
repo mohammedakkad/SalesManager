@@ -67,6 +67,7 @@ class ProductRepositoryImpl(
                                         it.toEntity()
                                     }
                                 )
+
                             } else {
                                 dao.insertProduct(product.toEntity())
                             }
@@ -151,6 +152,11 @@ class ProductRepositoryImpl(
                 it.toEntity()
             }
         )
+        val check = dao.getAllWithUnitsOnce()
+        android.util.Log.d("DEBUG_CHECK1234", "Products in DB after save: ${check.size}")
+        check.forEach {
+            android.util.Log.d("DEBUG_CHECK1234", "${it.product.name} — units: ${it.units.size}")
+        }
 
         syncInBackground {
             remote.uploadProduct(mid, productToSave.copy(syncStatus = SyncStatus.SYNCED))
