@@ -27,36 +27,31 @@ class ProductRepositoryImpl(
     }
 
     private fun startRealtimeSync() {
-        syncScope.launch {
-            activationRepo.observeMerchantCode()
-            .filter {
-                it.isNotEmpty()
-            }
+    syncScope.launch {
+        activationRepo.observeMerchantCode()
+            .filter { it.isNotEmpty() }
             .distinctUntilChanged()
-            .collectLatest {
-                code ->
-                remote.observeProducts(code).collect {
-                    products ->
-                    products.forEach {
-                        product ->
+            .collectLatest { code ->
+                remote.observeProducts(code).collect { products ->
+                    products.forEach { product ->
                         launch {
-                            // كل منتج يجلب وحداته من subcollection خاصة به
                             val units = remote.fetchUnitsForProduct(code, product.id)
-                            dao.upsertProductWithUnits(
-                                product.toEntity(),
-                                units.map {
-                                    it.toEntity()
-                                }
-                            )
-                            dao.deleteRemovedUnits(product.id, units.map {
-                                it.id
-                            })
+                            if (units.isNotEmpty()) {
+                                dao.upsertProductWithUnits(
+                                    product.toEntity(),
+                                    units.map { it.toEntity() }
+                                )
+                                dao.deleteRemovedUnits(product.id, units.map { it.id })
+                            } else {
+                                // لا إنترنت أو subcollection فارغة — حدّث المنتج فقط بدون المساس بالوحدات
+                                dao.insertProduct(product.toEntity())
+                            }
                         }
                     }
                 }
             }
-        }
     }
+}
 
     private suspend fun merchantId(): String = activationRepo.getMerchantCode()
 

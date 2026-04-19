@@ -111,7 +111,7 @@ val salesManagerModule = module {
         MerchantStatusRepositoryImpl()
     }
     single<ProductRepository> {
-        ProductRepositoryImpl(get(), get(), get())
+        ProductRepositoryImpl(get(), get(), get(), get<NetworkMonitor>())
     }
     single<StockRepository> {
         StockRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
