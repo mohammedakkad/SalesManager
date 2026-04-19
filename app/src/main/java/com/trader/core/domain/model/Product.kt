@@ -51,7 +51,7 @@ data class ProductWithUnits(
     val isLowStock: Boolean get() = units.any {
         it.quantityInStock > 0 && it.quantityInStock <= it.lowStockThreshold
     }
-    val isOutOfStock: Boolean get() = units.all {
+    val isOutOfStock: Boolean get() = units.isNotEmpty() && units.all {
         it.quantityInStock <= 0
     }
 }

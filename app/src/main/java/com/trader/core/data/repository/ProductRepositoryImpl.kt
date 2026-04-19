@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.UUID
 import com.trader.core.util.NetworkMonitor
+import com.trader.core.data.local.db.AppDatabase
+import com.trader.core.data.local.db.upsertProductWithUnitsAndClean
 
 class ProductRepositoryImpl(
     private val dao: ProductDao,
