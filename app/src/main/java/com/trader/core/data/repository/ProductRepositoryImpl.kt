@@ -17,6 +17,7 @@ import com.trader.core.util.NetworkMonitor
 
 class ProductRepositoryImpl(
     private val dao: ProductDao,
+    private val database: AppDatabase,
     private val remote: ProductFirestoreService,
     private val activationRepo: ActivationRepository,
     private val networkMonitor: NetworkMonitor
@@ -57,17 +58,14 @@ class ProductRepositoryImpl(
                         launch {
                             val units = remote.fetchUnitsForProduct(code, product.id)
                             if (units.isNotEmpty()) {
-                                dao.upsertProductWithUnits(
+                                // ✅ عملية ذرية حقيقية — Flow لا ينبعث حتى تنتهي
+                                database.upsertProductWithUnitsAndClean(
                                     product.toEntity(),
                                     units.map {
                                         it.toEntity()
                                     }
                                 )
-                                dao.deleteRemovedUnits(product.id, units.map {
-                                    it.id
-                                })
                             } else {
-                                // لا إنترنت أو subcollection فارغة — حدّث المنتج فقط بدون المساس بالوحدات
                                 dao.insertProduct(product.toEntity())
                             }
                         }
@@ -127,8 +125,7 @@ class ProductRepositoryImpl(
         val productToSave = product.copy(
             id = id, merchantId = mid,
             createdAt = if (product.createdAt == 0L) now else product.createdAt,
-            updatedAt = now,
-            syncStatus = SyncStatus.PENDING
+            updatedAt = now, syncStatus = SyncStatus.PENDING
         )
         val unitsToSave = units.mapIndexed {
             index, unit ->
@@ -141,21 +138,17 @@ class ProductRepositoryImpl(
                     it.isDefault
                 }) unit.isDefault else index == 0,
                 createdAt = if (unit.createdAt == 0L) now else unit.createdAt,
-                updatedAt = now,
-                syncStatus = SyncStatus.PENDING
+                updatedAt = now, syncStatus = SyncStatus.PENDING
             )
         }
 
-        // عملية ذرية — المنتج والوحدات معاً
-        dao.upsertProductWithUnits(
+        // ✅ عملية ذرية حقيقية
+        database.upsertProductWithUnitsAndClean(
             productToSave.toEntity(),
             unitsToSave.map {
                 it.toEntity()
             }
         )
-        dao.deleteRemovedUnits(id, unitsToSave.map {
-            it.id
-        })
 
         syncInBackground {
             remote.uploadProduct(mid, productToSave.copy(syncStatus = SyncStatus.SYNCED))

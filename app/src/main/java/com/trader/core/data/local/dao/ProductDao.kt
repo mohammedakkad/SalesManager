@@ -58,8 +58,9 @@ interface ProductDao {
         product: ProductEntity,
         units: List<ProductUnitEntity>
     ) {
+        insertUnits(units)
         insertProduct(product) // REPLACE يتعامل مع التعديل تلقائياً
-        insertUnits(units) // REPLACE يتعامل مع التعديل تلقائياً
+        // REPLACE يتعامل مع التعديل تلقائياً
         // لا حذف = لا flash = لا انبعاث وسطي فارغ
     }
 

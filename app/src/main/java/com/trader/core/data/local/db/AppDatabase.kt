@@ -202,3 +202,26 @@ abstract class AppDatabase : RoomDatabase() {
         .build()
     }
 }
+
+suspend fun AppDatabase.upsertProductWithUnits(
+    product: ProductEntity,
+    units: List<ProductUnitEntity>
+) {
+    withTransaction {
+        productDao().insertUnits(units) // الوحدات أولاً
+        productDao().insertProduct(product) // المنتج ثانياً — Flow ينبعث هنا فقط
+    }
+}
+
+suspend fun AppDatabase.upsertProductWithUnitsAndClean(
+    product: ProductEntity,
+    units: List<ProductUnitEntity>
+) {
+    withTransaction {
+        productDao().insertUnits(units)
+        productDao().insertProduct(product)
+        productDao().deleteRemovedUnits(product.id, units.map {
+            it.id
+        })
+    }
+}
