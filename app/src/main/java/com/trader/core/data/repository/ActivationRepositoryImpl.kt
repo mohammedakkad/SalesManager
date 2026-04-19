@@ -157,21 +157,20 @@ class ActivationRepositoryImpl(
             } catch (_: Exception) {}
         }
 
-        // ✅ ── المنتجات والوحدات (Firestore) ─────────────────────
-        // المخزن يُخزَّن في Firestore وليس Realtime DB
+        // ✅ المنتجات والوحدات من subcollection الجديدة
         try {
             val products = productFirestoreService.fetchAllProducts(code)
-            val units = productFirestoreService.fetchAllUnits(code)
             products.forEach {
                 product ->
                 try {
-                    productDao.insertProduct(product.toEntity())
-                } catch (_: Exception) {}
-            }
-            units.forEach {
-                unit ->
-                try {
-                    productDao.insertUnit(unit.toEntity())
+                    // جلب وحدات كل منتج من subcollection خاصة به
+                    val units = productFirestoreService.fetchUnitsForProduct(code, product.id)
+                    productDao.upsertProductWithUnits(
+                        product.toEntity(),
+                        units.map {
+                            it.toEntity()
+                        }
+                    )
                 } catch (_: Exception) {}
             }
         } catch (_: Exception) {}
