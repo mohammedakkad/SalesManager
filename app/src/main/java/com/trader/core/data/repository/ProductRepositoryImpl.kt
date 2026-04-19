@@ -26,7 +26,7 @@ class ProductRepositoryImpl(
 
     init {
         startRealtimeSync()
-        startPendingSyncOnReconnect
+        startPendingSyncOnReconnect()
     }
 
     private fun startPendingSyncOnReconnect() {
