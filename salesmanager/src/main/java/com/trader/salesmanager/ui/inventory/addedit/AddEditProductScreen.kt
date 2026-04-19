@@ -41,7 +41,10 @@ fun AddEditProductScreen(
         else if (initialBarcode != null) viewModel.initWithBarcode(initialBarcode)
     }
     LaunchedEffect(state.savedSuccessfully) {
-        if (state.savedSuccessfully) onNavigateUp()
+        if (state.savedSuccessfully) {
+            kotlinx.coroutines.delay(300) // انتظر Room يُطلق الـ Flow
+            onNavigateUp()
+        }
     }
 
     if (showScanner) {
