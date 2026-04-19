@@ -48,7 +48,14 @@ class InventoryListViewModel(
     private val _filter = MutableStateFlow(StockFilter.ALL)
 
     val uiState: StateFlow<InventoryListUiState> = combine(
-        productRepo.getAllProducts(),
+        productRepo.getAllProducts().map {
+            list ->
+            // 🔴 الإضافة هنا: فلترة أي منتج تأتي قائمة وحداته فارغة
+            // هذا سيمنع ظهور الصنف بدون سعر أو كمية في وضع الأوفلاين اللحظي
+            list.filter {
+                it.units.isNotEmpty()
+            }
+        },
         _query,
         _filter
     ) {
@@ -61,7 +68,7 @@ class InventoryListViewModel(
         )
     }.stateIn(
         viewModelScope,
-        SharingStarted.Eagerly, // ✅ يبدأ فوراً ولا يتوقف أبداً
+        SharingStarted.Eagerly,
         InventoryListUiState()
     )
 
