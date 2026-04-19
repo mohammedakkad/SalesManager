@@ -13,6 +13,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.UUID
+import com.trader.core.util.NetworkMonitor
 
 class ProductRepositoryImpl(
     private val dao: ProductDao,
