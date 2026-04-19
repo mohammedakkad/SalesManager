@@ -163,6 +163,13 @@ class ProductRepositoryImpl(
             }
         }
 
+        val saved = dao.getById(id)
+        android.util.Log.d("DEBUG1234", "Product saved: ${saved?.product?.name}")
+        android.util.Log.d("DEBUG1234", "Units count: ${saved?.units?.size}")
+        saved?.units?.forEach {
+            android.util.Log.d("DEBUG1234", "Unit: ${it.unitLabel} price=${it.price} qty=${it.quantityInStock}")
+        }
+
         return id
     }
 
