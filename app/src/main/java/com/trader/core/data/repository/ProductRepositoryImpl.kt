@@ -82,11 +82,15 @@ class ProductRepositoryImpl(
 
     // ── استعلامات ────────────────────────────────────────────────
 
-    override fun getAllProducts(): Flow<List<ProductWithUnits>> =
-    dao.getAllWithUnits().map {
-        list -> list.map {
-            it.toDomainWithUnits()
+    override fun getAllProducts(): Flow<List<ProductWithUnits>> {
+        return dao.getAllWithUnits()
+        .map {
+            entities ->
+            entities.map {
+                it.toDomainWithUnits()
+            }
         }
+        .distinctUntilChanged() // 🔴 يضمن عدم إرسال نفس البيانات مرتين للواجهة
     }
 
     override fun searchProducts(query: String): Flow<List<ProductWithUnits>> =
