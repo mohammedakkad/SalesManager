@@ -23,12 +23,7 @@ interface ProductDao {
     suspend fun getAllWithUnitsOnce(): List<ProductWithUnitsRelation>
 
     @Transaction
-    @Query("""
-    SELECT p.* FROM products p
-    INNER JOIN product_units pu ON pu.productId = p.id
-    GROUP BY p.id
-    ORDER BY p.name ASC
-        """)
+    @Query("SELECT * FROM products ORDER BY name ASC")
     fun getAllWithUnits(): Flow<List<ProductWithUnitsRelation>>
 
     @Transaction
@@ -63,12 +58,9 @@ interface ProductDao {
         product: ProductEntity,
         units: List<ProductUnitEntity>
     ) {
-        insertUnits(units)
-        insertProduct(product) // REPLACE يتعامل مع التعديل تلقائياً
-        // REPLACE يتعامل مع التعديل تلقائياً
-        // لا حذف = لا flash = لا انبعاث وسطي فارغ
+        insertProduct(product) // ✅ المنتج أولاً
+        insertUnits(units) // ✅ الوحدات ثانياً
     }
-
 
     // ── Units ─────────────────────────────────────────────────────
 

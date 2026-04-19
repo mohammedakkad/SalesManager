@@ -165,12 +165,10 @@ class ActivationRepositoryImpl(
                 try {
                     // جلب وحدات كل منتج من subcollection خاصة به
                     val units = productFirestoreService.fetchUnitsForProduct(code, product.id)
-                    productDao.upsertProductWithUnits(
-                        product.toEntity(),
-                        units.map {
-                            it.toEntity()
-                        }
-                    )
+                    productDao.insertProduct(product.toEntity())
+                    productDao.insertUnits(units.map {
+                        it.toEntity()
+                    })
                 } catch (_: Exception) {}
             }
         } catch (_: Exception) {}
