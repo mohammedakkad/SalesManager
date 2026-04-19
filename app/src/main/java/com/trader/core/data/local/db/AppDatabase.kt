@@ -21,7 +21,7 @@ import com.trader.core.domain.model.PaymentType
         InventorySessionEntity::class,
         InventorySessionItemEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -172,10 +172,39 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE product_units RENAME TO product_units_old")
+                db.execSQL("""
+            CREATE TABLE product_units (
+                id                TEXT NOT NULL PRIMARY KEY,
+                productId         TEXT NOT NULL,
+                unitType          TEXT NOT NULL,
+                unitLabel         TEXT NOT NULL,
+                price             REAL NOT NULL DEFAULT 0,
+                quantityInStock   REAL NOT NULL DEFAULT 0,
+                itemsPerCarton    INTEGER,
+                lowStockThreshold REAL NOT NULL DEFAULT 0,
+                isDefault         INTEGER NOT NULL DEFAULT 0,
+                weightUnit        TEXT NOT NULL DEFAULT 'KG',
+                createdAt         INTEGER NOT NULL,
+                updatedAt         INTEGER NOT NULL,
+                syncStatus        TEXT NOT NULL DEFAULT 'PENDING',
+                FOREIGN KEY (productId) REFERENCES products(id)
+                ON DELETE CASCADE
+                DEFERRABLE INITIALLY DEFERRED
+            )
+        """)
+                db.execSQL("INSERT INTO product_units SELECT * FROM product_units_old")
+                db.execSQL("DROP TABLE product_units_old")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_product_units_productId ON product_units(productId)")
+            }
+        }
+
         // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
         Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
@@ -208,8 +237,8 @@ suspend fun AppDatabase.upsertProductWithUnits(
     units: List<ProductUnitEntity>
 ) {
     withTransaction {
-        productDao().insertProduct(product) // ✅ المنتج أولاً — Foreign Key يتحقق
-        productDao().insertUnits(units) // ✅ الوحدات ثانياً
+        productDao().insertUnits(units)     // الوحدات أولاً
+        productDao().insertProduct(product) // المنتج ثانياً
     }
 }
 

@@ -23,11 +23,23 @@ interface ProductDao {
     suspend fun getAllWithUnitsOnce(): List<ProductWithUnitsRelation>
 
     @Transaction
-    @Query("SELECT * FROM products ORDER BY name ASC")
+    @Query("""
+    SELECT p.* FROM products p
+    INNER JOIN product_units pu ON p.id = pu.productId
+    GROUP BY p.id
+    ORDER BY p.name ASC
+        """)
     fun getAllWithUnits(): Flow<List<ProductWithUnitsRelation>>
 
+
     @Transaction
-    @Query("SELECT * FROM products WHERE name LIKE '%' || :query || '%' ORDER BY name ASC")
+    @Query("""
+    SELECT p.* FROM products p
+    INNER JOIN product_units pu ON p.id = pu.productId
+    WHERE p.name LIKE '%' || :query || '%'
+    GROUP BY p.id
+    ORDER BY p.name ASC
+        """)
     fun searchWithUnits(query: String): Flow<List<ProductWithUnitsRelation>>
 
     @Transaction
