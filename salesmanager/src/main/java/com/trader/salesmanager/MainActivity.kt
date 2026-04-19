@@ -36,9 +36,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         NotificationService.createChannels(this)
         requestNotificationPermission()
-        lifecycleScope.launch {
-            FirestoreMigrationHelper().migrateAll()
-        }
+        
         val currentVersionCode = packageManager
         .getPackageInfo(packageName, 0)
         .let {
