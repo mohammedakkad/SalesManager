@@ -134,7 +134,8 @@ fun AddEditTransactionScreen(
                     Card(shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = Emerald500.copy(0.06f))) {
                         Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            uiState.pendingLines.forEach { line ->
+                            uiState.pendingLines.forEach {
+                                line ->
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                     Text(
                                         "${line.product.product.name} × ${line.displayQtyLabel}",
@@ -154,7 +155,11 @@ fun AddEditTransactionScreen(
 
             // ── المبلغ ───────────────────────────────────────────────
             OutlinedTextField(
-                value = uiState.amount, onValueChange = { v -> viewModel.updateAmount(v.filter { it.isDigit() || it == '.' || it in '٠'..'٩' || it in '۰'..'۹' }) },
+                value = uiState.amount, onValueChange = {
+                    v -> viewModel.updateAmount(v.filter {
+                        it.isDigit() || it == '.' || it in '٠'..'٩' || it in '۰'..'۹'
+                    })
+                },
                 label = {
                     Text("المبلغ الإجمالي ₪ *")
                 },
@@ -255,16 +260,31 @@ fun AddEditTransactionScreen(
             }
 
             Button(
-                onClick = viewModel::save, enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Violet500)
+                // 🔴 تعطيل الزر إذا كان التطبيق يحفظ الآن أو إذا تم الحفظ بنجاح
+                onClick = viewModel::save,
+                enabled = !uiState.isLoading && !uiState.isSaved,
+                modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Violet500,
+                    disabledContainerColor = Color.Gray // لون رمادي عند التعطيل
+                )
             ) {
-                if (uiState.isLoading)
-                    CircularProgressIndicator(Modifier.size(20.dp), color = Color.White, strokeWidth = 2.dp)
-                else {
+                if (uiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
                     Icon(Icons.Rounded.Save, null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("حفظ العملية", fontWeight = FontWeight.Bold)
+                    Text(
+                        text = if (uiState.isSaved) "تم الحفظ بنجاح" else "حفظ العملية",
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
             Spacer(Modifier.height(24.dp))
