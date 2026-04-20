@@ -8,6 +8,8 @@ import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import com.trader.core.domain.model.SyncStatus
+
 
 class TransactionRepositoryImpl(
     private val transactionDao: TransactionDao,
