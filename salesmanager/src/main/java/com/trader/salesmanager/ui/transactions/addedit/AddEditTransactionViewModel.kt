@@ -201,61 +201,83 @@ class AddEditTransactionViewModel(
     }
 
     fun save() {
-        // 1. صمام أمان برمجى: إذا كانت العملية جارية، اخرج فوراً
-        if (isSavingInProgress) return
+        // 1. منع النقر المزدوج (برمجياً ومن خلال حالة الـ Loading)
+        if (isSavingInProgress || _uiState.value.isLoading) return
 
-        val currentState = _uiState.value
-        // التحقق من البيانات الأساسية قبل البدء
-        if (currentState.amount.isEmpty() || currentState.selectedCustomer == null) {
+        val state = _uiState.value
+        val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
+        val amount = state.amount.toLatinDigits().toDoubleOrNull()
+
+        // التحقق من صحة البيانات
+        if (amount == null || amount <= 0) {
             _uiState.update {
-                it.copy(error = "يرجى ملء البيانات المطلوبة")
+                it.copy(error = "أدخل مبلغ صحيح")
             }
             return
         }
 
         viewModelScope.launch {
             try {
-                // 2. إغلاق البوابة وتحديث حالة التحميل
+                // 2. إغلاق البوابة فوراً
                 isSavingInProgress = true
                 _uiState.update {
                     it.copy(isLoading = true, error = null)
                 }
 
-                val amountValue = currentState.amount.toLatinDigits().toDoubleOrNull() ?: 0.0
-
                 val transaction = Transaction(
-                    id = currentState.savedTransactionId ?: 0L,
-                    customerId = currentState.selectedCustomer.id,
-                    customerName = currentState.selectedCustomer.name,
-                    amount = amountValue,
-                    isPaid = currentState.isPaid,
-                    paymentType = currentState.paymentType,
-                    paymentMethodId = currentState.selectedPaymentMethod?.id,
-                    note = currentState.note,
-                    merchantId = merchantId,
-                    createdAt = System.currentTimeMillis()
+                    id = editingId ?: 0,
+                    customerId = customer.id,
+                    amount = amount,
+                    isPaid = state.isPaid,
+                    paymentType = state.paymentType,
+                    paymentMethodId = state.selectedPaymentMethod?.id,
+                    note = state.note,
+                    paidAt = if (state.isPaid) System.currentTimeMillis() else null,
+                    hasItems = state.hasItems
                 )
 
-                val transactionId = if (currentState.isEditMode) {
-                    transactionRepo.updateTransaction(transaction)
-                    transaction.id
+                if (editingId == null) {
+                    // ──── حالة الإضافة الجديدة ────────────────────────────────
+                    val savedId = transactionRepo.insertTransaction(transaction)
+                    if (state.pendingLines.isNotEmpty()) {
+                        saveTransactionItems(savedId, state.pendingLines)
+                    }
+                    _uiState.update {
+                        it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
+                    }
                 } else {
-                    transactionRepo.insertTransaction(transaction)
+                    // ──── حالة التعديل (هذا الجزء الذي كان ينقصنا) ──────────────
+                    transactionRepo.updateTransaction(transaction)
+                    val txId = editingId!!
+
+                    if (state.pendingLines.isNotEmpty()) {
+                        // 1. إرجاع المخزون للأصناف القديمة قبل حذفها
+                        val oldItems = invoiceRepo.getItemsForTransactionOnce(txId)
+                        oldItems.forEach {
+                            old ->
+                            stockRepo.returnStock(
+                                productId = old.productId,
+                                unitId = old.unitId,
+                                quantity = old.quantity,
+                                transactionId = txId,
+                                productName = old.productName,
+                                unitLabel = old.unitLabel
+                            )
+                        }
+                        // 2. حذف الأصناف القديمة وحفظ الجديدة وخصم مخزنها
+                        invoiceRepo.deleteItemsForTransaction(txId)
+                        saveTransactionItems(txId, state.pendingLines)
+                    }
+
+                    _uiState.update {
+                        it.copy(isLoading = false, isSaved = true, savedTransactionId = txId)
+                    }
                 }
-
-                // تنفيذ حفظ الأصناف وخصم المخزون
-                saveInvoiceItemsAndDeductStock(transactionId, currentState.pendingLines)
-
-                // 3. نجاح العملية: اترك البوابة مغلقة لأننا سننتقل من الشاشة
-                _uiState.update {
-                    it.copy(isSaved = true, savedTransactionId = transactionId, isLoading = false)
-                }
-
             } catch (e: Exception) {
-                // 4. في حالة الخطأ: افتح البوابة مجدداً للسماح للمستخدم بالمحاولة مرة أخرى
+                // 3. في حال الفشل، نفتح البوابة مرة أخرى للمحاولة
                 isSavingInProgress = false
                 _uiState.update {
-                    it.copy(isLoading = false, error = "فشل الحفظ: ${e.message}")
+                    it.copy(isLoading = false, error = "حدث خطأ: ${e.message}")
                 }
             }
         }
