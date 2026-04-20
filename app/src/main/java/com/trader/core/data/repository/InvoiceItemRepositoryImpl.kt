@@ -7,12 +7,20 @@ import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.repository.InvoiceItemRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class InvoiceItemRepositoryImpl(
     private val dao: InvoiceItemDao,
     private val remote: ProductFirestoreService,
     private val merchantId: String
 ) : InvoiceItemRepository {
+
+
+    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
 
     override fun getItemsForTransaction(transactionId: Long): Flow<List<InvoiceItem>> =
     dao.getForTransaction(transactionId).map {
@@ -22,12 +30,16 @@ class InvoiceItemRepositoryImpl(
     }
 
     override suspend fun saveItems(items: List<InvoiceItem>) {
+        // ✅ Local first — فوري
         dao.insertAll(items.map {
             it.toEntity()
         })
-        try {
-            remote.uploadInvoiceItems(merchantId, items)
-        } catch (_: Exception) {}
+        // ✅ Sync في الخلفية — لا يوقف save() أبداً
+        syncScope.launch {
+            try {
+                remote.uploadInvoiceItems(merchantId, items)
+            } catch (_: Exception) {}
+        }
     }
 
     override suspend fun getItemsForTransactionOnce(transactionId: Long): List<InvoiceItem> =

@@ -206,10 +206,10 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
                         modifier = Modifier.weight(1f, false)
                     )
                     // ✅ أيقونة المزامنة — مثل المخزن بالضبط
-                    if (isPending) {
+                    if (tx.syncStatus == SyncStatus.PENDING) {
                         Surface(
                             shape = RoundedCornerShape(20.dp),
-                            color = UnpaidAmber.copy(0.15f)
+                            color = UnpaidAmber.copy(alpha = 0.15f)
                         ) {
                             Row(
                                 Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
@@ -217,12 +217,13 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
                                 horizontalArrangement = Arrangement.spacedBy(3.dp)
                             ) {
                                 Icon(
-                                    Icons.Rounded.CloudOff, null,
+                                    Icons.Rounded.CloudOff,
+                                    contentDescription = null,
                                     modifier = Modifier.size(10.dp),
                                     tint = UnpaidAmber
                                 )
                                 Text(
-                                    "محلي",
+                                    "جاري المزامنة",
                                     fontSize = 9.sp,
                                     color = UnpaidAmber,
                                     fontWeight = FontWeight.SemiBold
