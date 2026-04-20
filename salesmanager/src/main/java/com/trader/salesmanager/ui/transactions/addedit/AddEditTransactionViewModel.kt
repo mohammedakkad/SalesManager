@@ -240,7 +240,7 @@ class AddEditTransactionViewModel(
                     // ──── حالة الإضافة الجديدة ────────────────────────────────
                     val savedId = transactionRepo.insertTransaction(transaction)
                     if (state.pendingLines.isNotEmpty()) {
-                        saveTransactionItems(savedId, state.pendingLines)
+                        saveItemsAndDeductStock(savedId, state.pendingLines)
                     }
                     _uiState.update {
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
@@ -266,7 +266,7 @@ class AddEditTransactionViewModel(
                         }
                         // 2. حذف الأصناف القديمة وحفظ الجديدة وخصم مخزنها
                         invoiceRepo.deleteItemsForTransaction(txId)
-                        saveTransactionItems(txId, state.pendingLines)
+                        saveItemsAndDeductStock(txId, state.pendingLines)
                     }
 
                     _uiState.update {
