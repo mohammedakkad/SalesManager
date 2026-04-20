@@ -17,6 +17,9 @@ class StockRepositoryImpl(
     private val merchantId: String
 ) : StockRepository {
 
+    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+
     override fun getMovementsForProduct(productId: String, unitId: String): Flow<List<StockMovement>> =
     movementDao.getForProductUnit(productId, unitId).map {
         it.map {
@@ -100,9 +103,8 @@ class StockRepositoryImpl(
         val currentQty = productDao.getQuantity(unitId) ?: 0.0
         val newQty = (currentQty + delta).coerceAtLeast(0.0)
 
-        // ✅ Local first — فوري بدون انتظار
+        // ✅ Local first — فوري
         productDao.updateQuantity(unitId, newQty)
-
         val movement = StockMovement(
             id = UUID.randomUUID().toString(),
             productId = productId, productName = productName,
@@ -116,23 +118,22 @@ class StockRepositoryImpl(
         movementDao.insert(movement.toEntity())
 
         // ✅ Sync في الخلفية — لا يوقف العملية أبداً
-        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+        syncScope.launch {
             try {
                 remote.uploadMovement(merchantId, movement)
                 remote.updateRemoteQuantity(merchantId, unitId, newQty)
                 movementDao.markSynced(movement.id)
                 productDao.markUnitSynced(unitId)
-            } catch (_: Exception) {
-                // يبقى PENDING — سيُرفع عند syncPendingMovements
-            }
+            } catch (_: Exception) {}
         }
     }
 }
+}
 
 data class StockConflict(
-    val unitId: String,
-    val productName: String,
-    val unitLabel: String,
-    val localQuantity: Double,
-    val remoteQuantity: Double
+val unitId: String,
+val productName: String,
+val unitLabel: String,
+val localQuantity: Double,
+val remoteQuantity: Double
 )
