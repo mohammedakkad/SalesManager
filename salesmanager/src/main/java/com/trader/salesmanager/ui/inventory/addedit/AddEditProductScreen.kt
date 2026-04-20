@@ -151,6 +151,15 @@ fun AddEditProductScreen(
                         onUpdate = {
                             viewModel.updateUnit(index, it)
                         },
+                        onUpdatePrice = {
+                            viewModel.updateUnitPrice(index, it)
+                        },
+                        onUpdateQty = {
+                            viewModel.updateUnitQty(index, it)
+                        },
+                        onUpdateLowStock = {
+                            viewModel.updateUnitLowStock(index, it)
+                        },
                         onDelete = {
                             viewModel.removeUnit(index)
                         },
@@ -220,6 +229,9 @@ private fun UnitEditor(
     index: Int,
     canDelete: Boolean,
     onUpdate: (UnitDraft) -> Unit,
+    onUpdatePrice: (String) -> Unit,
+    onUpdateQty: (String) -> Unit,
+    onUpdateLowStock: (String) -> Unit,
     onDelete: () -> Unit,
     onSetDefault: () -> Unit
 ) {
@@ -295,7 +307,7 @@ private fun UnitEditor(
             OutlinedTextField(
                 value = unit.price,
                 onValueChange = {
-                    onUpdate(unit.copy(price = it))
+                    onUpdatePrice(it)
                 },
                 label = {
                     Text("السعر ₪")
@@ -306,7 +318,7 @@ private fun UnitEditor(
             OutlinedTextField(
                 value = unit.quantityInStock,
                 onValueChange = {
-                    onUpdate(unit.copy(quantityInStock = it))
+                    onUpdateQty(it)
                 },
                 label = {
                     Text(if (unit.unitType == UnitType.WEIGHT) "الكمية (كجم)" else "الكمية")
@@ -355,7 +367,7 @@ private fun UnitEditor(
         OutlinedTextField(
             value = unit.lowStockThreshold,
             onValueChange = {
-                onUpdate(unit.copy(lowStockThreshold = it))
+                onUpdateLowStock(it)
             },
             label = {
                 Text("تنبيه عند نقص الكمية إلى")
