@@ -236,6 +236,23 @@ abstract class AppDatabase : RoomDatabase() {
 
         val MIGRATION_9_10 = object : Migration(9, 10) {
             override fun migrate(db: SupportSQLiteDatabase) {
+                // الخطوة 1: إزالة الباركودات المكررة قبل إنشاء الـ UNIQUE INDEX
+                // → نُبقي الصنف الأقدم (MIN rowid) ونُفرِّغ barcode البقية إلى NULL
+                // → بدون هذه الخطوة: الأجهزة التي فيها تكرار تكرش عند فتح التطبيق
+                db.execSQL(
+                    """
+                    UPDATE products
+                    SET barcode = NULL
+                    WHERE barcode IS NOT NULL
+                      AND rowid NOT IN (
+                          SELECT MIN(rowid)
+                          FROM products
+                          WHERE barcode IS NOT NULL
+                          GROUP BY barcode, merchantId
+                      )
+                    """.trimIndent()
+                )
+                // الخطوة 2: إنشاء الـ UNIQUE INDEX بأمان بعد التنظيف
                 db.execSQL(
                     "CREATE UNIQUE INDEX IF NOT EXISTS index_products_barcode_merchantId " +
                     "ON products (barcode, merchantId)"
