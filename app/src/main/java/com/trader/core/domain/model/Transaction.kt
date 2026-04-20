@@ -12,5 +12,7 @@ data class Transaction(
     val note: String = "",
     val date: Long = System.currentTimeMillis(),
     val paidAt: Long? = null,
-    val hasItems: Boolean = false       // ← جديد v2
+    val hasItems: Boolean = false,
+    // ← جديد v2
+    val syncStatus: SyncStatus = SyncStatus.SYNCED
 )

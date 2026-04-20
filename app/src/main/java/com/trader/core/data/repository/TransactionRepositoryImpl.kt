@@ -95,10 +95,13 @@ class TransactionRepositoryImpl(
     override suspend fun getTransactionById(id: Long) = transactionDao.getTransactionById(id)?.enrich()
 
     override suspend fun insertTransaction(t: Transaction): Long {
-        val id = transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
+        // ✅ يُحفظ كـ PENDING أولاً
+        val entity = TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.PENDING))
+        val id = transactionDao.insertTransaction(entity)
         syncScope.launch {
             try {
                 sync.pushTransaction(code(), t.copy(id = id))
+                transactionDao.markSynced(id) // ✅ يصبح SYNCED بعد الرفع
             } catch (_: Exception) {}
         }
         return id

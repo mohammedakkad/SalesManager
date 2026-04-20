@@ -31,4 +31,7 @@ interface TransactionDao {
     @Query("SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE isPaid = 0 AND customerId = :customerId")
     suspend fun getUnpaidAmountByCustomer(customerId: Long): Double
     @Query("DELETE FROM transactions") suspend fun deleteAll()
+    
+    @Query("UPDATE transactions SET syncStatus = 'SYNCED' WHERE id = :id")
+    suspend fun markSynced(id: Long)
 }

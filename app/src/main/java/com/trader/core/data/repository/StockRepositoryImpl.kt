@@ -99,7 +99,10 @@ class StockRepositoryImpl(
     ) {
         val currentQty = productDao.getQuantity(unitId) ?: 0.0
         val newQty = (currentQty + delta).coerceAtLeast(0.0)
+
+        // ✅ Local first — فوري بدون انتظار
         productDao.updateQuantity(unitId, newQty)
+
         val movement = StockMovement(
             id = UUID.randomUUID().toString(),
             productId = productId, productName = productName,
@@ -111,12 +114,18 @@ class StockRepositoryImpl(
             syncStatus = SyncStatus.PENDING
         )
         movementDao.insert(movement.toEntity())
-        try {
-            remote.uploadMovement(merchantId, movement)
-            remote.updateRemoteQuantity(merchantId, unitId, newQty)
-            movementDao.markSynced(movement.id)
-            productDao.markUnitSynced(unitId)
-        } catch (_: Exception) {}
+
+        // ✅ Sync في الخلفية — لا يوقف العملية أبداً
+        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                remote.uploadMovement(merchantId, movement)
+                remote.updateRemoteQuantity(merchantId, unitId, newQty)
+                movementDao.markSynced(movement.id)
+                productDao.markUnitSynced(unitId)
+            } catch (_: Exception) {
+                // يبقى PENDING — سيُرفع عند syncPendingMovements
+            }
+        }
     }
 }
 
