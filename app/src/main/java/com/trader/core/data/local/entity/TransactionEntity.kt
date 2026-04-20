@@ -1,7 +1,9 @@
 package com.trader.core.data.local.entity
 
 import androidx.room.*
-import com.trader.core.domain.model.*
+import com.trader.core.domain.model.PaymentType
+import com.trader.core.domain.model.SyncStatus
+import com.trader.core.domain.model.Transaction
 
 @Entity(
     tableName = "transactions",
