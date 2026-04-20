@@ -168,7 +168,7 @@ val salesManagerModule = module {
     }
     // ── Inventory ─────────────────────────────────────────────────
     viewModel {
-        InventoryListViewModel(get())
+        InventoryListViewModel(get(), get())
     }
     viewModel {
         AddEditProductViewModel(get())
