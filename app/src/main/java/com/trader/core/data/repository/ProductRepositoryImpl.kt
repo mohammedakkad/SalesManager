@@ -46,14 +46,6 @@ class ProductRepositoryImpl(
     }
 
     // ── مزامنة Realtime من Firestore → Room ──────────────────────
-    // ✅ الإصلاح الجذري:
-    //   المشكلة القديمة: عند ضعف الإنترنت كان observeProducts يُطلق حدثاً
-    //   ثم fetchUnitsForProduct يُرجع قائمة فارغة → dao.insertProduct يُستدعى
-    //   → يستبدل المنتج المحلي الكامل بصنف Remote بدون وحدات.
-    //
-    //   الحل: لا نُحدِّث Room بأي بيانات آتية من Remote
-    //   إلا إذا جلبنا الوحدات بنجاح (units.isNotEmpty()).
-    //   إذا فشل جلب الوحدات → نتجاهل الحدث كلياً ونبقي البيانات المحلية.
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
@@ -68,15 +60,13 @@ class ProductRepositoryImpl(
                     remoteProducts.forEach {
                         remoteProduct ->
                         launch {
-                            // ✅ جلب الوحدات أولاً — إذا فشل نتجاهل كلياً
                             val units = try {
                                 remote.fetchUnitsForProduct(code, remoteProduct.id)
                             } catch (_: Exception) {
-                                null // فشل الشبكة → تجاهل
+                                null
                             }
 
                             when {
-                                // ✅ حالة مثالية: منتج + وحدات → حفظ كامل
                                 units != null && units.isNotEmpty() -> {
                                     database.upsertProductWithUnitsAndClean(
                                         remoteProduct.toEntity(),
@@ -84,20 +74,11 @@ class ProductRepositoryImpl(
                                             it.toEntity()
                                         }
                                     )
-                                }
-
-                                // ✅ الوحدات لم تُجلب (شبكة ضعيفة أو فارغة):
-                                //    تحقق هل المنتج موجود محلياً مع وحدات
-                                //    إذا نعم → لا تلمسه (البيانات المحلية أكمل)
-                                //    إذا لا  → أضف المنتج فقط (سيُكتمل عند المزامنة التالية)
-                                else -> {
+                                } else -> {
                                     val localProduct = dao.getById(remoteProduct.id)
                                     if (localProduct == null) {
-                                        // منتج جديد من Remote لم يُحفظ محلياً بعد
                                         dao.insertProduct(remoteProduct.toEntity())
-                                        // سيُكتمل بالوحدات عند syncPendingProducts أو عند عودة الإنترنت
                                     }
-                                    // إذا موجود محلياً مع وحدات → لا نفعل شيئاً
                                 }
                             }
                         }
@@ -147,6 +128,15 @@ class ProductRepositoryImpl(
     override suspend fun getProductById(id: String): ProductWithUnits? =
     dao.getById(id)?.toDomainWithUnits()
 
+    // ── التحقق من تفرد الباركود ──────────────────────────────────
+
+    override suspend fun getBarcodeConflict(barcode: String, excludeProductId: String?): String? {
+        if (barcode.isBlank()) return null
+        val existing = dao.getByBarcode(barcode) ?: return null
+        if (existing.product.id == excludeProductId) return null // نفس الصنف عند التعديل
+        return existing.product.name
+    }
+
     // ── حفظ وتعديل — LOCAL FIRST ─────────────────────────────────
 
     override suspend fun saveProduct(product: Product, units: List<ProductUnit>): String {
@@ -179,7 +169,6 @@ class ProductRepositoryImpl(
             )
         }
 
-        // ✅ حفظ ذري محلي أولاً (المنتج + وحداته دفعة واحدة)
         database.upsertProductWithUnitsAndClean(
             productToSave.toEntity(),
             unitsToSave.map {
@@ -187,7 +176,6 @@ class ProductRepositoryImpl(
             }
         )
 
-        // ✅ مزامنة في الخلفية — لا تُبطئ الـ UI
         syncInBackground {
             remote.uploadProduct(mid, productToSave.copy(syncStatus = SyncStatus.SYNCED))
             unitsToSave.forEach {

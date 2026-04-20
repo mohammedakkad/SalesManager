@@ -42,7 +42,7 @@ fun AddEditProductScreen(
     }
     LaunchedEffect(state.savedSuccessfully) {
         if (state.savedSuccessfully) {
-            kotlinx.coroutines.delay(300) // انتظر Room يُطلق الـ Flow
+            kotlinx.coroutines.delay(300)
             onNavigateUp()
         }
     }
@@ -50,7 +50,9 @@ fun AddEditProductScreen(
     if (showScanner) {
         BarcodeScannerScreen(
             onBarcodeDetected = {
-                barcode -> viewModel.setBarcode(barcode); showScanner = false
+                barcode ->
+                viewModel.setBarcode(barcode)
+                showScanner = false
             },
             onDismiss = {
                 showScanner = false
@@ -60,12 +62,15 @@ fun AddEditProductScreen(
     }
 
     Column(
-        Modifier.fillMaxSize().background(appColors.screenBackground)
+        Modifier
+        .fillMaxSize()
+        .background(appColors.screenBackground)
         .verticalScroll(rememberScrollState())
     ) {
         // ── Header ────────────────────────────────────────────────
         Box(
-            Modifier.fillMaxWidth()
+            Modifier
+            .fillMaxWidth()
             .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
             .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
         ) {
@@ -89,7 +94,10 @@ fun AddEditProductScreen(
 
             // ── باركود ────────────────────────────────────────────
             SectionCard("الباركود", Icons.Rounded.QrCode, Cyan500) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
                     OutlinedTextField(
                         value = state.barcode,
                         onValueChange = viewModel::setBarcode,
@@ -100,13 +108,58 @@ fun AddEditProductScreen(
                             Text("6223001234567")
                         },
                         singleLine = true,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        isError = state.barcodeConflict != null,
+                        // ── trailing icon: spinner أثناء التحقق، خطأ عند التعارض ──
+                        trailingIcon = {
+                            when {
+                                state.barcodeChecking -> CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    strokeWidth = 2.dp,
+                                    color = Cyan500
+                                )
+                                state.barcodeConflict != null -> Icon(
+                                    Icons.Rounded.ErrorOutline,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                                state.barcode.isNotBlank() && !state.barcodeChecking -> Icon(
+                                    Icons.Rounded.CheckCircleOutline,
+                                    contentDescription = null,
+                                    tint = Emerald500
+                                )
+                            }
+                        },
+                        // ── رسالة التعارض تظهر تحت الحقل مباشرةً ──
+                        supportingText = state.barcodeConflict?.let {
+                            conflict ->
+                            {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Rounded.ErrorOutline,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Text(
+                                        conflict,
+                                        color = MaterialTheme.colorScheme.error,
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                }
+                            }
+                        }
                     )
                     OutlinedIconButton(
                         onClick = {
                             showScanner = true
                         },
-                        modifier = Modifier.size(56.dp).align(Alignment.Bottom)
+                        modifier = Modifier
+                        .size(56.dp)
+                        .padding(top = 4.dp) // محاذاة مع الـ TextField
                     ) {
                         Icon(Icons.Rounded.QrCodeScanner, null, tint = Cyan500)
                     }
@@ -186,7 +239,7 @@ fun AddEditProductScreen(
                 }
             }
 
-            // ── خطأ ───────────────────────────────────────────────
+            // ── خطأ عام ───────────────────────────────────────────
             state.error?.let {
                 Card(
                     shape = RoundedCornerShape(12.dp),
@@ -200,7 +253,7 @@ fun AddEditProductScreen(
                 }
             }
 
-            // ── حفظ ───────────────────────────────────────────────
+            // ── زر الحفظ ──────────────────────────────────────────
             Button(
                 onClick = viewModel::save,
                 modifier = Modifier.fillMaxWidth().height(52.dp),
@@ -213,8 +266,10 @@ fun AddEditProductScreen(
                 } else {
                     Icon(Icons.Rounded.Save, null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text(if (state.isEditing) "حفظ التعديلات" else "إضافة الصنف",
-                        fontWeight = FontWeight.Bold)
+                    Text(
+                        if (state.isEditing) "حفظ التعديلات" else "إضافة الصنف",
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
@@ -236,15 +291,18 @@ private fun UnitEditor(
     onSetDefault: () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        // رأس الوحدة
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("وحدة ${index + 1}", fontWeight = FontWeight.SemiBold,
-                style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+            Text(
+                "وحدة ${index + 1}", fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f)
+            )
             if (unit.isDefault) {
                 Surface(shape = RoundedCornerShape(20.dp), color = Emerald500.copy(0.12f)) {
-                    Text("افتراضي ⭐", Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                    Text(
+                        "افتراضي ⭐", Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
                         style = MaterialTheme.typography.labelSmall, color = Emerald500,
-                        fontWeight = FontWeight.SemiBold)
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             } else {
                 TextButton(onClick = onSetDefault) {
@@ -258,7 +316,6 @@ private fun UnitEditor(
             }
         }
 
-        // نوع الوحدة
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             UnitType.entries.forEach {
                 type ->
@@ -267,13 +324,16 @@ private fun UnitEditor(
                 }
                 val sel = unit.unitType == type
                 FilterChip(
-                    selected = sel, onClick = {
-                        onUpdate(unit.copy(
-                            unitType = type,
-                            unitLabel = label,
-                            weightUnit = WeightUnit.KG,
-                            itemsPerCarton = if (type == UnitType.CARTON) unit.itemsPerCarton else ""
-                        ))
+                    selected = sel,
+                    onClick = {
+                        onUpdate(
+                            unit.copy(
+                                unitType = type,
+                                unitLabel = label,
+                                weightUnit = WeightUnit.KG,
+                                itemsPerCarton = if (type == UnitType.CARTON) unit.itemsPerCarton else ""
+                            )
+                        )
                     },
                     label = {
                         Text(label)
@@ -287,7 +347,6 @@ private fun UnitEditor(
             }
         }
 
-        // تسمية الوحدة
         OutlinedTextField(
             value = unit.unitLabel,
             onValueChange = {
@@ -302,7 +361,6 @@ private fun UnitEditor(
             singleLine = true, modifier = Modifier.fillMaxWidth()
         )
 
-        // سعر + كمية
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedTextField(
                 value = unit.price,
@@ -328,7 +386,6 @@ private fun UnitEditor(
             )
         }
 
-        // قطع في الكرتون (فقط لو CARTON)
         AnimatedVisibility(unit.unitType == UnitType.CARTON) {
             OutlinedTextField(
                 value = unit.itemsPerCarton,
@@ -343,27 +400,23 @@ private fun UnitEditor(
             )
         }
 
-        // وحدة الوزن (فقط لو WEIGHT) — دائماً كيلوغرام
         AnimatedVisibility(unit.unitType == UnitType.WEIGHT) {
-            Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = Emerald500.copy(alpha = 0.1f)
-            ) {
+            Surface(shape = RoundedCornerShape(8.dp), color = Emerald500.copy(alpha = 0.1f)) {
                 Row(
                     Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Icon(Icons.Rounded.Scale, null,
-                        tint = Emerald500, modifier = Modifier.size(16.dp))
-                    Text("وحدة التخزين: كيلوغرام (كجم)",
+                    Icon(Icons.Rounded.Scale, null, tint = Emerald500, modifier = Modifier.size(16.dp))
+                    Text(
+                        "وحدة التخزين: كيلوغرام (كجم)",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Emerald500)
+                        color = Emerald500
+                    )
                 }
             }
         }
 
-        // حد التنبيه
         OutlinedTextField(
             value = unit.lowStockThreshold,
             onValueChange = {
@@ -375,8 +428,10 @@ private fun UnitEditor(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true, modifier = Modifier.fillMaxWidth(),
             leadingIcon = {
-                Icon(Icons.Rounded.NotificationsActive, null,
-                    tint = UnpaidAmber, modifier = Modifier.size(18.dp))
+                Icon(
+                    Icons.Rounded.NotificationsActive, null,
+                    tint = UnpaidAmber, modifier = Modifier.size(18.dp)
+                )
             }
         )
     }
@@ -389,15 +444,16 @@ private fun SectionCard(
     iconColor: Color,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Card(shape = RoundedCornerShape(16.dp), elevation = CardDefaults.cardElevation(1.dp),
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(1.dp),
         colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
     ) {
         Column(Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(icon, null, tint = iconColor, modifier = Modifier.size(20.dp))
                 Spacer(Modifier.width(8.dp))
-                Text(title, fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleSmall)
+                Text(title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
             }
             Spacer(Modifier.height(14.dp))
             content()

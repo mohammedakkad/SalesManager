@@ -3,7 +3,24 @@ package com.trader.core.data.local.entity
 import androidx.room.*
 import com.trader.core.domain.model.*
 
-@Entity(tableName = "products")
+// ⚠️ تم إضافة Index فريد على (barcode, merchantId).
+//    يتطلب ذلك Room Migration جديدة:
+//
+//    val MIGRATION_X_Y = object : Migration(X, Y) {
+//        override fun migrate(db: SupportSQLiteDatabase) {
+//            db.execSQL(
+//                "CREATE UNIQUE INDEX IF NOT EXISTS index_products_barcode_merchantId " +
+//                "ON products (barcode, merchantId)"
+//            )
+//        }
+//    }
+//
+//    ملاحظة: SQLite يسمح بقيم NULL متعددة في عمود UNIQUE، لذا المنتجات بدون باركود غير متأثرة.
+
+@Entity(
+    tableName = "products",
+    indices = [Index(value = ["barcode", "merchantId"], unique = true)]
+)
 data class ProductEntity(
     @PrimaryKey val id: String,
     val barcode: String?,
@@ -50,7 +67,7 @@ data class ProductUnitEntity(
     val itemsPerCarton: Int?,
     val lowStockThreshold: Double,
     val isDefault: Boolean,
-    val weightUnit: String = WeightUnit.KG.name,  // ← v2.1
+    val weightUnit: String = WeightUnit.KG.name,
     val createdAt: Long,
     val updatedAt: Long,
     val syncStatus: String
@@ -63,7 +80,9 @@ data class ProductUnitEntity(
         itemsPerCarton = itemsPerCarton,
         lowStockThreshold = lowStockThreshold,
         isDefault = isDefault,
-        weightUnit = runCatching { WeightUnit.valueOf(weightUnit) }.getOrDefault(WeightUnit.KG),
+        weightUnit = runCatching {
+            WeightUnit.valueOf(weightUnit)
+        }.getOrDefault(WeightUnit.KG),
         createdAt = createdAt, updatedAt = updatedAt,
         syncStatus = SyncStatus.valueOf(syncStatus)
     )

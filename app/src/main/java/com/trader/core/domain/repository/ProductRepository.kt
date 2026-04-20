@@ -14,6 +14,12 @@ interface ProductRepository {
     suspend fun getProductByBarcode(barcode: String): ProductWithUnits?
     suspend fun getProductById(id: String): ProductWithUnits?
 
+    /**
+    * يُعيد اسم الصنف الذي يستخدم هذا الباركود، أو null إذا لا يوجد تعارض.
+    * @param excludeProductId مُعرَّف الصنف الحالي (عند التعديل) لاستثنائه من الفحص.
+    */
+    suspend fun getBarcodeConflict(barcode: String, excludeProductId: String? = null): String?
+
     // ── إضافة وتعديل ─────────────────────────────────────────────
     suspend fun saveProduct(product: Product, units: List<ProductUnit>): String
     suspend fun updateProduct(product: Product)

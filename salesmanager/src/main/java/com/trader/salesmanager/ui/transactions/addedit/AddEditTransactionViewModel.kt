@@ -89,6 +89,25 @@ class AddEditTransactionViewModel(
             val t = transactionRepo.getTransactionById(transactionId) ?: return@launch
             val customer = if (t.customerId == WALK_IN_CUSTOMER.id) WALK_IN_CUSTOMER
             else customerRepo.getCustomerById(t.customerId)
+
+            // ✅ جلب الأصناف الموجودة وتحويلها لـ InvoiceLineItem
+            val existingLines = if (t.hasItems) {
+                invoiceRepo.getItemsForTransactionOnce(transactionId).mapNotNull {
+                    item ->
+                    val productWithUnits = productRepo.getProductById(item.productId) ?: return@mapNotNull null
+                    val unit = productWithUnits.units.firstOrNull {
+                        it.id == item.unitId
+                    } ?: return@mapNotNull null
+                    InvoiceLineItem(
+                        product = productWithUnits,
+                        selectedUnit = unit,
+                        displayQty = item.quantity,
+                        displayWeightUnit = SaleWeightUnit.KG,
+                        customPrice = if (item.pricePerUnit != unit.price) item.pricePerUnit else null
+                    )
+                }
+            } else emptyList()
+
             _uiState.update {
                 state ->
                 state.copy(
@@ -98,6 +117,7 @@ class AddEditTransactionViewModel(
                     paymentType = t.paymentType,
                     note = t.note,
                     hasItems = t.hasItems,
+                    pendingLines = existingLines, // ✅ أضف
                     isEditMode = true
                 )
             }
