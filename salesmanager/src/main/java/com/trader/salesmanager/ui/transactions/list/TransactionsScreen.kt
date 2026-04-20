@@ -17,11 +17,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.trader.core.domain.model.Transaction
 import com.trader.core.util.DateUtils.toDateString
 import com.trader.salesmanager.ui.components.StatusChip
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
+import com.trader.core.domain.model.SyncStatus
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
