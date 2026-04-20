@@ -32,18 +32,28 @@ class ProductRepositoryImpl(
         startPendingSyncOnReconnect()
     }
 
+    // ── مزامنة تلقائية عند عودة الإنترنت ─────────────────────────
     private fun startPendingSyncOnReconnect() {
         syncScope.launch {
             networkMonitor.isOnlineFlow
             .filter {
                 it
-            } // فقط عند عودة الإنترنت
+            }
             .collect {
                 syncPendingProducts()
             }
         }
     }
 
+    // ── مزامنة Realtime من Firestore → Room ──────────────────────
+    // ✅ الإصلاح الجذري:
+    //   المشكلة القديمة: عند ضعف الإنترنت كان observeProducts يُطلق حدثاً
+    //   ثم fetchUnitsForProduct يُرجع قائمة فارغة → dao.insertProduct يُستدعى
+    //   → يستبدل المنتج المحلي الكامل بصنف Remote بدون وحدات.
+    //
+    //   الحل: لا نُحدِّث Room بأي بيانات آتية من Remote
+    //   إلا إذا جلبنا الوحدات بنجاح (units.isNotEmpty()).
+    //   إذا فشل جلب الوحدات → نتجاهل الحدث كلياً ونبقي البيانات المحلية.
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
@@ -54,22 +64,41 @@ class ProductRepositoryImpl(
             .collectLatest {
                 code ->
                 remote.observeProducts(code).collect {
-                    products ->
-                    products.forEach {
-                        product ->
+                    remoteProducts ->
+                    remoteProducts.forEach {
+                        remoteProduct ->
                         launch {
-                            val units = remote.fetchUnitsForProduct(code, product.id)
-                            if (units.isNotEmpty()) {
-                                // ✅ عملية ذرية حقيقية — Flow لا ينبعث حتى تنتهي
-                                database.upsertProductWithUnitsAndClean(
-                                    product.toEntity(),
-                                    units.map {
-                                        it.toEntity()
-                                    }
-                                )
+                            // ✅ جلب الوحدات أولاً — إذا فشل نتجاهل كلياً
+                            val units = try {
+                                remote.fetchUnitsForProduct(code, remoteProduct.id)
+                            } catch (_: Exception) {
+                                null // فشل الشبكة → تجاهل
+                            }
 
-                            } else {
-                                dao.insertProduct(product.toEntity())
+                            when {
+                                // ✅ حالة مثالية: منتج + وحدات → حفظ كامل
+                                units != null && units.isNotEmpty() -> {
+                                    database.upsertProductWithUnitsAndClean(
+                                        remoteProduct.toEntity(),
+                                        units.map {
+                                            it.toEntity()
+                                        }
+                                    )
+                                }
+
+                                // ✅ الوحدات لم تُجلب (شبكة ضعيفة أو فارغة):
+                                //    تحقق هل المنتج موجود محلياً مع وحدات
+                                //    إذا نعم → لا تلمسه (البيانات المحلية أكمل)
+                                //    إذا لا  → أضف المنتج فقط (سيُكتمل عند المزامنة التالية)
+                                else -> {
+                                    val localProduct = dao.getById(remoteProduct.id)
+                                    if (localProduct == null) {
+                                        // منتج جديد من Remote لم يُحفظ محلياً بعد
+                                        dao.insertProduct(remoteProduct.toEntity())
+                                        // سيُكتمل بالوحدات عند syncPendingProducts أو عند عودة الإنترنت
+                                    }
+                                    // إذا موجود محلياً مع وحدات → لا نفعل شيئاً
+                                }
                             }
                         }
                     }
@@ -82,16 +111,14 @@ class ProductRepositoryImpl(
 
     // ── استعلامات ────────────────────────────────────────────────
 
-    override fun getAllProducts(): Flow<List<ProductWithUnits>> {
-        return dao.getAllWithUnits()
-        .map {
-            entities ->
-            entities.map {
-                it.toDomainWithUnits()
-            }
+    override fun getAllProducts(): Flow<List<ProductWithUnits>> =
+    dao.getAllWithUnits()
+    .map {
+        entities -> entities.map {
+            it.toDomainWithUnits()
         }
-        .distinctUntilChanged() // 🔴 يضمن عدم إرسال نفس البيانات مرتين للواجهة
     }
+    .distinctUntilChanged()
 
     override fun searchProducts(query: String): Flow<List<ProductWithUnits>> =
     dao.searchWithUnits(query).map {
@@ -120,7 +147,7 @@ class ProductRepositoryImpl(
     override suspend fun getProductById(id: String): ProductWithUnits? =
     dao.getById(id)?.toDomainWithUnits()
 
-    // ── حفظ وتعديل — LOCAL FIRST ──────────────────────────────────
+    // ── حفظ وتعديل — LOCAL FIRST ─────────────────────────────────
 
     override suspend fun saveProduct(product: Product, units: List<ProductUnit>): String {
         val id = product.id.ifEmpty {
@@ -130,9 +157,11 @@ class ProductRepositoryImpl(
         val mid = merchantId()
 
         val productToSave = product.copy(
-            id = id, merchantId = mid,
+            id = id,
+            merchantId = mid,
             createdAt = if (product.createdAt == 0L) now else product.createdAt,
-            updatedAt = now, syncStatus = SyncStatus.PENDING
+            updatedAt = now,
+            syncStatus = SyncStatus.PENDING
         )
         val unitsToSave = units.mapIndexed {
             index, unit ->
@@ -145,39 +174,30 @@ class ProductRepositoryImpl(
                     it.isDefault
                 }) unit.isDefault else index == 0,
                 createdAt = if (unit.createdAt == 0L) now else unit.createdAt,
-                updatedAt = now, syncStatus = SyncStatus.PENDING
+                updatedAt = now,
+                syncStatus = SyncStatus.PENDING
             )
         }
 
-        // ✅ عملية ذرية حقيقية
+        // ✅ حفظ ذري محلي أولاً (المنتج + وحداته دفعة واحدة)
         database.upsertProductWithUnitsAndClean(
             productToSave.toEntity(),
             unitsToSave.map {
                 it.toEntity()
             }
         )
-        val check = dao.getAllWithUnitsOnce()
-        android.util.Log.d("DEBUG_CHECK1234", "Products in DB after save: ${check.size}")
-        check.forEach {
-            android.util.Log.d("DEBUG_CHECK1234", "${it.product.name} — units: ${it.units.size}")
-        }
 
+        // ✅ مزامنة في الخلفية — لا تُبطئ الـ UI
         syncInBackground {
             remote.uploadProduct(mid, productToSave.copy(syncStatus = SyncStatus.SYNCED))
             unitsToSave.forEach {
-                remote.uploadUnit(mid, it.copy(syncStatus = SyncStatus.SYNCED))
+                unit ->
+                remote.uploadUnit(mid, unit.copy(syncStatus = SyncStatus.SYNCED))
             }
             dao.markProductSynced(id)
             unitsToSave.forEach {
-                dao.markUnitSynced(it.id)
+                unit -> dao.markUnitSynced(unit.id)
             }
-        }
-
-        val saved = dao.getById(id)
-        android.util.Log.d("DEBUG1234", "Product saved: ${saved?.product?.name}")
-        android.util.Log.d("DEBUG1234", "Units count: ${saved?.units?.size}")
-        saved?.units?.forEach {
-            android.util.Log.d("DEBUG1234", "Unit: ${it.unitLabel} price=${it.price} qty=${it.quantityInStock}")
         }
 
         return id
@@ -185,10 +205,7 @@ class ProductRepositoryImpl(
 
     override suspend fun updateProduct(product: Product) {
         val mid = merchantId()
-        val updated = product.copy(
-            updatedAt = System.currentTimeMillis(),
-            syncStatus = SyncStatus.PENDING
-        )
+        val updated = product.copy(updatedAt = System.currentTimeMillis(), syncStatus = SyncStatus.PENDING)
         dao.updateProduct(updated.toEntity())
         syncInBackground {
             remote.uploadProduct(mid, updated.copy(syncStatus = SyncStatus.SYNCED))
@@ -222,10 +239,7 @@ class ProductRepositoryImpl(
 
     override suspend fun updateUnit(unit: ProductUnit) {
         val mid = merchantId()
-        val updated = unit.copy(
-            updatedAt = System.currentTimeMillis(),
-            syncStatus = SyncStatus.PENDING
-        )
+        val updated = unit.copy(updatedAt = System.currentTimeMillis(), syncStatus = SyncStatus.PENDING)
         dao.updateUnit(updated.toEntity())
         syncInBackground {
             remote.uploadUnit(mid, updated.copy(syncStatus = SyncStatus.SYNCED))
@@ -235,7 +249,6 @@ class ProductRepositoryImpl(
 
     override suspend fun deleteUnit(unitId: String) {
         val mid = merchantId()
-        // نجلب productId من Room لأن deleteUnit في Firestore يحتاجه
         val productId = dao.getUnitsForProduct(unitId).firstOrNull()?.productId ?: run {
             dao.deleteUnit(unitId)
             return
@@ -249,6 +262,7 @@ class ProductRepositoryImpl(
     override suspend fun syncPendingProducts() {
         val mid = merchantId()
         if (mid.isEmpty()) return
+
         dao.getPendingProducts().forEach {
             entity ->
             try {

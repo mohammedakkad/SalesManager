@@ -1,7 +1,7 @@
 package com.trader.salesmanager.ui.inventory.list
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,12 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.trader.core.domain.model.ProductWithUnits
+import com.trader.core.domain.model.SyncStatus
 import com.trader.core.domain.model.UnitType
 import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
@@ -41,21 +44,44 @@ fun InventoryListScreen(
     viewModel: InventoryListViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    var showScanner      by remember { mutableStateOf(false) }
-    var showNewProduct   by remember { mutableStateOf<String?>(null) } // barcode or null
+    var showScanner by remember {
+        mutableStateOf(false)
+    }
+    var showNewProduct by remember {
+        mutableStateOf<String?>(null)
+    }
 
     // Dialog: باركود غير موجود
-    showNewProduct?.let { barcode ->
+    showNewProduct?.let {
+        barcode ->
         AlertDialog(
-            onDismissRequest = { showNewProduct = null },
-            icon = { Icon(Icons.Rounded.QrCodeScanner, null, tint = Emerald500) },
-            title = { Text("باركود غير موجود", fontWeight = FontWeight.Bold) },
-            text = { Text("الباركود \"$barcode\" غير موجود في المخزن.\nهل تريد إضافة صنف جديد بهذا الباركود؟") },
+            onDismissRequest = {
+                showNewProduct = null
+            },
+            icon = {
+                Icon(Icons.Rounded.QrCodeScanner, null, tint = Emerald500)
+            },
+            title = {
+                Text("باركود غير موجود", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text("الباركود \"$barcode\" غير موجود في المخزن.\nهل تريد إضافة صنف جديد بهذا الباركود؟")
+            },
             confirmButton = {
-                Button(onClick = { showNewProduct = null; onAddProduct(barcode) }) { Text("إضافة صنف") }
+                Button(onClick = {
+                    showNewProduct = null; onAddProduct(barcode)
+                },
+                    colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
+                ) {
+                    Text("إضافة صنف")
+                }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showNewProduct = null }) { Text("إلغاء") }
+                OutlinedButton(onClick = {
+                    showNewProduct = null
+                }) {
+                    Text("إلغاء")
+                }
             },
             shape = RoundedCornerShape(20.dp)
         )
@@ -63,15 +89,22 @@ fun InventoryListScreen(
 
     if (showScanner) {
         BarcodeScannerScreen(
-            onBarcodeDetected = { barcode ->
+            onBarcodeDetected = {
+                barcode ->
                 showScanner = false
                 viewModel.onBarcodeScanned(
                     barcode,
-                    onFound = { productId -> onProductClick(productId) },
-                    onNotFound = { showNewProduct = barcode }
+                    onFound = {
+                        productId -> onProductClick(productId)
+                    },
+                    onNotFound = {
+                        showNewProduct = barcode
+                    }
                 )
             },
-            onDismiss = { showScanner = false }
+            onDismiss = {
+                showScanner = false
+            }
         )
         return
     }
@@ -84,35 +117,48 @@ fun InventoryListScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 SmallFloatingActionButton(
-                    onClick = { onInventorySession() },
+                    onClick = {
+                        onInventorySession()
+                    },
                     containerColor = Cyan500,
                     contentColor = Color.White,
                     shape = RoundedCornerShape(12.dp)
-                ) { Icon(Icons.Rounded.Inventory2, null, modifier = Modifier.size(18.dp)) }
+                ) {
+                    Icon(Icons.Rounded.Inventory2, null, modifier = Modifier.size(18.dp))
+                }
 
                 SmallFloatingActionButton(
-                    onClick = { onStockReports() },
+                    onClick = {
+                        onStockReports()
+                    },
                     containerColor = Violet500,
                     contentColor = Color.White,
                     shape = RoundedCornerShape(12.dp)
-                ) { Icon(Icons.Rounded.BarChart, null, modifier = Modifier.size(18.dp)) }
+                ) {
+                    Icon(Icons.Rounded.BarChart, null, modifier = Modifier.size(18.dp))
+                }
 
                 FloatingActionButton(
-                    onClick = { onAddProduct(null) },
+                    onClick = {
+                        onAddProduct(null)
+                    },
                     containerColor = Emerald500,
                     contentColor = Color.White,
                     shape = RoundedCornerShape(16.dp)
-                ) { Icon(Icons.Rounded.Add, null) }
+                ) {
+                    Icon(Icons.Rounded.Add, null)
+                }
             }
         }
-    ) { padding ->
+    ) {
+        padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
 
             // ── Header ────────────────────────────────────────────
             Box(
                 Modifier.fillMaxWidth()
-                    .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
-                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+                .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
+                .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -122,10 +168,22 @@ fun InventoryListScreen(
                         Text("المخزن", fontWeight = FontWeight.Bold, color = Color.White,
                             style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier.weight(1f))
-                        IconButton(onClick = { showScanner = true },
+                        IconButton(onClick = {
+                            showScanner = true
+                        },
                             modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                        ) { Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White) }
+                        ) {
+                            Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White)
+                        }
                     }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    // ✅ إضافة شريط حالة المزامنة (من النسخة الأولى)
+                    OfflineSyncBanner(
+                        isOnline = state.isOnline,
+                        pendingSyncCount = state.pendingSyncCount
+                    )
 
                     Spacer(Modifier.height(12.dp))
 
@@ -133,11 +191,17 @@ fun InventoryListScreen(
                     OutlinedTextField(
                         value = state.query,
                         onValueChange = viewModel::setQuery,
-                        placeholder = { Text("بحث بالاسم أو الباركود...", color = Color.White.copy(0.5f)) },
-                        leadingIcon = { Icon(Icons.Rounded.Search, null, tint = Color.White.copy(0.7f)) },
+                        placeholder = {
+                            Text("بحث بالاسم أو الباركود...", color = Color.White.copy(0.5f))
+                        },
+                        leadingIcon = {
+                            Icon(Icons.Rounded.Search, null, tint = Color.White.copy(0.7f))
+                        },
                         trailingIcon = {
                             AnimatedVisibility(state.query.isNotEmpty()) {
-                                IconButton(onClick = { viewModel.setQuery("") }) {
+                                IconButton(onClick = {
+                                    viewModel.setQuery("")
+                                }) {
                                     Icon(Icons.Rounded.Close, null, tint = Color.White.copy(0.7f))
                                 }
                             }
@@ -158,8 +222,8 @@ fun InventoryListScreen(
 
             // ── إحصائيات سريعة ────────────────────────────────────
             Row(
-                Modifier.fillMaxWidth().background(Color.White)
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                Modifier.fillMaxWidth().background(appColors.cardBackground)
+                .padding(horizontal = 16.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 StatChip(Modifier.weight(1f), "${state.totalProducts}", "صنف", Emerald500, Icons.Rounded.Inventory)
@@ -172,7 +236,8 @@ fun InventoryListScreen(
                 Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                StockFilter.entries.forEach { f ->
+                StockFilter.entries.forEach {
+                    f ->
                     val label = when (f) {
                         StockFilter.ALL -> "الكل"
                         StockFilter.LOW -> "نقص"
@@ -181,8 +246,12 @@ fun InventoryListScreen(
                     val sel = state.filter == f
                     FilterChip(
                         selected = sel,
-                        onClick = { viewModel.setFilter(f) },
-                        label = { Text(label, fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal) },
+                        onClick = {
+                            viewModel.setFilter(f)
+                        },
+                        label = {
+                            Text(label, fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal)
+                        },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = when (f) {
                                 StockFilter.ALL -> Emerald500.copy(0.15f)
@@ -203,9 +272,12 @@ fun InventoryListScreen(
             // ── قائمة الأصناف ─────────────────────────────────────
             AnimatedContent(
                 targetState = state.isLoading to state.filtered.isEmpty(),
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                transitionSpec = {
+                    fadeIn() togetherWith fadeOut()
+                },
                 label = "list"
-            ) { (loading, empty) ->
+            ) {
+                (loading, empty) ->
                 when {
                     loading -> Box(Modifier.fillMaxSize(), Alignment.Center) {
                         CircularProgressIndicator(color = Emerald500)
@@ -220,8 +292,7 @@ fun InventoryListScreen(
                                 color = appColors.textSubtle, textAlign = TextAlign.Center
                             )
                         }
-                    }
-                    else -> LazyColumn(
+                    } else -> LazyColumn(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
@@ -231,12 +302,54 @@ fun InventoryListScreen(
                                 color = appColors.textSubtle,
                                 modifier = Modifier.padding(bottom = 4.dp))
                         }
-                        items(state.filtered, key = { it.product.id }) { item ->
-                            ProductCard(item = item, onClick = { onProductClick(item.product.id) })
+                        items(state.filtered, key = {
+                            it.product.id
+                        }) {
+                            item ->
+                            ProductCard(item = item, onClick = {
+                                onProductClick(item.product.id)
+                            })
                         }
-                        item { Spacer(Modifier.height(80.dp)) }
+                        item {
+                            Spacer(Modifier.height(80.dp))
+                        }
                     }
                 }
+            }
+        }
+    }
+}
+
+// ✅ دالة شريط المزامنة (من النسخة الأولى)
+@Composable
+private fun OfflineSyncBanner(isOnline: Boolean, pendingSyncCount: Int) {
+    AnimatedVisibility(
+        visible = !isOnline || pendingSyncCount > 0,
+        enter = expandVertically() + fadeIn(),
+        exit = shrinkVertically() + fadeOut()
+    ) {
+        val (bgColor, icon, message, color) = when {
+            !isOnline -> arrayOf(Color(0xFFEF4444).copy(0.15f), Icons.Rounded.WifiOff, "بدون إنترنت — بياناتك محفوظة محلياً", Color(0xFFEF4444))
+            pendingSyncCount > 0 -> arrayOf(UnpaidAmber.copy(0.15f), Icons.Rounded.Sync, "جارٍ مزامنة $pendingSyncCount صنف...", UnpaidAmber)
+            else -> arrayOf(Color.Transparent, Icons.Rounded.Check, "", Color.Transparent)
+        }
+
+        val rotation by rememberInfiniteTransition(label = "").animateFloat(
+            initialValue = 0f, targetValue = 360f,
+            animationSpec = infiniteRepeatable(tween(1200, easing = LinearEasing)), label = ""
+        )
+
+        Surface(shape = RoundedCornerShape(10.dp), color = bgColor as Color, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+            Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Icon(
+                    imageVector = icon as ImageVector, contentDescription = null, tint = color as Color,
+                    modifier = Modifier.size(16.dp).let {
+                        if (icon == Icons.Rounded.Sync) it.graphicsLayer {
+                            rotationZ = rotation
+                        } else it
+                    }
+                )
+                Text(message as String, style = MaterialTheme.typography.labelSmall, color = color, fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -265,14 +378,20 @@ private fun StatChip(modifier: Modifier, value: String, label: String, color: Co
 private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
     val statusColor = when {
         item.isOutOfStock -> DebtRed
-        item.isLowStock   -> UnpaidAmber
-        else              -> PaidGreen
+        item.isLowStock -> UnpaidAmber
+        else -> PaidGreen
     }
     val statusLabel = when {
         item.isOutOfStock -> "نفد"
-        item.isLowStock   -> "نقص"
-        else              -> "متوفر"
+        item.isLowStock -> "نقص"
+        else -> "متوفر"
     }
+
+    // ✅ تحديد إذا الصنف لم يُزامن بعد (من النسخة الأولى)
+    val isPending = item.units.isNotEmpty() && item.units.all {
+        it.syncStatus == SyncStatus.PENDING
+    }
+
     val initial = item.product.name.firstOrNull()?.toString() ?: "؟"
     val bgColors = listOf(Emerald500, Cyan500, Violet500, UnpaidAmber)
     val bg = bgColors[item.product.name.length % bgColors.size]
@@ -284,67 +403,62 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
     ) {
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            // أيقونة الصنف
             Box(
                 Modifier.size(48.dp).clip(RoundedCornerShape(12.dp)).background(bg.copy(0.12f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(initial, color = bg, fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium)
+                Text(initial, color = bg, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text(item.product.name, fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.bodyMedium, maxLines = 1,
-                    overflow = TextOverflow.Ellipsis)
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(item.product.name, fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.bodyMedium, maxLines = 1,
+                        overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, false))
+
+                    // ✅ مؤشر "محلي" (من النسخة الأولى)
+                    if (isPending) {
+                        Surface(shape = RoundedCornerShape(20.dp), color = UnpaidAmber.copy(0.15f)) {
+                            Row(Modifier.padding(horizontal = 6.dp, vertical = 2.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                                Icon(Icons.Rounded.CloudOff, null, modifier = Modifier.size(10.dp), tint = UnpaidAmber)
+                                Text("محلي", fontSize = 9.sp, color = UnpaidAmber, fontWeight = FontWeight.SemiBold)
+                            }
+                        }
+                    }
+                }
+
                 if (item.product.category.isNotEmpty()) {
-                    Text(item.product.category, style = MaterialTheme.typography.bodySmall,
-                        color = appColors.textSubtle)
+                    Text(item.product.category, style = MaterialTheme.typography.bodySmall, color = appColors.textSubtle)
                 }
                 Spacer(Modifier.height(6.dp))
-                // وحدات الصنف
+
+                // وحدات الصنف (تأخذ أول 3 فقط لمنع التكدس)
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    item.units.forEach { unit ->
+                    item.units.take(3).forEach {
+                        unit ->
                         val qty = unit.quantityInStock
                         val qtyText = if (unit.unitType == UnitType.WEIGHT)
                             "${String.format("%.2f", qty)} ${unit.unitLabel}"
                         else "${qty.toInt()} ${unit.unitLabel}"
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = appColors.divider
-                        ) {
-                            Text(
-                                qtyText,
-                                Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = appColors.textSecondary
-                            )
+                        Surface(shape = RoundedCornerShape(6.dp), color = appColors.divider) {
+                            Text(qtyText, Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall, color = appColors.textSecondary)
                         }
                     }
                 }
             }
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                // حالة المخزون
                 Surface(shape = RoundedCornerShape(20.dp), color = statusColor.copy(0.12f)) {
-                    Row(
-                        Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         Box(Modifier.size(6.dp).clip(CircleShape).background(statusColor))
-                        Text(statusLabel, style = MaterialTheme.typography.labelSmall,
-                            color = statusColor, fontWeight = FontWeight.SemiBold)
+                        Text(statusLabel, style = MaterialTheme.typography.labelSmall, color = statusColor, fontWeight = FontWeight.SemiBold)
                     }
                 }
-                // سعر الوحدة الافتراضية
-                item.defaultUnit?.let { unit ->
-                    Text("₪${String.format("%.2f", unit.price)}",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = appColors.textPrimary)
+                item.defaultUnit?.let {
+                    unit ->
+                    Text("₪${String.format("%.2f", unit.price)}", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = appColors.textPrimary)
                 }
-                Icon(Icons.Rounded.ChevronRight, null,
-                    tint = appColors.divider, modifier = Modifier.size(18.dp))
+                Icon(Icons.Rounded.ChevronRight, null, tint = appColors.divider, modifier = Modifier.size(18.dp))
             }
         }
     }
