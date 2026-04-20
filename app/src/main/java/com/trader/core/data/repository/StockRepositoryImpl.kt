@@ -128,12 +128,12 @@ class StockRepositoryImpl(
         }
     }
 }
-}
+
 
 data class StockConflict(
-val unitId: String,
-val productName: String,
-val unitLabel: String,
-val localQuantity: Double,
-val remoteQuantity: Double
+    val unitId: String,
+    val productName: String,
+    val unitLabel: String,
+    val localQuantity: Double,
+    val remoteQuantity: Double
 )

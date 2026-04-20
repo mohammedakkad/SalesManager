@@ -24,7 +24,7 @@ data class TransactionEntity(
     val paidAt: Long? = null,
     val paymentType: String = PaymentType.DEBT.name,
     val hasItems: Boolean = false,
-    val syncStatus: String // ✅ أضف
+    val syncStatus: String = SyncStatus.SYNCED.name
 ) {
     fun toDomain(customerName: String = "", paymentMethodName: String = "") = Transaction(
         id = id, customerId = customerId, customerName = customerName,
