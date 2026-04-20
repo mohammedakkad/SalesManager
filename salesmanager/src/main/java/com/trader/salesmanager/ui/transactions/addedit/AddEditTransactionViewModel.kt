@@ -41,6 +41,7 @@ class AddEditTransactionViewModel(
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
     private var editingId: Long? = null
+    private var isSavingInProgress = false
 
     init {
         viewModelScope.launch {
@@ -200,6 +201,8 @@ class AddEditTransactionViewModel(
     }
 
     fun save() {
+        if (_uiState.value.isLoading) return
+
         val state = _uiState.value
         val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
         val amount = state.amount.toLatinDigits().toDoubleOrNull()
@@ -314,7 +317,7 @@ class AddEditTransactionViewModel(
         }
 
         // مزامنة مع Firebase
-        stockRepo.syncPendingMovements()
+       // stockRepo.syncPendingMovements()
     }
 }
 

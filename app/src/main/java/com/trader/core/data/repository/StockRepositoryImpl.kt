@@ -18,10 +18,18 @@ class StockRepositoryImpl(
 ) : StockRepository {
 
     override fun getMovementsForProduct(productId: String, unitId: String): Flow<List<StockMovement>> =
-        movementDao.getForProductUnit(productId, unitId).map { it.map { e -> e.toDomain() } }
+    movementDao.getForProductUnit(productId, unitId).map {
+        it.map {
+            e -> e.toDomain()
+        }
+    }
 
     override fun getMovementsForTransaction(transactionId: Long): Flow<List<StockMovement>> =
-        movementDao.getForTransaction(transactionId).map { it.map { e -> e.toDomain() } }
+    movementDao.getForTransaction(transactionId).map {
+        it.map {
+            e -> e.toDomain()
+        }
+    }
 
     override suspend fun deductStock(
         productId: String, unitId: String, quantity: Double,
@@ -39,17 +47,24 @@ class StockRepositoryImpl(
     ) = applyMovement(productId, unitId, quantity, type, null, productName, unitLabel, note)
 
     override suspend fun syncPendingMovements() {
-        movementDao.getPending().forEach { entity ->
-            try { remote.uploadMovement(merchantId, entity.toDomain()); movementDao.markSynced(entity.id) } catch (_: Exception) {}
+        movementDao.getPending().forEach {
+            entity ->
+            try {
+                remote.uploadMovement(merchantId, entity.toDomain()); movementDao.markSynced(entity.id)
+            } catch (_: Exception) {}
         }
-        productDao.getPendingUnits().forEach { unit ->
-            try { remote.updateRemoteQuantity(merchantId, unit.id, unit.quantityInStock); productDao.markUnitSynced(unit.id) } catch (_: Exception) {}
+        productDao.getPendingUnits().forEach {
+            unit ->
+            try {
+                remote.updateRemoteQuantity(merchantId, unit.id, unit.quantityInStock); productDao.markUnitSynced(unit.id)
+            } catch (_: Exception) {}
         }
     }
 
     suspend fun detectConflicts(): List<StockConflict> {
         val conflicts = mutableListOf<StockConflict>()
-        productDao.getPendingUnits().forEach { unitEntity ->
+        productDao.getPendingUnits().forEach {
+            unitEntity ->
             try {
                 val remoteQty = remote.getRemoteQuantity(merchantId, unitEntity.id) ?: return@forEach
                 val localQty = unitEntity.quantityInStock
@@ -62,11 +77,19 @@ class StockRepositoryImpl(
     }
 
     suspend fun resolveConflictWithServer(unitId: String) {
-        try { remote.getRemoteQuantity(merchantId, unitId)?.let { productDao.updateQuantity(unitId, it) } } catch (_: Exception) {}
+        try {
+            remote.getRemoteQuantity(merchantId, unitId)?.let {
+                productDao.updateQuantity(unitId, it)
+            }
+        } catch (_: Exception) {}
     }
 
     suspend fun resolveConflictWithLocal(unitId: String) {
-        try { productDao.getQuantity(unitId)?.let { remote.updateRemoteQuantity(merchantId, unitId, it) } } catch (_: Exception) {}
+        try {
+            productDao.getQuantity(unitId)?.let {
+                remote.updateRemoteQuantity(merchantId, unitId, it)
+            }
+        } catch (_: Exception) {}
     }
 
     private suspend fun applyMovement(
@@ -92,6 +115,7 @@ class StockRepositoryImpl(
             remote.uploadMovement(merchantId, movement)
             remote.updateRemoteQuantity(merchantId, unitId, newQty)
             movementDao.markSynced(movement.id)
+            productDao.markUnitSynced(unitId)
         } catch (_: Exception) {}
     }
 }

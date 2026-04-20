@@ -96,18 +96,30 @@ class TransactionRepositoryImpl(
 
     override suspend fun insertTransaction(t: Transaction): Long {
         val id = transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
-        sync.pushTransaction(code(), t.copy(id = id))
+        syncScope.launch {
+            try {
+                sync.pushTransaction(code(), t.copy(id = id))
+            } catch (_: Exception) {}
+        }
         return id
     }
 
     override suspend fun updateTransaction(t: Transaction) {
         transactionDao.updateTransaction(TransactionEntity.fromDomain(t))
-        sync.pushTransaction(code(), t)
+        syncScope.launch {
+            try {
+                sync.pushTransaction(code(), t)
+            } catch (_: Exception) {}
+        }
     }
 
     override suspend fun deleteTransaction(t: Transaction) {
         transactionDao.deleteTransaction(TransactionEntity.fromDomain(t))
-        sync.deleteTransaction(code(), t.id)
+        syncScope.launch {
+            try {
+                sync.deleteTransaction(code(), t.id)
+            } catch (_: Exception) {}
+        }
     }
 
     override suspend fun getTotalAmountByDate(s: Long, e: Long) = transactionDao.getTotalAmountByDate(s, e)
