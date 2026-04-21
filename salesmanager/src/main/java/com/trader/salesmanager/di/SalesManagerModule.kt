@@ -99,7 +99,7 @@ val salesManagerModule = module {
         CustomerRepositoryImpl(get(), get(), get())
     }
     single<TransactionRepository> {
-        TransactionRepositoryImpl(get(), get(), get(), get(), get())
+        TransactionRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
     }
     single<PaymentMethodRepository> {
         PaymentMethodRepositoryImpl(get(), get(), get())

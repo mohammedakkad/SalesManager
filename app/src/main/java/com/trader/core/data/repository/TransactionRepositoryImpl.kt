@@ -5,6 +5,8 @@ import com.trader.core.data.local.entity.TransactionEntity
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.ActivationRepository
+import com.trader.core.domain.repository.InvoiceItemRepository
+import com.trader.core.domain.repository.StockRepository
 import com.trader.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -16,7 +18,9 @@ class TransactionRepositoryImpl(
     private val customerDao: CustomerDao,
     private val paymentMethodDao: PaymentMethodDao,
     private val sync: FirebaseSyncService,
-    private val activationRepo: ActivationRepository
+    private val activationRepo: ActivationRepository,
+    private val invoiceItemRepo: InvoiceItemRepository,
+    private val stockRepo: StockRepository
 ) : TransactionRepository {
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -119,6 +123,22 @@ class TransactionRepositoryImpl(
     }
 
     override suspend fun deleteTransaction(t: Transaction) {
+        // ✅ إرجاع المخزون إذا كانت العملية تحتوي أصناف
+        if (t.hasItems) {
+            val items = invoiceItemRepo.getItemsForTransactionOnce(t.id)
+            items.forEach {
+                item ->
+                stockRepo.returnStock(
+                    productId = item.productId,
+                    unitId = item.unitId,
+                    quantity = item.quantity,
+                    transactionId = t.id,
+                    productName = item.productName,
+                    unitLabel = item.unitLabel
+                )
+            }
+            invoiceItemRepo.deleteItemsForTransaction(t.id)
+        }
         transactionDao.deleteTransaction(TransactionEntity.fromDomain(t))
         syncScope.launch {
             try {

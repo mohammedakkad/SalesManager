@@ -32,7 +32,6 @@ class ProductRepositoryImpl(
         startPendingSyncOnReconnect()
     }
 
-    // ── مزامنة تلقائية عند عودة الإنترنت ─────────────────────────
     private fun startPendingSyncOnReconnect() {
         syncScope.launch {
             networkMonitor.isOnlineFlow
@@ -45,7 +44,6 @@ class ProductRepositoryImpl(
         }
     }
 
-    // ── مزامنة Realtime من Firestore → Room ──────────────────────
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
@@ -65,7 +63,6 @@ class ProductRepositoryImpl(
                             } catch (_: Exception) {
                                 null
                             }
-
                             when {
                                 units != null && units.isNotEmpty() -> {
                                     database.upsertProductWithUnitsAndClean(
@@ -89,8 +86,6 @@ class ProductRepositoryImpl(
     }
 
     private suspend fun merchantId(): String = activationRepo.getMerchantCode()
-
-    // ── استعلامات ────────────────────────────────────────────────
 
     override fun getAllProducts(): Flow<List<ProductWithUnits>> =
     dao.getAllWithUnits()
@@ -128,16 +123,12 @@ class ProductRepositoryImpl(
     override suspend fun getProductById(id: String): ProductWithUnits? =
     dao.getById(id)?.toDomainWithUnits()
 
-    // ── التحقق من تفرد الباركود ──────────────────────────────────
-
     override suspend fun getBarcodeConflict(barcode: String, excludeProductId: String?): String? {
         if (barcode.isBlank()) return null
         val existing = dao.getByBarcode(barcode) ?: return null
-        if (existing.product.id == excludeProductId) return null // نفس الصنف عند التعديل
+        if (existing.product.id == excludeProductId) return null
         return existing.product.name
     }
-
-    // ── حفظ وتعديل — LOCAL FIRST ─────────────────────────────────
 
     override suspend fun saveProduct(product: Product, units: List<ProductUnit>): String {
         val id = product.id.ifEmpty {
@@ -145,6 +136,21 @@ class ProductRepositoryImpl(
         }
         val now = System.currentTimeMillis()
         val mid = merchantId()
+
+        // ✅ الإصلاح: جلب IDs الوحدات القديمة قبل الحفظ (فقط عند التعديل)
+        // نحتاجها لحذف المحذوف منها في Firestore — كانت تُحذف من Room لكن تبقى في Firestore
+        // فيُعيدها startRealtimeSync بعد ثوانٍ
+        val deletedUnitIds: Set<String> = if (product.id.isNotEmpty()) {
+            val oldIds = dao.getUnitsForProduct(id).map {
+                it.id
+            }.toSet()
+            val newIds = units.map {
+                it.id
+            }.filter {
+                it.isNotEmpty()
+            }.toSet()
+            oldIds - newIds
+        } else emptySet()
 
         val productToSave = product.copy(
             id = id,
@@ -181,6 +187,13 @@ class ProductRepositoryImpl(
             unitsToSave.forEach {
                 unit ->
                 remote.uploadUnit(mid, unit.copy(syncStatus = SyncStatus.SYNCED))
+            }
+            // ✅ حذف الوحدات المحذوفة من Firestore حتى لا يُعيدها startRealtimeSync
+            deletedUnitIds.forEach {
+                unitId ->
+                try {
+                    remote.deleteUnit(mid, unitId, id)
+                } catch (_: Exception) {}
             }
             dao.markProductSynced(id)
             unitsToSave.forEach {
