@@ -23,16 +23,14 @@ import androidx.compose.ui.unit.dp
 import com.trader.core.data.local.appDataStore
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.Transaction
-import com.trader.core.domain.repository.InvoiceItemRepository
-import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.DateUtils.toDateTimeString
 import com.trader.salesmanager.ui.components.StatusChip
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.InvoiceSharer
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,51 +38,61 @@ fun TransactionDetailsScreen(
     transactionId: Long,
     onNavigateUp: () -> Unit,
     onEdit: (Long) -> Unit,
-    repo: TransactionRepository = koinInject(),
-    invoiceItemRepo: InvoiceItemRepository = koinInject()
-) {
-    var transaction by remember { mutableStateOf<Transaction?>(null) }
-    var showDeleteDialog by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+    viewModel: TransactionDetailsViewModel = koinViewModel(parameters = { parametersOf(transactionId) }) {
+    val uiState by viewModel.uiState.collectAsState()
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
 
-    // اسم المحل من DataStore
     val storeName by context.appDataStore.data
-        .map { it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: "" }
-        .collectAsState(initial = "")
+    .map {
+        it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+    }
+    .collectAsState(initial = "")
 
-    // أصناف الفاتورة
-    val invoiceItems by invoiceItemRepo
-        .getItemsForTransaction(transactionId)
-        .collectAsState(initial = emptyList())
-
-    LaunchedEffect(transactionId) {
-        transaction = repo.getTransactionById(transactionId)
+    // الانتقال للخلف فور اكتمال الحذف
+    LaunchedEffect(uiState.isDeleted) {
+        if (uiState.isDeleted) onNavigateUp()
     }
 
     if (showDeleteDialog) {
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            icon = { Icon(Icons.Rounded.DeleteForever, null, tint = DebtRed) },
-            title = { Text("حذف العملية", fontWeight = FontWeight.Bold) },
-            text = { Text("هل تريد حذف هذه العملية؟") },
+            onDismissRequest = {
+                showDeleteDialog = false
+            },
+            icon = {
+                Icon(Icons.Rounded.DeleteForever, null, tint = DebtRed)
+            },
+            title = {
+                Text("حذف العملية", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text("هل تريد حذف هذه العملية؟")
+            },
             confirmButton = {
                 Button(
                     onClick = {
-                        scope.launch { transaction?.let { repo.deleteTransaction(it) } }
-                        onNavigateUp()
+                        showDeleteDialog = false
+                        viewModel.delete()
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = DebtRed)
-                ) { Text("حذف") }
+                ) {
+                    Text("حذف")
+                }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showDeleteDialog = false }) { Text("إلغاء") }
+                OutlinedButton(onClick = {
+                    showDeleteDialog = false
+                }) {
+                    Text("إلغاء")
+                }
             },
             shape = RoundedCornerShape(20.dp)
         )
     }
 
-    val t = transaction
+    val t = uiState.transaction
     if (t == null) {
         Box(Modifier.fillMaxSize(), Alignment.Center) {
             CircularProgressIndicator(color = Emerald500)
@@ -98,13 +106,13 @@ fun TransactionDetailsScreen(
         item {
             Box(
                 Modifier.fillMaxWidth()
-                    .background(
-                        Brush.horizontalGradient(
-                            if (t.isPaid) listOf(Emerald700, PaidGreen)
-                            else listOf(Color(0xFFB45309), UnpaidAmber)
-                        )
+                .background(
+                    Brush.horizontalGradient(
+                        if (t.isPaid) listOf(Emerald700, PaidGreen)
+                        else listOf(Color(0xFFB45309), UnpaidAmber)
                     )
-                    .padding(top = 48.dp, bottom = 28.dp, start = 20.dp, end = 20.dp)
+                )
+                .padding(top = 48.dp, bottom = 28.dp, start = 20.dp, end = 20.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -112,25 +120,27 @@ fun TransactionDetailsScreen(
                             Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
-                        // زر مشاركة الفاتورة
                         IconButton(
                             onClick = {
                                 InvoiceSharer.shareInvoice(
                                     context = context,
                                     transaction = t,
-                                    items = invoiceItems,
+                                    items = uiState.invoiceItems,
                                     storeName = storeName
                                 )
                             },
-                            modifier = Modifier.clip(CircleShape)
-                                .background(Color.White.copy(0.15f))
+                            modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
                         ) {
                             Icon(Icons.Rounded.Share, null, tint = Color.White)
                         }
-                        IconButton(onClick = { onEdit(transactionId) }) {
+                        IconButton(onClick = {
+                            onEdit(transactionId)
+                        }) {
                             Icon(Icons.Rounded.Edit, null, tint = Color.White)
                         }
-                        IconButton(onClick = { showDeleteDialog = true }) {
+                        IconButton(onClick = {
+                            showDeleteDialog = true
+                        }) {
                             Icon(Icons.Rounded.Delete, null, tint = Color.White.copy(0.8f))
                         }
                     }
@@ -141,7 +151,7 @@ fun TransactionDetailsScreen(
                     ) {
                         Box(
                             Modifier.size(64.dp).clip(CircleShape)
-                                .background(Color.White.copy(0.2f)),
+                            .background(Color.White.copy(0.2f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -169,24 +179,26 @@ fun TransactionDetailsScreen(
                 Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                DetailRow(Icons.Rounded.Person,         "الزبون",       t.customerName,                          Emerald500)
-                DetailRow(Icons.Rounded.CreditCard,     "طريقة الدفع",  t.paymentMethodName.ifEmpty { "غير محدد" }, Cyan500)
-                DetailRow(Icons.Rounded.CalendarToday,  "التاريخ",       t.date.toDateTimeString(),               Violet500)
+                DetailRow(Icons.Rounded.Person, "الزبون", t.customerName, Emerald500)
+                DetailRow(Icons.Rounded.CreditCard, "طريقة الدفع", t.paymentMethodName.ifEmpty {
+                    "غير محدد"
+                }, Cyan500)
+                DetailRow(Icons.Rounded.CalendarToday, "التاريخ", t.date.toDateTimeString(), Violet500)
                 val paymentTypeLabel = when (t.paymentType) {
-                    com.trader.core.domain.model.PaymentType.CASH   -> "كاش 💵"
-                    com.trader.core.domain.model.PaymentType.DEBT   -> "دين 📋"
-                    com.trader.core.domain.model.PaymentType.BANK   -> "بنك 🏦"
+                    com.trader.core.domain.model.PaymentType.CASH -> "كاش 💵"
+                    com.trader.core.domain.model.PaymentType.DEBT -> "دين 📋"
+                    com.trader.core.domain.model.PaymentType.BANK -> "بنك 🏦"
                     com.trader.core.domain.model.PaymentType.WALLET -> "محفظة 💳"
-                    com.trader.core.domain.model.PaymentType.OTHER  -> "أخرى 💰"
+                    com.trader.core.domain.model.PaymentType.OTHER -> "أخرى 💰"
                 }
-                DetailRow(Icons.Rounded.Payment,        "نوع الدفع",    paymentTypeLabel,                        UnpaidAmber)
+                DetailRow(Icons.Rounded.Payment, "نوع الدفع", paymentTypeLabel, UnpaidAmber)
                 if (t.note.isNotEmpty())
-                    DetailRow(Icons.Rounded.Notes,      "ملاحظة",       t.note,                                  Color(0xFF8B5CF6))
+                    DetailRow(Icons.Rounded.Notes, "ملاحظة", t.note, Color(0xFF8B5CF6))
             }
         }
 
         // ── أصناف الفاتورة ────────────────────────────────────────
-        if (invoiceItems.isNotEmpty()) {
+        if (uiState.invoiceItems.isNotEmpty()) {
             item {
                 Text(
                     "أصناف الفاتورة",
@@ -204,12 +216,12 @@ fun TransactionDetailsScreen(
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     Column(Modifier.fillMaxWidth()) {
-                        invoiceItems.forEachIndexed { index, item ->
+                        uiState.invoiceItems.forEachIndexed {
+                            index, item ->
                             InvoiceItemRow(item)
-                            if (index < invoiceItems.lastIndex)
+                            if (index < uiState.invoiceItems.lastIndex)
                                 HorizontalDivider(color = appColors.divider)
                         }
-                        // الإجمالي
                         HorizontalDivider(color = appColors.border, thickness = 1.dp)
                         Row(
                             Modifier.fillMaxWidth().padding(14.dp),
@@ -218,7 +230,7 @@ fun TransactionDetailsScreen(
                             Text("الإجمالي", fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.bodyMedium)
                             Text(
-                                "₪${String.format("%.2f", invoiceItems.sumOf { it.totalPrice })}",
+                                "₪${String.format("%.2f", uiState.invoiceItems.sumOf { it.totalPrice })}",
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.titleSmall,
                                 color = Violet500
@@ -236,12 +248,12 @@ fun TransactionDetailsScreen(
                     InvoiceSharer.shareInvoice(
                         context = context,
                         transaction = t,
-                        items = invoiceItems,
+                        items = uiState.invoiceItems,
                         storeName = storeName
                     )
                 },
                 modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp).height(52.dp),
+                .padding(horizontal = 16.dp, vertical = 16.dp).height(52.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF25D366))
             ) {
@@ -251,7 +263,9 @@ fun TransactionDetailsScreen(
             }
         }
 
-        item { Spacer(Modifier.height(24.dp)) }
+        item {
+            Spacer(Modifier.height(24.dp))
+        }
     }
 }
 
@@ -264,7 +278,7 @@ private fun InvoiceItemRow(item: InvoiceItem) {
     ) {
         Box(
             Modifier.size(36.dp).clip(RoundedCornerShape(8.dp))
-                .background(Violet500.copy(0.1f)),
+            .background(Violet500.copy(0.1f)),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -305,12 +319,15 @@ private fun DetailRow(icon: ImageVector, label: String, value: String, color: Co
             Box(
                 Modifier.size(40.dp).clip(CircleShape).background(color.copy(0.15f)),
                 contentAlignment = Alignment.Center
-            ) { Icon(icon, null, tint = color, modifier = Modifier.size(20.dp)) }
+            ) {
+                Icon(icon, null, tint = color, modifier = Modifier.size(20.dp))
+            }
             Spacer(Modifier.width(14.dp))
             Column {
                 Text(label, style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(value, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                Text(value, style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold)
             }
         }
     }
