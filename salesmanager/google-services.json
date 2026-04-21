@@ -89,6 +89,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "520815967269-qn49vm25nus4qm8td2rag4pm0u3rd2bu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trader.salesmanager.test",
+            "certificate_hash": "4c9931c2ddcf9f1cb296a1d4eb742281ae6655f7"
+          }
+        },
+        {
           "client_id": "520815967269-lc6d7gc5ddrkfqfvuamq7b6fit2endal.apps.googleusercontent.com",
           "client_type": 3
         }
