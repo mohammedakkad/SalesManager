@@ -37,6 +37,7 @@ android {
         // ── نسخة الاختبار: تُنصَّب بجانب البرودكشن على نفس الجهاز ──
         create("staging") {
             applicationIdSuffix = ".test"           // com.trader.salesmanager.test
+            manifestPlaceholders["appName"] = "Sales Test"
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
