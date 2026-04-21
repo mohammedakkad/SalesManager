@@ -7,3 +7,15 @@ plugins {
     alias(libs.plugins.google.services)     apply false
     alias(libs.plugins.firebase.crashlytics) apply false
 }
+
+subprojects {
+    pluginManager.withPlugin("com.android.library") {
+        extensions.configure<com.android.build.gradle.LibraryExtension> {
+            buildTypes {
+                maybeCreate("staging").apply {
+                    matchingFallbacks += listOf("release")
+                }
+            }
+        }
+    }
+}
