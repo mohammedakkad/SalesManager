@@ -51,7 +51,12 @@ class TransactionRepositoryImpl(
                     list.forEach {
                         t ->
                         try {
-                            transactionDao.insertTransaction(TransactionEntity.fromDomain(t))
+                            val existing = transactionDao.getTransactionById(t.id)
+                            if (existing == null) {
+                                transactionDao.insertTransaction(
+                                    TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.SYNCED))
+                                )
+                            }
                         } catch (e: android.database.sqlite.SQLiteConstraintException) {
                             // Customer not synced yet — skip silently
                         }

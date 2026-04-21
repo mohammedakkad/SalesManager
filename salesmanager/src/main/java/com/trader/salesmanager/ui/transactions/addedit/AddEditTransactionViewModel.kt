@@ -26,7 +26,9 @@ data class AddEditTransactionUiState(
     val error: String? = null,
     val isEditMode: Boolean = false,
     val pendingLines: List<InvoiceLineItem> = emptyList(),
-    val hasItems: Boolean = false
+    val hasItems: Boolean = false,
+    val userEditedLines: Boolean = false
+
 )
 
 class AddEditTransactionViewModel(
@@ -90,24 +92,6 @@ class AddEditTransactionViewModel(
             val customer = if (t.customerId == WALK_IN_CUSTOMER.id) WALK_IN_CUSTOMER
             else customerRepo.getCustomerById(t.customerId)
 
-            // ✅ جلب الأصناف الموجودة وتحويلها لـ InvoiceLineItem
-            val existingLines = if (t.hasItems) {
-                invoiceRepo.getItemsForTransactionOnce(transactionId).mapNotNull {
-                    item ->
-                    val productWithUnits = productRepo.getProductById(item.productId) ?: return@mapNotNull null
-                    val unit = productWithUnits.units.firstOrNull {
-                        it.id == item.unitId
-                    } ?: return@mapNotNull null
-                    InvoiceLineItem(
-                        product = productWithUnits,
-                        selectedUnit = unit,
-                        displayQty = item.quantity,
-                        displayWeightUnit = SaleWeightUnit.KG,
-                        customPrice = if (item.pricePerUnit != unit.price) item.pricePerUnit else null
-                    )
-                }
-            } else emptyList()
-
             _uiState.update {
                 state ->
                 state.copy(
@@ -117,9 +101,37 @@ class AddEditTransactionViewModel(
                     paymentType = t.paymentType,
                     note = t.note,
                     hasItems = t.hasItems,
-                    pendingLines = existingLines, // ✅ أضف
                     isEditMode = true
                 )
+            }
+
+            // ✅ راقب الأصناف عبر Flow بدلاً من قراءة آنية
+            if (t.hasItems) {
+                invoiceRepo.getItemsForTransaction(transactionId).collect {
+                    items ->
+                    val lines = items.mapNotNull {
+                        item ->
+                        val productWithUnits = productRepo.getProductById(item.productId)
+                        ?: return@mapNotNull null
+                        val unit = productWithUnits.units.firstOrNull {
+                            it.id == item.unitId
+                        }
+                        ?: return@mapNotNull null
+                        InvoiceLineItem(
+                            product = productWithUnits,
+                            selectedUnit = unit,
+                            displayQty = item.quantity,
+                            displayWeightUnit = SaleWeightUnit.KG,
+                            customPrice = if (item.pricePerUnit != unit.price) item.pricePerUnit else null
+                        )
+                    }
+                    // ✅ فقط إذا لم يكن المستخدم يعدّل الأصناف يدوياً
+                    if (!_uiState.value.userEditedLines) {
+                        _uiState.update {
+                            it.copy(pendingLines = lines, hasItems = lines.isNotEmpty())
+                        }
+                    }
+                }
             }
         }
     }
@@ -130,6 +142,7 @@ class AddEditTransactionViewModel(
             it.copy(
                 pendingLines = lines,
                 hasItems = lines.isNotEmpty(),
+                userEditedLines = true,
                 amount = if (lines.isNotEmpty())
                     String.format(Locale.US, "%.2f", total) else it.amount
             )
@@ -189,6 +202,7 @@ class AddEditTransactionViewModel(
                     it.copy(
                         pendingLines = rebuilt,
                         hasItems = rebuilt.isNotEmpty(),
+                        userEditedLines = true,
                         amount = if (rebuilt.isNotEmpty())
                             String.format(Locale.US, "%.2f", total) else it.amount
                     )
