@@ -38,7 +38,8 @@ fun TransactionDetailsScreen(
     transactionId: Long,
     onNavigateUp: () -> Unit,
     onEdit: (Long) -> Unit,
-    viewModel: TransactionDetailsViewModel = koinViewModel(parameters = { parametersOf(transactionId) }) {
+    viewModel: TransactionDetailsViewModel = koinViewModel { parametersOf(transactionId) }
+) {
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteDialog by remember {
         mutableStateOf(false)
