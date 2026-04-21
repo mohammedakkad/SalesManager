@@ -38,6 +38,7 @@ android {
         create("staging") {
             applicationIdSuffix = ".test"           // com.trader.salesmanager.test
             manifestPlaceholders["appName"] = "Sales Test"
+            resValue("string", "app_name", "مدير المبيعات TEST")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
