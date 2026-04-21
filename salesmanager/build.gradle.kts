@@ -31,10 +31,22 @@ android {
         }
     }
     buildTypes {
-        debug   { applicationIdSuffix = ".debug" }
-        release { isMinifyEnabled = true; isShrinkResources = true
+        debug {
+            applicationIdSuffix = ".debug"
+        }
+        // ── نسخة الاختبار: تُنصَّب بجانب البرودكشن على نفس الجهاز ──
+        create("staging") {
+            applicationIdSuffix = ".test"           // com.trader.salesmanager.test
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release") }
+            signingConfig = signingConfigs.getByName("release")
+        }
+        release {
+            isMinifyEnabled = true; isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
+        }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
     kotlinOptions { jvmTarget = "11" }
