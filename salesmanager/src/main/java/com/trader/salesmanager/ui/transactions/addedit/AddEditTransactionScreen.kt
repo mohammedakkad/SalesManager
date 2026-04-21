@@ -109,49 +109,49 @@ fun AddEditTransactionScreen(
             }
 
             // ── أصناف الفاتورة ───────────────────────────────────────
-            if (!uiState.isEditMode) {
-                OutlinedButton(
-                    onClick = {
-                        onNavigateToInvoiceItems(uiState.selectedCustomer?.name ?: "زبون")
-                    },
-                    modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
-                    border = ButtonDefaults.outlinedButtonBorder(true).copy(
-                        brush = androidx.compose.ui.graphics.SolidColor(
-                            if (uiState.hasItems) Emerald500 else appColors.divider)
-                    )
-                ) {
-                    Icon(if (uiState.hasItems) Icons.Rounded.CheckCircle else Icons.Rounded.ShoppingCart,
-                        null, tint = if (uiState.hasItems) Emerald500 else appColors.textSubtle,
-                        modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        if (uiState.hasItems) "أصناف الفاتورة ✓ (${uiState.pendingLines.size} صنف)"
-                        else "إضافة أصناف من المخزن (اختياري)",
-                        color = if (uiState.hasItems) Emerald500 else appColors.textSubtle
-                    )
-                }
-                AnimatedVisibility(uiState.hasItems) {
-                    Card(shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Emerald500.copy(0.06f))) {
-                        Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            uiState.pendingLines.forEach {
-                                line ->
-                                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text(
-                                        "${line.product.product.name} × ${line.displayQtyLabel}",
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                    Text(
-                                        "₪${String.format(java.util.Locale.US, "%.2f", line.totalPrice)}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        fontWeight = FontWeight.SemiBold, color = Emerald500
-                                    )
-                                }
+
+            OutlinedButton(
+                onClick = {
+                    onNavigateToInvoiceItems(uiState.selectedCustomer?.name ?: "زبون")
+                },
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
+                border = ButtonDefaults.outlinedButtonBorder(true).copy(
+                    brush = androidx.compose.ui.graphics.SolidColor(
+                        if (uiState.hasItems) Emerald500 else appColors.divider)
+                )
+            ) {
+                Icon(if (uiState.hasItems) Icons.Rounded.CheckCircle else Icons.Rounded.ShoppingCart,
+                    null, tint = if (uiState.hasItems) Emerald500 else appColors.textSubtle,
+                    modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    if (uiState.hasItems) "أصناف الفاتورة ✓ (${uiState.pendingLines.size} صنف)"
+                    else "إضافة أصناف من المخزن (اختياري)",
+                    color = if (uiState.hasItems) Emerald500 else appColors.textSubtle
+                )
+            }
+            AnimatedVisibility(uiState.hasItems) {
+                Card(shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Emerald500.copy(0.06f))) {
+                    Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        uiState.pendingLines.forEach {
+                            line ->
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Text(
+                                    "${line.product.product.name} × ${line.displayQtyLabel}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                                Text(
+                                    "₪${String.format(java.util.Locale.US, "%.2f", line.totalPrice)}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.SemiBold, color = Emerald500
+                                )
                             }
                         }
                     }
                 }
             }
+
 
             // ── المبلغ ───────────────────────────────────────────────
             OutlinedTextField(
