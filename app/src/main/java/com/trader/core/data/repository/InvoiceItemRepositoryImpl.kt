@@ -3,6 +3,7 @@ package com.trader.core.data.repository
 import com.trader.core.data.local.dao.InvoiceItemDao
 import com.trader.core.data.local.entity.toEntity
 import com.trader.core.data.remote.ProductFirestoreService
+import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.repository.InvoiceItemRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class InvoiceItemRepositoryImpl(
     private val dao: InvoiceItemDao,
-    private val remote: ProductFirestoreService
+    private val remote: ProductFirestoreService,
     private val sync: FirebaseSyncService,
     private val merchantId: String
 ) : InvoiceItemRepository {
