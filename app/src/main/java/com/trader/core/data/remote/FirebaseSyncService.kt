@@ -211,13 +211,13 @@ class FirebaseSyncService {
     fun deleteCustomer(merchantCode: String, id: Long) {
         db.reference.child("merchants").child(merchantCode).child("customers").child(id.toString()).removeValue()
     }
-    fun pushTransaction(merchantCode: String, t: AppTransaction) {
+    suspend fun pushTransaction(merchantCode: String, t: AppTransaction) {
         db.reference.child("merchants").child(merchantCode).child("transactions").child(t.id.toString())
         .setValue(mapOf("id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
             "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
             "note" to t.note, "date" to t.date, "paidAt" to t.paidAt)).await()
     }
-    fun deleteTransaction(merchantCode: String, id: Long) {
+    suspend fun deleteTransaction(merchantCode: String, id: Long) {
         db.reference.child("merchants").child(merchantCode).child("transactions").child(id.toString()).removeValue().await()
     }
     fun pushPaymentMethod(merchantCode: String, m: PaymentMethod) {
