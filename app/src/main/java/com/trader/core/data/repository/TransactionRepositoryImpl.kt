@@ -71,7 +71,7 @@ class TransactionRepositoryImpl(
                         }
 
                     }
-                    val remoteIds = remoteList.map {
+                    val remoteIds = list.map {
                         it.id
                     }.toSet()
                     val localIds = transactionDao.getAllIds()

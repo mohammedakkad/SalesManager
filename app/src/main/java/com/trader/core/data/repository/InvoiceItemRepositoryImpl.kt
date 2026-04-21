@@ -65,7 +65,6 @@ class InvoiceItemRepositoryImpl(
         }
     }
 
-    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
 
     override fun getItemsForTransaction(transactionId: Long): Flow<List<InvoiceItem>> =
