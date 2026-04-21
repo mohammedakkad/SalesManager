@@ -34,6 +34,7 @@ import org.koin.androidx.compose.koinViewModel
 fun InvoiceItemsScreen(
     customerName: String,
     onNavigateUp: () -> Unit,
+    existingLinesJson: String? = null,
     onConfirm: (lines: List<InvoiceLineItem>, totalAmount: Double) -> Unit,
     viewModel: InvoiceItemsViewModel = koinViewModel()
 ) {
@@ -49,6 +50,12 @@ fun InvoiceItemsScreen(
     }
     var barcodeNotFound by remember {
         mutableStateOf<String?>(null)
+    }
+
+    LaunchedEffect(existingLinesJson) {
+        if (!existingLinesJson.isNullOrEmpty()) {
+            viewModel.loadExistingLines(existingLinesJson)
+        }
     }
 
     barcodeNotFound?.let {

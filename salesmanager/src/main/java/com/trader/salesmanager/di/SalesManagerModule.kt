@@ -118,7 +118,7 @@ val salesManagerModule = module {
         StockRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
     }
     single<InvoiceItemRepository> {
-        InvoiceItemRepositoryImpl(get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        InvoiceItemRepositoryImpl(get(),get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
     }
     single<InventoryRepository> {
         InventoryRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))

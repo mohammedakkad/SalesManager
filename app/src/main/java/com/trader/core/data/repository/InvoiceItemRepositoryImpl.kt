@@ -14,10 +14,55 @@ import kotlinx.coroutines.launch
 
 class InvoiceItemRepositoryImpl(
     private val dao: InvoiceItemDao,
-    private val remote: ProductFirestoreService,
+    private val remote: ProductFirestoreService
+    private val sync: FirebaseSyncService,
     private val merchantId: String
 ) : InvoiceItemRepository {
 
+
+    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    init {
+        startRealtimeSync() // ✅ أضف
+    }
+
+    // ✅ مزامنة الأصناف من Firebase Realtime Database
+    private fun startRealtimeSync() {
+        syncScope.launch {
+            try {
+                sync.observeInvoiceItems(merchantId).collect {
+                    items ->
+                    items.forEach {
+                        item ->
+                        try {
+                            dao.insertAll(listOf(item.toEntity()))
+                        } catch (_: Exception) {}
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    override suspend fun saveItems(items: List<InvoiceItem>) {
+        dao.insertAll(items.map {
+            it.toEntity()
+        })
+        syncScope.launch {
+            try {
+                remote.uploadInvoiceItems(merchantId, items) // Firestore
+                sync.pushInvoiceItems(merchantId, items) // ✅ Realtime Database
+            } catch (_: Exception) {}
+        }
+    }
+
+    override suspend fun deleteItemsForTransaction(transactionId: Long) {
+        dao.deleteForTransaction(transactionId)
+        syncScope.launch {
+            try {
+                sync.deleteInvoiceItemsForTransaction(merchantId, transactionId)
+            } catch (_: Exception) {}
+        }
+    }
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -29,27 +74,12 @@ class InvoiceItemRepositoryImpl(
         }
     }
 
-    override suspend fun saveItems(items: List<InvoiceItem>) {
-        // ✅ Local first — فوري
-        dao.insertAll(items.map {
-            it.toEntity()
-        })
-        // ✅ Sync في الخلفية — لا يوقف save() أبداً
-        syncScope.launch {
-            try {
-                remote.uploadInvoiceItems(merchantId, items)
-            } catch (_: Exception) {}
-        }
-    }
 
     override suspend fun getItemsForTransactionOnce(transactionId: Long): List<InvoiceItem> =
     dao.getForTransactionOnce(transactionId).map {
         it.toDomain()
     }
 
-    override suspend fun deleteItemsForTransaction(transactionId: Long) {
-        dao.deleteForTransaction(transactionId)
-    }
 
     override suspend fun syncPendingItems() {
         val pending = dao.getPending()

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
+import com.trader.core.domain.model.InvoiceItem
+
 
 class FirebaseSyncService {
     private val db = FirebaseDatabase.getInstance()
@@ -30,18 +32,18 @@ class FirebaseSyncService {
             // ✅ Timeout 8 seconds — Firebase hangs indefinitely offline without it
             val snap = withTimeoutOrNull(8_000) {
                 db.reference.child("activation_codes").child(code).get().await()
-            } ?: return ValidationResult.NetworkError   // timeout = no internet
+            } ?: return ValidationResult.NetworkError // timeout = no internet
 
             if (!snap.exists()) return ValidationResult.NotFound
             val boolVal = snap.getValue(Boolean::class.java)
             if (boolVal != null) return if (boolVal) ValidationResult.Active else ValidationResult.Disabled
             val map = snap.value as? Map<*, *> ?: return ValidationResult.Active
             when (map["status"] as? String) {
-                "ACTIVE"    -> ValidationResult.Active
-                "DISABLED"  -> ValidationResult.Disabled
-                "EXPIRED"   -> ValidationResult.Expired
-                "DELETED"   -> ValidationResult.NotFound
-                else        -> ValidationResult.Active
+                "ACTIVE" -> ValidationResult.Active
+                "DISABLED" -> ValidationResult.Disabled
+                "EXPIRED" -> ValidationResult.Expired
+                "DELETED" -> ValidationResult.NotFound
+                else -> ValidationResult.Active
             }
         } catch (e: Exception) {
             ValidationResult.NetworkError
@@ -58,7 +60,7 @@ class FirebaseSyncService {
         return try {
             val snap = withTimeoutOrNull(8_000) {
                 db.reference.child("activation_codes").child(code).get().await()
-            } ?: return null  // timeout = offline
+            } ?: return null // timeout = offline
             if (!snap.exists()) return "DELETED"
             val boolVal = snap.getValue(Boolean::class.java)
             if (boolVal != null) return if (boolVal) "ACTIVE" else "DISABLED"
@@ -226,6 +228,64 @@ class FirebaseSyncService {
     }
     fun deletePaymentMethod(merchantCode: String, id: Long) {
         db.reference.child("merchants").child(merchantCode).child("payment_methods").child(id.toString()).removeValue()
+    }
+
+    // ── Invoice Items ────────────────────────────────────────────
+    fun observeInvoiceItems(merchantCode: String): Flow<List<InvoiceItem>> = callbackFlow {
+        val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snap: DataSnapshot) {
+                trySend(snap.children.mapNotNull {
+                    child ->
+                    val m = child.value as? Map<*, *> ?: return@mapNotNull null
+                    runCatching {
+                        InvoiceItem(
+                            id = m["id"] as? String ?: return@mapNotNull null,
+                            transactionId = m["transactionId"].asLong() ?: return@mapNotNull null,
+                            productId = m["productId"] as? String ?: return@mapNotNull null,
+                            productName = m["productName"] as? String ?: "",
+                            unitId = m["unitId"] as? String ?: return@mapNotNull null,
+                            unitLabel = m["unitLabel"] as? String ?: "",
+                            quantity = m["quantity"].asDouble() ?: return@mapNotNull null,
+                            pricePerUnit = m["pricePerUnit"].asDouble() ?: 0.0,
+                            totalPrice = m["totalPrice"].asDouble() ?: 0.0,
+                            merchantId = merchantCode
+                        )
+                    }.getOrNull()
+                })
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        ref.addValueEventListener(listener)
+        awaitClose {
+            ref.removeEventListener(listener)
+        }
+    }
+
+    suspend fun pushInvoiceItems(merchantCode: String, items: List<InvoiceItem>) {
+        val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
+        items.forEach {
+            item ->
+            ref.child(item.id).setValue(mapOf(
+                "id" to item.id,
+                "transactionId" to item.transactionId,
+                "productId" to item.productId,
+                "productName" to item.productName,
+                "unitId" to item.unitId,
+                "unitLabel" to item.unitLabel,
+                "quantity" to item.quantity,
+                "pricePerUnit" to item.pricePerUnit,
+                "totalPrice" to item.totalPrice
+            )).await()
+        }
+    }
+
+    suspend fun deleteInvoiceItemsForTransaction(merchantCode: String, transactionId: Long) {
+        val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
+        val snap = ref.orderByChild("transactionId").equalTo(transactionId.toDouble()).get().await()
+        snap.children.forEach {
+            it.ref.removeValue().await()
+        }
     }
 }
 

@@ -306,6 +306,13 @@ fun AppNavigation() {
                 },
                 onNavigateToInvoiceItems = {
                     customerName ->
+                    // ✅ احفظ الأصناف الحالية قبل الانتقال
+                    val currentLines = invoiceViewModel.uiState.value.pendingLines
+                    if (currentLines.isNotEmpty()) {
+                        navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("existing_lines_json", serializeLines(currentLines))
+                    }
                     navController.navigate(Screen.InvoiceItems.createRoute(customerName))
                 },
                 viewModel = invoiceViewModel
@@ -521,20 +528,20 @@ fun AppNavigation() {
             ?.let {
                 java.net.URLDecoder.decode(it, "UTF-8")
             } ?: ""
+            val existingLinesJson = back.savedStateHandle.get<String>("existing_lines_json")
             InvoiceItemsScreen(
                 customerName = customerName,
+                existingLinesJson = existingLinesJson, // ✅
                 onNavigateUp = {
                     navController.navigateUp()
                 },
                 onConfirm = {
                     lines, total ->
-                    // نمرر البيانات عبر SavedStateHandle
+                    back.savedStateHandle.remove<String>("existing_lines_json") // ✅ امسح بعد الاستخدام
                     navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set("invoice_lines_json", serializeLines(lines))
+                    ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
                     navController.previousBackStackEntry
-                    ?.savedStateHandle
-                    ?.set("invoice_total", total)
+                    ?.savedStateHandle?.set("invoice_total", total)
                     navController.navigateUp()
                 }
             )

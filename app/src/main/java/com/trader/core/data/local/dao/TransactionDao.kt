@@ -34,4 +34,10 @@ interface TransactionDao {
     
     @Query("UPDATE transactions SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markSynced(id: Long)
+    
+    @Query("SELECT id FROM transactions")
+    suspend fun getAllIds(): List<Long>
+
+    @Query("DELETE FROM transactions WHERE id = :id")
+    suspend fun deleteById(id: Long)
 }

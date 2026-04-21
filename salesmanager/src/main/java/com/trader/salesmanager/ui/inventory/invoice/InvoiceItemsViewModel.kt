@@ -224,4 +224,36 @@ class InvoiceItemsViewModel(
     fun clearLines() {
         _lines.value = emptyList()
     }
+
+    fun loadExistingLines(json: String) {
+        if (_lines.value.isNotEmpty()) return // لا تعيد التحميل إذا المستخدم أضاف أصناف
+        viewModelScope.launch {
+            try {
+                val arr = org.json.JSONArray(json)
+                val rebuilt = mutableListOf<InvoiceLineItem>()
+                for (i in 0 until arr.length()) {
+                    val obj = arr.getJSONObject(i)
+                    val productId = obj.getString("productId")
+                    val unitId = obj.getString("unitId")
+                    val price = obj.getDouble("price")
+                    val displayQty = obj.getDouble("displayQty")
+                    val weightUnit = runCatching {
+                        SaleWeightUnit.valueOf(obj.optString("displayWeightUnit", "KG"))
+                    }.getOrDefault(SaleWeightUnit.KG)
+                    val productWithUnits = productRepo.getProductById(productId) ?: continue
+                    val unit = productWithUnits.units.firstOrNull {
+                        it.id == unitId
+                    } ?: continue
+                    rebuilt += InvoiceLineItem(
+                        product = productWithUnits,
+                        selectedUnit = unit,
+                        displayQty = displayQty,
+                        displayWeightUnit = weightUnit,
+                        customPrice = if (price != unit.price) price else null
+                    )
+                }
+                _lines.value = rebuilt
+            } catch (_: Exception) {}
+        }
+    }
 }

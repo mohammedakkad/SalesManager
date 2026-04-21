@@ -54,11 +54,31 @@ class TransactionRepositoryImpl(
                             val existing = transactionDao.getTransactionById(t.id)
                             if (existing == null) {
                                 transactionDao.insertTransaction(
-                                    TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.SYNCED))
+                                    TransactionEntity.fromDomain(
+                                        t.copy(syncStatus = SyncStatus.SYNCED)
+                                    )
+                                )
+                            } else if (existing.syncStatus == SyncStatus.SYNCED.name) {
+                                // فقط حدّث إذا كانت SYNCED — لا تلمس PENDING
+                                transactionDao.insertTransaction(
+                                    TransactionEntity.fromDomain(
+                                        t.copy(syncStatus = SyncStatus.SYNCED)
+                                    )
                                 )
                             }
                         } catch (e: android.database.sqlite.SQLiteConstraintException) {
                             // Customer not synced yet — skip silently
+                        }
+
+                    }
+                    val remoteIds = remoteList.map {
+                        it.id
+                    }.toSet()
+                    val localIds = transactionDao.getAllIds()
+                    localIds.forEach {
+                        localId ->
+                        if (localId !in remoteIds) {
+                            transactionDao.deleteById(localId)
                         }
                     }
                 }
@@ -119,10 +139,14 @@ class TransactionRepositoryImpl(
     }
 
     override suspend fun updateTransaction(t: Transaction) {
-        transactionDao.updateTransaction(TransactionEntity.fromDomain(t))
+        // ✅ PENDING حتى يتأكد الرفع
+        transactionDao.updateTransaction(
+            TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.PENDING))
+        )
         syncScope.launch {
             try {
                 sync.pushTransaction(code(), t)
+                transactionDao.markSynced(t.id)
             } catch (_: Exception) {}
         }
     }
