@@ -316,6 +316,22 @@ class AddEditTransactionViewModel(
             }
         }
     }
+    
+    fun serializePendingLines(): String? {
+        val lines = _uiState.value.pendingLines
+        if (lines.isEmpty()) return null
+        val arr = org.json.JSONArray()
+        lines.forEach { line ->
+            arr.put(org.json.JSONObject().apply {
+                put("productId",         line.product.product.id)
+                put("unitId",            line.selectedUnit.id)
+                put("displayQty",        line.displayQty)
+                put("displayWeightUnit", line.displayWeightUnit.name)
+                put("price",             line.effectivePrice)
+            })
+        }
+        return arr.toString()
+    }
 
     // ── حفظ الأصناف + خصم المخزون + مزامنة ──────────────────────
     private suspend fun saveItemsAndDeductStock(
