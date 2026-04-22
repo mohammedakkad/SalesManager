@@ -107,7 +107,11 @@ class AddEditTransactionViewModel(
 
             // ✅ جلب الأصناف مرة واحدة فقط — بدون Flow مستمر
             if (t.hasItems && !_uiState.value.userEditedLines) {
-                val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
+                val items = invoiceRepo.getItemsForTransaction(transactionId)
+                .filter {
+                    it.isNotEmpty()
+                }
+                .first()
                 val lines = items.mapNotNull {
                     item ->
                     val productWithUnits = productRepo.getProductById(item.productId)
