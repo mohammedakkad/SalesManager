@@ -105,31 +105,36 @@ class AddEditTransactionViewModel(
                 )
             }
 
-            // ✅ راقب الأصناف عبر Flow بدلاً من قراءة آنية
-            if (t.hasItems) {
-                invoiceRepo.getItemsForTransaction(transactionId).collect {
-                    items ->
-                    val lines = items.mapNotNull {
-                        item ->
-                        val productWithUnits = productRepo.getProductById(item.productId)
-                        ?: return@mapNotNull null
-                        val unit = productWithUnits.units.firstOrNull {
-                            it.id == item.unitId
-                        }
-                        ?: return@mapNotNull null
-                        InvoiceLineItem(
-                            product = productWithUnits,
-                            selectedUnit = unit,
-                            displayQty = item.quantity,
-                            displayWeightUnit = SaleWeightUnit.KG,
-                            customPrice = if (item.pricePerUnit != unit.price) item.pricePerUnit else null
-                        )
+            // ✅ جلب الأصناف مرة واحدة فقط — بدون Flow مستمر
+            if (t.hasItems && !_uiState.value.userEditedLines) {
+                val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
+                val lines = items.mapNotNull {
+                    item ->
+                    val productWithUnits = productRepo.getProductById(item.productId)
+                    ?: return@mapNotNull null
+                    val unit = productWithUnits.units.firstOrNull {
+                        it.id == item.unitId
                     }
-                    // ✅ فقط إذا لم يكن المستخدم يعدّل الأصناف يدوياً
-                    if (!_uiState.value.userEditedLines) {
-                        _uiState.update {
-                            it.copy(pendingLines = lines, hasItems = lines.isNotEmpty())
-                        }
+                    ?: return@mapNotNull null
+                    InvoiceLineItem(
+                        product = productWithUnits,
+                        selectedUnit = unit,
+                        displayQty = item.quantity,
+                        displayWeightUnit = SaleWeightUnit.KG,
+                        customPrice = if (item.pricePerUnit != unit.price) item.pricePerUnit else null
+                    )
+                }
+                if (lines.isNotEmpty()) {
+                    val total = lines.sumOf {
+                        it.totalPrice
+                    }
+                    _uiState.update {
+                        it.copy(
+                            pendingLines = lines,
+                            hasItems = true,
+                            // ✅ حدّث المبلغ ليشمل كل الأصناف
+                            amount = String.format(Locale.US, "%.2f", total)
+                        )
                     }
                 }
             }
@@ -166,45 +171,38 @@ class AddEditTransactionViewModel(
                 if (arr.length() == 0) return@launch
 
                 val rebuilt = mutableListOf<InvoiceLineItem>()
-
                 for (i in 0 until arr.length()) {
                     val obj = arr.getJSONObject(i)
-
                     val productId = obj.getString("productId")
                     val unitId = obj.getString("unitId")
                     val price = obj.getDouble("price")
-
-                    // ✅ قراءة displayQty (وليس quantity)
                     val displayQty = obj.getDouble("displayQty")
-
-                    // استعادة الوحدة التجارية — افتراضي KG إذا غابت
                     val weightUnit = runCatching {
                         SaleWeightUnit.valueOf(obj.optString("displayWeightUnit", "KG"))
                     }.getOrDefault(SaleWeightUnit.KG)
-
-                    // جلب المنتج من DB المحلية
                     val productWithUnits = productRepo.getProductById(productId) ?: continue
                     val unit = productWithUnits.units.firstOrNull {
                         it.id == unitId
                     } ?: continue
-
                     rebuilt += InvoiceLineItem(
                         product = productWithUnits,
                         selectedUnit = unit,
-                        displayQty = displayQty, // ✅ الكمية بوحدة البائع
-                        displayWeightUnit = weightUnit, // ✅ وحدة البائع
+                        displayQty = displayQty,
+                        displayWeightUnit = weightUnit,
                         customPrice = if (price != unit.price) price else null
-                        // quantity (بالكيلو) = displayQty × weightUnit.toKg — محسوبة تلقائياً
                     )
                 }
 
+                // ✅ المبلغ يحسب من كل الأصناف — القديمة والجديدة معاً
+                val newTotal = rebuilt.sumOf {
+                    it.totalPrice
+                }
                 _uiState.update {
                     it.copy(
                         pendingLines = rebuilt,
                         hasItems = rebuilt.isNotEmpty(),
                         userEditedLines = true,
-                        amount = if (rebuilt.isNotEmpty())
-                            String.format(Locale.US, "%.2f", total) else it.amount
+                        amount = String.format(Locale.US, "%.2f", newTotal)
                     )
                 }
             } catch (e: Exception) {
@@ -235,14 +233,19 @@ class AddEditTransactionViewModel(
     }
 
     fun save() {
-        // 1. منع النقر المزدوج (برمجياً ومن خلال حالة الـ Loading)
         if (isSavingInProgress || _uiState.value.isLoading) return
-
         val state = _uiState.value
         val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
-        val amount = state.amount.toLatinDigits().toDoubleOrNull()
 
-        // التحقق من صحة البيانات
+        // ✅ المبلغ يُحسب من الأصناف إذا كانت موجودة — لا من حقل الإدخال
+        val amount = if (state.pendingLines.isNotEmpty()) {
+            state.pendingLines.sumOf {
+                it.totalPrice
+            }
+        } else {
+            state.amount.toLatinDigits().toDoubleOrNull()
+        }
+
         if (amount == null || amount <= 0) {
             _uiState.update {
                 it.copy(error = "أدخل مبلغ صحيح")
@@ -252,7 +255,6 @@ class AddEditTransactionViewModel(
 
         viewModelScope.launch {
             try {
-                // 2. إغلاق البوابة فوراً
                 isSavingInProgress = true
                 _uiState.update {
                     it.copy(isLoading = true, error = null)
@@ -261,17 +263,16 @@ class AddEditTransactionViewModel(
                 val transaction = Transaction(
                     id = editingId ?: 0,
                     customerId = customer.id,
-                    amount = amount,
+                    amount = amount, // ✅ المبلغ الصحيح دائماً
                     isPaid = state.isPaid,
                     paymentType = state.paymentType,
                     paymentMethodId = state.selectedPaymentMethod?.id,
                     note = state.note,
                     paidAt = if (state.isPaid) System.currentTimeMillis() else null,
-                    hasItems = state.hasItems
+                    hasItems = state.pendingLines.isNotEmpty()
                 )
 
                 if (editingId == null) {
-                    // ──── حالة الإضافة الجديدة ────────────────────────────────
                     val savedId = transactionRepo.insertTransaction(transaction)
                     if (state.pendingLines.isNotEmpty()) {
                         saveItemsAndDeductStock(savedId, state.pendingLines)
@@ -280,25 +281,20 @@ class AddEditTransactionViewModel(
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
                     }
                 } else {
-                    // ──── حالة التعديل (هذا الجزء الذي كان ينقصنا) ──────────────
-                    transactionRepo.updateTransaction(transaction)
                     val txId = editingId!!
+                    transactionRepo.updateTransaction(transaction)
 
-                    if (state.pendingLines.isNotEmpty()) {
-                        // 1. إرجاع المخزون للأصناف القديمة قبل حذفها
+                    if (state.userEditedLines) {
+                        // ✅ فقط إذا عدّل المستخدم الأصناف فعلاً
                         val oldItems = invoiceRepo.getItemsForTransactionOnce(txId)
                         oldItems.forEach {
                             old ->
                             stockRepo.returnStock(
-                                productId = old.productId,
-                                unitId = old.unitId,
-                                quantity = old.quantity,
-                                transactionId = txId,
-                                productName = old.productName,
-                                unitLabel = old.unitLabel
+                                productId = old.productId, unitId = old.unitId,
+                                quantity = old.quantity, transactionId = txId,
+                                productName = old.productName, unitLabel = old.unitLabel
                             )
                         }
-                        // 2. حذف الأصناف القديمة وحفظ الجديدة وخصم مخزنها
                         invoiceRepo.deleteItemsForTransaction(txId)
                         saveItemsAndDeductStock(txId, state.pendingLines)
                     }
@@ -308,7 +304,6 @@ class AddEditTransactionViewModel(
                     }
                 }
             } catch (e: Exception) {
-                // 3. في حال الفشل، نفتح البوابة مرة أخرى للمحاولة
                 isSavingInProgress = false
                 _uiState.update {
                     it.copy(isLoading = false, error = "حدث خطأ: ${e.message}")
@@ -316,18 +311,19 @@ class AddEditTransactionViewModel(
             }
         }
     }
-    
+
     fun serializePendingLines(): String? {
         val lines = _uiState.value.pendingLines
         if (lines.isEmpty()) return null
         val arr = org.json.JSONArray()
-        lines.forEach { line ->
+        lines.forEach {
+            line ->
             arr.put(org.json.JSONObject().apply {
-                put("productId",         line.product.product.id)
-                put("unitId",            line.selectedUnit.id)
-                put("displayQty",        line.displayQty)
+                put("productId", line.product.product.id)
+                put("unitId", line.selectedUnit.id)
+                put("displayQty", line.displayQty)
                 put("displayWeightUnit", line.displayWeightUnit.name)
-                put("price",             line.effectivePrice)
+                put("price", line.effectivePrice)
             })
         }
         return arr.toString()
