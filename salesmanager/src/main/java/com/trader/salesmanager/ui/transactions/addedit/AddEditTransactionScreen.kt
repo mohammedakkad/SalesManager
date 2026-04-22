@@ -32,7 +32,7 @@ fun AddEditTransactionScreen(
     transactionId: Long?,
     preselectedCustomerId: Long?,
     onNavigateUp: () -> Unit,
-    onNavigateToInvoiceItems: (customerName: String) -> Unit = {},
+    onNavigateToInvoiceItems: (customerName: String, existingLinesJson: String?) -> Unit = { _, _ -> },
     viewModel: AddEditTransactionViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -112,7 +112,10 @@ fun AddEditTransactionScreen(
 
             OutlinedButton(
                 onClick = {
-                    onNavigateToInvoiceItems(uiState.selectedCustomer?.name ?: "زبون")
+                    onNavigateToInvoiceItems(
+                        uiState.selectedCustomer?.name ?: "زبون",
+                        viewModel.serializePendingLines()
+                    )
                 },
                 modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
                 border = ButtonDefaults.outlinedButtonBorder(true).copy(

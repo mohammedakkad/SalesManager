@@ -20,6 +20,9 @@ interface TransactionDao {
     suspend fun getUnpaidOlderThan(olderThanMillis: Long): List<TransactionEntity>
     @Query("SELECT * FROM transactions WHERE id = :id")
     suspend fun getTransactionById(id: Long): TransactionEntity?
+
+    @Query("SELECT * FROM transactions WHERE id = :id")
+    fun observeTransactionById(id: Long): Flow<TransactionEntity?>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: TransactionEntity): Long
     @Update suspend fun updateTransaction(transaction: TransactionEntity)

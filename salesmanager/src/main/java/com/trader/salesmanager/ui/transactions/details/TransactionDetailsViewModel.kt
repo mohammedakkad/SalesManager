@@ -27,20 +27,15 @@ class TransactionDetailsViewModel(
     val uiState: StateFlow<TransactionDetailsUiState> = _state.asStateFlow()
 
     init {
-        loadTransaction()
-        observeInvoiceItems()
-    }
-
-    private fun loadTransaction() {
+        // ✅ مشكلة 5: Flow مستمر — يُحدِّث الشاشة فوراً عند أي تغيير في العملية
         viewModelScope.launch {
-            val t = transactionRepo.getTransactionById(transactionId)
-            _state.update {
-                it.copy(transaction = t)
+            transactionRepo.observeTransactionById(transactionId).collect {
+                t ->
+                _state.update {
+                    it.copy(transaction = t)
+                }
             }
         }
-    }
-
-    private fun observeInvoiceItems() {
         viewModelScope.launch {
             invoiceItemRepo.getItemsForTransaction(transactionId).collect {
                 items ->
@@ -54,8 +49,6 @@ class TransactionDetailsViewModel(
     fun delete() {
         val t = _state.value.transaction ?: return
         viewModelScope.launch {
-            // ✅ نستخدم invoiceItems المحملة فعلاً من الـ Flow
-            // لا نعتمد على t.hasItems لأنه قد يكون خاطئاً في بيانات قديمة
             val items = _state.value.invoiceItems
             if (items.isNotEmpty()) {
                 items.forEach {

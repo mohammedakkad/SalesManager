@@ -11,6 +11,7 @@ import com.trader.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import com.trader.core.domain.model.SyncStatus
+import kotlinx.coroutines.delay
 
 
 class TransactionRepositoryImpl(
@@ -125,6 +126,12 @@ class TransactionRepositoryImpl(
 
     override suspend fun getTransactionById(id: Long) = transactionDao.getTransactionById(id)?.enrich()
 
+    // ✅ مشكلة 5: Flow مستمر بدلاً من قراءة آنية — يُحدِّث شاشة التفاصيل فوراً عند أي تغيير
+    override fun observeTransactionById(id: Long): Flow<Transaction?> =
+    transactionDao.observeTransactionById(id).map {
+        it?.enrich()
+    }
+
     override suspend fun insertTransaction(t: Transaction): Long {
         // ✅ يُحفظ كـ PENDING أولاً
         val entity = TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.PENDING))
@@ -146,6 +153,8 @@ class TransactionRepositoryImpl(
         syncScope.launch {
             try {
                 sync.pushTransaction(code(), t)
+                // ✅ مشكلة 4: تأخير بسيط حتى تظهر أيقونة "جاري المزامنة" للتاجر
+                delay(600)
                 transactionDao.markSynced(t.id)
             } catch (_: Exception) {}
         }
