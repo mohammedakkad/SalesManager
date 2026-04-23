@@ -38,9 +38,12 @@ fun AddEditTransactionScreen(
     val uiState by viewModel.uiState.collectAsState()
     val paymentRepo: PaymentMethodRepository = koinInject()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(transactionId) {
         viewModel.loadPaymentMethods(paymentRepo)
-        viewModel.loadTransaction(transactionId)
+        if (transactionId != null) {
+            viewModel.loadTransaction(transactionId)
+        }
+
         viewModel.preselect(preselectedCustomerId)
     }
     LaunchedEffect(uiState.isSaved) {
