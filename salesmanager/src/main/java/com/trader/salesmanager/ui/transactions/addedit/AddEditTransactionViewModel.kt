@@ -128,6 +128,7 @@ class AddEditTransactionViewModel(
                     it.totalPrice
                 }
                 _uiState.update {
+                    if (it.userEditedLines) return@update it
                     it.copy(
                         pendingLines = lines,
                         hasItems = true,
@@ -204,10 +205,10 @@ class AddEditTransactionViewModel(
                         amount = String.format(Locale.US, "%.2f", newTotal)
                     )
                 }
-                
-                 android.util.Log.d("SYNC_DEBUG123456", "Lines count rebuilt: ${rebuilt.size}")
-                 
-                 android.util.Log.d("SYNC_DEBUG123456", "UI State Amount now is: ${_uiState.value.amount}")
+
+                android.util.Log.d("SYNC_DEBUG123456", "Lines count rebuilt: ${rebuilt.size}")
+
+                android.util.Log.d("SYNC_DEBUG123456", "UI State Amount now is: ${_uiState.value.amount}")
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(error = "فشل استعادة البيانات: ${e.message}")

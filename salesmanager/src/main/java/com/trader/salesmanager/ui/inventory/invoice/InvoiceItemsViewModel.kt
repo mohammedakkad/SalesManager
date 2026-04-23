@@ -226,7 +226,6 @@ class InvoiceItemsViewModel(
     }
 
     fun loadExistingLines(json: String) {
-        if (_lines.value.isNotEmpty()) return // لا تعيد التحميل إذا المستخدم أضاف أصناف
         viewModelScope.launch {
             try {
                 val arr = org.json.JSONArray(json)
@@ -252,7 +251,9 @@ class InvoiceItemsViewModel(
                         customPrice = if (price != unit.price) price else null
                     )
                 }
-                _lines.value = rebuilt
+                if (_lines.value.isEmpty()) {
+                    _lines.value = rebuilt
+                }
             } catch (_: Exception) {}
         }
     }
