@@ -204,6 +204,8 @@ class AddEditTransactionViewModel(
                         amount = String.format(Locale.US, "%.2f", newTotal)
                     )
                 }
+                
+                 android.util.Log.d("SYNC_DEBUG123456", "Lines count rebuilt: ${rebuilt.size}")
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(error = "فشل استعادة البيانات: ${e.message}")
