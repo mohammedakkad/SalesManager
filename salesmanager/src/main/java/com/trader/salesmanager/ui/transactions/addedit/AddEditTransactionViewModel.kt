@@ -163,7 +163,7 @@ class AddEditTransactionViewModel(
     //   serializeLines يكتب:  "displayQty", "displayWeightUnit", "price"
     //   applyInvoiceLinesFromJson يقرأ: "displayQty", "displayWeightUnit", "price"
     //   quantity (بالكيلو) = displayQty × weightUnit.toKg  (محسوبة تلقائياً)
-    fun applyInvoiceLinesFromJson(json: String, total: Double) {
+    fun applyInvoiceLinesFromJson(json: String, total: Double = 0.0) {
         viewModelScope.launch {
             try {
                 val arr = org.json.JSONArray(json)
