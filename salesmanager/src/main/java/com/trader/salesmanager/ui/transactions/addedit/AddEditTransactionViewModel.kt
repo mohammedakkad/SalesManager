@@ -128,14 +128,10 @@ class AddEditTransactionViewModel(
                     it.totalPrice
                 }
                 _uiState.update {
-                    // ✅ إصلاح race condition:
-                    // إذا عاد المستخدم من شاشة الأصناف قبل انتهاء هذا الكوروتين،
-                    // applyInvoiceLinesFromJson تكون قد انتهت وعيّنت userEditedLines = true.
-                    // في هذه الحالة لا نمسح عمله.
-                    if (it.userEditedLines) return@update it
                     it.copy(
                         pendingLines = lines,
                         hasItems = true,
+                        // ✅ حدّث المبلغ ليشمل كل الأصناف
                         amount = String.format(Locale.US, "%.2f", total)
                     )
                 }
@@ -167,7 +163,7 @@ class AddEditTransactionViewModel(
     //   serializeLines يكتب:  "displayQty", "displayWeightUnit", "price"
     //   applyInvoiceLinesFromJson يقرأ: "displayQty", "displayWeightUnit", "price"
     //   quantity (بالكيلو) = displayQty × weightUnit.toKg  (محسوبة تلقائياً)
-    fun applyInvoiceLinesFromJson(json: String) {
+    fun applyInvoiceLinesFromJson(json: String, total: Double) {
         viewModelScope.launch {
             try {
                 val arr = org.json.JSONArray(json)
@@ -292,7 +288,6 @@ class AddEditTransactionViewModel(
                     transactionRepo.updateTransaction(transaction)
 
                     if (state.userEditedLines) {
-                        // ✅ فقط إذا عدّل المستخدم الأصناف فعلاً
                         val oldItems = invoiceRepo.getItemsForTransactionOnce(txId)
                         oldItems.forEach {
                             old ->
@@ -303,7 +298,9 @@ class AddEditTransactionViewModel(
                             )
                         }
                         invoiceRepo.deleteItemsForTransaction(txId)
-                        saveItemsAndDeductStock(txId, state.pendingLines)
+                        // ✅ نُمرِّر oldItems لإعادة استخدام نفس UUID للأصناف الموجودة
+                        // يمنع Firebase Sync من إعادة إدراج الصنف القديم (duplicate)
+                        saveItemsAndDeductStock(txId, state.pendingLines, oldItems)
                     }
 
                     _uiState.update {
@@ -339,11 +336,21 @@ class AddEditTransactionViewModel(
     // ── حفظ الأصناف + خصم المخزون + مزامنة ──────────────────────
     private suspend fun saveItemsAndDeductStock(
         transactionId: Long,
-        lines: List<InvoiceLineItem>
+        lines: List<InvoiceLineItem>,
+        oldItems: List<InvoiceItem> = emptyList()
     ) {
+        // ✅ خريطة productId:unitId → UUID القديم
+        // إذا وجد نفس الصنف + الوحدة في العملية القديمة → نُعيد استخدام UUID
+        // هذا يجعل Firebase يرى UPDATE بدل DELETE+INSERT → لا تكرار
+        val oldIdMap = oldItems.associate {
+            "${it.productId}:${it.unitId}" to it.id
+        }
+
         val items = lines.map {
             line ->
-            // نحفظ الوحدة التجارية في unitLabel للعرض في الفاتورة
+            val key = "${line.product.product.id}:${line.selectedUnit.id}"
+            val itemId = oldIdMap[key] ?: UUID.randomUUID().toString()
+
             val unitLabelDisplay = if (
                 line.selectedUnit.unitType == UnitType.WEIGHT &&
                 line.displayWeightUnit != SaleWeightUnit.KG
@@ -351,37 +358,32 @@ class AddEditTransactionViewModel(
             else line.selectedUnit.unitLabel
 
             InvoiceItem(
-                id = UUID.randomUUID().toString(),
+                id = itemId,
                 transactionId = transactionId,
                 productId = line.product.product.id,
                 productName = line.product.product.name,
                 unitId = line.selectedUnit.id,
                 unitLabel = unitLabelDisplay,
-                quantity = line.quantity, // ✅ بالكيلو دائماً
+                quantity = line.quantity,
                 pricePerUnit = line.effectivePrice,
                 totalPrice = line.totalPrice,
                 merchantId = merchantId
             )
         }
 
-        // local + remote
         invoiceRepo.saveItems(items)
 
-        // خصم المخزون بالكيلو
         lines.forEach {
             line ->
             stockRepo.deductStock(
                 productId = line.product.product.id,
                 unitId = line.selectedUnit.id,
-                quantity = line.quantity, // ✅ displayQty × toKg
+                quantity = line.quantity,
                 transactionId = transactionId,
                 productName = line.product.product.name,
                 unitLabel = line.selectedUnit.unitLabel
             )
         }
-
-        // مزامنة مع Firebase
-        // stockRepo.syncPendingMovements()
     }
 }
 
