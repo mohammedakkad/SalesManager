@@ -40,7 +40,19 @@ class TransactionDetailsViewModel(
             invoiceItemRepo.getItemsForTransaction(transactionId).collect {
                 items ->
                 _state.update {
-                    it.copy(invoiceItems = items)
+                    current ->
+                    // ✅ ترتيب ثابت بـ productName → لا إعادة ترتيب بعد الحفظ
+                    // ✅ تجاهل القائمة الفارغة اللحظية أثناء دورة delete+reinsert
+                    //    (تحدث عندما يحذف saveItemsAndDeductStock القديم ويُدرج الجديد)
+                    val sorted = items.sortedBy {
+                        it.productName
+                    }
+                    if (sorted.isEmpty() && current.invoiceItems.isNotEmpty()
+                        && current.transaction?.hasItems == true) {
+                        current // لا تُحدِّث — هذه فترة عابرة
+                    } else {
+                        current.copy(invoiceItems = sorted)
+                    }
                 }
             }
         }
