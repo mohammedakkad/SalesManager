@@ -96,7 +96,7 @@ class AddEditTransactionViewModel(
                 state ->
                 state.copy(
                     selectedCustomer = customer,
-                    amount = t.amount.toString(),
+                    amount = if (state.userEditedLines) state.amount else t.amount.toString(),
                     isPaid = t.isPaid,
                     paymentType = t.paymentType,
                     note = t.note,
