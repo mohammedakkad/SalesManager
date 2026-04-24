@@ -128,10 +128,13 @@ class AddEditTransactionViewModel(
                     it.totalPrice
                 }
                 _uiState.update {
+                    // ✅ guard: إذا عاد المستخدم من شاشة الأصناف قبل انتهاء هذا الكوروتين،
+                    // applyInvoiceLinesFromJson تكون قد وضعت userEditedLines=true.
+                    // لا نمسح عمله — نتجاهل هذا التحديث كلياً.
+                    if (it.userEditedLines) return@update it
                     it.copy(
                         pendingLines = lines,
                         hasItems = true,
-                        // ✅ حدّث المبلغ ليشمل كل الأصناف
                         amount = String.format(Locale.US, "%.2f", total)
                     )
                 }
