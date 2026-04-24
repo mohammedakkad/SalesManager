@@ -128,11 +128,14 @@ class AddEditTransactionViewModel(
                     it.totalPrice
                 }
                 _uiState.update {
+                    // ✅ إصلاح race condition:
+                    // إذا عاد المستخدم من شاشة الأصناف قبل انتهاء هذا الكوروتين،
+                    // applyInvoiceLinesFromJson تكون قد انتهت وعيّنت userEditedLines = true.
+                    // في هذه الحالة لا نمسح عمله.
                     if (it.userEditedLines) return@update it
                     it.copy(
                         pendingLines = lines,
                         hasItems = true,
-                        // ✅ حدّث المبلغ ليشمل كل الأصناف
                         amount = String.format(Locale.US, "%.2f", total)
                     )
                 }
@@ -164,7 +167,7 @@ class AddEditTransactionViewModel(
     //   serializeLines يكتب:  "displayQty", "displayWeightUnit", "price"
     //   applyInvoiceLinesFromJson يقرأ: "displayQty", "displayWeightUnit", "price"
     //   quantity (بالكيلو) = displayQty × weightUnit.toKg  (محسوبة تلقائياً)
-    fun applyInvoiceLinesFromJson(json: String, total: Double) {
+    fun applyInvoiceLinesFromJson(json: String) {
         viewModelScope.launch {
             try {
                 val arr = org.json.JSONArray(json)

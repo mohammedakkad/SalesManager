@@ -251,9 +251,9 @@ class InvoiceItemsViewModel(
                         customPrice = if (price != unit.price) price else null
                     )
                 }
-                if (_lines.value.isEmpty()) {
-                    _lines.value = rebuilt
-                }
+
+                _lines.value = rebuilt
+
             } catch (_: Exception) {}
         }
     }

@@ -284,18 +284,17 @@ fun AppNavigation() {
             val invoiceViewModel: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
             org.koin.androidx.compose.koinViewModel()
 
-            // ✅ نراقب SavedStateHandle بشكل مستمر لضمان استلام الأصناف دائماً
-            val linesJson by back.savedStateHandle.getStateFlow<String?>("invoice_lines_json", null)
-            .collectAsState()
-            val invoiceTotal by back.savedStateHandle.getStateFlow<Double?>("invoice_total", null)
+            val linesJson by back.savedStateHandle
+            .getStateFlow<String?>("invoice_lines_json", null)
             .collectAsState()
 
+            // ✅ إصلاح race condition:
+            // invoiceTotal كان يُعيَّن بعد linesJson فيخرج LaunchedEffect مبكراً.
+            // applyInvoiceLinesFromJson تحسب المبلغ داخلياً → لا نحتاج total من الخارج.
             LaunchedEffect(linesJson) {
                 val json = linesJson ?: return@LaunchedEffect
-                val total = invoiceTotal ?: return@LaunchedEffect
-                invoiceViewModel.applyInvoiceLinesFromJson(json, total)
+                invoiceViewModel.applyInvoiceLinesFromJson(json)
                 back.savedStateHandle.remove<String>("invoice_lines_json")
-                back.savedStateHandle.remove<Double>("invoice_total")
             }
 
             AddEditTransactionScreen(
@@ -330,18 +329,14 @@ fun AppNavigation() {
             val invoiceViewModel: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
             org.koin.androidx.compose.koinViewModel()
 
-            // ✅ نفس منطق AddTransaction — نراقب SavedStateHandle
-            val linesJson by back.savedStateHandle.getStateFlow<String?>("invoice_lines_json", null)
-            .collectAsState()
-            val invoiceTotal by back.savedStateHandle.getStateFlow<Double?>("invoice_total", null)
+            val linesJson by back.savedStateHandle
+            .getStateFlow<String?>("invoice_lines_json", null)
             .collectAsState()
 
             LaunchedEffect(linesJson) {
                 val json = linesJson ?: return@LaunchedEffect
-                val total = invoiceTotal ?: return@LaunchedEffect
-                invoiceViewModel.applyInvoiceLinesFromJson(json, total)
+                invoiceViewModel.applyInvoiceLinesFromJson(json)
                 back.savedStateHandle.remove<String>("invoice_lines_json")
-                back.savedStateHandle.remove<Double>("invoice_total")
             }
 
             AddEditTransactionScreen(
@@ -547,13 +542,10 @@ fun AppNavigation() {
                 },
                 onConfirm = {
                     lines, total ->
-                    // ✅ امسح existing_lines_json من الشاشة السابقة حتى لا تُعاد عند الرجوع
                     navController.previousBackStackEntry
                     ?.savedStateHandle?.remove<String>("existing_lines_json")
                     navController.previousBackStackEntry
                     ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
-                    navController.previousBackStackEntry
-                    ?.savedStateHandle?.set("invoice_total", total)
                     navController.navigateUp()
                 }
             )
