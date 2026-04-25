@@ -58,6 +58,14 @@ class ProductRepositoryImpl(
                     remoteProducts.forEach {
                         remoteProduct ->
                         launch {
+                            // ✅ تحقق من updatedAt قبل طلب الوحدات من الشبكة
+                            // إذا المنتج موجود محلياً بنفس updatedAt → لم يتغير → تجاهله
+                            val local = dao.getById(remoteProduct.id)
+                            val isUnchanged = local != null &&
+                            local.product.updatedAt == remoteProduct.updatedAt &&
+                            local.product.syncStatus != "PENDING"
+                            if (isUnchanged) return@launch
+
                             val units = try {
                                 remote.fetchUnitsForProduct(code, remoteProduct.id)
                             } catch (_: Exception) {
@@ -72,8 +80,7 @@ class ProductRepositoryImpl(
                                         }
                                     )
                                 } else -> {
-                                    val localProduct = dao.getById(remoteProduct.id)
-                                    if (localProduct == null) {
+                                    if (local == null) {
                                         dao.insertProduct(remoteProduct.toEntity())
                                     }
                                 }
