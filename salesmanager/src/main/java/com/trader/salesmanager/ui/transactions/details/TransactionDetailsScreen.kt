@@ -224,18 +224,48 @@ fun TransactionDetailsScreen(
                                 HorizontalDivider(color = appColors.divider)
                         }
                         HorizontalDivider(color = appColors.border, thickness = 1.dp)
-                        Row(
-                            Modifier.fillMaxWidth().padding(14.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text("الإجمالي", fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.bodyMedium)
-                            Text(
-                                "₪${String.format("%.2f", uiState.invoiceItems.sumOf { it.totalPrice })}",
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.titleSmall,
-                                color = Violet500
-                            )
+                        Column(Modifier.fillMaxWidth().padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            val itemsTotal = uiState.invoiceItems.sumOf {
+                                it.totalPrice
+                            }
+                            val baseAmount = t.amount - itemsTotal
+
+                            // ✅ إذا يوجد مبلغ أساسي إضافي (عملية كانت بدون أصناف ثم أُضيفت)
+                            // نُفصِّل المبلغين ليفهم التاجر التفاصيل
+                            if (baseAmount > 0.001) {
+                                Row(Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween) {
+                                    Text("مجموع الأصناف",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = appColors.textSubtle)
+                                    Text("₪${String.format("%.2f", itemsTotal)}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = appColors.textSubtle)
+                                }
+                                Row(Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween) {
+                                    Text("مبلغ إضافي",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = appColors.textSubtle)
+                                    Text("₪${String.format("%.2f", baseAmount)}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = appColors.textSubtle)
+                                }
+                                HorizontalDivider(color = appColors.divider,
+                                    modifier = Modifier.padding(vertical = 2.dp))
+                            }
+                            Row(Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween) {
+                                Text("الإجمالي", fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    "₪${String.format("%.2f", t.amount)}",
+                                    fontWeight = FontWeight.Bold,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Violet500
+                                )
+                            }
                         }
                     }
                 }
