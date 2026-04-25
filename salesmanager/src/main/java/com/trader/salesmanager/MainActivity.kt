@@ -34,9 +34,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
         NotificationService.createChannels(this)
         requestNotificationPermission()
-        
+
         val currentVersionCode = packageManager
         .getPackageInfo(packageName, 0)
         .let {

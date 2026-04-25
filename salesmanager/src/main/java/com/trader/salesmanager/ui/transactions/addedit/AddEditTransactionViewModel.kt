@@ -27,7 +27,10 @@ data class AddEditTransactionUiState(
     val isEditMode: Boolean = false,
     val pendingLines: List<InvoiceLineItem> = emptyList(),
     val hasItems: Boolean = false,
-    val userEditedLines: Boolean = false
+    val userEditedLines: Boolean = false,
+    // ✅ المبلغ الأصلي للعملية (عند التعديل) — يُضاف لمجموع الأصناف
+    // يكون > 0 فقط إذا كانت العملية بدون أصناف في الأصل
+    val baseAmount: Double = 0.0
 
 )
 
@@ -101,7 +104,10 @@ class AddEditTransactionViewModel(
                     paymentType = t.paymentType,
                     note = t.note,
                     hasItems = t.hasItems,
-                    isEditMode = true
+                    isEditMode = true,
+                    // ✅ نحفظ المبلغ الأصلي فقط إذا لم تكن للعملية أصناف
+                    // إذا كانت فيها أصناف → baseAmount = 0 (الأصناف هي المصدر الوحيد)
+                    baseAmount = if (!t.hasItems) t.amount else 0.0
                 )
             }
 
@@ -195,10 +201,10 @@ class AddEditTransactionViewModel(
                     )
                 }
 
-                // ✅ المبلغ يحسب من كل الأصناف — القديمة والجديدة معاً
+                // ✅ المبلغ = الأصناف + المبلغ الأصلي (إذا كانت العملية بدون أصناف في الأصل)
                 val newTotal = rebuilt.sumOf {
                     it.totalPrice
-                }
+                } + _uiState.value.baseAmount
                 _uiState.update {
                     it.copy(
                         pendingLines = rebuilt,
@@ -243,11 +249,11 @@ class AddEditTransactionViewModel(
         val state = _uiState.value
         val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
 
-        // ✅ المبلغ يُحسب من الأصناف إذا كانت موجودة — لا من حقل الإدخال
+        // ✅ المبلغ = مجموع الأصناف + المبلغ الأصلي (إذا وُجد)
         val amount = if (state.pendingLines.isNotEmpty()) {
             state.pendingLines.sumOf {
                 it.totalPrice
-            }
+            } + state.baseAmount
         } else {
             state.amount.toLatinDigits().toDoubleOrNull()
         }
