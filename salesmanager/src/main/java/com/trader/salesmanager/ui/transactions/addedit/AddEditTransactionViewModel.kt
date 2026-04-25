@@ -27,8 +27,9 @@ data class AddEditTransactionUiState(
     val isEditMode: Boolean = false,
     val pendingLines: List<InvoiceLineItem> = emptyList(),
     val hasItems: Boolean = false,
-    val userEditedLines: Boolean = false
-
+    val userEditedLines: Boolean = false,
+    // المبلغ الأصلي للعملية قبل إضافة أصناف (يُضاف لمجموع الأصناف)
+    val baseAmount: Double = 0.0
 )
 
 class AddEditTransactionViewModel(
@@ -100,9 +101,10 @@ class AddEditTransactionViewModel(
                     isPaid = t.isPaid,
                     paymentType = t.paymentType,
                     note = t.note,
-                    // ✅ إذا المستخدم عدّل الأصناف بالفعل → لا تمسح hasItems
                     hasItems = if (state.userEditedLines) state.hasItems else t.hasItems,
-                    isEditMode = true
+                    isEditMode = true,
+                    // يُخزَّن فقط إذا كانت العملية بدون أصناف — يُضاف لمجموع الأصناف لاحقاً
+                    baseAmount = if (!t.hasItems) t.amount else 0.0
                 )
             }
 
@@ -157,17 +159,14 @@ class AddEditTransactionViewModel(
         }
     }
 
-    // ── مسار 2: الأصناف تأتي كـ JSON من SavedStateHandle ─────────────
-    //
-    // ✅ الإصلاح: يقرأ "displayQty" (وليس "quantity") لأن serializeLines
-    //    في AppNavigation يحفظ الحقل باسم "displayQty".
-    //    كان يقرأ "quantity" → JSONException: No value for quantity.
-    //
-    // التسلسل الصحيح:
-    //   serializeLines يكتب:  "displayQty", "displayWeightUnit", "price"
-    //   applyInvoiceLinesFromJson يقرأ: "displayQty", "displayWeightUnit", "price"
-    //   quantity (بالكيلو) = displayQty × weightUnit.toKg  (محسوبة تلقائياً)
     fun applyInvoiceLinesFromJson(json: String, total: Double = 0.0) {
+        // ✅ حل race condition:
+        // نُعيِّن userEditedLines=true و hasItems=true فوراً (synchronously) قبل الـ coroutine.
+        // هكذا إذا انتهى loadTransaction بعدنا، يرى userEditedLines=true ولا يمسح شيئاً.
+        _uiState.update {
+            it.copy(userEditedLines = true, hasItems = true)
+        }
+
         viewModelScope.launch {
             try {
                 val arr = org.json.JSONArray(json)
@@ -196,22 +195,17 @@ class AddEditTransactionViewModel(
                     )
                 }
 
-                // ✅ المبلغ يحسب من كل الأصناف — القديمة والجديدة معاً
+                // ✅ المبلغ = الأصناف + المبلغ الأصلي (إذا كانت العملية بدون أصناف في الأصل)
                 val newTotal = rebuilt.sumOf {
                     it.totalPrice
-                }
+                } + _uiState.value.baseAmount
                 _uiState.update {
                     it.copy(
                         pendingLines = rebuilt,
                         hasItems = rebuilt.isNotEmpty(),
-                        userEditedLines = true,
                         amount = String.format(Locale.US, "%.2f", newTotal)
                     )
                 }
-
-                android.util.Log.d("SYNC_DEBUG123456", "Lines count rebuilt: ${rebuilt.size}")
-
-                android.util.Log.d("SYNC_DEBUG123456", "UI State Amount now is: ${_uiState.value.amount}")
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(error = "فشل استعادة البيانات: ${e.message}")
@@ -244,11 +238,10 @@ class AddEditTransactionViewModel(
         val state = _uiState.value
         val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
 
-        // ✅ المبلغ يُحسب من الأصناف إذا كانت موجودة — لا من حقل الإدخال
         val amount = if (state.pendingLines.isNotEmpty()) {
             state.pendingLines.sumOf {
                 it.totalPrice
-            }
+            } + state.baseAmount
         } else {
             state.amount.toLatinDigits().toDoubleOrNull()
         }

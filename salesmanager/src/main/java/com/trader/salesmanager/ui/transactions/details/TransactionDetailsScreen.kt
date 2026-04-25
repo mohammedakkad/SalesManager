@@ -226,13 +226,11 @@ fun TransactionDetailsScreen(
                         HorizontalDivider(color = appColors.border, thickness = 1.dp)
                         Column(Modifier.fillMaxWidth().padding(14.dp),
                             verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            val itemsTotal = uiState.invoiceItems.sumOf {
-                                it.totalPrice
-                            }
-                            val baseAmount = t.amount - itemsTotal
+                            val itemsTotal = uiState.invoiceItems.sumOf { it.totalPrice }
+                            val baseAmount  = t.amount - itemsTotal
 
-                            // ✅ إذا يوجد مبلغ أساسي إضافي (عملية كانت بدون أصناف ثم أُضيفت)
-                            // نُفصِّل المبلغين ليفهم التاجر التفاصيل
+                            // ✅ إذا يوجد مبلغ أساسي (عملية أُضيفت أصناف عليها لاحقاً)
+                            // نُفصِّل المبلغين حتى يفهم التاجر التركيبة
                             if (baseAmount > 0.001) {
                                 Row(Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween) {
@@ -255,16 +253,15 @@ fun TransactionDetailsScreen(
                                 HorizontalDivider(color = appColors.divider,
                                     modifier = Modifier.padding(vertical = 2.dp))
                             }
+                            // ✅ الإجمالي دائماً من t.amount — يشمل الأصناف + المبلغ الإضافي
                             Row(Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text("الإجمالي", fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.bodyMedium)
-                                Text(
-                                    "₪${String.format("%.2f", t.amount)}",
+                                Text("₪${String.format("%.2f", t.amount)}",
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.titleSmall,
-                                    color = Violet500
-                                )
+                                    color = Violet500)
                             }
                         }
                     }
