@@ -102,13 +102,10 @@ class AddEditTransactionViewModel(
                     paymentType = t.paymentType,
                     note = t.note,
                     hasItems = if (state.userEditedLines) state.hasItems else t.hasItems,
-                    isEditMode = true,
-                    // يُخزَّن فقط إذا كانت العملية بدون أصناف — يُضاف لمجموع الأصناف لاحقاً
-                    baseAmount = if (!t.hasItems) t.amount else 0.0
+                    isEditMode = true
                 )
             }
 
-            // ✅ جلب الأصناف مرة واحدة فقط — بدون Flow مستمر
             val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
             val lines = items.mapNotNull {
                 item ->
@@ -126,20 +123,34 @@ class AddEditTransactionViewModel(
                     customPrice = if (item.pricePerUnit != unit.price) item.pricePerUnit else null
                 )
             }
-            if (lines.isNotEmpty()) {
-                val total = lines.sumOf {
-                    it.totalPrice
-                }
+
+            // ✅ الإصلاح: baseAmount = t.amount - مجموع الأصناف
+            // يعمل في كل الحالات:
+            //   - عملية بدون أصناف:    t.amount=10, itemsTotal=0  → baseAmount=10
+            //   - تعديل أول (أضيف 15):  t.amount=25, itemsTotal=15 → baseAmount=10
+            //   - تعديل ثاني (أضيف 30): t.amount=25, itemsTotal=15 → baseAmount=10
+            // لا يعتمد على hasItems أبداً
+            val itemsTotal = lines.sumOf {
+                it.totalPrice
+            }
+            val baseAmount = (t.amount - itemsTotal).coerceAtLeast(0.0)
+
+            _uiState.update {
+                state ->
+                if (state.userEditedLines) return@update state
+                state.copy(
+                    pendingLines = lines,
+                    hasItems = lines.isNotEmpty(),
+                    amount = String.format(Locale.US, "%.2f",
+                        if (lines.isNotEmpty()) itemsTotal else t.amount),
+                    baseAmount = baseAmount
+                )
+            }
+
+            // إذا المستخدم لم يعدّل بعد، نُحدِّث baseAmount فقط حتى تستخدمه applyInvoiceLinesFromJson
+            if (_uiState.value.userEditedLines) {
                 _uiState.update {
-                    // ✅ guard: إذا عاد المستخدم من شاشة الأصناف قبل انتهاء هذا الكوروتين،
-                    // applyInvoiceLinesFromJson تكون قد وضعت userEditedLines=true.
-                    // لا نمسح عمله — نتجاهل هذا التحديث كلياً.
-                    if (it.userEditedLines) return@update it
-                    it.copy(
-                        pendingLines = lines,
-                        hasItems = true,
-                        amount = String.format(Locale.US, "%.2f", total)
-                    )
+                    it.copy(baseAmount = baseAmount)
                 }
             }
         }
