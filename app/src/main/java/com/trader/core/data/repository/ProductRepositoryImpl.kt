@@ -139,27 +139,16 @@ class ProductRepositoryImpl(
         return existing.product.name
     }
 
-    override suspend fun saveProduct(product: Product, units: List<ProductUnit>): String {
+    override suspend fun saveProduct(
+        product: Product,
+        units: List<ProductUnit>,
+        deletedUnitIds: Set<String>
+    ): String {
         val id = product.id.ifEmpty {
             UUID.randomUUID().toString()
         }
         val now = System.currentTimeMillis()
         val mid = merchantId()
-
-        // ✅ الإصلاح: جلب IDs الوحدات القديمة قبل الحفظ (فقط عند التعديل)
-        // نحتاجها لحذف المحذوف منها في Firestore — كانت تُحذف من Room لكن تبقى في Firestore
-        // فيُعيدها startRealtimeSync بعد ثوانٍ
-        val deletedUnitIds: Set<String> = if (product.id.isNotEmpty()) {
-            val oldIds = dao.getUnitsForProduct(id).map {
-                it.id
-            }.toSet()
-            val newIds = units.map {
-                it.id
-            }.filter {
-                it.isNotEmpty()
-            }.toSet()
-            oldIds - newIds
-        } else emptySet()
 
         val productToSave = product.copy(
             id = id,
@@ -192,21 +181,23 @@ class ProductRepositoryImpl(
         )
 
         syncInBackground {
+            // ✅ markSynced فوراً بعد كل upload منفرد
+            // بدلاً من الانتظار حتى نهاية كل العمليات
+            // هذا يجعل badge "جاري مزامنة" يختفي بمجرد نجاح كل عملية
             remote.uploadProduct(mid, productToSave.copy(syncStatus = SyncStatus.SYNCED))
+            dao.markProductSynced(id) // ← badge يختفي هنا مباشرة
+
             unitsToSave.forEach {
                 unit ->
                 remote.uploadUnit(mid, unit.copy(syncStatus = SyncStatus.SYNCED))
+                dao.markUnitSynced(unit.id) // ← بعد كل وحدة
             }
-            // ✅ حذف الوحدات المحذوفة من Firestore حتى لا يُعيدها startRealtimeSync
+
             deletedUnitIds.forEach {
                 unitId ->
                 try {
                     remote.deleteUnit(mid, unitId, id)
                 } catch (_: Exception) {}
-            }
-            dao.markProductSynced(id)
-            unitsToSave.forEach {
-                unit -> dao.markUnitSynced(unit.id)
             }
         }
 

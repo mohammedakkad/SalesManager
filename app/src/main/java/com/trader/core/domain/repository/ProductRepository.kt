@@ -4,6 +4,8 @@ import com.trader.core.domain.model.Product
 import com.trader.core.domain.model.ProductUnit
 import com.trader.core.domain.model.ProductWithUnits
 import kotlinx.coroutines.flow.Flow
+import kotlin.collections.emptySet
+
 
 interface ProductRepository {
     // ── استعلامات ────────────────────────────────────────────────
@@ -21,7 +23,8 @@ interface ProductRepository {
     suspend fun getBarcodeConflict(barcode: String, excludeProductId: String? = null): String?
 
     // ── إضافة وتعديل ─────────────────────────────────────────────
-    suspend fun saveProduct(product: Product, units: List<ProductUnit>): String
+    suspend fun saveProduct(product: Product, units: List<ProductUnit>,
+        deletedUnitIds: Set<String> = emptySet()): String
     suspend fun updateProduct(product: Product)
     suspend fun deleteProduct(productId: String)
 

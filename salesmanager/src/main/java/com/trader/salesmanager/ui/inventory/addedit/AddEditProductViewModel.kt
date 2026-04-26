@@ -54,6 +54,7 @@ data class AddEditProductUiState(
     val name: String = "",
     val category: String = "",
     val units: List<UnitDraft> = listOf(UnitDraft(isDefault = true)),
+    val deletedUnitIds: Set<String> = emptySet(),  // IDs الوحدات المحذوفة (موجودة في DB)
     val isSaving: Boolean = false,
     val savedSuccessfully: Boolean = false,
     val error: String? = null,
@@ -166,18 +167,22 @@ class AddEditProductViewModel(
     }
 
     fun removeUnit(index: Int) {
-        _state.update {
-            s ->
-            val list = s.units.toMutableList().also {
-                it.removeAt(index)
-            }
-            val fixed = if (list.none {
-                it.isDefault
-            } && list.isNotEmpty())
-            list.mapIndexed {
-                i, u -> if (i == 0) u.copy(isDefault = true) else u
-            } else list
-            s.copy(units = fixed)
+        _state.update { s ->
+            val removed = s.units[index]
+            val list = s.units.toMutableList().also { it.removeAt(index) }
+
+            // ✅ تعيين افتراضي تلقائي إذا حُذفت الوحدة الافتراضية
+            val fixed = if (list.none { it.isDefault } && list.isNotEmpty())
+                list.mapIndexed { i, u -> if (i == 0) u.copy(isDefault = true) else u }
+            else list
+
+            // ✅ نتتبع ID الوحدة المحذوفة فقط إذا كانت موجودة في DB (id غير فارغ)
+            // الوحدات الجديدة (لم تُحفظ بعد) لا نحتاج حذفها من Firestore
+            val newDeleted = if (removed.id.isNotEmpty())
+                s.deletedUnitIds + removed.id
+            else s.deletedUnitIds
+
+            s.copy(units = fixed, deletedUnitIds = newDeleted)
         }
     }
 
@@ -258,7 +263,7 @@ class AddEditProductViewModel(
                         weightUnit = draft.weightUnit
                     )
                 }
-                productRepo.saveProduct(product, units)
+                productRepo.saveProduct(product, units, s.deletedUnitIds)
                 _state.update {
                     it.copy(isSaving = false, savedSuccessfully = true)
                 }
