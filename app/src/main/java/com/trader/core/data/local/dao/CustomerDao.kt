@@ -15,9 +15,9 @@ interface CustomerDao {
     @Query("SELECT * FROM customers WHERE id = :id")
     suspend fun getCustomerById(id: Long): CustomerEntity?
 
-    /** للتحقق من تكرار رقم الهاتف قبل الحفظ */
+    /** للتحقق من تكرار رقم الهاتف قبل الحفظ — excludeId لاستثناء العميل الحالي عند التعديل */
     @Query("SELECT * FROM customers WHERE phone = :phone AND phone != '' AND id != :excludeId LIMIT 1")
-    suspend fun getByPhone(phone: String, excludeId: Long = -999L): CustomerEntity?
+    suspend fun getByPhone(phone: String, excludeId: Long): CustomerEntity?
 
     /** لمعرفة عدد العمليات المرتبطة قبل الحذف */
     @Query("SELECT COUNT(*) FROM transactions WHERE customerId = :customerId")
@@ -43,7 +43,8 @@ interface CustomerDao {
     suspend fun deleteCustomer(customer: CustomerEntity)
 
     /** حذف جميع الزبائن ماعدا الزبون الزائر (id=-1) — يُستدعى عند إلغاء التفعيل */
-    @Query("DELETE FROM customers WHERE id != -1") suspend fun deleteAll()
+    @Query("DELETE FROM customers WHERE id != -1")
+    suspend fun deleteAll()
 
     @Query("UPDATE customers SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markCustomerSynced(id: Long)
