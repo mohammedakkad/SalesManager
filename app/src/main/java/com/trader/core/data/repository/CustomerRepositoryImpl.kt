@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import com.trader.core.domain.model.SyncStatus
 
 class CustomerRepositoryImpl(
     private val dao: CustomerDao,
