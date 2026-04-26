@@ -97,7 +97,7 @@ val salesManagerModule = module {
         ActivationRepositoryImpl(androidContext(), get(), get(), get(), get(), get(), get())
     }
     single<CustomerRepository> {
-        CustomerRepositoryImpl(get(), get(), get())
+        CustomerRepositoryImpl(get(), get(), get(), get())
     }
     single<TransactionRepository> {
         TransactionRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
