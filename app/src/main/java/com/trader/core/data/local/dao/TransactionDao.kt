@@ -45,6 +45,6 @@ interface TransactionDao {
     suspend fun deleteById(id: Long)
 
     /** عند حذف عميل → تُنقل عملياته للزبون الزائر (id=-1) بدل حذفها */
-    @Query("UPDATE transactions SET customerId = -1, customerName = 'زبون' WHERE customerId = :customerId")
+    @Query("UPDATE transactions SET customerId = -1 WHERE customerId = :customerId")
     suspend fun reassignToVisitor(customerId: Long)
 }
