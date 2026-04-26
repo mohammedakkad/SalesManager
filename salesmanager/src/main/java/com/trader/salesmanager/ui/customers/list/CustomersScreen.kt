@@ -18,7 +18,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.trader.core.domain.model.Customer
+import com.trader.core.domain.model.SyncStatus
 import com.trader.salesmanager.ui.components.*
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
@@ -244,9 +246,48 @@ private fun CustomerCard(customer: Customer, onClick: () -> Unit, onDelete: () -
             }
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(customer.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                Text("اضغط لعرض التفاصيل", style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        customer.name,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+                    // ✅ نفس badge المزامنة في شاشة العمليات
+                    if (customer.syncStatus == SyncStatus.PENDING) {
+                        Surface(
+                            shape = RoundedCornerShape(20.dp),
+                            color = UnpaidAmber.copy(alpha = 0.15f)
+                        ) {
+                            Row(
+                                Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(3.dp)
+                            ) {
+                                Icon(
+                                    Icons.Rounded.CloudOff,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(10.dp),
+                                    tint = UnpaidAmber
+                                )
+                                Text(
+                                    "جاري المزامنة",
+                                    fontSize = 9.sp,
+                                    color = UnpaidAmber,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    }
+                }
+                Text(
+                    if (customer.phone.isNotEmpty()) customer.phone else "اضغط لعرض التفاصيل",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             IconButton(onClick = onDelete) {
                 Icon(Icons.Rounded.DeleteOutline, null, tint = DebtRed.copy(alpha = 0.7f))
