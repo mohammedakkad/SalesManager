@@ -57,10 +57,10 @@ fun AddEditCustomerScreen(
                 label = {
                     Text("اسم الزبون *")
                 },
-                isError = uiState.error != null,
-                supportingText = uiState.error?.let {
+                isError = uiState.nameError != null || uiState.error != null,
+                supportingText = (uiState.nameError ?: uiState.error)?.let {
                     {
-                        Text(it)
+                        Text(it, color = MaterialTheme.colorScheme.error)
                     }
                 },
                 singleLine = true,
@@ -76,31 +76,27 @@ fun AddEditCustomerScreen(
                     Text("05XXXXXXXX")
                 },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth(),
-                isError = uiState.phoneConflict != null,
+                isError = uiState.phoneError != null,
                 trailingIcon = {
                     when {
                         uiState.phoneChecking -> CircularProgressIndicator(
-                            modifier = Modifier.size(18.dp),
-                            strokeWidth = 2.dp
+                            modifier = Modifier.size(18.dp), strokeWidth = 2.dp
                         )
-                        uiState.phoneConflict != null -> Icon(
-                            Icons.Rounded.ErrorOutline,
-                            contentDescription = null,
+                        uiState.phoneError != null -> Icon(
+                            Icons.Rounded.ErrorOutline, null,
                             tint = MaterialTheme.colorScheme.error
                         )
-                        uiState.phone.isNotBlank() && !uiState.phoneChecking -> Icon(
-                            Icons.Rounded.CheckCircleOutline,
-                            contentDescription = null,
+                        uiState.phone.length == 10 && !uiState.phoneChecking -> Icon(
+                            Icons.Rounded.CheckCircleOutline, null,
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
-                supportingText = uiState.phoneConflict?.let {
-                    conflict ->
+                supportingText = uiState.phoneError?.let {
                     {
-                        Text(conflict, color = MaterialTheme.colorScheme.error)
+                        Text(it, color = MaterialTheme.colorScheme.error)
                     }
                 }
             )

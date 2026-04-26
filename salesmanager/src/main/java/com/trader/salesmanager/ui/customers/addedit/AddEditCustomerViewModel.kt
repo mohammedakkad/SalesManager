@@ -12,14 +12,32 @@ import kotlinx.coroutines.Job
 data class AddEditCustomerUiState(
     val name: String = "",
     val phone: String = "",
-    val phoneConflict: String? = null, // اسم العميل المتعارض
+    val phoneConflict: String? = null,
     val phoneChecking: Boolean = false,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val error: String? = null,
     val isEditMode: Boolean = false
 ) {
-    val canSave get() = name.isNotBlank() && phoneConflict == null && !phoneChecking
+    // ✅ الاسم: 2 حرف على الأقل، الهاتف: فارغ أو 10 أرقام بالضبط
+    val nameError: String? get() = when {
+        name.isEmpty() -> null // لا نُظهر خطأ قبل أي كتابة
+        name.trim().length < 2 -> "الاسم يجب أن يكون حرفين على الأقل"
+        else -> null
+    }
+    val phoneError: String? get() = when {
+        phoneConflict != null -> phoneConflict
+        phone.isEmpty() -> null
+        phone.length != 10 -> "رقم الهاتف يجب أن يكون 10 أرقام"
+        !phone.all {
+            it.isDigit()
+        } -> "رقم الهاتف يجب أن يحتوي أرقام فقط"
+        else -> null
+    }
+    val canSave get() = name.trim().length >= 2
+    && phoneConflict == null
+    && !phoneChecking
+    && (phone.isEmpty() || phone.length == 10)
 }
 
 class AddEditCustomerViewModel(private val repo: CustomerRepository) : ViewModel() {
@@ -44,10 +62,15 @@ class AddEditCustomerViewModel(private val repo: CustomerRepository) : ViewModel
     }
 
     fun updatePhone(v: String) {
+        // ✅ فلترة: أرقام فقط، بحد أقصى 10
+        val digits = v.filter {
+            it.isDigit()
+        }.take(10)
         _uiState.update {
-            it.copy(phone = v, phoneConflict = null)
+            it.copy(phone = digits, phoneConflict = null)
         }
-        checkPhone(v)
+        // تحقق من التعارض فقط إذا اكتمل الرقم
+        if (digits.length == 10) checkPhone(digits)
     }
 
     private fun checkPhone(phone: String) {
@@ -76,19 +99,20 @@ class AddEditCustomerViewModel(private val repo: CustomerRepository) : ViewModel
     }
 
     fun save() {
-        val name = _uiState.value.name.trim()
-        if (name.isEmpty()) {
+        val state = _uiState.value
+        val name = state.name.trim()
+        if (name.length < 2) {
             _uiState.update {
-                it.copy(error = "اسم الزبون مطلوب")
-            }; return
+                it.copy(error = "الاسم يجب أن يكون حرفين على الأقل")
+            }
+            return
         }
-        if (!_uiState.value.canSave) return
+        if (!state.canSave) return
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            // ✅ حماية أخيرة قبل الحفظ
-            val phone = _uiState.value.phone.trim()
+            val phone = state.phone.trim()
             if (phone.isNotBlank()) {
                 val conflict = repo.getPhoneConflict(phone, editingId ?: -999L)
                 if (conflict != null) {

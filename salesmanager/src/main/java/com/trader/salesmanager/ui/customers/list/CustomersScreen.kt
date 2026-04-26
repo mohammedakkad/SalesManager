@@ -289,8 +289,11 @@ private fun CustomerCard(customer: Customer, onClick: () -> Unit, onDelete: () -
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            IconButton(onClick = onDelete) {
-                Icon(Icons.Rounded.DeleteOutline, null, tint = DebtRed.copy(alpha = 0.7f))
+            // ✅ إخفاء زر الحذف للزبون الزائر (id = -1)
+            if (customer.id != -1L) {
+                IconButton(onClick = onDelete) {
+                    Icon(Icons.Rounded.DeleteOutline, null, tint = DebtRed.copy(alpha = 0.7f))
+                }
             }
             Icon(Icons.Rounded.ChevronRight, null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))

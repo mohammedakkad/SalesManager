@@ -78,8 +78,11 @@ fun CustomerDetailsScreen(
                                 Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                             }
                             Spacer(Modifier.weight(1f))
-                            IconButton(onClick = onEditCustomer) {
-                                Icon(Icons.Rounded.Edit, null, tint = Color.White)
+                            // ✅ إخفاء زر التعديل للزبون الزائر (id = -1)
+                            if (customerId != -1L) {
+                                IconButton(onClick = onEditCustomer) {
+                                    Icon(Icons.Rounded.Edit, null, tint = Color.White)
+                                }
                             }
                         }
                         Spacer(Modifier.height(8.dp))
