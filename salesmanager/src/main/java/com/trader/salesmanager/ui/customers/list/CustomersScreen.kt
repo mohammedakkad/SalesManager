@@ -122,11 +122,35 @@ fun CustomersScreen(
                             Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.width(8.dp))
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text("الزبائن", style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold, color = Color.White)
                             Text("${uiState.customers.size} زبون", color = Color.White.copy(0.7f),
                                 style = MaterialTheme.typography.bodySmall)
+                        }
+                        // ✅ badge المزامنة
+                        androidx.compose.animation.AnimatedVisibility(uiState.pendingSyncCount > 0) {
+                            Surface(
+                                shape = RoundedCornerShape(20.dp),
+                                color = Color.White.copy(0.2f)
+                            ) {
+                                Row(
+                                    Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(12.dp),
+                                        color = Color.White,
+                                        strokeWidth = 1.5.dp
+                                    )
+                                    Text(
+                                        "جاري رفع ${uiState.pendingSyncCount}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = Color.White
+                                    )
+                                }
+                            }
                         }
                     }
                     Spacer(Modifier.height(12.dp))

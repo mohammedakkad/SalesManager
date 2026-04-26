@@ -1,6 +1,7 @@
 package com.trader.core.data.repository
 
 import com.trader.core.data.local.dao.CustomerDao
+import com.trader.core.data.local.dao.TransactionDao
 import com.trader.core.data.local.entity.CustomerEntity
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Customer
@@ -16,6 +17,7 @@ import com.trader.core.domain.model.SyncStatus
 
 class CustomerRepositoryImpl(
     private val dao: CustomerDao,
+    private val transactionDao: TransactionDao,
     private val sync: FirebaseSyncService,
     private val activationRepo: ActivationRepository
 ) : CustomerRepository {
@@ -93,6 +95,8 @@ class CustomerRepositoryImpl(
 
     override suspend fun deleteCustomer(c: Customer) {
         if (c.id == -1L) return
+        // ✅ تحويل العمليات للزبون الزائر قبل الحذف — يمنع CASCADE DELETE
+        transactionDao.reassignToVisitor(c.id)
         dao.deleteCustomer(CustomerEntity.fromDomain(c))
         syncScope.launch {
             try {
