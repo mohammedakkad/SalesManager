@@ -10,39 +10,98 @@ import kotlinx.coroutines.launch
 data class AddEditCustomerUiState(
     val name: String = "",
     val phone: String = "",
+    val phoneConflict: String? = null, // اسم العميل المتعارض
+    val phoneChecking: Boolean = false,
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val error: String? = null,
     val isEditMode: Boolean = false
-)
+) {
+    val canSave get() = name.isNotBlank() && phoneConflict == null && !phoneChecking
+}
 
 class AddEditCustomerViewModel(private val repo: CustomerRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(AddEditCustomerUiState())
     val uiState: StateFlow<AddEditCustomerUiState> = _uiState.asStateFlow()
     private var editingId: Long? = null
+    private var phoneCheckJob: Job? = null
 
     fun loadCustomer(id: Long?) {
         if (id == null) return
         editingId = id
         viewModelScope.launch {
             val c = repo.getCustomerById(id) ?: return@launch
-            _uiState.update { it.copy(name = c.name, phone = c.phone, isEditMode = true) }
+            _uiState.update {
+                it.copy(name = c.name, phone = c.phone, isEditMode = true)
+            }
         }
     }
 
-    fun updateName(v: String) = _uiState.update { it.copy(name = v, error = null) }
-    fun updatePhone(v: String) = _uiState.update { it.copy(phone = v) }
+    fun updateName(v: String) = _uiState.update {
+        it.copy(name = v, error = null)
+    }
+
+    fun updatePhone(v: String) {
+        _uiState.update {
+            it.copy(phone = v, phoneConflict = null)
+        }
+        checkPhone(v)
+    }
+
+    private fun checkPhone(phone: String) {
+        phoneCheckJob?.cancel()
+        if (phone.isBlank()) {
+            _uiState.update {
+                it.copy(phoneConflict = null, phoneChecking = false)
+            }
+            return
+        }
+        phoneCheckJob = viewModelScope.launch {
+            _uiState.update {
+                it.copy(phoneChecking = true)
+            }
+            delay(350)
+            val conflictName = repo.getPhoneConflict(phone, editingId ?: -999L)
+            _uiState.update {
+                it.copy(
+                    phoneChecking = false,
+                    phoneConflict = conflictName?.let {
+                        n -> "مستخدم للعميل: $n"
+                    }
+                )
+            }
+        }
+    }
 
     fun save() {
         val name = _uiState.value.name.trim()
-        if (name.isEmpty()) { _uiState.update { it.copy(error = "اسم الزبون مطلوب") }; return }
+        if (name.isEmpty()) {
+            _uiState.update {
+                it.copy(error = "اسم الزبون مطلوب")
+            }; return
+        }
+        if (!_uiState.value.canSave) return
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            // ✅ حماية أخيرة قبل الحفظ
             val phone = _uiState.value.phone.trim()
+            if (phone.isNotBlank()) {
+                val conflict = repo.getPhoneConflict(phone, editingId ?: -999L)
+                if (conflict != null) {
+                    _uiState.update {
+                        it.copy(isLoading = false, phoneConflict = "مستخدم للعميل: $conflict")
+                    }
+                    return@launch
+                }
+            }
             val id = editingId
             if (id == null) repo.insertCustomer(Customer(name = name, phone = phone))
-            else            repo.updateCustomer(Customer(id = id, name = name, phone = phone))
-            _uiState.update { it.copy(isLoading = false, isSaved = true) }
+            else repo.updateCustomer(Customer(id = id, name = name, phone = phone))
+            _uiState.update {
+                it.copy(isLoading = false, isSaved = true)
+            }
         }
     }
 }

@@ -15,6 +15,15 @@ interface CustomerDao {
     @Query("SELECT * FROM customers WHERE id = :id")
     suspend fun getCustomerById(id: Long): CustomerEntity?
 
+    /** للتحقق من تكرار رقم الهاتف قبل الحفظ */
+    @Query("SELECT * FROM customers WHERE phone = :phone AND phone != '' AND id != :excludeId LIMIT 1")
+    suspend fun getByPhone(phone: String, excludeId: Long = -999L): CustomerEntity?
+
+    /** لمعرفة عدد العمليات المرتبطة قبل الحذف */
+    @Query("SELECT COUNT(*) FROM transactions WHERE customerId = :customerId")
+    suspend fun getTransactionCount(customerId: Long): Int
+
+
     // IGNORE: don't replace existing customers - REPLACE causes CASCADE delete of their transactions!
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCustomer(customer: CustomerEntity): Long
@@ -32,7 +41,10 @@ interface CustomerDao {
 
     @Delete
     suspend fun deleteCustomer(customer: CustomerEntity)
-    
+
     /** حذف جميع الزبائن ماعدا الزبون الزائر (id=-1) — يُستدعى عند إلغاء التفعيل */
     @Query("DELETE FROM customers WHERE id != -1") suspend fun deleteAll()
+
+    @Query("UPDATE customers SET syncStatus = 'SYNCED' WHERE id = :id")
+    suspend fun markCustomerSynced(id: Long)
 }

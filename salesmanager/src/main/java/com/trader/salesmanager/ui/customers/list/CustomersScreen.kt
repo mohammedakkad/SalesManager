@@ -32,21 +32,64 @@ fun CustomersScreen(
     viewModel: CustomersViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showDeleteDialog by remember { mutableStateOf<Customer?>(null) }
+    val deleteConfirm by viewModel.deleteConfirm.collectAsState()
 
-    showDeleteDialog?.let { customer ->
+    // ✅ dialog حذف ذكي — يعرض عدد العمليات المرتبطة
+    deleteConfirm?.let {
+        state ->
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = null },
-            icon = { Icon(Icons.Rounded.DeleteForever, null, tint = DebtRed) },
-            title = { Text("حذف الزبون", fontWeight = FontWeight.Bold) },
-            text = { Text("سيتم حذف ${customer.name} وجميع عملياته نهائياً.") },
+            onDismissRequest = viewModel::dismissDelete,
+            icon = {
+                Icon(Icons.Rounded.DeleteForever, null, tint = DebtRed)
+            },
+            title = {
+                Text("حذف الزبون", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (state.transactionCount > 0) {
+                        // ⚠️ تحذير واضح عند وجود عمليات
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = DebtRed.copy(alpha = 0.1f)
+                        ) {
+                            Row(
+                                Modifier.padding(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Rounded.Warning, null,
+                                    tint = DebtRed, modifier = Modifier.size(20.dp))
+                                Text(
+                                    "يملك ${state.transactionCount} عملية مرتبطة",
+                                    color = DebtRed,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
+                    }
+                    Text(
+                        if (state.transactionCount > 0)
+                            "حذف \"${state.customer.name}\" سيجعل عملياته تظهر بدون اسم زبون."
+                        else
+                            "هل تريد حذف \"${state.customer.name}\" نهائياً؟"
+                    )
+                }
+            },
             confirmButton = {
                 Button(
-                    onClick = { viewModel.deleteCustomer(customer); showDeleteDialog = null },
+                    onClick = viewModel::confirmDelete,
                     colors = ButtonDefaults.buttonColors(containerColor = DebtRed)
-                ) { Text("حذف") }
+                ) {
+                    Text(if (state.transactionCount > 0) "حذف رغم ذلك" else "حذف")
+                }
             },
-            dismissButton = { OutlinedButton(onClick = { showDeleteDialog = null }) { Text("إلغاء") } },
+            dismissButton = {
+                OutlinedButton(onClick = viewModel::dismissDelete) {
+                    Text("إلغاء")
+                }
+            },
             shape = RoundedCornerShape(20.dp)
         )
     }
@@ -63,14 +106,15 @@ fun CustomersScreen(
                 Icon(Icons.Rounded.PersonAdd, null)
             }
         }
-    ) { padding ->
+    ) {
+        padding ->
         Column(modifier = Modifier.fillMaxSize().padding(padding)) {
             // ── Header ──────────────────────────────────────────
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Brush.horizontalGradient(listOf(Emerald700, Cyan500)))
-                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+                .fillMaxWidth()
+                .background(Brush.horizontalGradient(listOf(Emerald700, Cyan500)))
+                .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -97,9 +141,12 @@ fun CustomersScreen(
             // ── Content ──────────────────────────────────────────
             AnimatedContent(
                 targetState = uiState.customers.isEmpty(),
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                transitionSpec = {
+                    fadeIn() togetherWith fadeOut()
+                },
                 label = "content"
-            ) { empty ->
+            ) {
+                empty ->
                 if (empty) {
                     EmptyState(
                         icon = Icons.Rounded.People,
@@ -112,20 +159,35 @@ fun CustomersScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        itemsIndexed(uiState.customers, key = { _, c -> c.id }) { index, customer ->
-                            val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                        itemsIndexed(uiState.customers, key = {
+                            _, c -> c.id
+                        }) {
+                            index, customer ->
+                            val visible = remember {
+                                MutableTransitionState(false).apply {
+                                    targetState = true
+                                }
+                            }
                             AnimatedVisibility(
                                 visibleState = visible,
-                                enter = slideInVertically(initialOffsetY = { it / 2 }, animationSpec = tween(300, delayMillis = index * 40)) + fadeIn()
+                                enter = slideInVertically(initialOffsetY = {
+                                    it / 2
+                                }, animationSpec = tween(300, delayMillis = index * 40)) + fadeIn()
                             ) {
                                 CustomerCard(
                                     customer = customer,
-                                    onClick = { onCustomerClick(customer.id) },
-                                    onDelete = { showDeleteDialog = customer }
+                                    onClick = {
+                                        onCustomerClick(customer.id)
+                                    },
+                                    onDelete = {
+                                        viewModel.requestDelete(customer)
+                                    }
                                 )
                             }
                         }
-                        item { Spacer(Modifier.height(72.dp)) }
+                        item {
+                            Spacer(Modifier.height(72.dp))
+                        }
                     }
                 }
             }
@@ -149,9 +211,9 @@ private fun CustomerCard(customer: Customer, onClick: () -> Unit, onDelete: () -
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Brush.radialGradient(listOf(cardColor, cardColor.copy(0.7f)))),
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(Brush.radialGradient(listOf(cardColor, cardColor.copy(0.7f)))),
                 contentAlignment = Alignment.Center
             ) {
                 Text(initial, color = Color.White, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)

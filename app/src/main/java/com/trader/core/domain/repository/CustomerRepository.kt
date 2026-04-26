@@ -10,4 +10,6 @@ interface CustomerRepository {
     suspend fun insertCustomer(customer: Customer): Long
     suspend fun updateCustomer(customer: Customer)
     suspend fun deleteCustomer(customer: Customer)
-}
+    suspend fun getPhoneConflict(phone: String, excludeId: Long = -999L): String?
+    suspend fun getTransactionCount(customerId: Long): Int
+    }
