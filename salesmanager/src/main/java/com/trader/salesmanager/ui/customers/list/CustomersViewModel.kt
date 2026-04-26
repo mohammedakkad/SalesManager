@@ -7,6 +7,8 @@ import com.trader.core.domain.repository.CustomerRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.trader.core.domain.model.SyncStatus
+
 
 class CustomersViewModel(private val repo: CustomerRepository) : ViewModel() {
 

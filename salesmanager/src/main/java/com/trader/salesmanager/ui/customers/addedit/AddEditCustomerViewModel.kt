@@ -6,6 +6,8 @@ import com.trader.core.domain.model.Customer
 import com.trader.core.domain.repository.CustomerRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 
 data class AddEditCustomerUiState(
     val name: String = "",
