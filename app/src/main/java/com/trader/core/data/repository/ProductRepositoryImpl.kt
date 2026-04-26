@@ -58,12 +58,14 @@ class ProductRepositoryImpl(
                     remoteProducts.forEach {
                         remoteProduct ->
                         launch {
-                            // ✅ تحقق من updatedAt قبل طلب الوحدات من الشبكة
-                            // إذا المنتج موجود محلياً بنفس updatedAt → لم يتغير → تجاهله
                             val local = dao.getById(remoteProduct.id)
+                            // ✅ updatedAt كافٍ وحده:
+                            // - إذا تطابق → نفس الإصدار (سواء PENDING أو SYNCED) → تجاهل
+                            // - شرط syncStatus كان يُبطل الـ guard: الصنف يُرفع محلياً
+                            //   بـ PENDING، فيُطلق Firestore قبل markSynced → guard يفشل
+                            //   → fetchUnitsForProduct لكل صنف رغم عدم تغيره
                             val isUnchanged = local != null &&
-                            local.product.updatedAt == remoteProduct.updatedAt &&
-                            local.product.syncStatus != "PENDING"
+                            local.product.updatedAt == remoteProduct.updatedAt
                             if (isUnchanged) return@launch
 
                             val units = try {
