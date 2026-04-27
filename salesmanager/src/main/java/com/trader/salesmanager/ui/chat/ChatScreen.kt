@@ -1,6 +1,7 @@
 package com.trader.salesmanager.ui.chat
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -427,22 +428,53 @@ private fun ChatBubble(
 }
 
 // ── علامات القراءة ✓ / ✓✓ ────────────────────────────────────
+// SENDING → ساعة دوارة
+// SENT    → ✓ رمادي
+// READ    → ✓✓ ملون (مع Crossfade animation)
 @Composable
 private fun ReadReceipt(status: MessageStatus) {
-    val color = when (status) {
-        MessageStatus.READ    -> Color(0xFF06B6D4)  // أزرق = مقروء
-        MessageStatus.SENT    -> appColors.textSubtle  // رمادي = وصلت
-        MessageStatus.SENDING -> appColors.textSubtle
+    val tintColor = when (status) {
+        MessageStatus.READ    -> Cyan500                  // ✓✓ ملون = مقروء
+        MessageStatus.SENT    -> Color(0xFF94A3B8)        // ✓  رمادي = وصل
+        MessageStatus.SENDING -> Color(0xFF94A3B8)        // ساعة رمادية
     }
-    when (status) {
-        MessageStatus.SENT, MessageStatus.SENDING -> {
-            Icon(Icons.Rounded.Done, null, tint = color, modifier = Modifier.size(14.dp))
-        }
-        MessageStatus.READ -> {
-            // ✓✓ — أيقونتان متراكبتان
-            Box(modifier = Modifier.size(18.dp, 14.dp)) {
-                Icon(Icons.Rounded.Done, null, tint = color, modifier = Modifier.size(14.dp).offset(x = 0.dp))
-                Icon(Icons.Rounded.Done, null, tint = color, modifier = Modifier.size(14.dp).offset(x = 4.dp))
+
+    Crossfade(
+        targetState = status,
+        animationSpec = tween(durationMillis = 300),
+        label = "readReceiptAnim"
+    ) { targetStatus ->
+        when (targetStatus) {
+            MessageStatus.SENDING -> {
+                // ساعة صغيرة = جاري الإرسال
+                Icon(
+                    Icons.Rounded.Schedule, null,
+                    tint = tintColor,
+                    modifier = Modifier.size(13.dp)
+                )
+            }
+            MessageStatus.SENT -> {
+                // ✓ واحد رمادي
+                Icon(
+                    Icons.Rounded.Done, null,
+                    tint = tintColor,
+                    modifier = Modifier.size(14.dp)
+                )
+            }
+            MessageStatus.READ -> {
+                // ✓✓ ملون — أيقونتان بتراكب أنيق
+                Box(modifier = Modifier.size(20.dp, 14.dp)) {
+                    Icon(
+                        Icons.Rounded.Done, null,
+                        tint = tintColor,
+                        modifier = Modifier.size(14.dp).offset(x = 0.dp)
+                    )
+                    Icon(
+                        Icons.Rounded.Done, null,
+                        tint = tintColor,
+                        modifier = Modifier.size(14.dp).offset(x = 5.dp)
+                    )
+                }
             }
         }
     }

@@ -35,8 +35,12 @@ class ChatDetailViewModel(
         viewModelScope.launch {
             repo.getMessages(merchantId).collect { msgs ->
                 _uiState.update { it.copy(messages = msgs) }
-                msgs.filter { !it.isRead && it.senderId != SENDER_ADMIN }
-                    .forEach { repo.markAsRead(merchantId, it.id) }
+                // ✅ Batch
+                val unreadFromMerchant = msgs.filter { !it.isRead && it.senderId != SENDER_ADMIN }
+                    .map { it.id }
+                if (unreadFromMerchant.isNotEmpty()) {
+                    repo.markAllAsRead(merchantId, unreadFromMerchant)
+                }
             }
         }
     }

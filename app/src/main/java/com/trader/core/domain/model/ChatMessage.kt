@@ -3,9 +3,9 @@ package com.trader.core.domain.model
 import com.google.firebase.Timestamp
 
 enum class MessageStatus {
-    SENDING,   // pending في الـ local
-    SENT,      // وصلت لـ Firestore  (✓)
-    READ       // قرأها الطرف الثاني (✓✓)
+    SENDING,    // pending في الـ local (لم يُرفع بعد)
+    SENT,       // وصلت لـ Firestore          ✓ رمادي
+    READ        // قرأها الطرف الثاني         ✓✓ ملون
 }
 
 data class ChatMessage(
@@ -15,8 +15,9 @@ data class ChatMessage(
     val senderName: String = "",
     val timestamp: Timestamp? = null,
     val isRead: Boolean = false,
-    val editedAt: Timestamp? = null,   // null = لم يُعدَّل
-    val deletedAt: Timestamp? = null   // null = لم يُحذَف (soft delete)
+    val readAt: Long? = null,           // ✅ وقت القراءة
+    val editedAt: Timestamp? = null,
+    val deletedAt: Timestamp? = null
 ) {
     val status: MessageStatus
         get() = if (isRead) MessageStatus.READ else MessageStatus.SENT

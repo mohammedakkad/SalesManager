@@ -1,6 +1,7 @@
 package com.trader.admin.ui.chat.detail
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -325,15 +326,19 @@ private fun AdminChatBubble(
 
 @Composable
 private fun AdminReadReceipt(status: MessageStatus) {
-    val color = if (status == MessageStatus.READ) Cyan500 else Slate600
-    when (status) {
-        MessageStatus.READ -> {
-            Box(Modifier.size(18.dp, 14.dp)) {
+    Crossfade(targetState = status, animationSpec = tween(300), label = "adminRead") { s ->
+        val color = when (s) {
+            MessageStatus.READ    -> Cyan500
+            else                  -> Slate600
+        }
+        when (s) {
+            MessageStatus.SENDING -> Icon(Icons.Rounded.Schedule, null, tint = color, modifier = Modifier.size(13.dp))
+            MessageStatus.SENT    -> Icon(Icons.Rounded.Done, null, tint = color, modifier = Modifier.size(14.dp))
+            MessageStatus.READ    -> Box(Modifier.size(20.dp, 14.dp)) {
                 Icon(Icons.Rounded.Done, null, tint = color, modifier = Modifier.size(14.dp).offset(x = 0.dp))
-                Icon(Icons.Rounded.Done, null, tint = color, modifier = Modifier.size(14.dp).offset(x = 4.dp))
+                Icon(Icons.Rounded.Done, null, tint = color, modifier = Modifier.size(14.dp).offset(x = 5.dp))
             }
         }
-        else -> Icon(Icons.Rounded.Done, null, tint = color, modifier = Modifier.size(14.dp))
     }
 }
 

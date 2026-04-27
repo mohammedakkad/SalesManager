@@ -54,9 +54,12 @@ class ChatViewModel(
             chatRepo.getMessages(id)
                 .onEach { msgs ->
                     _uiState.update { it.copy(messages = msgs, isLoading = false) }
-                    // تعليم رسائل الأدمن كـ مقروءة
-                    msgs.filter { !it.isRead && it.senderId == SENDER_ADMIN }
-                        .forEach { chatRepo.markAsRead(id, it.id) }
+                    // ✅ Batch — تعليم كل رسائل الأدمن غير المقروءة دفعة واحدة
+                    val unreadFromAdmin = msgs.filter { !it.isRead && it.senderId == SENDER_ADMIN }
+                        .map { it.id }
+                    if (unreadFromAdmin.isNotEmpty()) {
+                        chatRepo.markAllAsRead(id, unreadFromAdmin)
+                    }
                 }
                 .launchIn(viewModelScope)
 
