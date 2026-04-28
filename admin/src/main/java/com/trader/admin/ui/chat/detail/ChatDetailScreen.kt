@@ -48,7 +48,7 @@ val clipboard = LocalClipboardManager.current
 
 LaunchedEffect(uiState.visibleMessages.size) {
     if (uiState.visibleMessages.isNotEmpty())
-        listState.animateScrollToItem(uiState.visibleMessages.size - 1)
+        listState.animateScrollToItem(0)
 }
 
 androidx.activity.compose.BackHandler(uiState.isSelectionMode) {
@@ -127,6 +127,7 @@ Scaffold(
         // ── الرسائل ───────────────────────────────────────────
         LazyColumn(
             state = listState,
+            reverseLayout = true,
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.weight(1f)
@@ -134,9 +135,7 @@ Scaffold(
             val grouped = groupByDate(uiState.visibleMessages)
             grouped.forEach {
                 (label, msgs) ->
-                item(key = "date_$label") {
-                    AdminDateDivider(label)
-                }
+                
                 items(msgs, key = {
                     it.id
                 }) {
@@ -152,6 +151,10 @@ Scaffold(
                             viewModel.onTap(msg)
                         }
                     )
+                }
+                
+                item(key = "date_$label") {
+                    AdminDateDivider(label)
                 }
             }
         }

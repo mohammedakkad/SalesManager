@@ -35,5 +35,4 @@ val ActiveGreen   = Emerald500
 val ExpiredAmber  = Amber500
 val DisabledRose  = Rose500
 
-val Cyan500     = Color(0xFF06B6D4)
 val Cyan400     = Color(0xFF22D3EE)

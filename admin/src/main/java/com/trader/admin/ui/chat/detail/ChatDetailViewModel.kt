@@ -60,7 +60,9 @@ class ChatDetailViewModel(
             repo.getMessages(merchantId).collect {
                 msgs ->
                 _uiState.update {
-                    it.copy(messages = msgs)
+                    it.copy(messages = msgs.sortedByDescending {
+                        m -> m.timestamp
+                    })
                 }
                 msgs.filter {
                     !it.isRead && it.senderId != SENDER_ADMIN
