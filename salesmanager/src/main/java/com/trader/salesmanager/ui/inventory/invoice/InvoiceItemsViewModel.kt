@@ -24,24 +24,16 @@ data class InvoiceLineItem(
     val tempId: String = UUID.randomUUID().toString(),
     val product: ProductWithUnits,
     val selectedUnit: ProductUnit,
-
-    /** الكمية كما أدخلها البائع بـ displayWeightUnit */
     val displayQty: Double = 1.0,
-
-    /**
-     * وحدة عرض البائع.
-     * الافتراضي = KG إذا كانت وحدة المنتج WEIGHT، وإلا KG أيضاً
-     * (المنتجات غير الوزنية لا تستخدم التحويل).
-     */
     val displayWeightUnit: SaleWeightUnit = SaleWeightUnit.KG,
-
-    val customPrice: Double? = null
-) {
+    val customPrice: Double? = null,
     /**
-     * الكمية بالكيلو — هذه هي القيمة التي تُخصم من المخزون وتُحفظ في InvoiceItem.
-     * إذا كانت وحدة المنتج WEIGHT → تحويل حقيقي.
-     * إذا كانت غير وزنية (PIECE/CARTON) → displayQty مباشرة (لا تحويل).
+     * الكمية المتاحة في المخزون لهذه الوحدة (بوحدة المخزن).
+     * تُحدَّث عند إضافة الصنف أو تغيير الوحدة.
+     * تُستخدم فقط للتحقق والعرض — لا تُحفظ في DB.
      */
+    val stockAvailable: Double = Double.MAX_VALUE
+) {
     val quantity: Double get() = when {
         selectedUnit.unitType == UnitType.WEIGHT ->
         toKgQuantity(displayQty, displayWeightUnit)
@@ -51,15 +43,18 @@ data class InvoiceLineItem(
     val effectivePrice: Double get() = customPrice ?: selectedUnit.price
     val totalPrice: Double     get() = effectivePrice * quantity
 
-    /** نص مختصر للعرض في بطاقة الصنف */
+    // ✅ هل الكمية المطلوبة أكبر من المتاح؟
+    val isOverStock: Boolean get() = quantity > stockAvailable && stockAvailable != Double.MAX_VALUE
+
+    // نقص الكمية بالوحدة نفسها للعرض
+    val overStockAmount: Double get() = (quantity - stockAvailable).coerceAtLeast(0.0)
+
     val displayQtyLabel: String get() = when {
         selectedUnit.unitType == UnitType.WEIGHT ->
         "${displayQty.formatQty()} ${displayWeightUnit.labelAr}"
-        else ->
-        displayQty.formatQty()
+        else -> displayQty.formatQty()
     }
 
-    /** نص الكمية بالكيلو لعرضه في الفاتورة إلى جانب الوحدة الأصلية */
     val kgLabel: String get() = when {
         selectedUnit.unitType == UnitType.WEIGHT && displayWeightUnit != SaleWeightUnit.KG ->
         "(${quantity.formatQty()} كيلو)"
@@ -85,6 +80,10 @@ data class InvoiceItemsUiState(
     }
     val totalItems: Int    get() = lines.sumOf {
         it.displayQty.toInt().coerceAtLeast(1)
+    }
+    // ✅ هل يوجد أي صنف يتجاوز المخزون المتاح؟
+    val hasOverStockWarnings: Boolean get() = lines.any {
+        it.isOverStock
     }
 }
 
@@ -118,23 +117,25 @@ class InvoiceItemsViewModel(
 
     fun addProduct(product: ProductWithUnits) {
         val unit = product.defaultUnit ?: return
+        val stock = unit.quantityInStock
         val idx = _lines.value.indexOfFirst {
             it.product.product.id == product.product.id && it.selectedUnit.id == unit.id
         }
         if (idx >= 0) updateDisplayQty(idx, _lines.value[idx].displayQty + 1)
         else _lines.update {
-            it + InvoiceLineItem(product = product, selectedUnit = unit)
+            it + InvoiceLineItem(product = product, selectedUnit = unit, stockAvailable = stock)
         }
         _query.value = ""
     }
 
     fun addProductWithUnit(product: ProductWithUnits, unit: ProductUnit) {
+        val stock = unit.quantityInStock
         val idx = _lines.value.indexOfFirst {
             it.product.product.id == product.product.id && it.selectedUnit.id == unit.id
         }
         if (idx >= 0) updateDisplayQty(idx, _lines.value[idx].displayQty + 1)
         else _lines.update {
-            it + InvoiceLineItem(product = product, selectedUnit = unit)
+            it + InvoiceLineItem(product = product, selectedUnit = unit, stockAvailable = stock)
         }
         _query.value = ""
     }
@@ -180,7 +181,8 @@ class InvoiceItemsViewModel(
             list ->
             list.mapIndexed {
                 i, l ->
-                if (i == index) l.copy(selectedUnit = unit, customPrice = null) else l
+                // ✅ نُحدِّث stockAvailable عند تغيير الوحدة
+                if (i == index) l.copy(selectedUnit = unit, customPrice = null, stockAvailable = unit.quantityInStock) else l
             }
         }
     }
@@ -248,7 +250,8 @@ class InvoiceItemsViewModel(
                         selectedUnit = unit,
                         displayQty = displayQty,
                         displayWeightUnit = weightUnit,
-                        customPrice = if (price != unit.price) price else null
+                        customPrice = if (price != unit.price) price else null,
+                        stockAvailable = unit.quantityInStock
                     )
                 }
 

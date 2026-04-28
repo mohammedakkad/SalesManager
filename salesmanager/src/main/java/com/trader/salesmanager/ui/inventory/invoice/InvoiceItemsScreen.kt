@@ -276,6 +276,30 @@ fun InvoiceItemsScreen(
                 }
             }
 
+            // ✅ Banner تحذير عام عند تجاوز أي صنف للمخزون
+            AnimatedVisibility(visible = state.hasOverStockWarnings) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = DebtRed.copy(0.1f)
+                ) {
+                    Row(
+                        Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(Icons.Rounded.Warning, null,
+                            tint = DebtRed, modifier = Modifier.size(18.dp))
+                        Text(
+                            "بعض الأصناف تتجاوز الكمية المتاحة في المخزون",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = DebtRed,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+
             // ── زر التأكيد ────────────────────────────────────────
             Surface(
                 Modifier.fillMaxWidth(),
@@ -288,14 +312,23 @@ fun InvoiceItemsScreen(
                     },
                     modifier = Modifier.fillMaxWidth().padding(16.dp).height(52.dp),
                     shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Violet500),
+                    // ✅ اللون يتغير: Violet عادي → Amber عند وجود تجاوز
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (state.hasOverStockWarnings) UnpaidAmber else Violet500
+                    ),
                     enabled = state.lines.isNotEmpty()
                 ) {
-                    Icon(Icons.Rounded.CheckCircle, null, modifier = Modifier.size(20.dp))
+                    Icon(
+                        if (state.hasOverStockWarnings) Icons.Rounded.Warning else Icons.Rounded.CheckCircle,
+                        null, modifier = Modifier.size(20.dp)
+                    )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        if (state.lines.isEmpty()) "أضف أصناف أولاً"
-                        else "تأكيد  ₪${state.totalAmount.formatAmount()}",
+                        when {
+                            state.lines.isEmpty() -> "أضف أصناف أولاً"
+                            state.hasOverStockWarnings -> "تأكيد رغم تجاوز المخزون  ₪${state.totalAmount.formatAmount()}"
+                            else -> "تأكيد  ₪${state.totalAmount.formatAmount()}"
+                        },
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -316,81 +349,110 @@ private fun InvoiceLineCard(
         Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(2.dp),
-        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
+        // ✅ حدود حمراء + خلفية خفيفة عند تجاوز المخزون
+        colors = CardDefaults.cardColors(
+            containerColor = if (line.isOverStock) DebtRed.copy(0.05f) else appColors.cardBackground
+        ),
+        border = if (line.isOverStock) BorderStroke(1.dp, DebtRed.copy(0.4f)) else null
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(Modifier.weight(1f)) {
-                Text(line.product.product.name,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = appColors.textPrimary)
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(line.selectedUnit.unitLabel,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = appColors.textSecondary)
-                    if (line.kgLabel.isNotEmpty())
-                        Text(line.kgLabel,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Cyan500)
-                    if (line.customPrice != null)
-                        Text("• سعر معدّل",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = UnpaidAmber)
-                }
-                Text("₪${line.effectivePrice.formatAmount()} / ${line.selectedUnit.unitLabel}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = appColors.textSubtle)
-            }
-
-            // أزرار الكمية
+        Column {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                modifier = Modifier.fillMaxWidth().padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = onDecrement, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Rounded.Remove, null, tint = DebtRed, modifier = Modifier.size(18.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(line.product.product.name,
+                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = appColors.textPrimary)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(line.selectedUnit.unitLabel,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = appColors.textSecondary)
+                        if (line.kgLabel.isNotEmpty())
+                            Text(line.kgLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Cyan500)
+                        if (line.customPrice != null)
+                            Text("• سعر معدّل",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = UnpaidAmber)
+                    }
+                    // ✅ يعرض الكمية المتاحة — أحمر عند التجاوز، رمادي عادي
+                    if (line.stockAvailable != Double.MAX_VALUE) {
+                        Text(
+                            "المتاح: ${line.stockAvailable.formatQty()} ${line.selectedUnit.unitLabel}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (line.isOverStock) DebtRed else appColors.textSubtle
+                        )
+                    }
                 }
-                Text(
-                    line.displayQtyLabel,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.widthIn(min = 48.dp),
-                    textAlign = TextAlign.Center,
-                    color = appColors.textPrimary
-                )
-                IconButton(onClick = onIncrement, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Rounded.Add, null, tint = PaidGreen, modifier = Modifier.size(18.dp))
+
+                // أزرار الكمية
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    IconButton(onClick = onDecrement, modifier = Modifier.size(32.dp)) {
+                        Icon(Icons.Rounded.Remove, null, tint = DebtRed, modifier = Modifier.size(18.dp))
+                    }
+                    Text(
+                        line.displayQtyLabel,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.widthIn(min = 48.dp),
+                        textAlign = TextAlign.Center,
+                        // ✅ الكمية تتحول أحمر عند التجاوز
+                        color = if (line.isOverStock) DebtRed else appColors.textPrimary
+                    )
+                    IconButton(onClick = onIncrement, modifier = Modifier.size(32.dp)) {
+                        Icon(Icons.Rounded.Add, null, tint = PaidGreen, modifier = Modifier.size(18.dp))
+                    }
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("₪${line.totalPrice.formatAmount()}",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Violet500)
+                    Box(
+                        modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(Violet500.copy(alpha = 0.15f))
+                        .clickable {
+                            onEdit()
+                        },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(Icons.Rounded.Edit, null,
+                            tint = Violet500,
+                            modifier = Modifier.size(14.dp))
+                    }
                 }
             }
 
-            Column(horizontalAlignment = Alignment.End) {
-                Text("₪${line.totalPrice.formatAmount()}",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = Violet500)
-
-                // ✅ الإصلاح الثاني: زر تعديل واضح في كلا الوضعين
-                // استُخدم appColors.divider قديماً وهو خافت جداً
-                // الآن: دائرة ملونة صغيرة تظهر في Light و Dark
-                Box(
-                    modifier = Modifier
-                    .size(28.dp)
-                    .clip(CircleShape)
-                    .background(Violet500.copy(alpha = 0.15f))
-                    .clickable {
-                        onEdit()
-                    },
-                    contentAlignment = Alignment.Center
+            // ✅ شريط تحذير أسفل البطاقة — يظهر بـ AnimatedVisibility
+            AnimatedVisibility(visible = line.isOverStock) {
+                Row(
+                    Modifier.fillMaxWidth()
+                    .background(DebtRed.copy(0.08f))
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Icon(
-                        Icons.Rounded.Edit, null,
-                        tint = Violet500,
-                        modifier = Modifier.size(14.dp)
+                    Icon(Icons.Rounded.Warning, null,
+                        tint = DebtRed, modifier = Modifier.size(14.dp))
+                    Text(
+                        "يتجاوز المخزون بـ ${line.overStockAmount.formatQty()} ${line.selectedUnit.unitLabel}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = DebtRed,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
