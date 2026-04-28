@@ -65,6 +65,7 @@ if (uiState.showDeleteDialog) {
 }
 
 Scaffold(
+    modifier = Modifier.imePadding(),
     containerColor = Navy950,
     bottomBar = {
         AdminInputBar(uiState = uiState, onInput = viewModel::updateText,
