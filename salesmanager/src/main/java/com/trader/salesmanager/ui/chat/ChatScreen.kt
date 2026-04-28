@@ -76,7 +76,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
         }
     ) {
         padding ->
-        Column(Modifier.fillMaxSize().padding(padding).imePadding()) {
+        Column(Modifier.fillMaxSize().padding(padding) {
 
             // ── App Bar ───────────────────────────────────────────
             AnimatedContent(
@@ -133,9 +133,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
                     val grouped = groupMessagesByDate(state.visibleMessages)
                     grouped.forEach {
                         (dateLabel, msgs) ->
-                        item(key = "date_$dateLabel") {
-                            DateDivider(dateLabel)
-                        }
+
                         items(msgs, key = {
                             it.id
                         }) {
@@ -152,6 +150,9 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
                                     viewModel.onTap(msg)
                                 }
                             )
+                        }
+                        item(key = "date_$dateLabel") {
+                            DateDivider(dateLabel)
                         }
                     }
 
