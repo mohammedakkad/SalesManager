@@ -76,7 +76,9 @@ class ChatViewModel(
             .onEach {
                 msgs ->
                 _uiState.update {
-                    it.copy(messages = msgs, isLoading = false)
+                    it.copy(messages = msgs.sortedByDescending {
+                        m -> m.timestamp
+                    }, isLoading = false)
                 }
                 msgs.filter {
                     !it.isRead && it.senderId == SENDER_ADMIN

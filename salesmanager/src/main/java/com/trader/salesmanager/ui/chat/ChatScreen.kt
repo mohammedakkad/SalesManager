@@ -45,7 +45,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
     // تمرير تلقائي للأسفل عند رسالة جديدة
     LaunchedEffect(state.visibleMessages.size + state.pendingMessages.size) {
         val total = state.visibleMessages.size + state.pendingMessages.size
-        if (total > 0) listState.animateScrollToItem(total - 1)
+        if (total > 0) listState.animateScrollToItem(0)
     }
 
     // ── Back Handler: إلغاء وضع التحديد ──────────────────────────
@@ -70,12 +70,13 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
                 state = state,
                 onInput = viewModel::updateInput,
                 onSend = viewModel::sendOrSaveMessage,
-                onCancel = viewModel::cancelEdit
+                onCancel = viewModel::cancelEdit,
+                modifier = Modifier.imePadding()
             )
         }
     ) {
         padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        Column(Modifier.fillMaxSize().padding(padding).imePadding()) {
 
             // ── App Bar ───────────────────────────────────────────
             AnimatedContent(
@@ -110,10 +111,25 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
             } else {
                 LazyColumn(
                     state = listState,
+                    reverseLayout = true,
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
+                    items(state.pendingMessages, key = {
+                        "p_${it.tempId}"
+                    }) {
+                        pending ->
+                        PendingBubble(
+                            pending = pending,
+                            onRetry = {
+                                viewModel.retryMessage(pending.tempId)
+                            },
+                            onDismiss = {
+                                viewModel.dismissFailedMessage(pending.tempId)
+                            }
+                        )
+                    }
                     val grouped = groupMessagesByDate(state.visibleMessages)
                     grouped.forEach {
                         (dateLabel, msgs) ->
@@ -138,20 +154,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
                             )
                         }
                     }
-                    items(state.pendingMessages, key = {
-                        "p_${it.tempId}"
-                    }) {
-                        pending ->
-                        PendingBubble(
-                            pending = pending,
-                            onRetry = {
-                                viewModel.retryMessage(pending.tempId)
-                            },
-                            onDismiss = {
-                                viewModel.dismissFailedMessage(pending.tempId)
-                            }
-                        )
-                    }
+
                     item {
                         Spacer(Modifier.height(8.dp))
                     }
@@ -486,10 +489,11 @@ private fun ChatInputBar(
     state: ChatUiState,
     onInput: (String) -> Unit,
     onSend: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        Modifier.fillMaxWidth()
+        modifier.fillMaxWidth()
         .background(MaterialTheme.colorScheme.surface)
         .navigationBarsPadding()
     ) {
