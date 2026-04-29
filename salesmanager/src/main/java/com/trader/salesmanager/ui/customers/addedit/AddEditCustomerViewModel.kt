@@ -9,6 +9,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Job
 
+// الأسماء المحجوزة للزبون الزائر — لا يمكن لأي عميل حقيقي استخدامها
+private val RESERVED_NAMES = setOf(
+    "زبون زائر", "زبون", "زبون مجهول", "walk-in", "walkincustomer",
+    "walk in", "زائر", "مجهول", "غير محدد"
+)
+
 data class AddEditCustomerUiState(
     val name: String = "",
     val phone: String = "",
@@ -19,9 +25,14 @@ data class AddEditCustomerUiState(
     val error: String? = null,
     val isEditMode: Boolean = false
 ) {
-    // ✅ الاسم: 2 حرف على الأقل، الهاتف: فارغ أو 10 أرقام بالضبط
+    val isReservedName: Boolean
+    get() = name.trim().lowercase() in RESERVED_NAMES.map {
+        it.lowercase()
+    }
+
     val nameError: String? get() = when {
-        name.isEmpty() -> null // لا نُظهر خطأ قبل أي كتابة
+        name.isEmpty() -> null
+        isReservedName -> "reserved" // كود داخلي — الشاشة تعرض بطاقة خاصة
         name.trim().length < 2 -> "الاسم يجب أن يكون حرفين على الأقل"
         else -> null
     }
@@ -35,6 +46,7 @@ data class AddEditCustomerUiState(
         else -> null
     }
     val canSave get() = name.trim().length >= 2
+    && !isReservedName
     && phoneConflict == null
     && !phoneChecking
     && (phone.isEmpty() || phone.length == 10)
@@ -107,6 +119,7 @@ class AddEditCustomerViewModel(private val repo: CustomerRepository) : ViewModel
             }
             return
         }
+        if (state.isReservedName) return // ✅ حماية أخيرة
         if (!state.canSave) return
         viewModelScope.launch {
             _uiState.update {
