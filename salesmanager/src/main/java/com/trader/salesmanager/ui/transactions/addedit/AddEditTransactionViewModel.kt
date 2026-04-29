@@ -28,8 +28,9 @@ data class AddEditTransactionUiState(
     val pendingLines: List<InvoiceLineItem> = emptyList(),
     val hasItems: Boolean = false,
     val userEditedLines: Boolean = false,
-    // المبلغ الأصلي للعملية قبل إضافة أصناف (يُضاف لمجموع الأصناف)
-    val baseAmount: Double = 0.0
+    val baseAmount: Double = 0.0,
+    // ✅ مشكلة 3: نحفظ ID طريقة الدفع هنا حتى يتم ربطها بعد تحميل القائمة
+    val pendingPaymentMethodId: Long? = null
 )
 
 class AddEditTransactionViewModel(
@@ -66,9 +67,26 @@ class AddEditTransactionViewModel(
             repo.getAllPaymentMethods().collect {
                 methods ->
                 _uiState.update {
-                    it.copy(
+                    state ->
+                    val resolved = when {
+                        // ✅ مشكلة 3: إذا كان هناك ID محفوظ من العملية المُعدَّلة → ابحث عنه
+                        state.pendingPaymentMethodId != null ->
+                        methods.firstOrNull {
+                            it.id == state.pendingPaymentMethodId
+                        }
+                        ?: methods.firstOrNull()
+                        // عند الإضافة الجديدة أو لم يتغير شيء
+                        state.selectedPaymentMethod != null ->
+                        methods.firstOrNull {
+                            it.id == state.selectedPaymentMethod.id
+                        }
+                        ?: state.selectedPaymentMethod
+                        else -> methods.firstOrNull()
+                    }
+                    state.copy(
                         paymentMethods = methods,
-                        selectedPaymentMethod = it.selectedPaymentMethod ?: methods.firstOrNull()
+                        selectedPaymentMethod = resolved,
+                        pendingPaymentMethodId = null // ← مسح بعد الربط
                     )
                 }
             }
@@ -102,7 +120,9 @@ class AddEditTransactionViewModel(
                     paymentType = t.paymentType,
                     note = t.note,
                     hasItems = if (state.userEditedLines) state.hasItems else t.hasItems,
-                    isEditMode = true
+                    isEditMode = true,
+                    // ✅ مشكلة 3: نحفظ ID طريقة الدفع لتُطبَّق عند/بعد تحميل القائمة
+                    pendingPaymentMethodId = t.paymentMethodId
                 )
             }
 

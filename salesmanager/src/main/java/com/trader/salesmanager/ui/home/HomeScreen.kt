@@ -48,49 +48,54 @@ fun HomeScreen(
     onTransactionClick: (Long) -> Unit,
     viewModel: HomeViewModel = koinViewModel()
 ) {
-    val uiState    by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick        = onAddTransaction,
-                icon           = { Icon(Icons.Rounded.Add, null) },
-                text           = { Text("عملية جديدة", fontWeight = FontWeight.SemiBold) },
+                onClick = onAddTransaction,
+                icon = {
+                    Icon(Icons.Rounded.Add, null)
+                },
+                text = {
+                    Text("عملية جديدة", fontWeight = FontWeight.SemiBold)
+                },
                 containerColor = Emerald500,
-                contentColor   = Color.White,
-                shape          = RoundedCornerShape(16.dp)
+                contentColor = Color.White,
+                shape = RoundedCornerShape(16.dp)
             )
         }
-    ) { padding ->
+    ) {
+        padding ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(scrollState)
+            .fillMaxSize()
+            .padding(padding)
+            .verticalScroll(scrollState)
         ) {
             // ── Header + Stats Card ──────────────────────────────
             Box(modifier = Modifier.fillMaxWidth()) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(HEADER_CONTENT_HEIGHT + OVERLAP)
-                        .background(
-                            Brush.linearGradient(
-                                listOf(Emerald700, Cyan500),
-                                start = androidx.compose.ui.geometry.Offset(0f, 0f),
-                                end   = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                            )
+                    .fillMaxWidth()
+                    .height(HEADER_CONTENT_HEIGHT + OVERLAP)
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Emerald700, Cyan500),
+                            start = androidx.compose.ui.geometry.Offset(0f, 0f),
+                            end = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
                         )
+                    )
                 )
                 Column {
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 48.dp, start = 20.dp, end = 20.dp),
+                        .fillMaxWidth()
+                        .padding(top = 48.dp, start = 20.dp, end = 20.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment     = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
                             Text("مرحباً 👋",
@@ -107,36 +112,50 @@ fun HomeScreen(
                                 IconButton(
                                     onClick = onNavigateToChat,
                                     modifier = Modifier
-                                        .clip(CircleShape)
-                                        .background(Color.White.copy(0.2f))
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(0.2f))
                                 ) {
                                     Icon(Icons.Rounded.Forum, null, tint = Color.White)
                                 }
                                 if (uiState.unreadChatCount > 0) {
+                                    val badgeText = when {
+                                        uiState.unreadChatCount > 99 -> "99+"
+                                        uiState.unreadChatCount > 9 -> "${uiState.unreadChatCount}"
+                                        else -> "${uiState.unreadChatCount}"
+                                    }
+                                    // ✅ العرض يتمدد للأرقام المزدوجة والثلاثية
+                                    val badgeWidth = when {
+                                        uiState.unreadChatCount > 99 -> 26.dp
+                                        uiState.unreadChatCount > 9 -> 22.dp
+                                        else -> 18.dp
+                                    }
                                     Box(
                                         modifier = Modifier
-                                            .align(Alignment.TopEnd)
-                                            .offset(x = 4.dp, y = (-4).dp)
-                                            .size(18.dp)
-                                            .clip(CircleShape)
-                                            .background(Color(0xFFEF4444)),
+                                        .align(Alignment.TopEnd)
+                                        .offset(x = 4.dp, y = (-4).dp)
+                                        .height(18.dp)
+                                        .width(badgeWidth)
+                                        .clip(RoundedCornerShape(50))
+                                        .background(Color(0xFFEF4444)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            if (uiState.unreadChatCount > 99) "99+"
-                                            else "${uiState.unreadChatCount}",
-                                            color  = Color.White,
+                                            text = badgeText,
+                                            color = Color.White,
                                             fontSize = 9.sp,
-                                            fontWeight = FontWeight.Bold
+                                            fontWeight = FontWeight.ExtraBold,
+                                            // ✅ إصلاح الانزياح للأسفل
+                                            lineHeight = 9.sp,
+                                            maxLines = 1
                                         )
                                     }
                                 }
                             }
                             IconButton(
-                                onClick  = onNavigateToSettings,
+                                onClick = onNavigateToSettings,
                                 modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(0.2f))
+                                .clip(CircleShape)
+                                .background(Color.White.copy(0.2f))
                             ) {
                                 Icon(Icons.Rounded.Settings, null, tint = Color.White)
                             }
@@ -148,11 +167,11 @@ fun HomeScreen(
                     // ── Stats Card ───────────────────────────────
                     Card(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .offset(y = OVERLAP / 2)
-                            .shadow(12.dp, RoundedCornerShape(24.dp)),
-                        shape  = RoundedCornerShape(24.dp),
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .offset(y = OVERLAP / 2)
+                        .shadow(12.dp, RoundedCornerShape(24.dp)),
+                        shape = RoundedCornerShape(24.dp),
                         elevation = CardDefaults.cardElevation(0.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
@@ -170,7 +189,7 @@ fun HomeScreen(
                             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(0.4f))
                             Spacer(Modifier.height(16.dp))
                             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                                MiniStat(Modifier.weight(1f), "مدفوع",     uiState.todayPaid,   PaidGreen)
+                                MiniStat(Modifier.weight(1f), "مدفوع", uiState.todayPaid, PaidGreen)
                                 VerticalDivider(Modifier.height(40.dp), color = MaterialTheme.colorScheme.outline.copy(0.3f))
                                 MiniStat(Modifier.weight(1f), "غير مدفوع", uiState.todayUnpaid, UnpaidAmber)
                             }
@@ -190,16 +209,19 @@ fun HomeScreen(
                     modifier = Modifier.padding(bottom = 12.dp))
 
                 val navItems = listOf(
-                    NavItem("الزبائن",  Icons.Rounded.People,   Emerald500, onNavigateToCustomers),
-                    NavItem("العمليات", Icons.Rounded.Receipt,  Cyan500,    onNavigateToTransactions),
-                    NavItem("التقارير", Icons.Rounded.BarChart, Violet500,  onNavigateToReports),
-                    NavItem("الديون",   Icons.Rounded.Warning,  DebtRed,    onNavigateToDebts),
-                    NavItem("المخزن",   Icons.Rounded.Inventory2, Cyan500,  onNavigateToInventory),
+                    NavItem("الزبائن", Icons.Rounded.People, Emerald500, onNavigateToCustomers),
+                    NavItem("العمليات", Icons.Rounded.Receipt, Cyan500, onNavigateToTransactions),
+                    NavItem("التقارير", Icons.Rounded.BarChart, Violet500, onNavigateToReports),
+                    NavItem("الديون", Icons.Rounded.Warning, DebtRed, onNavigateToDebts),
+                    NavItem("المخزن", Icons.Rounded.Inventory2, Cyan500, onNavigateToInventory),
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    navItems.chunked(2).forEach { row ->
+                    navItems.chunked(2).forEach {
+                        row ->
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            row.forEach { NavCard(Modifier.weight(1f), it) }
+                            row.forEach {
+                                NavCard(Modifier.weight(1f), it)
+                            }
                             if (row.size == 1) Spacer(Modifier.weight(1f))
                         }
                     }
@@ -211,7 +233,7 @@ fun HomeScreen(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment     = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text("آخر العمليات",
                             style = MaterialTheme.typography.titleMedium,
@@ -223,11 +245,14 @@ fun HomeScreen(
                     }
                     Spacer(Modifier.height(8.dp))
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        uiState.recentTransactions.forEachIndexed { index, tx ->
+                        uiState.recentTransactions.forEachIndexed {
+                            index, tx ->
                             RecentTransactionCard(
-                                tx      = tx,
-                                index   = index,
-                                onClick = { onTransactionClick(tx.id) }
+                                tx = tx,
+                                index = index,
+                                onClick = {
+                                    onTransactionClick(tx.id)
+                                }
                             )
                         }
                     }
@@ -242,16 +267,22 @@ fun HomeScreen(
 // ── آخر عملية Card ───────────────────────────────────────────
 @Composable
 private fun RecentTransactionCard(tx: Transaction, index: Int, onClick: () -> Unit) {
-    val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+    val visible = remember {
+        MutableTransitionState(false).apply {
+            targetState = true
+        }
+    }
     AnimatedVisibility(
         visible,
-        enter = slideInVertically(tween(300, index * 60)) { it / 2 } + fadeIn(tween(300, index * 60))
+        enter = slideInVertically(tween(300, index * 60)) {
+            it / 2
+        } + fadeIn(tween(300, index * 60))
     ) {
         Card(
-            modifier  = Modifier.fillMaxWidth(),
-            shape     = RoundedCornerShape(16.dp),
-            onClick   = onClick,
-            colors    = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            onClick = onClick,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(1.dp)
         ) {
             Row(
@@ -262,23 +293,25 @@ private fun RecentTransactionCard(tx: Transaction, index: Int, onClick: () -> Un
                 // أيقونة الحالة
                 Box(
                     modifier = Modifier
-                        .size(42.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(if (tx.isPaid) PaidGreen.copy(0.12f) else UnpaidAmber.copy(0.12f)),
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (tx.isPaid) PaidGreen.copy(0.12f) else UnpaidAmber.copy(0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         if (tx.isPaid) Icons.Rounded.CheckCircle else Icons.Rounded.Schedule,
                         null,
-                        tint   = if (tx.isPaid) PaidGreen else UnpaidAmber,
+                        tint = if (tx.isPaid) PaidGreen else UnpaidAmber,
                         modifier = Modifier.size(22.dp)
                     )
                 }
                 // اسم الزبون + وقت
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        tx.customerName.ifEmpty { "—" },
-                        style    = MaterialTheme.typography.bodyMedium,
+                        tx.customerName.ifEmpty {
+                            "—"
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -294,9 +327,9 @@ private fun RecentTransactionCard(tx: Transaction, index: Int, onClick: () -> Un
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
                         String.format("%.0f", tx.amount),
-                        style      = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
-                        color      = if (tx.isPaid) PaidGreen else UnpaidAmber
+                        color = if (tx.isPaid) PaidGreen else UnpaidAmber
                     )
                     Spacer(Modifier.height(2.dp))
                     Surface(
@@ -306,8 +339,8 @@ private fun RecentTransactionCard(tx: Transaction, index: Int, onClick: () -> Un
                         Text(
                             if (tx.isPaid) "مدفوع" else "معلق",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
-                            style    = MaterialTheme.typography.labelSmall,
-                            color    = if (tx.isPaid) PaidGreen else UnpaidAmber,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (tx.isPaid) PaidGreen else UnpaidAmber,
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -333,17 +366,21 @@ private data class NavItem(val label: String, val icon: ImageVector, val color: 
 @Composable
 private fun NavCard(modifier: Modifier, item: NavItem) {
     Card(
-        modifier = modifier.clickable { item.onClick() },
-        shape    = RoundedCornerShape(16.dp),
-        colors   = CardDefaults.cardColors(containerColor = item.color.copy(0.08f)),
+        modifier = modifier.clickable {
+            item.onClick()
+        },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = item.color.copy(0.08f)),
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Box(
                 modifier = Modifier.size(44.dp).clip(RoundedCornerShape(12.dp))
-                    .background(item.color.copy(0.15f)),
+                .background(item.color.copy(0.15f)),
                 contentAlignment = Alignment.Center
-            ) { Icon(item.icon, null, tint = item.color, modifier = Modifier.size(22.dp)) }
+            ) {
+                Icon(item.icon, null, tint = item.color, modifier = Modifier.size(22.dp))
+            }
             Spacer(Modifier.height(12.dp))
             Text(item.label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(2.dp))
@@ -353,12 +390,12 @@ private fun NavCard(modifier: Modifier, item: NavItem) {
 }
 
 private fun formatTxDate(millis: Long): String {
-    val now  = System.currentTimeMillis()
+    val now = System.currentTimeMillis()
     val diff = now - millis
     return when {
-        diff < 60_000L              -> "الآن"
-        diff < 3_600_000L           -> "${diff / 60_000} د"
-        diff < 86_400_000L          -> "${diff / 3_600_000} س"
-        else                        -> SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(millis))
+        diff < 60_000L -> "الآن"
+        diff < 3_600_000L -> "${diff / 60_000} د"
+        diff < 86_400_000L -> "${diff / 3_600_000} س"
+        else -> SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(millis))
     }
 }
