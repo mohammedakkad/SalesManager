@@ -2,11 +2,25 @@ package com.trader.salesmanager.ui.transactions.addedit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.core.domain.model.*
-import com.trader.core.domain.repository.*
+import com.trader.core.domain.model.Customer
+import com.trader.core.domain.model.InvoiceItem
+import com.trader.core.domain.model.PaymentMethod
+import com.trader.core.domain.model.PaymentType
+import com.trader.core.domain.model.Transaction
+import com.trader.core.domain.model.UnitType
+import com.trader.core.domain.model.WALK_IN_CUSTOMER
+import com.trader.core.domain.repository.CustomerRepository
+import com.trader.core.domain.repository.InvoiceItemRepository
+import com.trader.core.domain.repository.PaymentMethodRepository
+import com.trader.core.domain.repository.ProductRepository
+import com.trader.core.domain.repository.StockRepository
+import com.trader.core.domain.repository.TransactionRepository
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceLineItem
 import com.trader.salesmanager.ui.inventory.invoice.SaleWeightUnit
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.UUID
@@ -49,12 +63,11 @@ class AddEditTransactionViewModel(
 
     init {
         viewModelScope.launch {
-            customerRepo.getAllCustomers().collect {
-                customers ->
+            customerRepo.getAllCustomers().collect { customers ->
                 val withGuest = listOf(WALK_IN_CUSTOMER) +
-                customers.filter {
-                    it.id != WALK_IN_CUSTOMER.id
-                }
+                        customers.filter {
+                            it.id != WALK_IN_CUSTOMER.id
+                        }
                 _uiState.update {
                     it.copy(customers = withGuest)
                 }
@@ -64,29 +77,19 @@ class AddEditTransactionViewModel(
 
     fun loadPaymentMethods(repo: PaymentMethodRepository) {
         viewModelScope.launch {
-            repo.getAllPaymentMethods().collect {
-                methods ->
-                _uiState.update {
-                    state ->
-                    val resolved = when {
-                        // ✅ مشكلة 3: إذا كان هناك ID محفوظ من العملية المُعدَّلة → ابحث عنه
-                        state.pendingPaymentMethodId != null ->
-                        methods.firstOrNull {
-                            it.id == state.pendingPaymentMethodId
-                        }
+            repo.getAllPaymentMethods().collect { methods ->
+                _uiState.update { state ->
+                    // الأولوية 1: الـ ID القادم من العملية المحملة
+                    // الأولوية 2: الطريقة المختارة حالياً
+                    // الأولوية 3: أول عنصر في القائمة
+                    val resolved = methods.find { it.id == state.pendingPaymentMethodId }
+                        ?: methods.find { it.id == state.selectedPaymentMethod?.id }
                         ?: methods.firstOrNull()
-                        // عند الإضافة الجديدة أو لم يتغير شيء
-                        state.selectedPaymentMethod != null ->
-                        methods.firstOrNull {
-                            it.id == state.selectedPaymentMethod.id
-                        }
-                        ?: state.selectedPaymentMethod
-                        else -> methods.firstOrNull()
-                    }
+
                     state.copy(
                         paymentMethods = methods,
                         selectedPaymentMethod = resolved,
-                        pendingPaymentMethodId = null // ← مسح بعد الربط
+                        pendingPaymentMethodId = if (resolved?.id == state.pendingPaymentMethodId) null else state.pendingPaymentMethodId
                     )
                 }
             }
@@ -111,8 +114,9 @@ class AddEditTransactionViewModel(
             val customer = if (t.customerId == WALK_IN_CUSTOMER.id) WALK_IN_CUSTOMER
             else customerRepo.getCustomerById(t.customerId)
 
-            _uiState.update {
-                state ->
+            _uiState.update { state ->
+                val matchingMethod = state.paymentMethods.find { it.id == t.paymentMethodId }
+
                 state.copy(
                     selectedCustomer = customer,
                     amount = if (state.userEditedLines) state.amount else t.amount.toString(),
@@ -122,19 +126,20 @@ class AddEditTransactionViewModel(
                     hasItems = if (state.userEditedLines) state.hasItems else t.hasItems,
                     isEditMode = true,
                     // ✅ مشكلة 3: نحفظ ID طريقة الدفع لتُطبَّق عند/بعد تحميل القائمة
-                    pendingPaymentMethodId = t.paymentMethodId
+                    pendingPaymentMethodId = if (matchingMethod == null) t.paymentMethodId else null,
+                    selectedPaymentMethod = matchingMethod ?: state.selectedPaymentMethod
+
                 )
             }
 
             val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
-            val lines = items.mapNotNull {
-                item ->
+            val lines = items.mapNotNull { item ->
                 val productWithUnits = productRepo.getProductById(item.productId)
-                ?: return@mapNotNull null
+                    ?: return@mapNotNull null
                 val unit = productWithUnits.units.firstOrNull {
                     it.id == item.unitId
                 }
-                ?: return@mapNotNull null
+                    ?: return@mapNotNull null
                 InvoiceLineItem(
                     product = productWithUnits,
                     selectedUnit = unit,
@@ -155,14 +160,15 @@ class AddEditTransactionViewModel(
             }
             val baseAmount = (t.amount - itemsTotal).coerceAtLeast(0.0)
 
-            _uiState.update {
-                state ->
+            _uiState.update { state ->
                 if (state.userEditedLines) return@update state
                 state.copy(
                     pendingLines = lines,
                     hasItems = lines.isNotEmpty(),
-                    amount = String.format(Locale.US, "%.2f",
-                        if (lines.isNotEmpty()) itemsTotal else t.amount),
+                    amount = String.format(
+                        Locale.US, "%.2f",
+                        if (lines.isNotEmpty()) itemsTotal else t.amount
+                    ),
                     baseAmount = baseAmount
                 )
             }
@@ -176,21 +182,7 @@ class AddEditTransactionViewModel(
         }
     }
 
-
-    // ── مسار 1: الأصناف تأتي مباشرة من InvoiceItemsScreen (Lambda) ──
-    fun applyInvoiceLines(lines: List<InvoiceLineItem>, total: Double) {
-        _uiState.update {
-            it.copy(
-                pendingLines = lines,
-                hasItems = lines.isNotEmpty(),
-                userEditedLines = true,
-                amount = if (lines.isNotEmpty())
-                    String.format(Locale.US, "%.2f", total) else it.amount
-            )
-        }
-    }
-
-    fun applyInvoiceLinesFromJson(json: String, total: Double = 0.0) {
+    fun applyInvoiceLinesFromJson(json: String) {
         // ✅ حل race condition:
         // نُعيِّن userEditedLines=true و hasItems=true فوراً (synchronously) قبل الـ coroutine.
         // هكذا إذا انتهى loadTransaction بعدنا، يرى userEditedLines=true ولا يمسح شيئاً.
@@ -248,18 +240,23 @@ class AddEditTransactionViewModel(
     fun selectCustomer(c: Customer) = _uiState.update {
         it.copy(selectedCustomer = c, error = null)
     }
+
     fun updateAmount(a: String) = _uiState.update {
         it.copy(amount = a.toLatinDigits(), error = null)
     }
+
     fun updateIsPaid(v: Boolean) = _uiState.update {
         it.copy(isPaid = v)
     }
+
     fun updatePaymentType(t: PaymentType) = _uiState.update {
         it.copy(paymentType = t)
     }
+
     fun selectPaymentMethod(m: PaymentMethod) = _uiState.update {
         it.copy(selectedPaymentMethod = m)
     }
+
     fun updateNote(n: String) = _uiState.update {
         it.copy(note = n)
     }
@@ -317,8 +314,7 @@ class AddEditTransactionViewModel(
 
                     if (state.userEditedLines) {
                         val oldItems = invoiceRepo.getItemsForTransactionOnce(txId)
-                        oldItems.forEach {
-                            old ->
+                        oldItems.forEach { old ->
                             stockRepo.returnStock(
                                 productId = old.productId, unitId = old.unitId,
                                 quantity = old.quantity, transactionId = txId,
@@ -348,8 +344,7 @@ class AddEditTransactionViewModel(
         val lines = _uiState.value.pendingLines
         if (lines.isEmpty()) return null
         val arr = org.json.JSONArray()
-        lines.forEach {
-            line ->
+        lines.forEach { line ->
             arr.put(org.json.JSONObject().apply {
                 put("productId", line.product.product.id)
                 put("unitId", line.selectedUnit.id)
@@ -374,8 +369,7 @@ class AddEditTransactionViewModel(
             "${it.productId}:${it.unitId}" to it.id
         }
 
-        val items = lines.map {
-            line ->
+        val items = lines.map { line ->
             val key = "${line.product.product.id}:${line.selectedUnit.id}"
             val itemId = oldIdMap[key] ?: UUID.randomUUID().toString()
 
@@ -401,8 +395,7 @@ class AddEditTransactionViewModel(
 
         invoiceRepo.saveItems(items)
 
-        lines.forEach {
-            line ->
+        lines.forEach { line ->
             stockRepo.deductStock(
                 productId = line.product.product.id,
                 unitId = line.selectedUnit.id,
@@ -416,10 +409,10 @@ class AddEditTransactionViewModel(
 }
 
 private fun String.toLatinDigits(): String = this
-.replace('٠', '0').replace('١', '1').replace('٢', '2')
-.replace('٣', '3').replace('٤', '4').replace('٥', '5')
-.replace('٦', '6').replace('٧', '7').replace('٨', '8')
-.replace('٩', '9').replace('۰', '0').replace('۱', '1')
-.replace('۲', '2').replace('۳', '3').replace('۴', '4')
-.replace('۵', '5').replace('۶', '6').replace('۷', '7')
-.replace('۸', '8').replace('۹', '9')
+    .replace('٠', '0').replace('١', '1').replace('٢', '2')
+    .replace('٣', '3').replace('٤', '4').replace('٥', '5')
+    .replace('٦', '6').replace('٧', '7').replace('٨', '8')
+    .replace('٩', '9').replace('۰', '0').replace('۱', '1')
+    .replace('۲', '2').replace('۳', '3').replace('۴', '4')
+    .replace('۵', '5').replace('۶', '6').replace('۷', '7')
+    .replace('۸', '8').replace('۹', '9')
