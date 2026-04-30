@@ -31,7 +31,11 @@ fun DebtsScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = padding.calculateBottomPadding())
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -44,10 +48,14 @@ fun DebtsScreen(
                     }
                     Spacer(Modifier.width(8.dp))
                     Column {
-                        Text("الديون", style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold, color = Color.White)
-                        Text("${uiState.debts.size} زبون عليه دين", color = Color.White.copy(0.7f),
-                            style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            "الديون", style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold, color = Color.White
+                        )
+                        Text(
+                            "${uiState.debts.size} زبون عليه دين", color = Color.White.copy(0.7f),
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 }
             }
@@ -61,21 +69,32 @@ fun DebtsScreen(
                     loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(color = DebtRed)
                     }
+
                     empty -> EmptyState(
                         icon = Icons.Rounded.CheckCircle,
                         title = "لا توجد ديون 🎉",
                         subtitle = "جميع الزبائن سددوا ديونهم",
                         modifier = Modifier.fillMaxSize()
                     )
+
                     else -> LazyColumn(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        itemsIndexed(uiState.debts, key = { _, d -> d.customer.id }) { index, item ->
-                            val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                        itemsIndexed(
+                            uiState.debts,
+                            key = { _, d -> d.customer.id }) { index, item ->
+                            val visible = remember {
+                                MutableTransitionState(false).apply {
+                                    targetState = true
+                                }
+                            }
                             AnimatedVisibility(
                                 visibleState = visible,
-                                enter = slideInVertically(initialOffsetY = { it / 2 }, animationSpec = tween(300, delayMillis = index * 50)) + fadeIn()
+                                enter = slideInVertically(
+                                    initialOffsetY = { it / 2 },
+                                    animationSpec = tween(300, delayMillis = index * 50)
+                                ) + fadeIn()
                             ) {
                                 DebtCard(
                                     name = item.customer.name,
@@ -109,13 +128,24 @@ private fun DebtCard(name: String, debt: Double, rank: Int, onClick: () -> Unit)
                     .background(DebtRed.copy(0.15f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text("#$rank", color = DebtRed, style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                Text(
+                    "#$rank",
+                    color = DebtRed,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold
+                )
             }
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                Text("اضغط لعرض التفاصيل", style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    name,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    "اضغط لعرض التفاصيل", style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             Text(
                 String.format("%.2f", debt),

@@ -45,7 +45,7 @@ fun SettingsScreen(
     updateViewModel: AppUpdateViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
-    val scope   = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
     // اسم المحل من DataStore
     val storeName by context.appDataStore.data
@@ -56,15 +56,18 @@ fun SettingsScreen(
 
     // إصدار التطبيق الحالي
     val currentVersion = remember {
-        try { context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0.0" }
-        catch (_: PackageManager.NameNotFoundException) { "1.0.0" }
+        try {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0.0"
+        } catch (_: PackageManager.NameNotFoundException) {
+            "1.0.0"
+        }
     }
 
     // حالة التحديث
     val updateState by updateViewModel.state.collectAsState()
     val isChecking = updateState is UpdateUiState.Checking
     val latestVersion = when (val s = updateState) {
-        is UpdateUiState.UpdateAvailable    -> s.info.versionName
+        is UpdateUiState.UpdateAvailable -> s.info.versionName
         is UpdateUiState.BackgroundDownloading -> "يتم التحميل..."
         else -> null
     }
@@ -93,11 +96,14 @@ fun SettingsScreen(
 
     Scaffold { padding ->
         Column(
-            Modifier.fillMaxSize().padding(padding)
+            Modifier
+                .fillMaxSize()
+                .padding(bottom = padding.calculateBottomPadding())
                 .verticalScroll(rememberScrollState())
         ) {
             Box(
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .background(Brush.horizontalGradient(listOf(Slate800, Slate600)))
                     .padding(top = 48.dp, bottom = 24.dp, start = 16.dp, end = 16.dp)
             ) {
@@ -106,9 +112,11 @@ fun SettingsScreen(
                         Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                     }
                     Spacer(Modifier.width(8.dp))
-                    Text("الإعدادات",
+                    Text(
+                        "الإعدادات",
                         style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold, color = Color.White)
+                        fontWeight = FontWeight.Bold, color = Color.White
+                    )
                 }
             }
 
@@ -118,11 +126,11 @@ fun SettingsScreen(
             ) {
                 // ── اسم المحل ──────────────────────────────────────
                 SettingItem(
-                    icon     = Icons.Rounded.Store,
-                    title    = "اسم المحل",
+                    icon = Icons.Rounded.Store,
+                    title = "اسم المحل",
                     subtitle = storeName.ifEmpty { "غير محدد — اضغط لتحديده" },
-                    color    = Emerald500,
-                    onClick  = { showStoreNameDialog = true }
+                    color = Emerald500,
+                    onClick = { showStoreNameDialog = true }
                 )
 
                 // ── الوضع الليلي ───────────────────────────────────
@@ -130,35 +138,40 @@ fun SettingsScreen(
 
                 // ── طرق الدفع ──────────────────────────────────────
                 SettingItem(
-                    icon     = Icons.Rounded.Payment,
-                    title    = "طرق الدفع",
+                    icon = Icons.Rounded.Payment,
+                    title = "طرق الدفع",
                     subtitle = "إدارة طرق دفع التاجر",
-                    color    = Cyan500,
-                    onClick  = onNavigateToPaymentMethods
+                    color = Cyan500,
+                    onClick = onNavigateToPaymentMethods
                 )
 
                 // ── الدعم الفني ────────────────────────────────────
                 SettingItem(
-                    icon     = Icons.Rounded.SupportAgent,
-                    title    = "الدعم الفني",
+                    icon = Icons.Rounded.SupportAgent,
+                    title = "الدعم الفني",
                     subtitle = "تواصل مع الإدارة مباشرة",
-                    color    = Violet500,
-                    onClick  = onNavigateToChat
+                    color = Violet500,
+                    onClick = onNavigateToChat
                 )
 
                 // ── التحديثات ──────────────────────────────────────
                 UpdateSettingItem(
                     currentVersion = currentVersion,
-                    latestVersion  = latestVersion,
-                    isChecking     = isChecking,
-                    updateState    = updateState,
-                    onCheck        = {
+                    latestVersion = latestVersion,
+                    isChecking = isChecking,
+                    updateState = updateState,
+                    onCheck = {
                         val versionCode = try {
-                            context.packageManager.getPackageInfo(context.packageName, 0).longVersionCode.toInt()
-                        } catch (_: Exception) { 0 }
+                            context.packageManager.getPackageInfo(
+                                context.packageName,
+                                0
+                            ).longVersionCode.toInt()
+                        } catch (_: Exception) {
+                            0
+                        }
                         updateViewModel.checkForUpdate(versionCode)
                     },
-                    onInstall      = { updateViewModel.install(context) }
+                    onInstall = { updateViewModel.install(context) }
                 )
             }
         }
@@ -200,12 +213,12 @@ private fun StoreNameDialog(
 
 @Composable
 private fun DarkModeSettingItem() {
-    val isDark   = isDarkTheme
-    val toggle   = toggleTheme
+    val isDark = isDarkTheme
+    val toggle = toggleTheme
 
     Card(
-        modifier  = Modifier.fillMaxWidth(),
-        shape     = RoundedCornerShape(14.dp),
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Row(
@@ -213,7 +226,9 @@ private fun DarkModeSettingItem() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                Modifier.size(44.dp).clip(RoundedCornerShape(12.dp))
+                Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(
                         if (isDark) Color(0xFF312E81).copy(0.3f)
                         else Color(0xFFFEF9C3)
@@ -243,10 +258,10 @@ private fun DarkModeSettingItem() {
                 checked = isDark,
                 onCheckedChange = { toggle() },
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor       = Color.White,
-                    checkedTrackColor       = Violet500,
-                    uncheckedThumbColor     = Color.White,
-                    uncheckedTrackColor     = Slate400
+                    checkedThumbColor = Color.White,
+                    checkedTrackColor = Violet500,
+                    uncheckedThumbColor = Color.White,
+                    uncheckedTrackColor = Slate400
                 )
             )
         }
@@ -263,24 +278,32 @@ private fun UpdateSettingItem(
     onInstall: () -> Unit
 ) {
     val hasUpdate = updateState is UpdateUiState.UpdateAvailable
-    val isReady   = updateState is UpdateUiState.ReadyToInstall
+    val isReady = updateState is UpdateUiState.ReadyToInstall
 
     Card(
-        modifier  = Modifier.fillMaxWidth().clickable(onClick = if (isReady) onInstall else onCheck),
-        shape     = RoundedCornerShape(14.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = if (isReady) onInstall else onCheck),
+        shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(1.dp),
-        colors    = CardDefaults.cardColors(
+        colors = CardDefaults.cardColors(
             containerColor = if (hasUpdate) UnpaidAmber.copy(0.06f) else MaterialTheme.colorScheme.surface
         )
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(44.dp).clip(RoundedCornerShape(12.dp))
+                Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background((if (hasUpdate) UnpaidAmber else Slate600).copy(0.12f)),
                 contentAlignment = Alignment.Center
             ) {
                 if (isChecking)
-                    CircularProgressIndicator(Modifier.size(22.dp), color = Slate600, strokeWidth = 2.dp)
+                    CircularProgressIndicator(
+                        Modifier.size(22.dp),
+                        color = Slate600,
+                        strokeWidth = 2.dp
+                    )
                 else
                     Icon(
                         if (isReady) Icons.Rounded.InstallMobile
@@ -292,22 +315,26 @@ private fun UpdateSettingItem(
             }
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
-                Text("الإصدار والتحديث",
-                    style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                Text(
+                    "الإصدار والتحديث",
+                    style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold
+                )
                 Text(
                     when {
-                        isReady      -> "✅ جاهز للتثبيت — اضغط للتثبيت"
-                        hasUpdate    -> "🔔 تحديث متاح: v${latestVersion}  (حالي: v$currentVersion)"
-                        isChecking   -> "جاري التحقق..."
+                        isReady -> "✅ جاهز للتثبيت — اضغط للتثبيت"
+                        hasUpdate -> "🔔 تحديث متاح: v${latestVersion}  (حالي: v$currentVersion)"
+                        isChecking -> "جاري التحقق..."
                         latestVersion != null -> latestVersion
-                        else         -> "v$currentVersion  •  اضغط للتحقق"
+                        else -> "v$currentVersion  •  اضغط للتحقق"
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = if (hasUpdate) UnpaidAmber else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Icon(Icons.Rounded.ChevronRight, null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(
+                Icons.Rounded.ChevronRight, null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -318,22 +345,37 @@ private fun SettingItem(
     color: Color, onClick: () -> Unit
 ) {
     Card(
-        modifier  = Modifier.fillMaxWidth().clickable(onClick = onClick),
-        shape     = RoundedCornerShape(14.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(44.dp).clip(RoundedCornerShape(12.dp)).background(color.copy(0.12f)),
+                Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(color.copy(0.12f)),
                 contentAlignment = Alignment.Center
             ) { Icon(icon, null, tint = color) }
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
-                Text(title,    style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                Text(subtitle, style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    subtitle, style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-            Icon(Icons.Rounded.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(
+                Icons.Rounded.ChevronRight,
+                null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

@@ -138,7 +138,7 @@ fun InvoiceItemsScreen(
 
     Scaffold(containerColor = appColors.screenBackground) {
         padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        Column(Modifier.fillMaxSize().padding(bottom = padding.calculateBottomPadding())) {
 
             // ── Header ──────────────────────────────────────────────
             Box(

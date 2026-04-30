@@ -47,14 +47,15 @@ data class DayTxUiState(
     val unpaidAmount: Double = 0.0,
     val isLoading: Boolean = true
 ) {
-    val filtered: List<Transaction> get() = all.filter { tx ->
-        val matchQuery = query.isEmpty() ||
-            tx.customerName.contains(query, ignoreCase = true)
-        val matchPaid = filterPaid == null || tx.isPaid == filterPaid
-        val matchMethod = filterPaymentMethod.isEmpty() ||
-            tx.paymentMethodName == filterPaymentMethod
-        matchQuery && matchPaid && matchMethod
-    }
+    val filtered: List<Transaction>
+        get() = all.filter { tx ->
+            val matchQuery = query.isEmpty() ||
+                    tx.customerName.contains(query, ignoreCase = true)
+            val matchPaid = filterPaid == null || tx.isPaid == filterPaid
+            val matchMethod = filterPaymentMethod.isEmpty() ||
+                    tx.paymentMethodName == filterPaymentMethod
+            matchQuery && matchPaid && matchMethod
+        }
 }
 
 class DayTransactionsViewModel(
@@ -67,37 +68,52 @@ class DayTransactionsViewModel(
 
     init {
         val cal = Calendar.getInstance().apply { timeInMillis = dateMillis }
-        cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0); cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
+        cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0); cal.set(
+            Calendar.SECOND,
+            0
+        ); cal.set(Calendar.MILLISECOND, 0)
         startOfDay = cal.timeInMillis
-        cal.set(Calendar.HOUR_OF_DAY, 23); cal.set(Calendar.MINUTE, 59); cal.set(Calendar.SECOND, 59); cal.set(Calendar.MILLISECOND, 999)
+        cal.set(Calendar.HOUR_OF_DAY, 23); cal.set(Calendar.MINUTE, 59); cal.set(
+            Calendar.SECOND,
+            59
+        ); cal.set(Calendar.MILLISECOND, 999)
         endOfDay = cal.timeInMillis
     }
 
-    private val _query   = MutableStateFlow("")
-    private val _paid    = MutableStateFlow<Boolean?>(null)
-    private val _method  = MutableStateFlow("")
+    private val _query = MutableStateFlow("")
+    private val _paid = MutableStateFlow<Boolean?>(null)
+    private val _method = MutableStateFlow("")
 
     val uiState: StateFlow<DayTxUiState> = combine(
         repo.getTransactionsByDate(startOfDay, endOfDay),
         _query, _paid, _method
     ) { txs, q, paid, method ->
-        val methods = txs.map { it.paymentMethodName }.filter { it.isNotEmpty() }.distinct().sorted()
+        val methods =
+            txs.map { it.paymentMethodName }.filter { it.isNotEmpty() }.distinct().sorted()
         DayTxUiState(
             all = txs,
             query = q,
             filterPaid = paid,
             filterPaymentMethod = method,
             paymentMethods = methods,
-            totalAmount  = txs.sumOf { it.amount },
-            paidAmount   = txs.filter { it.isPaid }.sumOf { it.amount },
+            totalAmount = txs.sumOf { it.amount },
+            paidAmount = txs.filter { it.isPaid }.sumOf { it.amount },
             unpaidAmount = txs.filter { !it.isPaid }.sumOf { it.amount },
             isLoading = false
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DayTxUiState())
 
-    fun setQuery(q: String)    { _query.value  = q }
-    fun setFilterPaid(v: Boolean?) { _paid.value = v }
-    fun setMethod(m: String)   { _method.value = m }
+    fun setQuery(q: String) {
+        _query.value = q
+    }
+
+    fun setFilterPaid(v: Boolean?) {
+        _paid.value = v
+    }
+
+    fun setMethod(m: String) {
+        _method.value = m
+    }
 }
 
 // ── Screen ────────────────────────────────────────────────────────
@@ -117,17 +133,21 @@ fun DayTransactionsScreen(
 
     if (showFilterSheet) {
         FilterBottomSheet(
-            state            = state,
-            onDismiss        = { showFilterSheet = false },
-            onSetPaid        = viewModel::setFilterPaid,
-            onSetMethod      = viewModel::setMethod
+            state = state,
+            onDismiss = { showFilterSheet = false },
+            onSetPaid = viewModel::setFilterPaid,
+            onSetMethod = viewModel::setMethod
         )
     }
 
     Scaffold(
         containerColor = appColors.screenBackground
     ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = padding.calculateBottomPadding())
+        ) {
 
             // ── Gradient Header ──────────────────────────────────
             Box(
@@ -142,19 +162,26 @@ fun DayTransactionsScreen(
                             Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("عمليات اليوم", fontWeight = FontWeight.Bold,
-                                color = Color.White, style = MaterialTheme.typography.headlineSmall)
-                            Text(dateLabel, color = Color.White.copy(0.75f),
-                                style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                "عمليات اليوم", fontWeight = FontWeight.Bold,
+                                color = Color.White, style = MaterialTheme.typography.headlineSmall
+                            )
+                            Text(
+                                dateLabel, color = Color.White.copy(0.75f),
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
                         // Filter button with badge
-                        val hasFilter = state.filterPaid != null || state.filterPaymentMethod.isNotEmpty()
+                        val hasFilter =
+                            state.filterPaid != null || state.filterPaymentMethod.isNotEmpty()
                         BadgedBox(badge = {
                             if (hasFilter) Badge(containerColor = Color(0xFFF59E0B))
                         }) {
                             IconButton(
                                 onClick = { showFilterSheet = true },
-                                modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(0.15f))
                             ) {
                                 Icon(Icons.Rounded.Tune, null, tint = Color.White)
                             }
@@ -167,8 +194,19 @@ fun DayTransactionsScreen(
                     OutlinedTextField(
                         value = state.query,
                         onValueChange = viewModel::setQuery,
-                        placeholder = { Text("بحث بالاسم أو رقم الهاتف...", color = Color.White.copy(0.5f)) },
-                        leadingIcon = { Icon(Icons.Rounded.Search, null, tint = Color.White.copy(0.7f)) },
+                        placeholder = {
+                            Text(
+                                "بحث بالاسم أو رقم الهاتف...",
+                                color = Color.White.copy(0.5f)
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Rounded.Search,
+                                null,
+                                tint = Color.White.copy(0.7f)
+                            )
+                        },
                         trailingIcon = {
                             AnimatedVisibility(state.query.isNotEmpty()) {
                                 IconButton(onClick = { viewModel.setQuery("") }) {
@@ -200,7 +238,7 @@ fun DayTransactionsScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 SummaryChip(Modifier.weight(1f), "الإجمالي", state.totalAmount, Violet500)
-                SummaryChip(Modifier.weight(1f), "مدفوع",   state.paidAmount,   PaidGreen)
+                SummaryChip(Modifier.weight(1f), "مدفوع", state.paidAmount, PaidGreen)
                 SummaryChip(Modifier.weight(1f), "غير مدفوع", state.unpaidAmount, DebtRed)
             }
 
@@ -214,28 +252,40 @@ fun DayTransactionsScreen(
                     loading -> Box(Modifier.fillMaxSize(), Alignment.Center) {
                         CircularProgressIndicator(color = Violet500)
                     }
+
                     empty -> Box(Modifier.fillMaxSize(), Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Rounded.SearchOff, null,
-                                modifier = Modifier.size(56.dp), tint = appColors.divider)
+                            Icon(
+                                Icons.Rounded.SearchOff, null,
+                                modifier = Modifier.size(56.dp), tint = appColors.divider
+                            )
                             Spacer(Modifier.height(8.dp))
-                            Text(if (state.query.isNotEmpty()) "لا توجد نتائج للبحث"
-                                 else "لا توجد عمليات في هذا اليوم",
-                                color = appColors.textSubtle, textAlign = TextAlign.Center)
+                            Text(
+                                if (state.query.isNotEmpty()) "لا توجد نتائج للبحث"
+                                else "لا توجد عمليات في هذا اليوم",
+                                color = appColors.textSubtle, textAlign = TextAlign.Center
+                            )
                         }
                     }
+
                     else -> LazyColumn(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         item {
-                            Text("${state.filtered.size} عملية",
+                            Text(
+                                "${state.filtered.size} عملية",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = appColors.textSubtle,
-                                modifier = Modifier.padding(bottom = 4.dp))
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
                         }
                         itemsIndexed(state.filtered, key = { _, t -> t.id }) { index, tx ->
-                            val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                            val visible = remember {
+                                MutableTransitionState(false).apply {
+                                    targetState = true
+                                }
+                            }
                             AnimatedVisibility(
                                 visibleState = visible,
                                 enter = slideInVertically(
@@ -256,7 +306,11 @@ fun DayTransactionsScreen(
 
 @Composable
 private fun SummaryChip(modifier: Modifier, label: String, value: Double, color: Color) {
-    val animated by animateFloatAsState(value.toFloat(), spring(Spring.DampingRatioMediumBouncy), label = "v")
+    val animated by animateFloatAsState(
+        value.toFloat(),
+        spring(Spring.DampingRatioMediumBouncy),
+        label = "v"
+    )
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(label, style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
         Spacer(Modifier.height(2.dp))
@@ -272,8 +326,8 @@ private fun SummaryChip(modifier: Modifier, label: String, value: Double, color:
 @Composable
 private fun DayTxCard(tx: Transaction, onClick: () -> Unit) {
     val initial = tx.customerName.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
-    val colors  = listOf(Violet500, Emerald500, Cyan500, UnpaidAmber, DebtRed)
-    val bg      = colors[tx.customerName.length % colors.size]
+    val colors = listOf(Violet500, Emerald500, Cyan500, UnpaidAmber, DebtRed)
+    val bg = colors[tx.customerName.length % colors.size]
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -283,27 +337,40 @@ private fun DayTxCard(tx: Transaction, onClick: () -> Unit) {
     ) {
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                modifier = Modifier.size(44.dp).clip(CircleShape).background(bg.copy(0.12f)),
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(bg.copy(0.12f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(initial, color = bg, fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleSmall)
+                Text(
+                    initial, color = bg, fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleSmall
+                )
             }
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(tx.customerName, fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    tx.customerName, fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyMedium
+                )
                 if (tx.paymentMethodName.isNotEmpty())
-                    Text(tx.paymentMethodName, style = MaterialTheme.typography.bodySmall,
-                        color = appColors.textSubtle)
+                    Text(
+                        tx.paymentMethodName, style = MaterialTheme.typography.bodySmall,
+                        color = appColors.textSubtle
+                    )
                 if (tx.note.isNotEmpty())
-                    Text(tx.note, style = MaterialTheme.typography.labelSmall,
-                        color = appColors.textSubtle, maxLines = 1)
+                    Text(
+                        tx.note, style = MaterialTheme.typography.labelSmall,
+                        color = appColors.textSubtle, maxLines = 1
+                    )
             }
             Column(horizontalAlignment = Alignment.End) {
-                Text("₪${String.format("%,.0f", tx.amount)}",
+                Text(
+                    "₪${String.format("%,.0f", tx.amount)}",
                     style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
-                    color = if (tx.isPaid) PaidGreen else appColors.textPrimary)
+                    color = if (tx.isPaid) PaidGreen else appColors.textPrimary
+                )
                 Spacer(Modifier.height(4.dp))
                 StatusChip(isPaid = tx.isPaid)
             }
@@ -333,18 +400,28 @@ private fun FilterBottomSheet(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
-                Text("الفلاتر", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(
+                    "الفلاتر",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
                 if (state.filterPaid != null || state.filterPaymentMethod.isNotEmpty()) {
                     TextButton(onClick = { onSetPaid(null); onSetMethod("") }) {
-                        Text("مسح الكل", color = DebtRed, style = MaterialTheme.typography.labelLarge)
+                        Text(
+                            "مسح الكل",
+                            color = DebtRed,
+                            style = MaterialTheme.typography.labelLarge
+                        )
                     }
                 }
             }
 
             // Paid filter
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("حالة الدفع", style = MaterialTheme.typography.labelLarge,
-                    color = appColors.textSecondary, fontWeight = FontWeight.SemiBold)
+                Text(
+                    "حالة الدفع", style = MaterialTheme.typography.labelLarge,
+                    color = appColors.textSecondary, fontWeight = FontWeight.SemiBold
+                )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf(null to "الكل", true to "مدفوع", false to "غير مدفوع")
                         .forEach { (value, label) ->
@@ -352,23 +429,30 @@ private fun FilterBottomSheet(
                             FilterChip(
                                 selected = sel,
                                 onClick = { onSetPaid(value) },
-                                label = { Text(label, fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal) },
+                                label = {
+                                    Text(
+                                        label,
+                                        fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = if (value == true) PaidGreen.copy(0.15f)
-                                                            else if (value == false) DebtRed.copy(0.15f)
-                                                            else Violet500.copy(0.12f),
+                                    else if (value == false) DebtRed.copy(0.15f)
+                                    else Violet500.copy(0.12f),
                                     selectedLabelColor = if (value == true) PaidGreen
-                                                        else if (value == false) DebtRed
-                                                        else Violet500,
+                                    else if (value == false) DebtRed
+                                    else Violet500,
                                     containerColor = appColors.cardBackgroundVariant,
                                     labelColor = appColors.textSecondary
                                 ),
                                 leadingIcon = if (sel) ({
-                                    Icon(Icons.Rounded.Check, null,
+                                    Icon(
+                                        Icons.Rounded.Check, null,
                                         modifier = Modifier.size(14.dp),
                                         tint = if (value == true) PaidGreen
-                                               else if (value == false) DebtRed
-                                               else Violet500)
+                                        else if (value == false) DebtRed
+                                        else Violet500
+                                    )
                                 }) else null
                             )
                         }
@@ -378,18 +462,24 @@ private fun FilterBottomSheet(
             // Payment method filter
             if (state.paymentMethods.isNotEmpty()) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("طريقة الدفع", style = MaterialTheme.typography.labelLarge,
-                        color = appColors.textSecondary, fontWeight = FontWeight.SemiBold)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.horizontalScroll(
-                        rememberScrollState())) {
+                    Text(
+                        "طريقة الدفع", style = MaterialTheme.typography.labelLarge,
+                        color = appColors.textSecondary, fontWeight = FontWeight.SemiBold
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.horizontalScroll(
+                            rememberScrollState()
+                        )
+                    ) {
                         // All
                         FilterChip(
                             selected = state.filterPaymentMethod.isEmpty(),
-                            onClick  = { onSetMethod("") },
-                            label    = { Text("الكل") },
-                            colors   = FilterChipDefaults.filterChipColors(
+                            onClick = { onSetMethod("") },
+                            label = { Text("الكل") },
+                            colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = Cyan500.copy(0.12f),
-                                selectedLabelColor     = Cyan500,
+                                selectedLabelColor = Cyan500,
                                 containerColor = appColors.cardBackgroundVariant
                             )
                         )
@@ -397,11 +487,16 @@ private fun FilterBottomSheet(
                             val sel = state.filterPaymentMethod == method
                             FilterChip(
                                 selected = sel,
-                                onClick  = { onSetMethod(method) },
-                                label    = { Text(method, fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal) },
-                                colors   = FilterChipDefaults.filterChipColors(
+                                onClick = { onSetMethod(method) },
+                                label = {
+                                    Text(
+                                        method,
+                                        fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = Cyan500.copy(0.12f),
-                                    selectedLabelColor     = Cyan500,
+                                    selectedLabelColor = Cyan500,
                                     containerColor = appColors.cardBackgroundVariant
                                 )
                             )
@@ -412,7 +507,9 @@ private fun FilterBottomSheet(
 
             Button(
                 onClick = onDismiss,
-                modifier = Modifier.fillMaxWidth().height(52.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Violet500)
             ) { Text("تطبيق", fontWeight = FontWeight.Bold) }

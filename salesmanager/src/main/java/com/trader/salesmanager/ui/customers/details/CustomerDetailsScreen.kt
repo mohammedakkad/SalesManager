@@ -43,8 +43,8 @@ fun CustomerDetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val name    = uiState.customer?.name ?: ""
-    val phone   = uiState.customer?.phone ?: ""
+    val name = uiState.customer?.name ?: ""
+    val phone = uiState.customer?.phone ?: ""
     val initial = name.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
 
     // clean phone: keep digits only, strip leading 0
@@ -61,7 +61,9 @@ fun CustomerDetailsScreen(
         }
     ) { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = padding.calculateBottomPadding()),
             contentPadding = PaddingValues(bottom = 80.dp)
         ) {
             item {
@@ -86,18 +88,42 @@ fun CustomerDetailsScreen(
                             }
                         }
                         Spacer(Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
                             Box(
-                                modifier = Modifier.size(64.dp).clip(CircleShape).background(Color.White.copy(0.2f)),
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(0.2f)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(initial, color = Color.White, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                                Text(
+                                    initial,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                             Column {
-                                Text(name, color = Color.White, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                                Text("${uiState.transactions.size} عملية", color = Color.White.copy(0.7f), style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    name,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    "${uiState.transactions.size} عملية",
+                                    color = Color.White.copy(0.7f),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                                 if (phone.isNotEmpty())
-                                    Text(phone, color = Color.White.copy(0.8f), style = MaterialTheme.typography.bodySmall)
+                                    Text(
+                                        phone,
+                                        color = Color.White.copy(0.8f),
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
                             }
                         }
                     }
@@ -118,23 +144,31 @@ fun CustomerDetailsScreen(
                         // Direct call — no prefix, uses raw number
                         Button(
                             onClick = {
-                                val intent = Intent(Intent.ACTION_DIAL,
-                                    Uri.parse("tel:$phone"))
+                                val intent = Intent(
+                                    Intent.ACTION_DIAL,
+                                    Uri.parse("tel:$phone")
+                                )
                                 context.startActivity(intent)
                             },
-                            modifier = Modifier.weight(1f).height(48.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFF1A73E8)
                             )
                         ) {
-                            Icon(Icons.Rounded.Call, null,
-                                tint = Color.White, modifier = Modifier.size(18.dp))
+                            Icon(
+                                Icons.Rounded.Call, null,
+                                tint = Color.White, modifier = Modifier.size(18.dp)
+                            )
                             Spacer(Modifier.width(6.dp))
-                            Text("اتصال مباشر",
+                            Text(
+                                "اتصال مباشر",
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.labelLarge)
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
                     }
 
@@ -142,7 +176,9 @@ fun CustomerDetailsScreen(
 
                     // ── WhatsApp buttons ─────────────────────────
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         WhatsAppButton(
@@ -169,17 +205,30 @@ fun CustomerDetailsScreen(
                 // ── Debt Card ────────────────────────────────────
                 Spacer(Modifier.height(16.dp))
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     shape = RoundedCornerShape(20.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = if (uiState.totalDebt > 0) DebtRed.copy(0.08f) else PaidGreen.copy(0.08f)
+                        containerColor = if (uiState.totalDebt > 0) DebtRed.copy(0.08f) else PaidGreen.copy(
+                            0.08f
+                        )
                     ),
                     elevation = CardDefaults.cardElevation(0.dp)
                 ) {
-                    Row(modifier = Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.padding(20.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(
-                            modifier = Modifier.size(56.dp).clip(CircleShape)
-                                .background(if (uiState.totalDebt > 0) DebtRed.copy(0.15f) else PaidGreen.copy(0.15f)),
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (uiState.totalDebt > 0) DebtRed.copy(0.15f) else PaidGreen.copy(
+                                        0.15f
+                                    )
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -205,25 +254,37 @@ fun CustomerDetailsScreen(
                     }
                 }
                 Spacer(Modifier.height(20.dp))
-                Text("العمليات", style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp))
+                Text(
+                    "العمليات", style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold, modifier = Modifier.padding(horizontal = 16.dp)
+                )
                 Spacer(Modifier.height(10.dp))
             }
 
             itemsIndexed(uiState.transactions, key = { _, t -> t.id }) { index, tx ->
-                val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                val visible =
+                    remember { MutableTransitionState(false).apply { targetState = true } }
                 AnimatedVisibility(
                     visibleState = visible,
-                    enter = slideInVertically(initialOffsetY = { it / 2 }, animationSpec = tween(250, delayMillis = index * 40)) + fadeIn()
+                    enter = slideInVertically(
+                        initialOffsetY = { it / 2 },
+                        animationSpec = tween(250, delayMillis = index * 40)
+                    ) + fadeIn()
                 ) {
-                    TxMiniCard(tx = tx, onClick = { onTransactionClick(tx.id) },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+                    TxMiniCard(
+                        tx = tx, onClick = { onTransactionClick(tx.id) },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
                 }
             }
 
             if (uiState.transactions.isEmpty() && !uiState.isLoading) {
                 item {
-                    EmptyState(icon = Icons.Rounded.Receipt, title = "لا توجد عمليات", subtitle = "اضغط + لإضافة أول عملية")
+                    EmptyState(
+                        icon = Icons.Rounded.Receipt,
+                        title = "لا توجد عمليات",
+                        subtitle = "اضغط + لإضافة أول عملية"
+                    )
                 }
             }
         }
@@ -246,16 +307,30 @@ private fun WhatsAppButton(label: String, modifier: Modifier = Modifier, onClick
 
 @Composable
 private fun TxMiniCard(tx: Transaction, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Card(modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), onClick = onClick,
-        elevation = CardDefaults.cardElevation(1.dp)) {
+    Card(
+        modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), onClick = onClick,
+        elevation = CardDefaults.cardElevation(1.dp)
+    ) {
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(tx.date.toDateString(), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    tx.date.toDateString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 if (tx.paymentMethodName.isNotEmpty())
-                    Text(tx.paymentMethodName, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        tx.paymentMethodName,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
             }
             Spacer(Modifier.width(12.dp))
-            Text(String.format("%.2f", tx.amount), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            Text(
+                String.format("%.2f", tx.amount),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(Modifier.width(8.dp))
             StatusChip(isPaid = tx.isPaid)
         }

@@ -67,44 +67,50 @@ fun HomeScreen(
                 shape = RoundedCornerShape(16.dp)
             )
         }
-    ) {
-        padding ->
+    ) { padding ->
         Column(
             modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)
-            .verticalScroll(scrollState)
+                .fillMaxSize()
+                .padding(bottom = padding.calculateBottomPadding())
+                .verticalScroll(scrollState)
         ) {
             // ── Header + Stats Card ──────────────────────────────
             Box(modifier = Modifier.fillMaxWidth()) {
                 Box(
                     modifier = Modifier
-                    .fillMaxWidth()
-                    .height(HEADER_CONTENT_HEIGHT + OVERLAP)
-                    .background(
-                        Brush.linearGradient(
-                            listOf(Emerald700, Cyan500),
-                            start = androidx.compose.ui.geometry.Offset(0f, 0f),
-                            end = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+                        .fillMaxWidth()
+                        .height(HEADER_CONTENT_HEIGHT + OVERLAP)
+                        .background(
+                            Brush.linearGradient(
+                                listOf(Emerald700, Cyan500),
+                                start = androidx.compose.ui.geometry.Offset(0f, 0f),
+                                end = androidx.compose.ui.geometry.Offset(
+                                    Float.POSITIVE_INFINITY,
+                                    Float.POSITIVE_INFINITY
+                                )
+                            )
                         )
-                    )
                 )
                 Column {
                     Row(
                         modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 48.dp, start = 20.dp, end = 20.dp),
+                            .fillMaxWidth()
+                            .padding(top = 48.dp, start = 20.dp, end = 20.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("مرحباً 👋",
+                            Text(
+                                "مرحباً 👋",
                                 color = Color.White.copy(0.8f),
-                                style = MaterialTheme.typography.bodyLarge)
-                            Text("مدير المبيعات",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Text(
+                                "مدير المبيعات",
                                 color = Color.White,
                                 style = MaterialTheme.typography.headlineLarge,
-                                fontWeight = FontWeight.Bold)
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             // ── زر الشات مع Badge ────────────────
@@ -112,8 +118,8 @@ fun HomeScreen(
                                 IconButton(
                                     onClick = onNavigateToChat,
                                     modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(0.2f))
+                                        .clip(CircleShape)
+                                        .background(Color.White.copy(0.2f))
                                 ) {
                                     Icon(Icons.Rounded.Forum, null, tint = Color.White)
                                 }
@@ -131,12 +137,12 @@ fun HomeScreen(
                                     }
                                     Box(
                                         modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .offset(x = 4.dp, y = (-4).dp)
-                                        .height(18.dp)
-                                        .width(badgeWidth)
-                                        .clip(RoundedCornerShape(50))
-                                        .background(Color(0xFFEF4444)),
+                                            .align(Alignment.TopEnd)
+                                            .offset(x = 4.dp, y = (-4).dp)
+                                            .height(18.dp)
+                                            .width(badgeWidth)
+                                            .clip(RoundedCornerShape(50))
+                                            .background(Color(0xFFEF4444)),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
@@ -154,8 +160,8 @@ fun HomeScreen(
                             IconButton(
                                 onClick = onNavigateToSettings,
                                 modifier = Modifier
-                                .clip(CircleShape)
-                                .background(Color.White.copy(0.2f))
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(0.2f))
                             ) {
                                 Icon(Icons.Rounded.Settings, null, tint = Color.White)
                             }
@@ -167,18 +173,20 @@ fun HomeScreen(
                     // ── Stats Card ───────────────────────────────
                     Card(
                         modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .offset(y = OVERLAP / 2)
-                        .shadow(12.dp, RoundedCornerShape(24.dp)),
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .offset(y = OVERLAP / 2)
+                            .shadow(12.dp, RoundedCornerShape(24.dp)),
                         shape = RoundedCornerShape(24.dp),
                         elevation = CardDefaults.cardElevation(0.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Column(modifier = Modifier.padding(20.dp)) {
-                            Text("إجمالي اليوم",
+                            Text(
+                                "إجمالي اليوم",
                                 style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                             Spacer(Modifier.height(4.dp))
                             AnimatedCounter(
                                 value = uiState.todayTotal,
@@ -190,8 +198,16 @@ fun HomeScreen(
                             Spacer(Modifier.height(16.dp))
                             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                 MiniStat(Modifier.weight(1f), "مدفوع", uiState.todayPaid, PaidGreen)
-                                VerticalDivider(Modifier.height(40.dp), color = MaterialTheme.colorScheme.outline.copy(0.3f))
-                                MiniStat(Modifier.weight(1f), "غير مدفوع", uiState.todayUnpaid, UnpaidAmber)
+                                VerticalDivider(
+                                    Modifier.height(40.dp),
+                                    color = MaterialTheme.colorScheme.outline.copy(0.3f)
+                                )
+                                MiniStat(
+                                    Modifier.weight(1f),
+                                    "غير مدفوع",
+                                    uiState.todayUnpaid,
+                                    UnpaidAmber
+                                )
                             }
                         }
                     }
@@ -203,10 +219,12 @@ fun HomeScreen(
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
 
                 // ── Quick Nav ────────────────────────────────────
-                Text("القوائم",
+                Text(
+                    "القوائم",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 12.dp))
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
 
                 val navItems = listOf(
                     NavItem("الزبائن", Icons.Rounded.People, Emerald500, onNavigateToCustomers),
@@ -216,8 +234,7 @@ fun HomeScreen(
                     NavItem("المخزن", Icons.Rounded.Inventory2, Cyan500, onNavigateToInventory),
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    navItems.chunked(2).forEach {
-                        row ->
+                    navItems.chunked(2).forEach { row ->
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             row.forEach {
                                 NavCard(Modifier.weight(1f), it)
@@ -235,18 +252,21 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("آخر العمليات",
+                        Text(
+                            "آخر العمليات",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold)
+                            fontWeight = FontWeight.Bold
+                        )
                         TextButton(onClick = onNavigateToTransactions) {
-                            Text("عرض الكل", color = Emerald500,
-                                style = MaterialTheme.typography.labelMedium)
+                            Text(
+                                "عرض الكل", color = Emerald500,
+                                style = MaterialTheme.typography.labelMedium
+                            )
                         }
                     }
                     Spacer(Modifier.height(8.dp))
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        uiState.recentTransactions.forEachIndexed {
-                            index, tx ->
+                        uiState.recentTransactions.forEachIndexed { index, tx ->
                             RecentTransactionCard(
                                 tx = tx,
                                 index = index,
@@ -293,9 +313,9 @@ private fun RecentTransactionCard(tx: Transaction, index: Int, onClick: () -> Un
                 // أيقونة الحالة
                 Box(
                     modifier = Modifier
-                    .size(42.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(if (tx.isPaid) PaidGreen.copy(0.12f) else UnpaidAmber.copy(0.12f)),
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (tx.isPaid) PaidGreen.copy(0.12f) else UnpaidAmber.copy(0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -354,14 +374,21 @@ private fun RecentTransactionCard(tx: Transaction, index: Int, onClick: () -> Un
 @Composable
 private fun MiniStat(modifier: Modifier, label: String, value: Double, color: Color) {
     Column(modifier = modifier) {
-        Text(label, style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            label, style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Spacer(Modifier.height(2.dp))
         AnimatedCounter(value = value, style = MaterialTheme.typography.titleMedium, color = color)
     }
 }
 
-private data class NavItem(val label: String, val icon: ImageVector, val color: Color, val onClick: () -> Unit)
+private data class NavItem(
+    val label: String,
+    val icon: ImageVector,
+    val color: Color,
+    val onClick: () -> Unit
+)
 
 @Composable
 private fun NavCard(modifier: Modifier, item: NavItem) {
@@ -375,16 +402,27 @@ private fun NavCard(modifier: Modifier, item: NavItem) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Box(
-                modifier = Modifier.size(44.dp).clip(RoundedCornerShape(12.dp))
-                .background(item.color.copy(0.15f)),
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(item.color.copy(0.15f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(item.icon, null, tint = item.color, modifier = Modifier.size(22.dp))
             }
             Spacer(Modifier.height(12.dp))
-            Text(item.label, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+            Text(
+                item.label,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
             Spacer(Modifier.height(2.dp))
-            Icon(Icons.Default.ArrowForward, null, tint = item.color, modifier = Modifier.size(14.dp))
+            Icon(
+                Icons.Default.ArrowForward,
+                null,
+                tint = item.color,
+                modifier = Modifier.size(14.dp)
+            )
         }
     }
 }

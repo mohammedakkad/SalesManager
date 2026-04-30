@@ -37,8 +37,7 @@ fun CustomersScreen(
     val deleteConfirm by viewModel.deleteConfirm.collectAsState()
 
     // ✅ dialog حذف ذكي — يعرض عدد العمليات المرتبطة
-    deleteConfirm?.let {
-        state ->
+    deleteConfirm?.let { state ->
         AlertDialog(
             onDismissRequest = viewModel::dismissDelete,
             icon = {
@@ -60,8 +59,10 @@ fun CustomersScreen(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(Icons.Rounded.Warning, null,
-                                    tint = DebtRed, modifier = Modifier.size(20.dp))
+                                Icon(
+                                    Icons.Rounded.Warning, null,
+                                    tint = DebtRed, modifier = Modifier.size(20.dp)
+                                )
                                 Text(
                                     "يملك ${state.transactionCount} عملية مرتبطة",
                                     color = DebtRed,
@@ -108,15 +109,16 @@ fun CustomersScreen(
                 Icon(Icons.Rounded.PersonAdd, null)
             }
         }
-    ) {
-        padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+    ) { padding ->
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = padding.calculateBottomPadding())) {
             // ── Header ──────────────────────────────────────────
             Box(
                 modifier = Modifier
-                .fillMaxWidth()
-                .background(Brush.horizontalGradient(listOf(Emerald700, Cyan500)))
-                .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
+                    .background(Brush.horizontalGradient(listOf(Emerald700, Cyan500)))
+                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -125,10 +127,14 @@ fun CustomersScreen(
                         }
                         Spacer(Modifier.width(8.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("الزبائن", style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold, color = Color.White)
-                            Text("${uiState.customers.size} زبون", color = Color.White.copy(0.7f),
-                                style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                "الزبائن", style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold, color = Color.White
+                            )
+                            Text(
+                                "${uiState.customers.size} زبون", color = Color.White.copy(0.7f),
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
                         // ✅ badge المزامنة
                         androidx.compose.animation.AnimatedVisibility(uiState.pendingSyncCount > 0) {
@@ -171,8 +177,7 @@ fun CustomersScreen(
                     fadeIn() togetherWith fadeOut()
                 },
                 label = "content"
-            ) {
-                empty ->
+            ) { empty ->
                 if (empty) {
                     EmptyState(
                         icon = Icons.Rounded.People,
@@ -185,10 +190,9 @@ fun CustomersScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        itemsIndexed(uiState.customers, key = {
-                            _, c -> c.id
-                        }) {
-                            index, customer ->
+                        itemsIndexed(uiState.customers, key = { _, c ->
+                            c.id
+                        }) { index, customer ->
                             val visible = remember {
                                 MutableTransitionState(false).apply {
                                     targetState = true
@@ -237,12 +241,17 @@ private fun CustomerCard(customer: Customer, onClick: () -> Unit, onDelete: () -
         Row(modifier = Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .background(Brush.radialGradient(listOf(cardColor, cardColor.copy(0.7f)))),
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Brush.radialGradient(listOf(cardColor, cardColor.copy(0.7f)))),
                 contentAlignment = Alignment.Center
             ) {
-                Text(initial, color = Color.White, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(
+                    initial,
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
             }
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -295,8 +304,10 @@ private fun CustomerCard(customer: Customer, onClick: () -> Unit, onDelete: () -
                     Icon(Icons.Rounded.DeleteOutline, null, tint = DebtRed.copy(alpha = 0.7f))
                 }
             }
-            Icon(Icons.Rounded.ChevronRight, null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
+            Icon(
+                Icons.Rounded.ChevronRight, null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp)
+            )
         }
     }
 }

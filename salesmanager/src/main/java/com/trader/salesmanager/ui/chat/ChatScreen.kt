@@ -76,7 +76,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
         }
     ) {
         padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        Column(Modifier.fillMaxSize().padding(bottom = padding.calculateBottomPadding())) {
 
             // ── App Bar ───────────────────────────────────────────
             AnimatedContent(

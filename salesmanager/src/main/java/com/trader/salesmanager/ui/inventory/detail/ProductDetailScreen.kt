@@ -49,7 +49,8 @@ fun ProductDetailScreen(
             title = { Text("حذف الصنف", fontWeight = FontWeight.Bold) },
             text = { Text("سيتم حذف الصنف \"${state.product?.product?.name}\" وكل وحداته نهائياً.") },
             confirmButton = {
-                Button(onClick = { viewModel.deleteProduct { onNavigateUp() } },
+                Button(
+                    onClick = { viewModel.deleteProduct { onNavigateUp() } },
                     colors = ButtonDefaults.buttonColors(containerColor = DebtRed)
                 ) { Text("حذف") }
             },
@@ -120,12 +121,15 @@ fun ProductDetailScreen(
     val bgColors = listOf(Emerald500, Cyan500, Violet500, UnpaidAmber)
     val bg = bgColors[p.product.name.length % bgColors.size]
 
-    LazyColumn(Modifier.fillMaxSize().background(appColors.screenBackground)) {
+    LazyColumn(Modifier
+        .fillMaxSize()
+        .background(appColors.screenBackground)) {
 
         // ── Header ────────────────────────────────────────────────
         item {
             Box(
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .background(Brush.linearGradient(listOf(bg.copy(0.8f), bg)))
                     .padding(top = 48.dp, bottom = 24.dp, start = 16.dp, end = 16.dp)
             ) {
@@ -142,24 +146,38 @@ fun ProductDetailScreen(
                             Icon(Icons.Rounded.Delete, null, tint = Color.White.copy(0.8f))
                         }
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
                         Box(
-                            Modifier.size(64.dp).clip(RoundedCornerShape(16.dp))
+                            Modifier
+                                .size(64.dp)
+                                .clip(RoundedCornerShape(16.dp))
                                 .background(Color.White.copy(0.2f)),
                             contentAlignment = Alignment.Center
-                        ) { Text(initial, color = Color.White, fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.headlineMedium) }
+                        ) {
+                            Text(
+                                initial, color = Color.White, fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.headlineMedium
+                            )
+                        }
                         Column {
-                            Text(p.product.name, color = Color.White,
+                            Text(
+                                p.product.name, color = Color.White,
                                 style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold)
+                                fontWeight = FontWeight.Bold
+                            )
                             if (p.product.category.isNotEmpty())
-                                Text(p.product.category, color = Color.White.copy(0.75f),
-                                    style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                    p.product.category, color = Color.White.copy(0.75f),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             if (p.product.barcode != null)
-                                Text("⬛ ${p.product.barcode}", color = Color.White.copy(0.6f),
-                                    style = MaterialTheme.typography.labelMedium)
+                                Text(
+                                    "⬛ ${p.product.barcode}", color = Color.White.copy(0.6f),
+                                    style = MaterialTheme.typography.labelMedium
+                                )
                         }
                     }
                 }
@@ -168,16 +186,24 @@ fun ProductDetailScreen(
 
         // ── الوحدات ───────────────────────────────────────────────
         item {
-            Column(Modifier.fillMaxWidth().padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("الوحدات والمخزون", fontWeight = FontWeight.Bold,
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    "الوحدات والمخزون", fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleSmall,
-                    color = appColors.textSecondary)
+                    color = appColors.textSecondary
+                )
                 p.units.forEach { unit ->
                     UnitCard(
                         unit = unit,
                         isExpanded = expandedUnit == unit.id,
-                        onToggle = { expandedUnit = if (expandedUnit == unit.id) null else unit.id },
+                        onToggle = {
+                            expandedUnit = if (expandedUnit == unit.id) null else unit.id
+                        },
                         onAddStock = { viewModel.showAdjust(unit, true) },
                         onDeductStock = { viewModel.showAdjust(unit, false) },
                         movementsFlow = viewModel.getMovementsForUnit(unit.id)
@@ -202,7 +228,9 @@ private fun UnitCard(
     val movements by movementsFlow.collectAsState(initial = emptyList())
     val isLow = unit.quantityInStock > 0 && unit.quantityInStock <= unit.lowStockThreshold
     val isOut = unit.quantityInStock <= 0
-    val statusColor = when { isOut -> DebtRed; isLow -> UnpaidAmber; else -> PaidGreen }
+    val statusColor = when {
+        isOut -> DebtRed; isLow -> UnpaidAmber; else -> PaidGreen
+    }
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -212,11 +240,19 @@ private fun UnitCard(
         Column(Modifier.fillMaxWidth()) {
             // رأس الوحدة
             Row(
-                Modifier.fillMaxWidth().clickable(onClick = onToggle).padding(14.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onToggle)
+                    .padding(14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(Modifier.size(40.dp).clip(CircleShape).background(statusColor.copy(0.12f)),
-                    contentAlignment = Alignment.Center) {
+                Box(
+                    Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(statusColor.copy(0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
                     Icon(
                         when (unit.unitType) {
                             UnitType.PIECE -> Icons.Rounded.Category
@@ -228,31 +264,56 @@ private fun UnitCard(
                 }
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(unit.unitLabel, fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.bodyMedium)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            unit.unitLabel, fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                         if (unit.isDefault)
-                            Surface(shape = RoundedCornerShape(20.dp), color = Emerald500.copy(0.12f)) {
-                                Text("⭐", Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                    style = MaterialTheme.typography.labelSmall)
+                            Surface(
+                                shape = RoundedCornerShape(20.dp),
+                                color = Emerald500.copy(0.12f)
+                            ) {
+                                Text(
+                                    "⭐", Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
                             }
                     }
                     val qtyText = when (unit.unitType) {
                         UnitType.WEIGHT -> "${String.format("%.3f", unit.quantityInStock)} كجم"
                         else -> "${unit.quantityInStock.toInt()} ${unit.unitLabel}"
                     }
-                    Text(qtyText, color = statusColor, fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        qtyText, color = statusColor, fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                     if (unit.unitType == UnitType.CARTON && unit.itemsPerCarton != null)
-                        Text("${unit.itemsPerCarton} قطعة/كرتون", style = MaterialTheme.typography.labelSmall,
-                            color = appColors.textSubtle)
+                        Text(
+                            "${unit.itemsPerCarton} قطعة/كرتون",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = appColors.textSubtle
+                        )
                 }
                 Column(horizontalAlignment = Alignment.End) {
-                    Text("₪${String.format("%.2f", unit.price)}",
-                        fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                    Text("تنبيه < ${unit.lowStockThreshold.let { if (unit.unitType == UnitType.WEIGHT) String.format("%.1f", it) else it.toInt().toString() }}",
-                        style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
+                    Text(
+                        "₪${String.format("%.2f", unit.price)}",
+                        fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall
+                    )
+                    Text(
+                        "تنبيه < ${
+                            unit.lowStockThreshold.let {
+                                if (unit.unitType == UnitType.WEIGHT) String.format(
+                                    "%.1f",
+                                    it
+                                ) else it.toInt().toString()
+                            }
+                        }",
+                        style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle
+                    )
                 }
                 Icon(
                     if (isExpanded) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore,
@@ -265,8 +326,12 @@ private fun UnitCard(
                 Column {
                     HorizontalDivider(color = appColors.divider)
                     // أزرار التعديل
-                    Row(Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         OutlinedButton(
                             onClick = onAddStock, modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(10.dp),
@@ -274,7 +339,12 @@ private fun UnitCard(
                                 brush = androidx.compose.ui.graphics.SolidColor(PaidGreen)
                             )
                         ) {
-                            Icon(Icons.Rounded.Add, null, tint = PaidGreen, modifier = Modifier.size(16.dp))
+                            Icon(
+                                Icons.Rounded.Add,
+                                null,
+                                tint = PaidGreen,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Spacer(Modifier.width(4.dp))
                             Text("إضافة", color = PaidGreen)
                         }
@@ -285,7 +355,12 @@ private fun UnitCard(
                                 brush = androidx.compose.ui.graphics.SolidColor(DebtRed)
                             )
                         ) {
-                            Icon(Icons.Rounded.Remove, null, tint = DebtRed, modifier = Modifier.size(16.dp))
+                            Icon(
+                                Icons.Rounded.Remove,
+                                null,
+                                tint = DebtRed,
+                                modifier = Modifier.size(16.dp)
+                            )
                             Spacer(Modifier.width(4.dp))
                             Text("خصم", color = DebtRed)
                         }
@@ -294,20 +369,26 @@ private fun UnitCard(
                     // سجل الحركات
                     if (movements.isNotEmpty()) {
                         HorizontalDivider(color = appColors.divider)
-                        Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text("سجل الحركات", fontWeight = FontWeight.SemiBold,
+                        Column(
+                            Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                "سجل الحركات", fontWeight = FontWeight.SemiBold,
                                 style = MaterialTheme.typography.labelLarge,
-                                color = appColors.textSecondary)
+                                color = appColors.textSecondary
+                            )
                             movements.take(10).forEach { mov ->
                                 MovementRow(mov)
                             }
                             if (movements.size > 10) {
-                                Text("+ ${movements.size - 10} حركة أخرى",
+                                Text(
+                                    "+ ${movements.size - 10} حركة أخرى",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = appColors.textSubtle,
                                     modifier = Modifier.fillMaxWidth(),
-                                    textAlign = TextAlign.Center)
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
                     }
@@ -339,20 +420,37 @@ private fun MovementRow(mov: StockMovement) {
     val timeStr = fmt.format(Date(mov.createdAt))
 
     Row(
-        Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Box(Modifier.size(32.dp).clip(CircleShape).background(color.copy(0.1f)),
-            contentAlignment = Alignment.Center) {
+        Box(
+            Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(color.copy(0.1f)),
+            contentAlignment = Alignment.Center
+        ) {
             Icon(icon, null, tint = color, modifier = Modifier.size(16.dp))
         }
         Column(Modifier.weight(1f)) {
-            Text(typeLabel, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
+            Text(
+                typeLabel,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium
+            )
             if (mov.note.isNotEmpty())
-                Text(mov.note, style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
-            Text(timeStr, style = MaterialTheme.typography.labelSmall, color = appColors.divider,
-                fontSize = 10.sp)
+                Text(
+                    mov.note,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = appColors.textSubtle
+                )
+            Text(
+                timeStr, style = MaterialTheme.typography.labelSmall, color = appColors.divider,
+                fontSize = 10.sp
+            )
         }
         Column(horizontalAlignment = Alignment.End) {
             Text(
@@ -361,7 +459,12 @@ private fun MovementRow(mov: StockMovement) {
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "${String.format("%.2f", mov.quantityBefore)} → ${String.format("%.2f", mov.quantityAfter)}",
+                "${String.format("%.2f", mov.quantityBefore)} → ${
+                    String.format(
+                        "%.2f",
+                        mov.quantityAfter
+                    )
+                }",
                 style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle,
                 fontSize = 9.sp
             )

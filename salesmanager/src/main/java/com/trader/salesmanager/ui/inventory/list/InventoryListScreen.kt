@@ -52,8 +52,7 @@ fun InventoryListScreen(
     }
 
     // Dialog: باركود غير موجود
-    showNewProduct?.let {
-        barcode ->
+    showNewProduct?.let { barcode ->
         AlertDialog(
             onDismissRequest = {
                 showNewProduct = null
@@ -68,9 +67,10 @@ fun InventoryListScreen(
                 Text("الباركود \"$barcode\" غير موجود في المخزن.\nهل تريد إضافة صنف جديد بهذا الباركود؟")
             },
             confirmButton = {
-                Button(onClick = {
-                    showNewProduct = null; onAddProduct(barcode)
-                },
+                Button(
+                    onClick = {
+                        showNewProduct = null; onAddProduct(barcode)
+                    },
                     colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
                 ) {
                     Text("إضافة صنف")
@@ -89,13 +89,12 @@ fun InventoryListScreen(
 
     if (showScanner) {
         BarcodeScannerScreen(
-            onBarcodeDetected = {
-                barcode ->
+            onBarcodeDetected = { barcode ->
                 showScanner = false
                 viewModel.onBarcodeScanned(
                     barcode,
-                    onFound = {
-                        productId -> onProductClick(productId)
+                    onFound = { productId ->
+                        onProductClick(productId)
                     },
                     onNotFound = {
                         showNewProduct = barcode
@@ -150,28 +149,35 @@ fun InventoryListScreen(
                 }
             }
         }
-    ) {
-        padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+    ) { padding ->
+        Column(Modifier
+            .fillMaxSize()
+            .padding(bottom = padding.calculateBottomPadding())) {
 
             // ── Header ────────────────────────────────────────────
             Box(
-                Modifier.fillMaxWidth()
-                .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
-                .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+                Modifier
+                    .fillMaxWidth()
+                    .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
+                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
                             Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                         }
-                        Text("المخزن", fontWeight = FontWeight.Bold, color = Color.White,
+                        Text(
+                            "المخزن", fontWeight = FontWeight.Bold, color = Color.White,
                             style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier.weight(1f))
-                        IconButton(onClick = {
-                            showScanner = true
-                        },
-                            modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
+                            modifier = Modifier.weight(1f)
+                        )
+                        IconButton(
+                            onClick = {
+                                showScanner = true
+                            },
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(Color.White.copy(0.15f))
                         ) {
                             Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White)
                         }
@@ -222,22 +228,43 @@ fun InventoryListScreen(
 
             // ── إحصائيات سريعة ────────────────────────────────────
             Row(
-                Modifier.fillMaxWidth().background(appColors.cardBackground)
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .background(appColors.cardBackground)
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                StatChip(Modifier.weight(1f), "${state.totalProducts}", "صنف", Emerald500, Icons.Rounded.Inventory)
-                StatChip(Modifier.weight(1f), "${state.lowStockCount}", "نقص", UnpaidAmber, Icons.Rounded.Warning)
-                StatChip(Modifier.weight(1f), "${state.outOfStockCount}", "نفد", DebtRed, Icons.Rounded.RemoveShoppingCart)
+                StatChip(
+                    Modifier.weight(1f),
+                    "${state.totalProducts}",
+                    "صنف",
+                    Emerald500,
+                    Icons.Rounded.Inventory
+                )
+                StatChip(
+                    Modifier.weight(1f),
+                    "${state.lowStockCount}",
+                    "نقص",
+                    UnpaidAmber,
+                    Icons.Rounded.Warning
+                )
+                StatChip(
+                    Modifier.weight(1f),
+                    "${state.outOfStockCount}",
+                    "نفد",
+                    DebtRed,
+                    Icons.Rounded.RemoveShoppingCart
+                )
             }
 
             // ── فلاتر ─────────────────────────────────────────────
             Row(
-                Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                StockFilter.entries.forEach {
-                    f ->
+                StockFilter.entries.forEach { f ->
                     val label = when (f) {
                         StockFilter.ALL -> "الكل"
                         StockFilter.LOW -> "نقص"
@@ -250,7 +277,10 @@ fun InventoryListScreen(
                             viewModel.setFilter(f)
                         },
                         label = {
-                            Text(label, fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal)
+                            Text(
+                                label,
+                                fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal
+                            )
                         },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = when (f) {
@@ -276,36 +306,41 @@ fun InventoryListScreen(
                     fadeIn() togetherWith fadeOut()
                 },
                 label = "list"
-            ) {
-                (loading, empty) ->
+            ) { (loading, empty) ->
                 when {
                     loading -> Box(Modifier.fillMaxSize(), Alignment.Center) {
                         CircularProgressIndicator(color = Emerald500)
                     }
+
                     empty -> Box(Modifier.fillMaxSize(), Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(Icons.Rounded.Inventory2, null,
-                                Modifier.size(64.dp), tint = appColors.divider)
+                            Icon(
+                                Icons.Rounded.Inventory2, null,
+                                Modifier.size(64.dp), tint = appColors.divider
+                            )
                             Spacer(Modifier.height(12.dp))
                             Text(
                                 if (state.query.isNotEmpty()) "لا توجد نتائج" else "المخزن فارغ\nأضف أصنافك الآن",
                                 color = appColors.textSubtle, textAlign = TextAlign.Center
                             )
                         }
-                    } else -> LazyColumn(
+                    }
+
+                    else -> LazyColumn(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         item {
-                            Text("${state.filtered.size} صنف",
+                            Text(
+                                "${state.filtered.size} صنف",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = appColors.textSubtle,
-                                modifier = Modifier.padding(bottom = 4.dp))
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            )
                         }
                         items(state.filtered, key = {
                             it.product.id
-                        }) {
-                            item ->
+                        }) { item ->
                             ProductCard(item = item, onClick = {
                                 onProductClick(item.product.id)
                             })
@@ -329,8 +364,20 @@ private fun OfflineSyncBanner(isOnline: Boolean, pendingSyncCount: Int) {
         exit = shrinkVertically() + fadeOut()
     ) {
         val (bgColor, icon, message, color) = when {
-            !isOnline -> arrayOf(Color(0xFFEF4444).copy(0.15f), Icons.Rounded.WifiOff, "بدون إنترنت — بياناتك محفوظة محلياً", Color(0xFFEF4444))
-            pendingSyncCount > 0 -> arrayOf(UnpaidAmber.copy(0.15f), Icons.Rounded.Sync, "جارٍ مزامنة $pendingSyncCount صنف...", UnpaidAmber)
+            !isOnline -> arrayOf(
+                Color(0xFFEF4444).copy(0.15f),
+                Icons.Rounded.WifiOff,
+                "بدون إنترنت — بياناتك محفوظة محلياً",
+                Color(0xFFEF4444)
+            )
+
+            pendingSyncCount > 0 -> arrayOf(
+                UnpaidAmber.copy(0.15f),
+                Icons.Rounded.Sync,
+                "جارٍ مزامنة $pendingSyncCount صنف...",
+                UnpaidAmber
+            )
+
             else -> arrayOf(Color.Transparent, Icons.Rounded.Check, "", Color.Transparent)
         }
 
@@ -339,24 +386,47 @@ private fun OfflineSyncBanner(isOnline: Boolean, pendingSyncCount: Int) {
             animationSpec = infiniteRepeatable(tween(1200, easing = LinearEasing)), label = ""
         )
 
-        Surface(shape = RoundedCornerShape(10.dp), color = bgColor as Color, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
-            Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Surface(
+            shape = RoundedCornerShape(10.dp),
+            color = bgColor as Color,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
+            Row(
+                Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Icon(
-                    imageVector = icon as ImageVector, contentDescription = null, tint = color as Color,
+                    imageVector = icon as ImageVector,
+                    contentDescription = null,
+                    tint = color as Color,
                     modifier = Modifier.size(16.dp).let {
                         if (icon == Icons.Rounded.Sync) it.graphicsLayer {
                             rotationZ = rotation
                         } else it
                     }
                 )
-                Text(message as String, style = MaterialTheme.typography.labelSmall, color = color, fontWeight = FontWeight.SemiBold)
+                Text(
+                    message as String,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = color,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }
 }
 
 @Composable
-private fun StatChip(modifier: Modifier, value: String, label: String, color: Color, icon: ImageVector) {
+private fun StatChip(
+    modifier: Modifier,
+    value: String,
+    label: String,
+    color: Color,
+    icon: ImageVector
+) {
     Surface(modifier = modifier, shape = RoundedCornerShape(12.dp), color = color.copy(0.08f)) {
         Row(
             Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
@@ -365,10 +435,14 @@ private fun StatChip(modifier: Modifier, value: String, label: String, color: Co
         ) {
             Icon(icon, null, tint = color, modifier = Modifier.size(16.dp))
             Column {
-                Text(value, style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold, color = color)
-                Text(label, style = MaterialTheme.typography.labelSmall,
-                    color = color.copy(0.7f))
+                Text(
+                    value, style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold, color = color
+                )
+                Text(
+                    label, style = MaterialTheme.typography.labelSmall,
+                    color = color.copy(0.7f)
+                )
             }
         }
     }
@@ -397,68 +471,131 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
     val bg = bgColors[item.product.name.length % bgColors.size]
 
     Card(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
     ) {
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(48.dp).clip(RoundedCornerShape(12.dp)).background(bg.copy(0.12f)),
+                Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(bg.copy(0.12f)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(initial, color = bg, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    initial,
+                    color = bg,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(item.product.name, fontWeight = FontWeight.SemiBold,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        item.product.name, fontWeight = FontWeight.SemiBold,
                         style = MaterialTheme.typography.bodyMedium, maxLines = 1,
-                        overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, false))
+                        overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f, false)
+                    )
 
                     // ✅ مؤشر "محلي" (من النسخة الأولى)
                     if (isPending) {
-                        Surface(shape = RoundedCornerShape(20.dp), color = UnpaidAmber.copy(0.15f)) {
-                            Row(Modifier.padding(horizontal = 6.dp, vertical = 2.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-                                Icon(Icons.Rounded.CloudOff, null, modifier = Modifier.size(10.dp), tint = UnpaidAmber)
-                                Text("محلي", fontSize = 9.sp, color = UnpaidAmber, fontWeight = FontWeight.SemiBold)
+                        Surface(
+                            shape = RoundedCornerShape(20.dp),
+                            color = UnpaidAmber.copy(0.15f)
+                        ) {
+                            Row(
+                                Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(3.dp)
+                            ) {
+                                Icon(
+                                    Icons.Rounded.CloudOff,
+                                    null,
+                                    modifier = Modifier.size(10.dp),
+                                    tint = UnpaidAmber
+                                )
+                                Text(
+                                    "محلي",
+                                    fontSize = 9.sp,
+                                    color = UnpaidAmber,
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             }
                         }
                     }
                 }
 
                 if (item.product.category.isNotEmpty()) {
-                    Text(item.product.category, style = MaterialTheme.typography.bodySmall, color = appColors.textSubtle)
+                    Text(
+                        item.product.category,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = appColors.textSubtle
+                    )
                 }
                 Spacer(Modifier.height(6.dp))
 
                 // وحدات الصنف (تأخذ أول 3 فقط لمنع التكدس)
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    item.units.take(3).forEach {
-                        unit ->
+                    item.units.take(3).forEach { unit ->
                         val qty = unit.quantityInStock
                         val qtyText = if (unit.unitType == UnitType.WEIGHT)
                             "${String.format("%.2f", qty)} ${unit.unitLabel}"
                         else "${qty.toInt()} ${unit.unitLabel}"
                         Surface(shape = RoundedCornerShape(6.dp), color = appColors.divider) {
-                            Text(qtyText, Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelSmall, color = appColors.textSecondary)
+                            Text(
+                                qtyText,
+                                Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = appColors.textSecondary
+                            )
                         }
                     }
                 }
             }
-            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Surface(shape = RoundedCornerShape(20.dp), color = statusColor.copy(0.12f)) {
-                    Row(Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Box(Modifier.size(6.dp).clip(CircleShape).background(statusColor))
-                        Text(statusLabel, style = MaterialTheme.typography.labelSmall, color = statusColor, fontWeight = FontWeight.SemiBold)
+                    Row(
+                        Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Box(Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(statusColor))
+                        Text(
+                            statusLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = statusColor,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
-                item.defaultUnit?.let {
-                    unit ->
-                    Text("₪${String.format("%.2f", unit.price)}", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = appColors.textPrimary)
+                item.defaultUnit?.let { unit ->
+                    Text(
+                        "₪${String.format("%.2f", unit.price)}",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = appColors.textPrimary
+                    )
                 }
-                Icon(Icons.Rounded.ChevronRight, null, tint = appColors.divider, modifier = Modifier.size(18.dp))
+                Icon(
+                    Icons.Rounded.ChevronRight,
+                    null,
+                    tint = appColors.divider,
+                    modifier = Modifier.size(18.dp)
+                )
             }
         }
     }
