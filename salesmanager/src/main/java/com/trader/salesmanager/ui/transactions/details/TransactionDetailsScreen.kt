@@ -30,8 +30,8 @@ import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.InvoiceSharer
 import kotlinx.coroutines.flow.map
 import com.trader.salesmanager.util.export.ExportTarget
-import com.trader.salesmanager.ui.export.ExportViewModel
-import com.trader.salesmanager.ui.components.ExportActionButton
+import com.trader.salesmanager.util.export.ExportViewModel
+import com.trader.salesmanager.util.export.ExportActionButton
 
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf

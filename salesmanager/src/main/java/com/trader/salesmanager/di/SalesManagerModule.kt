@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
-import com.trader.salesmanager.util.ExportViewModel
+import com.trader.salesmanager.util.export.ExportViewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {
