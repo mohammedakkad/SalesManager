@@ -382,7 +382,7 @@ fun AppNavigation() {
                     // هذا هو السطر الذي يفتح شاشة المرتجعات
                     navController.navigate(Screen.ReturnProcess.createRoute(txId)
                     )
-                }
+                })
                 composable(Screen.Debts.route) {
                     DebtsScreen(
                         onNavigateUp = {
