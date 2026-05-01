@@ -19,9 +19,11 @@ import com.trader.core.domain.model.PaymentType
         StockMovementEntity::class,
         InvoiceItemEntity::class,
         InventorySessionEntity::class,
-        InventorySessionItemEntity::class
+        InventorySessionItemEntity::class,
+        ReturnInvoiceEntity::class,
+        ReturnItemEntity::class
     ],
-    version = 12,
+    version = 13,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,6 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun stockMovementDao(): StockMovementDao
     abstract fun invoiceItemDao(): InvoiceItemDao
     abstract fun inventoryDao(): InventoryDao
+    abstract fun returnDao(): ReturnDao
 
     companion object {
         const val DB_NAME = "sales_manager.db"
@@ -270,6 +273,48 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+
+        val MIGRATION_12_13 = object : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // جدول فواتير الإرجاع
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS return_invoices (
+                        id                    TEXT NOT NULL PRIMARY KEY,
+                        originalTransactionId INTEGER NOT NULL,
+                        merchantId            TEXT NOT NULL,
+                        returnType            TEXT NOT NULL DEFAULT 'FULL',
+                        totalRefund           REAL NOT NULL DEFAULT 0,
+                        note                  TEXT NOT NULL DEFAULT '',
+                        createdAt             INTEGER NOT NULL,
+                        syncStatus            TEXT NOT NULL DEFAULT 'PENDING'
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_return_invoices_originalTransactionId ON return_invoices(originalTransactionId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_return_invoices_merchantId ON return_invoices(merchantId)")
+
+                // جدول أصناف الإرجاع
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS return_items (
+                        id               TEXT NOT NULL PRIMARY KEY,
+                        returnInvoiceId  TEXT NOT NULL,
+                        productId        TEXT NOT NULL,
+                        productName      TEXT NOT NULL,
+                        unitId           TEXT NOT NULL,
+                        unitLabel        TEXT NOT NULL,
+                        originalQuantity REAL NOT NULL,
+                        returnedQuantity REAL NOT NULL,
+                        pricePerUnit     REAL NOT NULL,
+                        costPricePerUnit REAL NOT NULL DEFAULT 0,
+                        totalRefund      REAL NOT NULL DEFAULT 0,
+                        lostProfit       REAL NOT NULL DEFAULT 0,
+                        FOREIGN KEY (returnInvoiceId) REFERENCES return_invoices(id) ON DELETE CASCADE
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_return_items_returnInvoiceId ON return_items(returnInvoiceId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_return_items_productId ON return_items(productId)")
+            }
+        }
+
         val MIGRATION_11_12 = object : Migration(11, 12) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
@@ -283,7 +328,7 @@ abstract class AppDatabase : RoomDatabase() {
         Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
         .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8,
             MIGRATION_8_9, MIGRATION_9_10,
-            MIGRATION_10_11, MIGRATION_11_12)
+            MIGRATION_10_11, MIGRATION_11_12, MIGRATION_12_13)
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)

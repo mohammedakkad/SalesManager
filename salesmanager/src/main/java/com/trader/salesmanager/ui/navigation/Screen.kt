@@ -48,4 +48,8 @@ sealed class Screen(val route: String) {
             "invoice_items/${java.net.URLEncoder.encode(customerName, "UTF-8")}"
     }
     object StockReports     : Screen("stock_reports")
+    // ── مرتجعات ───────────────────────────────────────────────
+    object ReturnProcess    : Screen("return_process/{transactionId}") {
+        fun createRoute(transactionId: Long) = "return_process/$transactionId"
+    }
 }

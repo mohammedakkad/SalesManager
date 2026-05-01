@@ -27,6 +27,7 @@ import com.trader.salesmanager.ui.home.HomeScreen
 import com.trader.salesmanager.ui.payments.PaymentMethodsScreen
 import com.trader.salesmanager.ui.reports.ReportsScreen
 import com.trader.salesmanager.ui.reports.DayTransactionsScreen
+import com.trader.salesmanager.ui.returns.ReturnProcessScreen
 import com.trader.salesmanager.ui.inventory.list.InventoryListScreen
 import com.trader.salesmanager.ui.inventory.addedit.AddEditProductScreen
 import com.trader.salesmanager.ui.inventory.detail.ProductDetailScreen
@@ -547,6 +548,21 @@ fun AppNavigation() {
                     navController.previousBackStackEntry
                     ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
                     navController.navigateUp()
+                }
+            )
+        }
+    }
+
+        composable(
+            route = Screen.ReturnProcess.route,
+            arguments = listOf(navArgument("transactionId") { type = NavType.LongType })
+        ) { back ->
+            ReturnProcessScreen(
+                transactionId   = back.arguments!!.getLong("transactionId"),
+                onNavigateUp    = { navController.navigateUp() },
+                onReturnSuccess = {
+                    navController.popBackStack()
+                    navController.popBackStack() // يرجع لشاشة التفاصيل
                 }
             )
         }
