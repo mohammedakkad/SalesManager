@@ -577,5 +577,3 @@ fun AppNavigation() {
         }
     }
 }
-
-}
