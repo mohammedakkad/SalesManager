@@ -50,7 +50,7 @@ object ExportManager {
     // 1. PDF — فاتورة عملية واحدة
     // ══════════════════════════════════════════════════════════
     fun generateInvoicePdf(
-        context: Context,
+        cacheDir: File,
         transaction: Transaction,
         items: List<InvoiceItem>,
         storeName: String
@@ -141,7 +141,7 @@ object ExportManager {
         drawFooter(c, storeName)
 
         doc.finishPage(page)
-        val file = File(context.cacheDir, "invoice_${transaction.id}.pdf")
+        val file = File(cacheDir, "invoice_${transaction.id}.pdf")
         doc.writeTo(FileOutputStream(file))
         doc.close()
         return file
@@ -151,7 +151,7 @@ object ExportManager {
     // 2. PDF — كشف حساب عميل
     // ══════════════════════════════════════════════════════════
     fun generateCustomerStatementPdf(
-        context: Context,
+        cacheDir: File,
         customer: Customer,
         transactions: List<Transaction>,
         storeName: String
@@ -215,7 +215,7 @@ object ExportManager {
         drawFooter(c, storeName)
 
         doc.finishPage(page)
-        val file = File(context.cacheDir, "statement_${customer.id}.pdf")
+        val file = File(cacheDir, "statement_${customer.id}.pdf")
         doc.writeTo(FileOutputStream(file))
         doc.close()
         return file
@@ -225,7 +225,7 @@ object ExportManager {
     // 3. Excel — تقرير المبيعات
     // ══════════════════════════════════════════════════════════
     fun generateSalesReportExcel(
-        context: Context,
+        cacheDir: File,
         transactions: List<Transaction>,
         periodLabel: String,
         storeName: String,
@@ -318,7 +318,7 @@ object ExportManager {
             }
         }
 
-        val file = File(context.cacheDir, "sales_report_${System.currentTimeMillis()}.xlsx")
+        val file = File(cacheDir, "sales_report_${System.currentTimeMillis()}.xlsx")
         xlsx.write(file)
         return file
     }
@@ -327,7 +327,7 @@ object ExportManager {
     // 4. Excel — تقرير المخزون
     // ══════════════════════════════════════════════════════════
     fun generateInventoryExcel(
-        context: Context,
+        cacheDir: File,
         products: List<ProductWithUnits>,
         storeName: String
     ): File {
@@ -399,7 +399,7 @@ object ExportManager {
         xlsx.addRow("" to normalStyle, "أصناف نفدت" to redStyle, outCount to redStyle)
         xlsx.addRow("" to normalStyle, "أصناف منخفضة" to yellowStyle, lowCount to yellowStyle)
 
-        val file = File(context.cacheDir, "inventory_${System.currentTimeMillis()}.xlsx")
+        val file = File(cacheDir, "inventory_${System.currentTimeMillis()}.xlsx")
         xlsx.write(file)
         return file
     }
