@@ -376,199 +376,203 @@ fun AppNavigation() {
                 },
                 onEdit = {
                     navController.navigate(Screen.EditTransaction.createRoute(it))
-                }
-            )
-        }
-        composable(Screen.Debts.route) {
-            DebtsScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
                 },
-                onCustomerClick = {
-                    navController.navigate(Screen.CustomerDetails.createRoute(it))
+                onNavigateToReturn = {
+                    txId ->
+                    // هذا هو السطر الذي يفتح شاشة المرتجعات
+                    navController.navigate(Screen.ReturnProcess.createRoute(txId)
+                    )
                 }
-            )
-        }
-        composable(Screen.Reports.route) {
-            ReportsScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onViewDayTransactions = {
-                    dateMillis ->
-                    navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
+                composable(Screen.Debts.route) {
+                    DebtsScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onCustomerClick = {
+                            navController.navigate(Screen.CustomerDetails.createRoute(it))
+                        }
+                    )
                 }
-            )
-        }
-        composable(Screen.PaymentMethods.route) {
-            PaymentMethodsScreen(onNavigateUp = {
-                navController.navigateUp()
-            })
-        }
-        composable(Screen.Settings.route) {
-            SettingsScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onNavigateToPaymentMethods = {
-                    navController.navigate(Screen.PaymentMethods.route)
-                },
-                onNavigateToChat = {
-                    navController.navigate(Screen.Chat.route)
+                composable(Screen.Reports.route) {
+                    ReportsScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onViewDayTransactions = {
+                            dateMillis ->
+                            navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
+                        }
+                    )
                 }
-            )
-        }
-        composable(Screen.Chat.route) {
-            ChatScreen(onNavigateUp = {
-                navController.navigateUp()
-            })
-        }
-        composable(
-            Screen.DayTransactions.route,
-            listOf(navArgument("dateMillis") {
-                type = NavType.LongType
-            })
-        ) {
-            back ->
-            val dateMillis = back.arguments!!.getLong("dateMillis")
-            DayTransactionsScreen(
-                dateMillis = dateMillis,
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onTransactionClick = {
-                    id -> navController.navigate(Screen.TransactionDetails.createRoute(id))
+                composable(Screen.PaymentMethods.route) {
+                    PaymentMethodsScreen(onNavigateUp = {
+                        navController.navigateUp()
+                    })
                 }
-            )
-        }
-        // ── v2 — المخزن ──────────────────────────────────────────
-        composable(Screen.Inventory.route) {
-            InventoryListScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onProductClick = {
-                    id -> navController.navigate(Screen.ProductDetail.createRoute(id))
-                },
-                onAddProduct = {
-                    barcode -> navController.navigate(Screen.AddProduct.createRoute(barcode))
-                },
-                onInventorySession = {
-                    navController.navigate(Screen.InventorySession.route)
-                },
-                onStockReports = {
-                    navController.navigate(Screen.StockReports.route)
+                composable(Screen.Settings.route) {
+                    SettingsScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onNavigateToPaymentMethods = {
+                            navController.navigate(Screen.PaymentMethods.route)
+                        },
+                        onNavigateToChat = {
+                            navController.navigate(Screen.Chat.route)
+                        }
+                    )
                 }
-            )
-        }
-        composable(
-            Screen.AddProduct.route,
-            listOf(navArgument("barcode") {
-                type = NavType.StringType; defaultValue = ""
-            })
-        ) {
-            back ->
-            val barcode = back.arguments?.getString("barcode")?.ifEmpty {
-                null
-            }
-            AddEditProductScreen(
-                productId = null, initialBarcode = barcode,
-                onNavigateUp = {
-                    navController.navigateUp()
+                composable(Screen.Chat.route) {
+                    ChatScreen(onNavigateUp = {
+                        navController.navigateUp()
+                    })
                 }
-            )
-        }
-        composable(
-            Screen.EditProduct.route,
-            listOf(navArgument("productId") {
-                type = NavType.StringType
-            })
-        ) {
-            back ->
-            AddEditProductScreen(
-                productId = back.arguments!!.getString("productId"),
-                onNavigateUp = {
-                    navController.navigateUp()
+                composable(
+                    Screen.DayTransactions.route,
+                    listOf(navArgument("dateMillis") {
+                        type = NavType.LongType
+                    })
+                ) {
+                    back ->
+                    val dateMillis = back.arguments!!.getLong("dateMillis")
+                    DayTransactionsScreen(
+                        dateMillis = dateMillis,
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onTransactionClick = {
+                            id -> navController.navigate(Screen.TransactionDetails.createRoute(id))
+                        }
+                    )
                 }
-            )
-        }
-        composable(
-            Screen.ProductDetail.route,
-            listOf(navArgument("productId") {
-                type = NavType.StringType
-            })
-        ) {
-            back ->
-            val productId = back.arguments!!.getString("productId")!!
-            ProductDetailScreen(
-                productId = productId,
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onEdit = {
-                    id -> navController.navigate(Screen.EditProduct.createRoute(id))
+                // ── v2 — المخزن ──────────────────────────────────────────
+                composable(Screen.Inventory.route) {
+                    InventoryListScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onProductClick = {
+                            id -> navController.navigate(Screen.ProductDetail.createRoute(id))
+                        },
+                        onAddProduct = {
+                            barcode -> navController.navigate(Screen.AddProduct.createRoute(barcode))
+                        },
+                        onInventorySession = {
+                            navController.navigate(Screen.InventorySession.route)
+                        },
+                        onStockReports = {
+                            navController.navigate(Screen.StockReports.route)
+                        }
+                    )
                 }
-            )
-        }
-        composable(Screen.InventorySession.route) {
-            com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
+                composable(
+                    Screen.AddProduct.route,
+                    listOf(navArgument("barcode") {
+                        type = NavType.StringType; defaultValue = ""
+                    })
+                ) {
+                    back ->
+                    val barcode = back.arguments?.getString("barcode")?.ifEmpty {
+                        null
+                    }
+                    AddEditProductScreen(
+                        productId = null, initialBarcode = barcode,
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
                 }
-            )
-        }
-        composable(Screen.StockReports.route) {
-            StockReportsScreen(onNavigateUp = {
-                navController.navigateUp()
-            })
-        }
-        composable(
-            Screen.InvoiceItems.route,
-            listOf(navArgument("customerName") {
-                type = NavType.StringType
-            })
-        ) {
-            back ->
-            val customerName = back.arguments?.getString("customerName")
-            ?.let {
-                java.net.URLDecoder.decode(it, "UTF-8")
-            } ?: ""
-            val existingLinesJson = navController.previousBackStackEntry
-            ?.savedStateHandle?.get<String>("existing_lines_json")
-            InvoiceItemsScreen(
-                customerName = customerName,
-                existingLinesJson = existingLinesJson,
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onConfirm = {
-                    lines, total ->
-                    navController.previousBackStackEntry
-                    ?.savedStateHandle?.remove<String>("existing_lines_json")
-                    navController.previousBackStackEntry
-                    ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
-                    navController.navigateUp()
+                composable(
+                    Screen.EditProduct.route,
+                    listOf(navArgument("productId") {
+                        type = NavType.StringType
+                    })
+                ) {
+                    back ->
+                    AddEditProductScreen(
+                        productId = back.arguments!!.getString("productId"),
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
                 }
-            )
-        }
+                composable(
+                    Screen.ProductDetail.route,
+                    listOf(navArgument("productId") {
+                        type = NavType.StringType
+                    })
+                ) {
+                    back ->
+                    val productId = back.arguments!!.getString("productId")!!
+                    ProductDetailScreen(
+                        productId = productId,
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onEdit = {
+                            id -> navController.navigate(Screen.EditProduct.createRoute(id))
+                        }
+                    )
+                }
+                composable(Screen.InventorySession.route) {
+                    com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        }
+                    )
+                }
+                composable(Screen.StockReports.route) {
+                    StockReportsScreen(onNavigateUp = {
+                        navController.navigateUp()
+                    })
+                }
+                composable(
+                    Screen.InvoiceItems.route,
+                    listOf(navArgument("customerName") {
+                        type = NavType.StringType
+                    })
+                ) {
+                    back ->
+                    val customerName = back.arguments?.getString("customerName")
+                    ?.let {
+                        java.net.URLDecoder.decode(it, "UTF-8")
+                    } ?: ""
+                    val existingLinesJson = navController.previousBackStackEntry
+                    ?.savedStateHandle?.get<String>("existing_lines_json")
+                    InvoiceItemsScreen(
+                        customerName = customerName,
+                        existingLinesJson = existingLinesJson,
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onConfirm = {
+                            lines, total ->
+                            navController.previousBackStackEntry
+                            ?.savedStateHandle?.remove<String>("existing_lines_json")
+                            navController.previousBackStackEntry
+                            ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
+                            navController.navigateUp()
+                        }
+                    )
+                }
 
-        composable(
-            route = Screen.ReturnProcess.route,
-            arguments = listOf(navArgument("transactionId") {
-                type = NavType.LongType
-            })
-        ) {
-            back ->
-            ReturnProcessScreen(
-                transactionId = back.arguments!!.getLong("transactionId"),
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onReturnSuccess = {
-                    navController.popBackStack()
-                    navController.popBackStack() // يرجع لشاشة التفاصيل
+                composable(
+                    route = Screen.ReturnProcess.route,
+                    arguments = listOf(navArgument("transactionId") {
+                        type = NavType.LongType
+                    })
+                ) {
+                    back ->
+                    ReturnProcessScreen(
+                        transactionId = back.arguments!!.getLong("transactionId"),
+                        onNavigateUp = {
+                            navController.navigateUp()
+                        },
+                        onReturnSuccess = {
+                            navController.popBackStack()
+                            navController.popBackStack() // يرجع لشاشة التفاصيل
+                        }
+                    )
                 }
-            )
+            }
         }
-    }
-}
