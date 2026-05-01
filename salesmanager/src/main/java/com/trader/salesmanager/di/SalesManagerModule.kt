@@ -35,6 +35,7 @@ import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import com.trader.salesmanager.util.export.ExportViewModel
+import com.trader.salesmanager.ui.returns.ReturnViewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {
@@ -65,6 +66,9 @@ val salesManagerModule = module {
     }
     single {
         get<AppDatabase>().inventoryDao()
+    }
+    single {
+        get<AppDatabase>().returnDao()
     }
 
     // ── Remote ───────────────────────────────────────────────────
@@ -123,6 +127,9 @@ val salesManagerModule = module {
     }
     single<InventoryRepository> {
         InventoryRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+    }
+    single<ReturnRepository> {
+        ReturnRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
     }
 
     // ── ViewModels ───────────────────────────────────────────────
@@ -191,5 +198,8 @@ val salesManagerModule = module {
     }
     viewModel {
         StockReportsViewModel(get(), get())
+    }
+    viewModel {
+        ReturnViewModel(get(),get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
     }
 }

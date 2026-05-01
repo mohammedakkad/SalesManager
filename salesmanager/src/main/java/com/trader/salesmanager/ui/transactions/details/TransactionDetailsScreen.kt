@@ -42,6 +42,7 @@ fun TransactionDetailsScreen(
     transactionId: Long,
     onNavigateUp: () -> Unit,
     onEdit: (Long) -> Unit,
+    onNavigateToReturn: (Long) -> Unit,
     viewModel: TransactionDetailsViewModel = koinViewModel { parametersOf(transactionId) }
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -130,6 +131,22 @@ fun TransactionDetailsScreen(
                         Spacer(Modifier.weight(1f))
                         IconButton(
                             onClick = {
+                                // الربط البرمجي بالشاشة الجديدة
+                                onNavigateToReturn(transactionId)
+                            },
+                            modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(0.15f))
+                        ) {
+                            Icon(
+                                Icons.Rounded.AssignmentReturn, // أو Icons.Rounded.KeyboardReturn
+                                contentDescription = "مرتجع",
+                                tint = Color.White
+                            )
+                        }
+                        IconButton(
+                            onClick = {
                                 exportVm.exportInvoicePdf(
                                     transaction = t,
                                     items = uiState.invoiceItems,
@@ -141,7 +158,7 @@ fun TransactionDetailsScreen(
                         ) {
                             Icon(Icons.Rounded.PictureAsPdf, null, tint = Color.White)
                         }
-                     
+
                         IconButton(onClick = {
                             onEdit(transactionId)
                         }) {
