@@ -29,6 +29,12 @@ import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.components.*
 import com.trader.salesmanager.ui.theme.*
 import com.trader.core.util.DateUtils.toDateString
+import com.trader.salesmanager.util.export.ExportTarget
+import com.trader.salesmanager.util.export.ExportViewModel
+import com.trader.salesmanager.util.export.ExportActionButton
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -49,6 +55,14 @@ fun CustomerDetailsScreen(
 
     // clean phone: keep digits only, strip leading 0
     val rawPhone = phone.filter { it.isDigit() }.trimStart('0')
+    val storeName by context.appDataStore.data
+    .map {
+        it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+    }
+    .collectAsState(initial = "")
+    
+    val exportVm: ExportViewModel = koinViewModel()
+    val exportState by exportVm.state.collectAsState()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -198,6 +212,27 @@ fun CustomerDetailsScreen(
                             }
                         )
                     }
+                }
+            }
+            
+            item {
+                uiState.customer?.let { customer ->
+                    com.trader.salesmanager.util.export.ExportActionButton(
+                        target         = com.trader.salesmanager.util.export.ExportTarget.CUSTOMER_STATEMENT,
+                        state          = exportState,
+                        onExport       = {
+                            exportVm.exportCustomerStatementPdf(
+                                customer     = customer,
+                                transactions = uiState.transactions,
+                                storeName    = storeName,
+                                cacheDir     = context.cacheDir
+                            )
+                        },
+                        onDismissError = exportVm::dismissError,
+                        modifier       = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
                 }
             }
 

@@ -141,19 +141,7 @@ fun TransactionDetailsScreen(
                         ) {
                             Icon(Icons.Rounded.PictureAsPdf, null, tint = Color.White)
                         }
-                        IconButton(
-                            onClick = {
-                                InvoiceSharer.shareInvoice(
-                                    context = context,
-                                    transaction = t,
-                                    items = uiState.invoiceItems,
-                                    storeName = storeName
-                                )
-                            },
-                            modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                        ) {
-                            Icon(Icons.Rounded.Share, null, tint = Color.White)
-                        }
+                     
                         IconButton(onClick = {
                             onEdit(transactionId)
                         }) {

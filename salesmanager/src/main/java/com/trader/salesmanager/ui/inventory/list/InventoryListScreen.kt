@@ -31,6 +31,12 @@ import com.trader.core.domain.model.UnitType
 import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
+import com.trader.salesmanager.util.export.ExportTarget
+import com.trader.salesmanager.util.export.ExportViewModel
+import com.trader.salesmanager.util.export.ExportActionButton
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,12 +50,22 @@ fun InventoryListScreen(
     viewModel: InventoryListViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     var showScanner by remember {
         mutableStateOf(false)
     }
     var showNewProduct by remember {
         mutableStateOf<String?>(null)
     }
+    
+    val storeName by context.appDataStore.data
+    .map {
+        it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+    }
+    .collectAsState(initial = "")
+    
+    val exportVm: ExportViewModel = koinViewModel()
+    val exportState by exportVm.state.collectAsState()
 
     // Dialog: باركود غير موجود
     showNewProduct?.let { barcode ->
@@ -170,6 +186,18 @@ fun InventoryListScreen(
                             "المخزن", fontWeight = FontWeight.Bold, color = Color.White,
                             style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier.weight(1f)
+                        )
+                        com.trader.salesmanager.util.export.ExportActionButton(
+                            target         = com.trader.salesmanager.util.export.ExportTarget.INVENTORY_EXCEL,
+                            state          = exportState,
+                            onExport       = {
+                                exportVm.exportInventoryExcel(
+                                    products  = state.products,
+                                    storeName = storeName,
+                                    cacheDir  = context.cacheDir
+                                )
+                            },
+                            onDismissError = exportVm::dismissError
                         )
                         IconButton(
                             onClick = {
