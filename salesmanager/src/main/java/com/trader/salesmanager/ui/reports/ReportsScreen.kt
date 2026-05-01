@@ -120,13 +120,13 @@ fun ReportsScreen(
                         state = exportState,
                         onExport = {
                             exportVm.exportSalesReportExcel(
-                                transactions = uiState.transactions ?: emptyList(),
+                                transactions = uiState.filteredTransactions,
                                 periodLabel = uiState.period.name,
                                 storeName = storeName,
                                 dailySales = uiState.dailySales,
                                 topSpenders = uiState.topSpenders,
                                 paymentShares = uiState.paymentShares,
-                                cacheDir = ctx.cacheDir
+                                cacheDir = context.cacheDir
                             )
                         },
                         onDismissError = exportVm::dismissError
