@@ -18,6 +18,7 @@ data class ProductUnit(
     val unitType: UnitType = UnitType.PIECE,
     val unitLabel: String = "",
     val price: Double = 0.0,
+    val costPrice: Double = 0.0,
     val quantityInStock: Double = 0.0,
     val itemsPerCarton: Int? = null,
     val lowStockThreshold: Double = 0.0,
@@ -28,6 +29,22 @@ data class ProductUnit(
     val updatedAt: Long = System.currentTimeMillis(),
     val syncStatus: SyncStatus = SyncStatus.PENDING
 ) {
+
+    /**
+     * هامش الربح لكل وحدة.
+     * null إذا لم يُحدَّد سعر الشراء (costPrice == 0).
+     */
+    val profitMargin: Double?
+    get() = if (costPrice > 0 && price > 0) price - costPrice else null
+
+    /**
+     * نسبة الربح %.
+     * null إذا لم يُحدَّد سعر الشراء.
+     */
+    val profitPercent: Double?
+    get() = if (costPrice > 0 && price > 0) ((price - costPrice) / costPrice) * 100 else null
+
+
     /** يحوّل الكمية المخزنة (بالكيلو دائماً) إلى وحدة العرض */
     fun displayQuantity(rawKg: Double): String = when {
         unitType != UnitType.WEIGHT -> rawKg.toInt().toString()

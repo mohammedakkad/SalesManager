@@ -65,6 +65,7 @@ fun AddEditProductScreen(
         Modifier
         .fillMaxSize()
         .background(appColors.screenBackground)
+        .imePadding()
         .verticalScroll(rememberScrollState())
     ) {
         // ── Header ────────────────────────────────────────────────
@@ -207,6 +208,7 @@ fun AddEditProductScreen(
                         onUpdatePrice = {
                             viewModel.updateUnitPrice(index, it)
                         },
+                        onUpdateCostPrice = { viewModel.updateUnitCostPrice(index, it) },
                         onUpdateQty = {
                             viewModel.updateUnitQty(index, it)
                         },
@@ -285,6 +287,7 @@ private fun UnitEditor(
     canDelete: Boolean,
     onUpdate: (UnitDraft) -> Unit,
     onUpdatePrice: (String) -> Unit,
+    onUpdateCostPrice: (String) -> Unit,
     onUpdateQty: (String) -> Unit,
     onUpdateLowStock: (String) -> Unit,
     onDelete: () -> Unit,
@@ -384,6 +387,58 @@ private fun UnitEditor(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true, modifier = Modifier.weight(1f)
             )
+        }
+        
+        // ✅ سعر الشراء + مؤشر هامش الربح
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(
+                value         = unit.costPrice,
+                onValueChange = { onUpdateCostPrice(it) },
+                label         = { Text("سعر الشراء ₪") },
+                placeholder   = { Text("اختياري") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine    = true,
+                modifier      = Modifier.weight(1f),
+                colors        = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor   = Cyan500,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
+                )
+            )
+            // مؤشر هامش الربح — يظهر عند إدخال كلا السعرين
+            val saleP = unit.price.toDoubleOrNull() ?: 0.0
+            val costP = unit.costPrice.toDoubleOrNull() ?: 0.0
+            if (saleP > 0 && costP > 0) {
+                val margin  = saleP - costP
+                val pct     = (margin / costP) * 100
+                val isProfit = margin >= 0
+                Surface(
+                    shape = RoundedCornerShape(10.dp),
+                    color = if (isProfit) Emerald500.copy(0.12f) else DebtRed.copy(0.12f),
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    Column(
+                        Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            if (isProfit) "ربح" else "خسارة",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isProfit) Emerald500 else DebtRed
+                        )
+                        Text(
+                            "₪${String.format("%.2f", kotlin.math.abs(margin))}",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isProfit) Emerald500 else DebtRed
+                        )
+                        Text(
+                            "${String.format("%.1f", kotlin.math.abs(pct))}%",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = if (isProfit) Emerald500 else DebtRed
+                        )
+                    }
+                }
+            }
         }
 
         AnimatedVisibility(unit.unitType == UnitType.CARTON) {

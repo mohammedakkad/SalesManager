@@ -39,6 +39,7 @@ data class UnitDraft(
     val unitType: UnitType = UnitType.PIECE,
     val unitLabel: String = "حبة",
     val price: String = "",
+    val costPrice: String = "",
     val quantityInStock: String = "0",
     val itemsPerCarton: String = "",
     val lowStockThreshold: String = "5",
@@ -54,7 +55,7 @@ data class AddEditProductUiState(
     val name: String = "",
     val category: String = "",
     val units: List<UnitDraft> = listOf(UnitDraft(isDefault = true)),
-    val deletedUnitIds: Set<String> = emptySet(),  // IDs الوحدات المحذوفة (موجودة في DB)
+    val deletedUnitIds: Set<String> = emptySet(), // IDs الوحدات المحذوفة (موجودة في DB)
     val isSaving: Boolean = false,
     val savedSuccessfully: Boolean = false,
     val error: String? = null,
@@ -105,6 +106,7 @@ class AddEditProductViewModel(
                             unitType = u.unitType,
                             unitLabel = u.unitLabel,
                             price = u.price.toString(),
+                            costPrice = if (u.costPrice > 0) u.costPrice.toString() else "",
                             quantityInStock = u.quantityInStock.toString(),
                             itemsPerCarton = u.itemsPerCarton?.toString() ?: "",
                             lowStockThreshold = u.lowStockThreshold.toString(),
@@ -167,14 +169,20 @@ class AddEditProductViewModel(
     }
 
     fun removeUnit(index: Int) {
-        _state.update { s ->
+        _state.update {
+            s ->
             val removed = s.units[index]
-            val list = s.units.toMutableList().also { it.removeAt(index) }
+            val list = s.units.toMutableList().also {
+                it.removeAt(index)
+            }
 
             // ✅ تعيين افتراضي تلقائي إذا حُذفت الوحدة الافتراضية
-            val fixed = if (list.none { it.isDefault } && list.isNotEmpty())
-                list.mapIndexed { i, u -> if (i == 0) u.copy(isDefault = true) else u }
-            else list
+            val fixed = if (list.none {
+                it.isDefault
+            } && list.isNotEmpty())
+            list.mapIndexed {
+                i, u -> if (i == 0) u.copy(isDefault = true) else u
+            } else list
 
             // ✅ نتتبع ID الوحدة المحذوفة فقط إذا كانت موجودة في DB (id غير فارغ)
             // الوحدات الجديدة (لم تُحفظ بعد) لا نحتاج حذفها من Firestore
@@ -197,6 +205,10 @@ class AddEditProductViewModel(
 
     fun updateUnitPrice(index: Int, raw: String) {
         updateUnit(index, _state.value.units[index].copy(price = raw.filterPositiveDecimal()))
+    }
+
+    fun updateUnitCostPrice(index: Int, raw: String) {
+        updateUnit(index, _state.value.units[index].copy(costPrice = raw.filterPositiveDecimal()))
     }
 
     fun updateUnitQty(index: Int, raw: String) {
@@ -256,6 +268,7 @@ class AddEditProductViewModel(
                         unitType = draft.unitType,
                         unitLabel = draft.unitLabel.trim(),
                         price = (draft.price.toDoubleOrNull() ?: 0.0).coerceAtLeast(0.0),
+                        costPrice = (draft.costPrice.toDoubleOrNull() ?: 0.0).coerceAtLeast(0.0),
                         quantityInStock = (draft.quantityInStock.toDoubleOrNull() ?: 0.0).coerceAtLeast(0.0),
                         itemsPerCarton = draft.itemsPerCarton.toIntOrNull(),
                         lowStockThreshold = (draft.lowStockThreshold.toDoubleOrNull() ?: 5.0).coerceAtLeast(0.0),
