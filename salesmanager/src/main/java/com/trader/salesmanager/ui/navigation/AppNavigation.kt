@@ -551,15 +551,19 @@ fun AppNavigation() {
                 }
             )
         }
-    }
 
         composable(
             route = Screen.ReturnProcess.route,
-            arguments = listOf(navArgument("transactionId") { type = NavType.LongType })
-        ) { back ->
+            arguments = listOf(navArgument("transactionId") {
+                type = NavType.LongType
+            })
+        ) {
+            back ->
             ReturnProcessScreen(
-                transactionId   = back.arguments!!.getLong("transactionId"),
-                onNavigateUp    = { navController.navigateUp() },
+                transactionId = back.arguments!!.getLong("transactionId"),
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
                 onReturnSuccess = {
                     navController.popBackStack()
                     navController.popBackStack() // يرجع لشاشة التفاصيل
