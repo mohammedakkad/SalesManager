@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import com.trader.salesmanager.util.ExportViewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {
@@ -128,6 +129,7 @@ val salesManagerModule = module {
     viewModel {
         ActivationViewModel(get(), get())
     }
+    viewModel { ExportViewModel() }
     viewModel {
         MerchantWatcherViewModel(get(), get(), androidContext())
     }

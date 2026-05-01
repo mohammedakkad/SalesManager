@@ -29,6 +29,10 @@ import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.InvoiceSharer
 import kotlinx.coroutines.flow.map
+import com.trader.salesmanager.util.export.ExportTarget
+import com.trader.salesmanager.ui.export.ExportViewModel
+import com.trader.salesmanager.ui.components.ExportActionButton
+
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -51,6 +55,9 @@ fun TransactionDetailsScreen(
         it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
     }
     .collectAsState(initial = "")
+
+    val exportVm: ExportViewModel = koinViewModel()
+    val exportState by exportVm.state.collectAsState()
 
     // الانتقال للخلف فور اكتمال الحذف
     LaunchedEffect(uiState.isDeleted) {
@@ -121,6 +128,19 @@ fun TransactionDetailsScreen(
                             Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
+                        IconButton(
+                            onClick = {
+                                exportVm.exportInvoicePdf(
+                                    transaction = t,
+                                    items = uiState.invoiceItems,
+                                    storeName = storeName,
+                                    cacheDir = context.cacheDir
+                                )
+                            },
+                            modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
+                        ) {
+                            Icon(Icons.Rounded.PictureAsPdf, null, tint = Color.White)
+                        }
                         IconButton(
                             onClick = {
                                 InvoiceSharer.shareInvoice(
@@ -226,8 +246,10 @@ fun TransactionDetailsScreen(
                         HorizontalDivider(color = appColors.border, thickness = 1.dp)
                         Column(Modifier.fillMaxWidth().padding(14.dp),
                             verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            val itemsTotal = uiState.invoiceItems.sumOf { it.totalPrice }
-                            val baseAmount  = t.amount - itemsTotal
+                            val itemsTotal = uiState.invoiceItems.sumOf {
+                                it.totalPrice
+                            }
+                            val baseAmount = t.amount - itemsTotal
 
                             // ✅ إذا يوجد مبلغ أساسي (عملية أُضيفت أصناف عليها لاحقاً)
                             // نُفصِّل المبلغين حتى يفهم التاجر التركيبة
@@ -271,24 +293,20 @@ fun TransactionDetailsScreen(
 
         // ── زر المشاركة السفلي ────────────────────────────────────
         item {
-            Button(
-                onClick = {
-                    InvoiceSharer.shareInvoice(
-                        context = context,
+            com.trader.salesmanager.util.export.ExportActionButton(
+                target = com.trader.salesmanager.util.export.ExportTarget.INVOICE_PDF,
+                state = exportState,
+                onExport = {
+                    exportVm.exportInvoicePdf(
                         transaction = t,
                         items = uiState.invoiceItems,
-                        storeName = storeName
+                        storeName = storeName,
+                        cacheDir = context.cacheDir
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp).height(52.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF25D366))
-            ) {
-                Icon(Icons.Rounded.Share, null, modifier = Modifier.size(20.dp))
-                Spacer(Modifier.width(8.dp))
-                Text("مشاركة الفاتورة عبر واتساب", fontWeight = FontWeight.Bold)
-            }
+                onDismissError = exportVm::dismissError,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+            )
         }
 
         item {
