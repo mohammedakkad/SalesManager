@@ -161,7 +161,7 @@ fun ReportsScreen(
                         if (isExporting) {
                             CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = Emerald500)
                         } else {
-                            Icon(Icons.Rounded.TableChart, contentDescription = "تصدير Excel", tint = Emerald500)
+                            Icon(Icons.Rounded.Analytics, contentDescription = "تصدير Excel", tint = Emerald500)
                         }
                     }
                 }
