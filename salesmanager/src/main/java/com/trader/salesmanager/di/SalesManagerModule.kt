@@ -136,7 +136,9 @@ val salesManagerModule = module {
     viewModel {
         ActivationViewModel(get(), get())
     }
-    viewModel { ExportViewModel() }
+    viewModel {
+        ExportViewModel()
+    }
     viewModel {
         MerchantWatcherViewModel(get(), get(), androidContext())
     }
@@ -200,6 +202,7 @@ val salesManagerModule = module {
         StockReportsViewModel(get(), get())
     }
     viewModel {
-        ReturnViewModel(get(),get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        params ->
+        ReturnViewModel(get(), get(), get(), get(named("merchantId")), params.get())
     }
 }
