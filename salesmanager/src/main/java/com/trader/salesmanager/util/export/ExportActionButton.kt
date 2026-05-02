@@ -23,6 +23,7 @@ import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import kotlinx.coroutines.launch
 import java.io.File
+import androidx.compose.foundation.BorderStroke
 
 /**
  * زر التصدير + Sheet الإجراءات.

@@ -203,6 +203,6 @@ val salesManagerModule = module {
     }
     viewModel {
         params ->
-        ReturnViewModel(get(), get(), get(), get(named("merchantId")), params.get())
+        ReturnViewModel(get(), get(), get(), get(org.koin.core.qualifier.named("merchantId")), params.get())
     }
 }
