@@ -47,13 +47,17 @@ class ReturnViewModel(
     private val returnRepo: ReturnRepository,
     private val invoiceRepo: InvoiceItemRepository,
     private val productRepo: ProductRepository,
-    private val merchantId: String
+    private val merchantId: String,
+    private val transactionId: Long         // ✅ يأتي من Koin parametersOf
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ReturnScreenState())
     val state: StateFlow<ReturnScreenState> = _state.asStateFlow()
 
-    fun load(transactionId: Long) {
+    init { load() }                         // ✅ يُستدعى تلقائياً عند الإنشاء
+
+    private fun load() {
+        val transactionId = this.transactionId
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
@@ -124,7 +128,7 @@ class ReturnViewModel(
     fun dismissConfirmSheet() = _state.update { it.copy(showConfirmSheet = false, processingState = ReturnUiState.Idle) }
 
     // ── تأكيد الإرجاع ────────────────────────────────────────────
-    fun confirmReturn(transactionId: Long) {
+    fun confirmReturn() {
         val s = _state.value
         if (!s.canConfirm) return
 
@@ -133,7 +137,7 @@ class ReturnViewModel(
 
             val returnType = if (s.isFullReturn) ReturnType.FULL else ReturnType.PARTIAL
             val invoice = ReturnInvoice(
-                originalTransactionId = transactionId,
+                originalTransactionId = this@ReturnViewModel.transactionId,
                 merchantId  = merchantId,
                 returnType  = returnType,
                 totalRefund = s.totalRefund,

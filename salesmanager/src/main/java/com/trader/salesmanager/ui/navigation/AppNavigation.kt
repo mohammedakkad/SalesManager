@@ -559,19 +559,15 @@ fun AppNavigation() {
 
         composable(
             route = Screen.ReturnProcess.route,
-            arguments = listOf(navArgument("transactionId") {
-                type = NavType.LongType
-            })
-        ) {
-            back ->
+            arguments = listOf(navArgument("transactionId") { type = NavType.LongType })
+        ) { back ->
+            val txId = back.arguments!!.getLong("transactionId")
             ReturnProcessScreen(
-                transactionId = back.arguments!!.getLong("transactionId"),
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
+                transactionId   = txId,
+                onNavigateUp    = { navController.navigateUp() },
                 onReturnSuccess = {
+                    // ✅ يرجع لشاشة التفاصيل مباشرة
                     navController.popBackStack()
-                    navController.popBackStack() // يرجع لشاشة التفاصيل
                 }
             )
         }

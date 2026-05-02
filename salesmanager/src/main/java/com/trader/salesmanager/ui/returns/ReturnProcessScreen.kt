@@ -32,11 +32,11 @@ fun ReturnProcessScreen(
     transactionId: Long,
     onNavigateUp: () -> Unit,
     onReturnSuccess: () -> Unit,
-    viewModel: ReturnViewModel = koinViewModel(parameters = { parametersOf(transactionId) })
+    viewModel: ReturnViewModel = koinViewModel { parametersOf(transactionId, Unit) }
 ) {
     val state by viewModel.state.collectAsState()
 
-    // ── ملاحظة على نجاح الإرجاع ─────────────────────────────────
+    // ✅ لا حاجة لـ LaunchedEffect لاستدعاء load() — يحدث في init{}
     LaunchedEffect(state.processingState) {
         if (state.processingState is com.trader.core.domain.model.ReturnUiState.Success) {
             onReturnSuccess()
@@ -58,7 +58,12 @@ fun ReturnProcessScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Brush.linearGradient(listOf(Color(0xFF7C3AED), Violet500)))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(MaterialTheme.colorScheme.primaryContainer,
+                                   MaterialTheme.colorScheme.primary)
+                        )
+                    )
                     .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
@@ -171,10 +176,9 @@ fun ReturnProcessScreen(
     // ── Bottom Sheet تأكيد ───────────────────────────────────────
     if (state.showConfirmSheet) {
         ConfirmReturnBottomSheet(
-            state      = state,
-            transactionId = transactionId,
-            onConfirm  = viewModel::confirmReturn,
-            onDismiss  = viewModel::dismissConfirmSheet
+            state     = state,
+            onConfirm = viewModel::confirmReturn,
+            onDismiss = viewModel::dismissConfirmSheet
         )
     }
 }
@@ -318,8 +322,7 @@ private fun ReturnLineCard(
 @Composable
 private fun ConfirmReturnBottomSheet(
     state: ReturnScreenState,
-    transactionId: Long,
-    onConfirm: (Long) -> Unit,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
@@ -398,7 +401,7 @@ private fun ConfirmReturnBottomSheet(
                 ) { Text("إلغاء") }
 
                 Button(
-                    onClick  = { onConfirm(transactionId) },
+                    onClick  = onConfirm,
                     enabled  = state.processingState !is com.trader.core.domain.model.ReturnUiState.Loading,
                     modifier = Modifier.weight(2f).height(52.dp),
                     shape    = RoundedCornerShape(14.dp),
