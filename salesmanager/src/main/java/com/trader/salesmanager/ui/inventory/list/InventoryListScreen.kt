@@ -32,9 +32,7 @@ import com.trader.core.domain.model.UnitType
 import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
-import com.trader.salesmanager.util.export.ExportTarget
-import com.trader.salesmanager.util.export.ExportViewModel
-import com.trader.salesmanager.util.export.ExportActionButton
+import com.trader.salesmanager.util.export.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -59,18 +57,54 @@ fun InventoryListScreen(
     var showNewProduct by remember {
         mutableStateOf<String?>(null)
     }
-    
+
     val storeName by context.appDataStore.data
     .map {
         it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
     }
     .collectAsState(initial = "")
-    
+
     val exportVm: ExportViewModel = koinViewModel()
     val exportState by exportVm.state.collectAsState()
+    var showExportSheet by remember {
+        mutableStateOf(false)
+    }
+
+    // فتح Sheet الإجراءات تلقائياً بعد نجاح التصدير
+    LaunchedEffect(exportState) {
+        if (exportState is ExportState.Success) {
+            showExportSheet = true
+        }
+    }
+
+    // Sheet الإجراءات بعد النجاح
+    if (showExportSheet && exportState is ExportState.Success) {
+        val success = exportState as ExportState.Success
+        val file = java.io.File(success.filePath)
+        ExportSuccessBottomSheet(
+            state = success,
+            onShare = {
+                ExportManager.shareFile(context, file, success.type.mimeType)
+                showExportSheet = false
+            },
+            onWhatsApp = {
+                ExportManager.shareToWhatsApp(context, file, success.type.mimeType)
+                showExportSheet = false
+            },
+            onDownload = {
+                ExportManager.saveToDownloads(context, file, success.fileName)
+                showExportSheet = false
+                exportVm.reset()
+            },
+            onDismiss = {
+                showExportSheet = false; exportVm.reset()
+            }
+        )
+    }
 
     // Dialog: باركود غير موجود
-    showNewProduct?.let { barcode ->
+    showNewProduct?.let {
+        barcode ->
         AlertDialog(
             onDismissRequest = {
                 showNewProduct = null
@@ -107,11 +141,13 @@ fun InventoryListScreen(
 
     if (showScanner) {
         BarcodeScannerScreen(
-            onBarcodeDetected = { barcode ->
+            onBarcodeDetected = {
+                barcode ->
                 showScanner = false
                 viewModel.onBarcodeScanned(
                     barcode,
-                    onFound = { productId ->
+                    onFound = {
+                        productId ->
                         onProductClick(productId)
                     },
                     onNotFound = {
@@ -167,7 +203,8 @@ fun InventoryListScreen(
                 }
             }
         }
-    ) { padding ->
+    ) {
+        padding ->
         Column(Modifier
             .fillMaxSize()
             .padding(bottom = padding.calculateBottomPadding())) {
@@ -175,9 +212,9 @@ fun InventoryListScreen(
             // ── Header ────────────────────────────────────────────
             Box(
                 Modifier
-                    .fillMaxWidth()
-                    .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
-                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+                .fillMaxWidth()
+                .background(Brush.linearGradient(listOf(Emerald700, Emerald500)))
+                .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -189,25 +226,55 @@ fun InventoryListScreen(
                             style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier.weight(1f)
                         )
-                        com.trader.salesmanager.util.export.ExportActionButton(
-                            target         = com.trader.salesmanager.util.export.ExportTarget.INVENTORY_EXCEL,
-                            state          = exportState,
-                            onExport       = {
-                                exportVm.exportInventoryExcel(
-                                    products  = state.products,
-                                    storeName = storeName,
-                                    cacheDir  = context.cacheDir
-                                )
+
+                        // ✅ أيقونة Excel أنيقة تتناسب مع الـ Header
+                        val isExporting = exportState is ExportState.Loading
+                        IconButton(
+                            onClick = {
+                                if (!isExporting) {
+                                    exportVm.exportInventoryExcel(
+                                        products = state.products,
+                                        storeName = storeName,
+                                        cacheDir = context.cacheDir
+                                    )
+                                }
                             },
-                            onDismissError = exportVm::dismissError
-                        )
+                            modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White.copy(if (isExporting) 0.08f else 0.15f))
+                        ) {
+                            if (isExporting) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    color = Color.White,
+                                    strokeWidth = 2.dp
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Rounded.TableChart,
+                                    contentDescription = "تصدير Excel",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
+
+                        // خطأ في التصدير
+                        if (exportState is ExportState.Error) {
+                            LaunchedEffect(exportState) {
+                                kotlinx.coroutines.delay(3000)
+                                exportVm.dismissError()
+                            }
+                        }
+
+                        Spacer(Modifier.width(4.dp))
                         IconButton(
                             onClick = {
                                 showScanner = true
                             },
                             modifier = Modifier
-                                .clip(CircleShape)
-                                .background(Color.White.copy(0.15f))
+                            .clip(CircleShape)
+                            .background(Color.White.copy(0.15f))
                         ) {
                             Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White)
                         }
@@ -259,9 +326,9 @@ fun InventoryListScreen(
             // ── إحصائيات سريعة ────────────────────────────────────
             Row(
                 Modifier
-                    .fillMaxWidth()
-                    .background(appColors.cardBackground)
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                .fillMaxWidth()
+                .background(appColors.cardBackground)
+                .padding(horizontal = 16.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 StatChip(
@@ -290,11 +357,12 @@ fun InventoryListScreen(
             // ── فلاتر ─────────────────────────────────────────────
             Row(
                 Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                StockFilter.entries.forEach { f ->
+                StockFilter.entries.forEach {
+                    f ->
                     val label = when (f) {
                         StockFilter.ALL -> "الكل"
                         StockFilter.LOW -> "نقص"
@@ -336,7 +404,8 @@ fun InventoryListScreen(
                     fadeIn() togetherWith fadeOut()
                 },
                 label = "list"
-            ) { (loading, empty) ->
+            ) {
+                (loading, empty) ->
                 when {
                     loading -> Box(Modifier.fillMaxSize(), Alignment.Center) {
                         CircularProgressIndicator(color = Emerald500)
@@ -354,9 +423,7 @@ fun InventoryListScreen(
                                 color = appColors.textSubtle, textAlign = TextAlign.Center
                             )
                         }
-                    }
-
-                    else -> LazyColumn(
+                    } else -> LazyColumn(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
@@ -370,7 +437,8 @@ fun InventoryListScreen(
                         }
                         items(state.filtered, key = {
                             it.product.id
-                        }) { item ->
+                        }) {
+                            item ->
                             ProductCard(item = item, onClick = {
                                 onProductClick(item.product.id)
                             })
@@ -420,8 +488,8 @@ private fun OfflineSyncBanner(isOnline: Boolean, pendingSyncCount: Int) {
             shape = RoundedCornerShape(10.dp),
             color = bgColor as Color,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
         ) {
             Row(
                 Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -502,8 +570,8 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+        .fillMaxWidth()
+        .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(2.dp),
         colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
@@ -511,9 +579,9 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
         Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
                 Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(bg.copy(0.12f)),
+                .size(48.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(bg.copy(0.12f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -574,7 +642,8 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
 
                 // وحدات الصنف (تأخذ أول 3 فقط لمنع التكدس)
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    item.units.take(3).forEach { unit ->
+                    item.units.take(3).forEach {
+                        unit ->
                         val qty = unit.quantityInStock
                         val qtyText = if (unit.unitType == UnitType.WEIGHT)
                             "${String.format("%.2f", qty)} ${unit.unitLabel}"
@@ -612,7 +681,8 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                         )
                     }
                 }
-                item.defaultUnit?.let { unit ->
+                item.defaultUnit?.let {
+                    unit ->
                     Text(
                         "₪${String.format("%.2f", unit.price)}",
                         style = MaterialTheme.typography.labelMedium,

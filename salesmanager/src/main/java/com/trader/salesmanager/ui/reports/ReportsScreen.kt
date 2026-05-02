@@ -75,9 +75,7 @@ import com.trader.salesmanager.ui.theme.Violet500
 import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
 import kotlin.math.min
-import com.trader.salesmanager.util.export.ExportTarget
-import com.trader.salesmanager.util.export.ExportViewModel
-import com.trader.salesmanager.util.export.ExportActionButton
+import com.trader.salesmanager.util.export.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -101,6 +99,33 @@ fun ReportsScreen(
 
     val exportVm: ExportViewModel = koinViewModel()
     val exportState by exportVm.state.collectAsState()
+    var showExportSheet by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(exportState) {
+        if (exportState is ExportState.Success) showExportSheet = true
+    }
+
+    if (showExportSheet && exportState is ExportState.Success) {
+        val success = exportState as ExportState.Success
+        val file = java.io.File(success.filePath)
+        ExportSuccessBottomSheet(
+            state = success,
+            onShare = {
+                ExportManager.shareFile(context, file, success.type.mimeType); showExportSheet = false
+            },
+            onWhatsApp = {
+                ExportManager.shareToWhatsApp(context, file, success.type.mimeType); showExportSheet = false
+            },
+            onDownload = {
+                ExportManager.saveToDownloads(context, file, success.fileName); showExportSheet = false; exportVm.reset()
+            },
+            onDismiss = {
+                showExportSheet = false; exportVm.reset()
+            }
+        )
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -115,22 +140,28 @@ fun ReportsScreen(
                     }
                 },
                 actions = {
-                    com.trader.salesmanager.util.export.ExportActionButton(
-                        target = com.trader.salesmanager.util.export.ExportTarget.SALES_REPORT_EXCEL,
-                        state = exportState,
-                        onExport = {
-                            exportVm.exportSalesReportExcel(
-                                transactions = uiState.filteredTransactions,
-                                periodLabel = uiState.period.name,
-                                storeName = storeName,
-                                dailySales = uiState.dailySales,
-                                topSpenders = uiState.topSpenders,
-                                paymentShares = uiState.paymentShares,
-                                cacheDir = context.cacheDir
-                            )
-                        },
-                        onDismissError = exportVm::dismissError
-                    )
+                    val isExporting = exportState is ExportState.Loading
+                    IconButton(
+                        onClick = {
+                            if (!isExporting) {
+                                exportVm.exportSalesReportExcel(
+                                    transactions = uiState.filteredTransactions,
+                                    periodLabel = uiState.period.name,
+                                    storeName = storeName,
+                                    dailySales = uiState.dailySales,
+                                    topSpenders = uiState.topSpenders,
+                                    paymentShares = uiState.paymentShares,
+                                    cacheDir = context.cacheDir
+                                )
+                            }
+                        }
+                    ) {
+                        if (isExporting) {
+                            CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = Emerald500)
+                        } else {
+                            Icon(Icons.Rounded.TableChart, contentDescription = "تصدير Excel", tint = Emerald500)
+                        }
+                    }
                 }
             )
         }

@@ -39,9 +39,11 @@ fun ExportActionButton(
     onDismissError: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current      // ← Context في الـ Composable ✅
-    val haptic  = LocalHapticFeedback.current
-    var showSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current // ← Context في الـ Composable ✅
+    val haptic = LocalHapticFeedback.current
+    var showSheet by remember {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(state) {
         if (state is ExportState.Success) showSheet = true
@@ -50,16 +52,23 @@ fun ExportActionButton(
     // ── زر التصدير ────────────────────────────────────────────
     val isLoading = state is ExportState.Loading
     val shimmer by rememberInfiniteTransition(label = "shimmer")
-        .animateFloat(0.4f, 1f, infiniteRepeatable(tween(900), RepeatMode.Reverse), label = "s")
+    .animateFloat(0.4f, 1f, infiniteRepeatable(tween(900), RepeatMode.Reverse), label = "s")
 
     OutlinedButton(
-        onClick = { if (!isLoading) { haptic.performHapticFeedback(HapticFeedbackType.LongPress); onExport() } },
+        onClick = {
+            if (!isLoading) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress); onExport()
+            }
+        },
         modifier = modifier.height(44.dp),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, if (isLoading) appColors.divider else Violet500),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = Violet500)
     ) {
-        AnimatedContent(isLoading, transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(150)) }, label = "btn") { loading ->
+        AnimatedContent(isLoading, transitionSpec = {
+            fadeIn(tween(200)) togetherWith fadeOut(tween(150))
+        }, label = "btn") {
+            loading ->
             if (loading) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp, color = Violet500.copy(shimmer))
@@ -80,14 +89,20 @@ fun ExportActionButton(
     if (showSheet && state is ExportState.Success) {
         val file = File(state.filePath)
         ExportSuccessSheet(
-            state     = state,
-            onShare   = { ExportManager.shareFile(context, file, state.type.mimeType); showSheet = false },
-            onWhatsApp = { ExportManager.shareToWhatsApp(context, file, state.type.mimeType); showSheet = false },
+            state = state,
+            onShare = {
+                ExportManager.shareFile(context, file, state.type.mimeType); showSheet = false
+            },
+            onWhatsApp = {
+                ExportManager.shareToWhatsApp(context, file, state.type.mimeType); showSheet = false
+            },
             onDownload = {
                 ExportManager.saveToDownloads(context, file, state.fileName)
                 showSheet = false
             },
-            onDismiss = { showSheet = false }
+            onDismiss = {
+                showSheet = false
+            }
         )
     }
 
@@ -109,12 +124,16 @@ private fun ExportSuccessSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
-    val dismiss = { scope.launch { sheetState.hide(); onDismiss() } }
+    val dismiss = {
+        scope.launch {
+            sheetState.hide(); onDismiss()
+        }
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState       = sheetState,
-        containerColor   = appColors.cardBackground,
+        sheetState = sheetState,
+        containerColor = appColors.cardBackground,
         dragHandle = {
             Box(Modifier.padding(top = 12.dp, bottom = 8.dp).size(40.dp, 4.dp)
                 .clip(RoundedCornerShape(50)).background(appColors.divider))
@@ -137,11 +156,13 @@ private fun ExportSuccessSheet(
 
             HorizontalDivider(color = appColors.divider)
 
-            SheetAction(Icons.Rounded.Share,    Cyan500,              "مشاركة",   "عبر أي تطبيق",       onShare)
-            SheetAction(Icons.Rounded.Chat,     Color(0xFF25D366),    "واتساب",   "إرسال مباشر",         onWhatsApp)
-            SheetAction(Icons.Rounded.Download, Violet500,            "تنزيل",    "حفظ في التنزيلات",    onDownload)
+            SheetAction(Icons.Rounded.Share, Cyan500, "مشاركة", "عبر أي تطبيق", onShare)
+            SheetAction(Icons.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
+            SheetAction(Icons.Rounded.Download, Violet500, "تنزيل", "حفظ في التنزيلات", onDownload)
 
-            TextButton(onClick = { dismiss() }, Modifier.fillMaxWidth()) {
+            TextButton(onClick = {
+                dismiss()
+            }, Modifier.fillMaxWidth()) {
                 Text("إغلاق", color = appColors.textSubtle)
             }
             Spacer(Modifier.height(4.dp))
@@ -152,7 +173,9 @@ private fun ExportSuccessSheet(
 @Composable
 private fun SheetAction(icon: ImageVector, color: Color, title: String, subtitle: String, onClick: () -> Unit) {
     val haptic = LocalHapticFeedback.current
-    Surface(onClick = { haptic.performHapticFeedback(HapticFeedbackType.LongPress); onClick() },
+    Surface(onClick = {
+        haptic.performHapticFeedback(HapticFeedbackType.LongPress); onClick()
+    },
         shape = RoundedCornerShape(14.dp), color = color.copy(0.06f), modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -182,6 +205,61 @@ private fun ExportErrorBar(message: String, onRetry: () -> Unit, onDismiss: () -
             IconButton(onClick = onDismiss, Modifier.size(28.dp)) {
                 Icon(Icons.Rounded.Close, null, tint = DebtRed, modifier = Modifier.size(16.dp))
             }
+        }
+    }
+}
+
+// ── Standalone Sheet — يُستخدم عند الحاجة لفتح Sheet بدون زر ExportActionButton ──
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExportSuccessBottomSheet(
+    state: ExportState.Success,
+    onShare: () -> Unit,
+    onWhatsApp: () -> Unit,
+    onDownload: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = appColors.cardBackground,
+        dragHandle = {
+            Box(Modifier.padding(top = 12.dp, bottom = 8.dp)
+                .size(40.dp, 4.dp).clip(RoundedCornerShape(50)).background(appColors.divider))
+        }
+    ) {
+        Column(
+            Modifier.fillMaxWidth().navigationBarsPadding()
+            .padding(horizontal = 20.dp, vertical = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Box(Modifier.size(48.dp).clip(RoundedCornerShape(14.dp)).background(Emerald500.copy(0.12f)), Alignment.Center) {
+                    Icon(Icons.Rounded.CheckCircle, null, tint = Emerald500, modifier = Modifier.size(26.dp))
+                }
+                Column {
+                    Text("الملف جاهز", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                    Text(state.fileName, style = MaterialTheme.typography.bodySmall, color = appColors.textSubtle)
+                }
+            }
+            HorizontalDivider(color = appColors.divider)
+            SheetAction(Icons.Rounded.Share, Cyan500, "مشاركة", "عبر أي تطبيق", onShare)
+            SheetAction(Icons.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
+            SheetAction(Icons.Rounded.Download, Violet500, "تنزيل", "حفظ في التنزيلات", onDownload)
+            TextButton(
+                onClick = {
+                    scope.launch {
+                        sheetState.hide(); onDismiss()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("إغلاق", color = appColors.textSubtle)
+            }
+            Spacer(Modifier.height(4.dp))
         }
     }
 }

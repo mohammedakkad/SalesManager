@@ -29,9 +29,7 @@ import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.InvoiceSharer
 import kotlinx.coroutines.flow.map
-import com.trader.salesmanager.util.export.ExportTarget
-import com.trader.salesmanager.util.export.ExportViewModel
-import com.trader.salesmanager.util.export.ExportActionButton
+import com.trader.salesmanager.util.export.*
 
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -59,6 +57,33 @@ fun TransactionDetailsScreen(
 
     val exportVm: ExportViewModel = koinViewModel()
     val exportState by exportVm.state.collectAsState()
+    var showExportSheet by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(exportState) {
+        if (exportState is ExportState.Success) showExportSheet = true
+    }
+
+    if (showExportSheet && exportState is ExportState.Success) {
+        val success = exportState as ExportState.Success
+        val file = java.io.File(success.filePath)
+        ExportSuccessBottomSheet(
+            state = success,
+            onShare = {
+                ExportManager.shareFile(context, file, success.type.mimeType); showExportSheet = false
+            },
+            onWhatsApp = {
+                ExportManager.shareToWhatsApp(context, file, success.type.mimeType); showExportSheet = false
+            },
+            onDownload = {
+                ExportManager.saveToDownloads(context, file, success.fileName); showExportSheet = false; exportVm.reset()
+            },
+            onDismiss = {
+                showExportSheet = false; exportVm.reset()
+            }
+        )
+    }
 
     // الانتقال للخلف فور اكتمال الحذف
     LaunchedEffect(uiState.isDeleted) {
@@ -145,18 +170,25 @@ fun TransactionDetailsScreen(
                                 tint = Color.White
                             )
                         }
+                        val isExporting = exportState is ExportState.Loading
                         IconButton(
                             onClick = {
-                                exportVm.exportInvoicePdf(
-                                    transaction = t,
-                                    items = uiState.invoiceItems,
-                                    storeName = storeName,
-                                    cacheDir = context.cacheDir
-                                )
+                                if (!isExporting) {
+                                    exportVm.exportInvoicePdf(
+                                        transaction = t,
+                                        items = uiState.invoiceItems,
+                                        storeName = storeName,
+                                        cacheDir = context.cacheDir
+                                    )
+                                }
                             },
                             modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
                         ) {
-                            Icon(Icons.Rounded.PictureAsPdf, null, tint = Color.White)
+                            if (isExporting) {
+                                CircularProgressIndicator(Modifier.size(18.dp), color = Color.White, strokeWidth = 2.dp)
+                            } else {
+                                Icon(Icons.Rounded.PictureAsPdf, null, tint = Color.White)
+                            }
                         }
 
                         IconButton(onClick = {
@@ -296,23 +328,7 @@ fun TransactionDetailsScreen(
             }
         }
 
-        // ── زر المشاركة السفلي ────────────────────────────────────
-        item {
-            com.trader.salesmanager.util.export.ExportActionButton(
-                target = com.trader.salesmanager.util.export.ExportTarget.INVOICE_PDF,
-                state = exportState,
-                onExport = {
-                    exportVm.exportInvoicePdf(
-                        transaction = t,
-                        items = uiState.invoiceItems,
-                        storeName = storeName,
-                        cacheDir = context.cacheDir
-                    )
-                },
-                onDismissError = exportVm::dismissError,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-        }
+        // ── زر PDF في الهيدر يفتح Sheet مباشرة — لا نحتاج زر سفلي ──
 
         item {
             Spacer(Modifier.height(24.dp))
