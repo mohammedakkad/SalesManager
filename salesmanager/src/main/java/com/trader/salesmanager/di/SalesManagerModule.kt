@@ -159,7 +159,7 @@ val salesManagerModule = module {
     }
     viewModel {
         params ->
-        TransactionDetailsViewModel(params.get(), get(), get(), get())
+        TransactionDetailsViewModel(params.get(), get(), get(), get(),get())
     }
     viewModel {
         AddEditTransactionViewModel(get(), get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))

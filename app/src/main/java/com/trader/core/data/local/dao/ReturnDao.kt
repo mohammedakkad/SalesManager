@@ -41,4 +41,21 @@ interface ReturnDao {
 
     @Query("UPDATE return_invoices SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markSynced(id: String)
+
+    /**
+     * ملخص الكمية المُرجَعة لكل unitId في عملية معينة.
+     * يُستخدم في getReturnSummary لمعرفة ما أُرجع لكل صنف.
+     * Edge Case: إذا لا توجد سجلات → القائمة فارغة (وليس null)
+     */
+    @Query("""
+        SELECT ri.unitId, COALESCE(SUM(ri.returnedQuantity), 0.0) AS total
+        FROM return_items ri
+        INNER JOIN return_invoices inv ON ri.returnInvoiceId = inv.id
+        WHERE inv.originalTransactionId = :transactionId
+        GROUP BY ri.unitId
+    """)
+    suspend fun getReturnedByUnit(transactionId: Long): List<UnitReturnSummary>
 }
+
+/** Projection للـ GROUP BY query */
+data class UnitReturnSummary(val unitId: String, val total: Double)

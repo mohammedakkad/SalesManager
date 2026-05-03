@@ -26,7 +26,7 @@ data class ReturnInvoiceEntity(
         totalRefund          = totalRefund,
         note                 = note,
         createdAt            = createdAt,
-        syncStatus           = ReturnStatus.valueOf(syncStatus)
+        syncStatus           = SyncStatus.valueOf(syncStatus)
     )
 }
 

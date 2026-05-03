@@ -2,7 +2,6 @@ package com.trader.core.data.repository
 
 import androidx.room.withTransaction
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.local.entity.*
 import com.trader.core.domain.model.*
@@ -20,32 +19,35 @@ class ReturnRepositoryImpl(
 
     private val dao = db.returnDao()
 
-    // ════════════════════════════════════════════════════════════
-    // الدالة الرئيسية — تعالج كل شيء في transaction واحدة
-    // ════════════════════════════════════════════════════════════
     override suspend fun processReturn(
         returnInvoice: ReturnInvoice,
         items: List<ReturnItem>
     ): ReturnInvoice {
 
+        // ── التحقق من صحة كل صنف قبل البدء ─────────────────────────
+        items.forEach { item ->
+            item.validate().getOrThrow()
+        }
+
         db.withTransaction {
-            // 1. التحقق من عدم تجاوز الكميات
+
+            // ── 1. التحقق من الكميات المتبقية (منع Double Return) ────
             items.forEach { item ->
                 val alreadyReturned = dao.totalReturnedForUnit(
                     returnInvoice.originalTransactionId, item.unitId
                 )
                 val maxReturnable = item.originalQuantity - alreadyReturned
                 require(item.returnedQuantity <= maxReturnable) {
-                    "الكمية المُرجَعة (${item.returnedQuantity}) تتجاوز الحد المسموح (${maxReturnable}) لـ ${item.productName}"
+                    "الكمية المُرجَعة (${item.returnedQuantity}) تتجاوز الحد (${maxReturnable}) لـ ${item.productName}"
                 }
             }
 
-            // 2. حفظ فاتورة الإرجاع محلياً
-            dao.insertReturnInvoice(returnInvoice.toEntity())
+            // ── 2. حفظ فاتورة الإرجاع ───────────────────────────────
+            val invoiceWithMerchant = returnInvoice.copy(merchantId = merchantId)
+            dao.insertReturnInvoice(invoiceWithMerchant.toEntity())
             dao.insertReturnItems(items.map { it.toEntity() })
 
-            // 3. إعادة المخزون لكل صنف
-            // Test Case 1: productId قد يكون لمنتج محذوف — returnStock يتعامل معه بشكل آمن
+            // ── 3. إعادة المخزون (يفشل بصمت إذا الصنف محذوف) ────────
             items.forEach { item ->
                 runCatching {
                     stockRepo.returnStock(
@@ -56,45 +58,116 @@ class ReturnRepositoryImpl(
                         productName   = item.productName,
                         unitLabel     = item.unitLabel
                     )
-                } // إذا فشل (منتج محذوف) → لا يوقف الإرجاع المالي
+                }
             }
 
-            // 4. تعديل مبلغ العملية الأصلية
+            // ── 4. تحديث مبلغ + returnStatus العملية الأصلية ────────
             val originalTx = transactionRepo.getTransactionById(
                 returnInvoice.originalTransactionId
             )
             if (originalTx != null) {
                 val newAmount = (originalTx.amount - returnInvoice.totalRefund).coerceAtLeast(0.0)
+
+                // ✅ حساب returnStatus الجديد بعد هذا الإرجاع
+                val allReturned = computeReturnStatus(
+                    transactionId   = originalTx.id,
+                    invoiceItems    = emptyList(), // سيُحسب في getReturnSummary
+                    newTotalRefund  = (originalTx.originalAmount - originalTx.amount) + returnInvoice.totalRefund,
+                    originalAmount  = originalTx.originalAmount
+                )
+
                 transactionRepo.updateTransaction(
-                    originalTx.copy(amount = newAmount)
+                    originalTx.copy(
+                        amount       = newAmount,
+                        returnStatus = allReturned
+                    )
                 )
             }
         }
 
-        // 5. رفع لـ Firebase (offline-first — يفشل بصمت ويُزامن لاحقاً)
-        // Test Case 2: إذا كان offline → PENDING في Room → WorkManager يرفعها لاحقاً
+        // ── 5. رفع Firebase (offline-first) ─────────────────────────
         runCatching { pushToFirebase(returnInvoice, items) }
 
-        return returnInvoice
+        return returnInvoice.copy(merchantId = merchantId)
+    }
+
+    // ── ملخص الإرجاع لعرض الحالة في الـ UI ──────────────────────────
+    override suspend fun getReturnSummary(
+        transactionId: Long,
+        invoiceItems: List<InvoiceItem>
+    ): ReturnSummary {
+        if (invoiceItems.isEmpty()) return ReturnSummary.NONE
+
+        val returnedByUnit = dao.getReturnedByUnit(transactionId)
+            .associate { it.unitId to it.total }
+
+        if (returnedByUnit.isEmpty()) return ReturnSummary.NONE
+
+        val totalRefunded = returnedByUnit.values.sum()
+
+        // ✅ الحالة: مكتمل إذا كل صنف أُرجع بكامل كميته
+        val allFullyReturned = invoiceItems.all { item ->
+            val returned = returnedByUnit[item.unitId] ?: 0.0
+            returned >= item.quantity
+        }
+
+        val status = when {
+            allFullyReturned -> TransactionReturnStatus.FULLY_RETURNED
+            else             -> TransactionReturnStatus.PARTIALLY_RETURNED
+        }
+
+        return ReturnSummary(
+            returnStatus   = status,
+            totalRefunded  = totalRefunded,
+            returnedByUnit = returnedByUnit
+        )
+    }
+
+    override fun getReturnsByTransaction(transactionId: Long): Flow<List<ReturnInvoice>> =
+        dao.getReturnsByTransaction(transactionId).map { it.map { e -> e.toDomain() } }
+
+    override suspend fun getReturnItems(returnInvoiceId: String): List<ReturnItem> =
+        dao.getReturnItems(returnInvoiceId).map { it.toDomain() }
+
+    override fun getAllReturns(): Flow<List<ReturnInvoice>> =
+        dao.getAllReturns(merchantId).map { it.map { e -> e.toDomain() } }
+
+    override suspend fun isPartialReturnEnabled(): Boolean = runCatching {
+        val snap = FirebaseDatabase.getInstance().reference
+            .child("activation_codes").child(merchantId)
+            .child("features").child("is_partial_return_enabled")
+            .get().await()
+        snap.getValue(Boolean::class.java) ?: false
+    }.getOrDefault(false)
+
+    // ── helpers ───────────────────────────────────────────────────────
+
+    private fun computeReturnStatus(
+        transactionId: Long,
+        invoiceItems: List<InvoiceItem>,
+        newTotalRefund: Double,
+        originalAmount: Double
+    ): TransactionReturnStatus = when {
+        newTotalRefund <= 0              -> TransactionReturnStatus.NONE
+        newTotalRefund >= originalAmount -> TransactionReturnStatus.FULLY_RETURNED
+        else                             -> TransactionReturnStatus.PARTIALLY_RETURNED
     }
 
     private suspend fun pushToFirebase(
         returnInvoice: ReturnInvoice,
         items: List<ReturnItem>
     ) {
-        val rtdb = FirebaseDatabase.getInstance().reference
-            .child("merchants")
-            .child(merchantId)
-            .child("return_invoices")
-            .child(returnInvoice.id)
+        val ref = FirebaseDatabase.getInstance().reference
+            .child("merchants").child(merchantId)
+            .child("return_invoices").child(returnInvoice.id)
 
-        val data = mapOf(
+        ref.setValue(mapOf(
             "originalTransactionId" to returnInvoice.originalTransactionId,
             "returnType"            to returnInvoice.returnType.name,
             "totalRefund"           to returnInvoice.totalRefund,
             "note"                  to returnInvoice.note,
             "createdAt"             to returnInvoice.createdAt,
-            "items"                 to items.associate { it.id to mapOf(
+            "items" to items.associate { it.id to mapOf(
                 "productId"       to it.productId,
                 "productName"     to it.productName,
                 "unitLabel"       to it.unitLabel,
@@ -102,28 +175,7 @@ class ReturnRepositoryImpl(
                 "pricePerUnit"    to it.pricePerUnit,
                 "totalRefund"     to it.totalRefund
             )}
-        )
-        rtdb.setValue(data).await()
+        )).await()
         dao.markSynced(returnInvoice.id)
     }
-
-    override fun getReturnsByTransaction(transactionId: Long): Flow<List<ReturnInvoice>> =
-        dao.getReturnsByTransaction(transactionId).map { list -> list.map { it.toDomain() } }
-
-    override suspend fun getReturnItems(returnInvoiceId: String): List<ReturnItem> =
-        dao.getReturnItems(returnInvoiceId).map { it.toDomain() }
-
-    override fun getAllReturns(): Flow<List<ReturnInvoice>> =
-        dao.getAllReturns(merchantId).map { list -> list.map { it.toDomain() } }
-
-    // Test Case 3: Feature Flag من Firebase Realtime DB
-    override suspend fun isPartialReturnEnabled(): Boolean = runCatching {
-        val snap = FirebaseDatabase.getInstance().reference
-            .child("activation_codes")
-            .child(merchantId)
-            .child("features")
-            .child("is_partial_return_enabled")
-            .get().await()
-        snap.getValue(Boolean::class.java) ?: false
-    }.getOrDefault(false) // إذا فشل (offline) → مجاني
 }

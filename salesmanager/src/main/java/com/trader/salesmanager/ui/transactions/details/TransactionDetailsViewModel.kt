@@ -6,6 +6,8 @@ import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.InvoiceItemRepository
 import com.trader.core.domain.repository.StockRepository
+import com.trader.core.domain.model.ReturnSummary
+import com.trader.core.domain.repository.ReturnRepository
 import com.trader.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -13,14 +15,17 @@ import kotlinx.coroutines.launch
 data class TransactionDetailsUiState(
     val transaction: Transaction? = null,
     val invoiceItems: List<InvoiceItem> = emptyList(),
-    val isDeleted: Boolean = false
+    val isDeleted: Boolean = false,
+    val returnSummary: ReturnSummary = ReturnSummary.NONE,
+    val isLoadingReturn: Boolean = false
 )
 
 class TransactionDetailsViewModel(
     private val transactionId: Long,
     private val transactionRepo: TransactionRepository,
     private val invoiceItemRepo: InvoiceItemRepository,
-    private val stockRepo: StockRepository
+    private val stockRepo: StockRepository,
+    private val returnRepo: ReturnRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TransactionDetailsUiState())
@@ -30,31 +35,30 @@ class TransactionDetailsViewModel(
         // ✅ مشكلة 5: Flow مستمر — يُحدِّث الشاشة فوراً عند أي تغيير في العملية
         viewModelScope.launch {
             transactionRepo.observeTransactionById(transactionId).collect {
-                t ->
+                    t ->
                 _state.update {
                     it.copy(transaction = t)
                 }
             }
         }
         viewModelScope.launch {
-            invoiceItemRepo.getItemsForTransaction(transactionId).collect {
-                items ->
-                _state.update {
-                    current ->
-                    // ✅ ترتيب ثابت بـ productName → لا إعادة ترتيب بعد الحفظ
-                    // ✅ تجاهل القائمة الفارغة اللحظية أثناء دورة delete+reinsert
-                    //    (تحدث عندما يحذف saveItemsAndDeductStock القديم ويُدرج الجديد)
-                    val sorted = items.sortedBy {
-                        it.productName
-                    }
+            invoiceItemRepo.getItemsForTransaction(transactionId).collect { items ->
+                _state.update { current ->
+                    val sorted = items.sortedBy { it.productName }
                     if (sorted.isEmpty() && current.invoiceItems.isNotEmpty()
-                        && current.transaction?.hasItems == true) {
-                        current // لا تُحدِّث — هذه فترة عابرة
-                    } else {
-                        current.copy(invoiceItems = sorted)
-                    }
+                        && current.transaction?.hasItems == true) current
+                    else current.copy(invoiceItems = sorted)
                 }
+                if (items.isNotEmpty()) loadReturnSummary(items)
             }
+        }
+    }
+
+    fun loadReturnSummary(items: List<InvoiceItem> = _state.value.invoiceItems) {
+        if (items.isEmpty()) return
+        viewModelScope.launch {
+            val summary = returnRepo.getReturnSummary(transactionId, items)
+            _state.update { it.copy(returnSummary = summary) }
         }
     }
 
@@ -64,7 +68,7 @@ class TransactionDetailsViewModel(
             val items = _state.value.invoiceItems
             if (items.isNotEmpty()) {
                 items.forEach {
-                    item ->
+                        item ->
                     stockRepo.returnStock(
                         productId = item.productId,
                         unitId = item.unitId,
