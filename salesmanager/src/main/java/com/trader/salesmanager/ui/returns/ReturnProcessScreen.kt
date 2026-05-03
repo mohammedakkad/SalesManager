@@ -17,8 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trader.salesmanager.ui.theme.*
@@ -52,7 +55,11 @@ fun ReturnProcessScreen(
     }
 
     Scaffold(containerColor = appColors.screenBackground) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(bottom = padding.calculateBottomPadding())
+        ) {
 
             // ── Header gradient ──────────────────────────────────
             Box(
@@ -60,8 +67,7 @@ fun ReturnProcessScreen(
                     .fillMaxWidth()
                     .background(
                         Brush.linearGradient(
-                            listOf(MaterialTheme.colorScheme.primaryContainer,
-                                   MaterialTheme.colorScheme.primary)
+                            listOf(Emerald700, PaidGreen)
                         )
                     )
                     .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
@@ -72,22 +78,31 @@ fun ReturnProcessScreen(
                             Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Column(Modifier.weight(1f)) {
-                            Text("إرجاع بضاعة",
+                            Text(
+                                "إرجاع بضاعة",
                                 fontWeight = FontWeight.Bold, color = Color.White,
-                                style = MaterialTheme.typography.headlineSmall)
-                            Text("اختر الأصناف والكميات المُرجَعة",
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                            Text(
+                                "اختر الأصناف والكميات المُرجَعة",
                                 color = Color.White.copy(0.75f),
-                                style = MaterialTheme.typography.bodySmall)
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
                     }
                     Spacer(Modifier.height(12.dp))
                     // ملخص سريع
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         SummaryPill("${state.selectedLines.size} أصناف", Icons.Rounded.Inventory2)
-                        SummaryPill("₪${String.format(Locale.US, "%.2f", state.totalRefund)}", Icons.Rounded.Undo)
+                        SummaryPill(
+                            "₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
+                            Icons.Rounded.Undo
+                        )
                         if (state.totalLostProfit > 0) {
-                            SummaryPill("خسارة ₪${String.format(Locale.US, "%.2f", state.totalLostProfit)}",
-                                Icons.Rounded.TrendingDown)
+                            SummaryPill(
+                                "خسارة ₪${String.format(Locale.US, "%.2f", state.totalLostProfit)}",
+                                Icons.Rounded.TrendingDown
+                            )
                         }
                     }
                 }
@@ -107,15 +122,17 @@ fun ReturnProcessScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 item {
-                    Text("الأصناف القابلة للإرجاع",
+                    Text(
+                        "الأصناف القابلة للإرجاع",
                         style = MaterialTheme.typography.labelLarge,
                         color = appColors.textSecondary,
-                        modifier = Modifier.padding(bottom = 4.dp))
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    )
                 }
 
                 itemsIndexed(state.lines, key = { _, l -> l.invoiceItem.id }) { index, line ->
                     ReturnLineCard(
-                        line    = line,
+                        line = line,
                         isPartialEnabled = state.isPartialEnabled,
                         onToggle = { viewModel.toggleLine(index) },
                         onQtyChange = { viewModel.updateQty(index, it) }
@@ -146,27 +163,35 @@ fun ReturnProcessScreen(
             // ── زر التأكيد ───────────────────────────────────────
             AnimatedVisibility(
                 visible = state.canConfirm,
-                enter   = slideInVertically { it } + fadeIn(),
-                exit    = slideOutVertically { it } + fadeOut()
+                enter = slideInVertically { it } + fadeIn(),
+                exit = slideOutVertically { it } + fadeOut()
             ) {
                 Surface(
                     shadowElevation = 12.dp,
                     color = appColors.cardBackground
                 ) {
                     Button(
-                        onClick  = viewModel::showConfirmSheet,
+                        onClick = viewModel::showConfirmSheet,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
                             .height(54.dp),
-                        shape  = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Violet500)
                     ) {
                         Icon(Icons.Rounded.Undo, null, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("تأكيد الإرجاع · ₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
+                        Text(
+                            "تأكيد الإرجاع · ₪${
+                                String.format(
+                                    Locale.US,
+                                    "%.2f",
+                                    state.totalRefund
+                                )
+                            }",
                             fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.bodyLarge)
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
                 }
             }
@@ -176,7 +201,7 @@ fun ReturnProcessScreen(
     // ── Bottom Sheet تأكيد ───────────────────────────────────────
     if (state.showConfirmSheet) {
         ConfirmReturnBottomSheet(
-            state     = state,
+            state = state,
             onConfirm = viewModel::confirmReturn,
             onDismiss = viewModel::dismissConfirmSheet
         )
@@ -192,128 +217,276 @@ private fun ReturnLineCard(
     onToggle: () -> Unit,
     onQtyChange: (Double) -> Unit
 ) {
-    val cardColor = when {
-        !line.canReturn    -> appColors.cardBackground.copy(alpha = 0.5f)
-        line.isSelected    -> Violet500.copy(0.06f)
-        else               -> appColors.cardBackground
-    }
-    val borderColor = when {
-        line.isSelected -> Violet500
-        else            -> appColors.border
-    }
+    val isEnabled  = line.canReturn
+    val isSelected = line.isSelected
 
-    Card(
-        modifier  = Modifier
+    val animatedElevation by animateDpAsState(
+        if (isSelected) 10.dp else 0.dp,
+        spring(Spring.DampingRatioMediumBouncy), label = "elev"
+    )
+    val animatedAlpha by animateFloatAsState(
+        if (isEnabled) 1f else 0.45f, tween(300), label = "alpha"
+    )
+    val animatedScale by animateFloatAsState(
+        if (isSelected) 1.01f else 1f,
+        spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMedium), label = "scale"
+    )
+
+    Box(
+        modifier = Modifier
             .fillMaxWidth()
-            .border(1.5.dp, borderColor, RoundedCornerShape(16.dp)),
-        shape     = RoundedCornerShape(16.dp),
-        colors    = CardDefaults.cardColors(containerColor = cardColor),
-        elevation = CardDefaults.cardElevation(if (line.isSelected) 4.dp else 1.dp),
-        onClick   = { if (line.canReturn) onToggle() }
+            .padding(vertical = 4.dp)
+            .graphicsLayer { alpha = animatedAlpha; scaleX = animatedScale; scaleY = animatedScale }
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // Checkbox
-                Checkbox(
-                    checked  = line.isSelected,
-                    onCheckedChange = { if (line.canReturn) onToggle() },
-                    enabled  = line.canReturn,
-                    colors   = CheckboxDefaults.colors(checkedColor = Violet500)
-                )
-                Spacer(Modifier.width(8.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(line.productName,
-                        fontWeight = FontWeight.SemiBold,
-                        color = appColors.textPrimary,
-                        style = MaterialTheme.typography.bodyMedium)
-                    Text("${line.unitLabel} · ₪${String.format(Locale.US, "%.2f", line.invoiceItem.pricePerUnit)}",
-                        color = appColors.textSubtle,
-                        style = MaterialTheme.typography.labelSmall)
-                }
-                // مبلغ الإرجاع
-                if (line.isSelected && line.returnQty > 0) {
-                    Column(horizontalAlignment = Alignment.End) {
-                        Text("₪${String.format(Locale.US, "%.2f", line.refundAmount)}",
-                            color = Violet500, fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleSmall)
-                        if (line.lostProfit > 0) {
-                            Text("خسارة ₪${String.format(Locale.US, "%.2f", line.lostProfit)}",
-                                color = DebtRed,
-                                style = MaterialTheme.typography.labelSmall)
+        // ── ظل ملون خلف البطاقة عند الاختيار ──────────────────
+        if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 6.dp)
+                    .height(60.dp)
+                    .align(Alignment.BottomCenter)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(
+                        Brush.horizontalGradient(listOf(Violet500.copy(0.25f), Cyan500.copy(0.2f)))
+                    )
+            )
+        }
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(24.dp))
+                .clickable(enabled = isEnabled) { onToggle() }
+                .then(
+                    if (isSelected) Modifier.border(
+                        width = 1.5.dp,
+                        brush = Brush.linearGradient(listOf(Violet500, Cyan500)),
+                        shape = RoundedCornerShape(24.dp)
+                    ) else Modifier.border(
+                        1.dp, appColors.border.copy(0.4f), RoundedCornerShape(24.dp)
+                    )
+                ),
+            color = if (isSelected) Violet500.copy(0.05f) else appColors.cardBackground,
+            shadowElevation = animatedElevation,
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    // ── أيقونة الحالة مع Animation ───────────────
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (isSelected)
+                                    Brush.linearGradient(listOf(Violet500, Cyan500))
+                                else
+                                    Brush.linearGradient(listOf(appColors.border.copy(0.2f), appColors.border.copy(0.3f)))
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Crossfade(targetState = isSelected, animationSpec = tween(250), label = "icon") { selected ->
+                            Icon(
+                                if (selected) Icons.Rounded.Check else Icons.Rounded.Undo,
+                                null,
+                                tint = if (selected) Color.White else appColors.textSubtle,
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
                     }
-                }
-            }
 
-            // Quantity Stepper — يظهر فقط إذا اختار وإذا كان partial مفعّل
-            AnimatedVisibility(
-                visible = line.isSelected && line.maxReturnable > 1 &&
-                    (isPartialEnabled || line.maxReturnable == line.invoiceItem.quantity)
-            ) {
-                Column {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color    = appColors.divider
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("الكمية المُرجَعة",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = appColors.textSecondary)
-
+                    // ── تفاصيل الصنف ─────────────────────────────
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(
+                            line.productName,
+                            style     = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.ExtraBold,
+                            color      = if (isSelected) Violet500 else appColors.textPrimary,
+                            maxLines   = 1
+                        )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            // زر -
-                            FilledIconButton(
-                                onClick = { onQtyChange(line.returnQty - 1) },
-                                enabled = line.returnQty > 1,
-                                modifier = Modifier.size(32.dp),
-                                colors   = IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = Violet500.copy(0.12f),
-                                    contentColor   = Violet500
+                            // Badge وحدة
+                            Surface(
+                                color = if (isSelected) Violet500.copy(0.1f) else appColors.border.copy(0.15f),
+                                shape = RoundedCornerShape(6.dp)
+                            ) {
+                                Text(
+                                    line.unitLabel,
+                                    modifier   = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    style      = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color      = if (isSelected) Violet500 else appColors.textSubtle
                                 )
-                            ) { Icon(Icons.Rounded.Remove, null, Modifier.size(16.dp)) }
-
-                            // الكمية
+                            }
+                            Text("·", color = appColors.textSubtle)
                             Text(
-                                "${line.returnQty.toInt()}/${line.maxReturnable.toInt()}",
-                                fontWeight = FontWeight.Bold,
-                                color      = appColors.textPrimary,
-                                style      = MaterialTheme.typography.titleSmall
+                                "₪${String.format(java.util.Locale.US, "%.2f", line.invoiceItem.pricePerUnit)}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = appColors.textSubtle
                             )
-
-                            // زر +
-                            FilledIconButton(
-                                onClick = { onQtyChange(line.returnQty + 1) },
-                                enabled = line.returnQty < line.maxReturnable,
-                                modifier = Modifier.size(32.dp),
-                                colors   = IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = Violet500.copy(0.12f),
-                                    contentColor   = Violet500
+                            // الكمية المتبقية
+                            if (line.maxReturnable < line.invoiceItem.quantity) {
+                                Text("·", color = appColors.textSubtle)
+                                Text(
+                                    "متبقي ${line.maxReturnable.toInt()}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = UnpaidAmber,
+                                    fontWeight = FontWeight.Bold
                                 )
-                            ) { Icon(Icons.Rounded.Add, null, Modifier.size(16.dp)) }
+                            }
+                        }
+                    }
+
+                    // ── مبلغ الإرجاع بانتقال أنيق ───────────────
+                    AnimatedVisibility(
+                        visible = isSelected,
+                        enter = fadeIn(tween(200)) + slideInHorizontally { it / 2 },
+                        exit  = fadeOut(tween(150)) + slideOutHorizontally { it / 2 }
+                    ) {
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(
+                                "₪${String.format(java.util.Locale.US, "%.2f", line.refundAmount)}",
+                                color      = Violet500,
+                                style      = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Black
+                            )
+                            if (line.lostProfit > 0) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                                ) {
+                                    Icon(Icons.Rounded.TrendingDown, null,
+                                        tint = DebtRed, modifier = Modifier.size(10.dp))
+                                    Text(
+                                        "₪${String.format(java.util.Locale.US, "%.2f", line.lostProfit)}",
+                                        color = DebtRed,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            // تنبيه — لا يمكن الإرجاع
-            if (!line.canReturn) {
-                Spacer(Modifier.height(4.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Block, null,
-                        tint = appColors.textSubtle, modifier = Modifier.size(12.dp))
-                    Text("تم إرجاع كامل الكمية مسبقاً",
-                        color = appColors.textSubtle, style = MaterialTheme.typography.labelSmall)
+                // ── Stepper كبسولة عائمة ─────────────────────────
+                AnimatedVisibility(
+                    visible = isSelected && line.maxReturnable > 1 &&
+                            (isPartialEnabled || line.maxReturnable == line.invoiceItem.quantity),
+                    enter = expandVertically(spring(Spring.DampingRatioMediumBouncy)) + fadeIn(),
+                    exit  = shrinkVertically(tween(200)) + fadeOut()
+                ) {
+                    Column {
+                        Spacer(Modifier.height(14.dp))
+                        HorizontalDivider(color = appColors.divider.copy(0.5f))
+                        Spacer(Modifier.height(12.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                "الكمية المُرجَعة",
+                                style      = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color      = appColors.textSecondary
+                            )
+                            // ── Stepper ──────────────────────────
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                StepperButton(
+                                    icon    = Icons.Rounded.Remove,
+                                    enabled = line.returnQty > 1,
+                                    onClick = { onQtyChange(line.returnQty - 1) }
+                                )
+                                // عداد مع animation
+                                Box(
+                                    modifier = Modifier
+                                        .widthIn(min = 72.dp)
+                                        .height(36.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            Brush.horizontalGradient(
+                                                listOf(Violet500.copy(0.08f), Cyan500.copy(0.06f))
+                                            )
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        "${line.returnQty.toInt()} / ${line.maxReturnable.toInt()}",
+                                        style      = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Black,
+                                        color      = Violet500
+                                    )
+                                }
+                                StepperButton(
+                                    icon    = Icons.Rounded.Add,
+                                    enabled = line.returnQty < line.maxReturnable,
+                                    onClick = { onQtyChange(line.returnQty + 1) }
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // ── حالة مكتمل الإرجاع ───────────────────────────
+                if (!isEnabled) {
+                    Spacer(Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(appColors.textSubtle.copy(0.06f))
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(Icons.Rounded.CheckCircle, null,
+                            modifier = Modifier.size(14.dp), tint = PaidGreen.copy(0.7f))
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            "تم إرجاع كامل الكمية مسبقاً",
+                            style      = MaterialTheme.typography.labelSmall,
+                            color      = appColors.textSubtle,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun StepperButton(icon: ImageVector, enabled: Boolean, onClick: () -> Unit) {
+    val scale by animateFloatAsState(if (enabled) 1f else 0.85f, label = "btn")
+    Box(
+        modifier = Modifier
+            .size(36.dp)
+            .graphicsLayer { scaleX = scale; scaleY = scale }
+            .clip(CircleShape)
+            .background(
+                if (enabled) Brush.linearGradient(listOf(Violet500, Cyan500))
+                else Brush.linearGradient(listOf(appColors.border.copy(0.2f), appColors.border.copy(0.2f)))
+            )
+            .clickable(enabled = enabled, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            icon, null,
+            modifier = Modifier.size(18.dp),
+            tint = if (enabled) Color.White else appColors.textSubtle.copy(0.4f)
+        )
     }
 }
 
@@ -327,7 +500,7 @@ private fun ConfirmReturnBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor   = appColors.cardBackground,
+        containerColor = appColors.cardBackground,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
     ) {
         Column(
@@ -347,21 +520,27 @@ private fun ConfirmReturnBottomSheet(
                 contentAlignment = Alignment.Center
             ) { Icon(Icons.Rounded.Undo, null, tint = Violet500, modifier = Modifier.size(32.dp)) }
 
-            Text("تأكيد الإرجاع",
+            Text(
+                "تأكيد الإرجاع",
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth())
+                modifier = Modifier.fillMaxWidth()
+            )
 
             // ملخص الأصناف
             state.selectedLines.forEach { line ->
                 Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-                    Text("${line.productName} × ${line.returnQty.toInt()} ${line.unitLabel}",
+                    Text(
+                        "${line.productName} × ${line.returnQty.toInt()} ${line.unitLabel}",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = appColors.textPrimary)
-                    Text("₪${String.format(Locale.US, "%.2f", line.refundAmount)}",
+                        color = appColors.textPrimary
+                    )
+                    Text(
+                        "₪${String.format(Locale.US, "%.2f", line.refundAmount)}",
                         color = Violet500, fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyMedium)
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
 
@@ -369,26 +548,44 @@ private fun ConfirmReturnBottomSheet(
 
             // الإجمالي
             Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
-                Text("إجمالي الاسترداد",
-                    style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Text("₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
+                Text(
+                    "إجمالي الاسترداد",
+                    style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold
+                )
+                Text(
+                    "₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
                     style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold, color = Violet500)
+                    fontWeight = FontWeight.Bold, color = Violet500
+                )
             }
 
             // تحذير الخسارة
             if (state.totalLostProfit > 0) {
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .clip(RoundedCornerShape(12.dp))
                         .background(DebtRed.copy(0.08f))
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Rounded.Warning, null, tint = DebtRed, modifier = Modifier.size(18.dp))
-                    Text("سيتم تسجيل خسارة ₪${String.format(Locale.US, "%.2f", state.totalLostProfit)} من هامش الربح",
-                        color = DebtRed, style = MaterialTheme.typography.bodySmall)
+                    Icon(
+                        Icons.Rounded.Warning,
+                        null,
+                        tint = DebtRed,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        "سيتم تسجيل خسارة ₪${
+                            String.format(
+                                Locale.US,
+                                "%.2f",
+                                state.totalLostProfit
+                            )
+                        } من هامش الربح",
+                        color = DebtRed, style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
 
@@ -396,19 +593,27 @@ private fun ConfirmReturnBottomSheet(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
                     onClick = onDismiss,
-                    modifier = Modifier.weight(1f).height(52.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(52.dp),
                     shape = RoundedCornerShape(14.dp)
                 ) { Text("إلغاء") }
 
                 Button(
-                    onClick  = onConfirm,
-                    enabled  = state.processingState !is com.trader.core.domain.model.ReturnUiState.Loading,
-                    modifier = Modifier.weight(2f).height(52.dp),
-                    shape    = RoundedCornerShape(14.dp),
-                    colors   = ButtonDefaults.buttonColors(containerColor = Violet500)
+                    onClick = onConfirm,
+                    enabled = state.processingState !is com.trader.core.domain.model.ReturnUiState.Loading,
+                    modifier = Modifier
+                        .weight(2f)
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Violet500)
                 ) {
                     if (state.processingState is com.trader.core.domain.model.ReturnUiState.Loading) {
-                        CircularProgressIndicator(Modifier.size(20.dp), Color.White, strokeWidth = 2.dp)
+                        CircularProgressIndicator(
+                            Modifier.size(20.dp),
+                            Color.White,
+                            strokeWidth = 2.dp
+                        )
                     } else {
                         Icon(Icons.Rounded.Check, null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
@@ -425,16 +630,27 @@ private fun ConfirmReturnBottomSheet(
 private fun PartialReturnLockedDialog(onDismiss: () -> Unit, onUpgrade: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor   = appColors.cardBackground,
-        icon  = { Icon(Icons.Rounded.Lock, null, tint = Violet500, modifier = Modifier.size(36.dp)) },
+        containerColor = appColors.cardBackground,
+        icon = {
+            Icon(
+                Icons.Rounded.Lock,
+                null,
+                tint = Violet500,
+                modifier = Modifier.size(36.dp)
+            )
+        },
         title = { Text("ميزة مدفوعة", fontWeight = FontWeight.Bold) },
-        text  = {
-            Text("الإرجاع الجزئي (اختيار أصناف محددة) متاح في الخطة المتقدمة والبريميوم.\nالخطة المجانية تدعم الإرجاع الكامل فقط.",
-                textAlign = TextAlign.Center)
+        text = {
+            Text(
+                "الإرجاع الجزئي (اختيار أصناف محددة) متاح في الخطة المتقدمة والبريميوم.\nالخطة المجانية تدعم الإرجاع الكامل فقط.",
+                textAlign = TextAlign.Center
+            )
         },
         confirmButton = {
-            Button(onClick = onUpgrade,
-                colors = ButtonDefaults.buttonColors(containerColor = Violet500)) {
+            Button(
+                onClick = onUpgrade,
+                colors = ButtonDefaults.buttonColors(containerColor = Violet500)
+            ) {
                 Text("ترقية الاشتراك")
             }
         },
@@ -454,8 +670,10 @@ private fun SummaryPill(text: String, icon: androidx.compose.ui.graphics.vector.
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(icon, null, tint = Color.White, modifier = Modifier.size(14.dp))
-            Text(text, color = Color.White, style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Medium)
+            Text(
+                text, color = Color.White, style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
