@@ -5,6 +5,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.trader.core.domain.model.FeatureFlags
 import com.trader.core.domain.model.MerchantTier
 import kotlinx.coroutines.tasks.await
+import com.trader.core.BuildConfig
 
 /**
  * Initializes Firebase Remote Config and pushes values to FeatureFlags.
@@ -49,7 +50,7 @@ object RemoteConfigManager {
         // Step 1: configure + set defaults (sync, never throws)
         rc.setConfigSettingsAsync(remoteConfigSettings {
             // Dev: fetch every 60s. Prod: use default (12h)
-            minimumFetchIntervalInSeconds = if (com.trader.core.BuildConfig.DEBUG) 60L else 43200L
+            minimumFetchIntervalInSeconds = if (BuildConfig.DEBUG) 60L else 43200L
         }).await()
         rc.setDefaultsAsync(IN_APP_DEFAULTS.mapValues { it.value }).await()
 
