@@ -228,3 +228,5 @@ class ReturnRepositoryImpl(
             dao.markSynced(returnInvoice.id)
         }
     }
+
+}
