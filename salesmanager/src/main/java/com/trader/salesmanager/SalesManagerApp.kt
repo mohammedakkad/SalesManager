@@ -9,8 +9,16 @@ import com.trader.salesmanager.worker.UnpaidDebtWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import com.trader.core.worker.StatusCheckWorker
+import com.trader.core.data.remote.RemoteConfigManager
+import com.trader.core.domain.repository.ActivationRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class SalesManagerApp : Application() {
+class SalesManagerApp : Application(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
         // Refresh FCM token on app start
@@ -32,5 +40,15 @@ class SalesManagerApp : Application() {
         UnpaidDebtWorker.schedule(this)
         
         StatusCheckWorker.schedule(this)
+
+        // ── Freemium: initialise Remote Config after Koin is ready ──
+        // Uses SupervisorJob so a crash here doesn't kill the app
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            runCatching {
+                val activationRepo: ActivationRepository by inject()
+                val tier = activationRepo.getMerchantTier()
+                RemoteConfigManager.initialize(tier)
+            }
+        }
     }
 }

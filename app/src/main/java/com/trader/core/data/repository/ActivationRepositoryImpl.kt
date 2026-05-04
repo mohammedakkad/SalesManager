@@ -14,8 +14,11 @@ import com.trader.core.data.local.entity.*
 import com.trader.core.data.remote.ProductFirestoreService
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.MerchantStatus
+import com.trader.core.domain.model.MerchantTier
 import com.trader.core.domain.repository.ActivationRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.flow.*
 import com.trader.core.domain.model.StartupStatus
 import com.trader.core.data.remote.ValidationResult
@@ -31,8 +34,10 @@ class ActivationRepositoryImpl(
     private val productFirestoreService: ProductFirestoreService // ✅
 ) : ActivationRepository {
 
-    private val IS_ACTIVATED = booleanPreferencesKey("is_activated")
-    private val MERCHANT_CODE = stringPreferencesKey("merchant_code")
+    private val IS_ACTIVATED      = booleanPreferencesKey("is_activated")
+    private val MERCHANT_CODE     = stringPreferencesKey("merchant_code")
+    private val MERCHANT_TIER     = stringPreferencesKey("merchant_tier")       // FREE / PREMIUM
+    private val IS_SELF_REGISTERED = booleanPreferencesKey("is_self_registered")
 
     override suspend fun validateCode(code: String) = firebaseService.validateCode(code)
 
@@ -208,4 +213,55 @@ class ActivationRepositoryImpl(
             } else -> StartupStatus.ACTIVE
         }
     }
+
+    // ════════════════════════════════════════════════════════════
+    // Freemium methods
+    // ════════════════════════════════════════════════════════════
+
+    override suspend fun getMerchantTier(): MerchantTier {
+        val raw = context.appDataStore.data.map { it[MERCHANT_TIER] ?: "" }.first()
+        return runCatching { MerchantTier.valueOf(raw) }.getOrDefault(MerchantTier.FREE)
+    }
+
+    override suspend fun isSelfRegistered(): Boolean =
+        context.appDataStore.data.map { it[IS_SELF_REGISTERED] ?: false }.first()
+
+    override suspend fun saveMerchantTier(tier: MerchantTier) {
+        context.appDataStore.edit { it[MERCHANT_TIER] = tier.name }
+    }
+
+    /**
+     * One-time free registration:
+     * 1. Creates Firestore doc (requires internet — one-time only).
+     * 2. Saves locally as "activated" with FREE tier.
+     * 3. Subsequent launches work offline using DataStore.
+     */
+    override suspend fun registerFree(deviceId: String) {
+        val merchantId = "free_${deviceId.take(12)}_${System.currentTimeMillis()}"
+
+        FirebaseFirestore.getInstance()
+            .collection("merchants")
+            .document(merchantId)
+            .set(mapOf(
+                "id"               to merchantId,
+                "tier"             to MerchantTier.FREE.name,
+                "status"           to "ACTIVE",
+                "isPermanent"      to true,
+                "isSelfRegistered" to true,
+                "activationCode"   to "",
+                "createdAt"        to System.currentTimeMillis()
+            )).await()
+
+        // Save locally — treated as "activated" from now on
+        context.appDataStore.edit {
+            it[IS_ACTIVATED]       = true
+            it[MERCHANT_CODE]      = merchantId
+            it[MERCHANT_TIER]      = MerchantTier.FREE.name
+            it[IS_SELF_REGISTERED] = true
+        }
+    }
+
+    // Update verifyStatusOnStartup to also read + persist tier
+    // (the existing override stays, we add tier reading in ACTIVE branch)
+    // See: ActivationViewModel reads tier after ACTIVE status
 }
