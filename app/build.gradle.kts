@@ -46,6 +46,7 @@ dependencies {
     api(libs.firebase.crashlytics)
     api(libs.firebase.analytics)
     api(libs.firebase.messaging)
+    api(libs.firebase.config)
     api(libs.androidx.work.runtime)
     api(libs.koin.workmanager)
 }
