@@ -276,7 +276,7 @@ abstract class AppDatabase : RoomDatabase() {
                 // الخطوة 2: إنشاء الـ UNIQUE INDEX بأمان بعد التنظيف
                 db.execSQL(
                     "CREATE UNIQUE INDEX IF NOT EXISTS index_products_barcode_merchantId " +
-                            "ON products (barcode, merchantId)"
+                    "ON products (barcode, merchantId)"
                 )
             }
         }
@@ -394,46 +394,47 @@ abstract class AppDatabase : RoomDatabase() {
 
         // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
-            Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
-                .addMigrations(
-                    MIGRATION_1_2,
-                    MIGRATION_2_3,
-                    MIGRATION_3_4,
-                    MIGRATION_4_5,
-                    MIGRATION_5_6,
-                    MIGRATION_6_7,
-                    MIGRATION_7_8,
-                    MIGRATION_8_9,
-                    MIGRATION_9_10,
-                    MIGRATION_10_11,
-                    MIGRATION_11_12,
-                    MIGRATION_12_13,
-                    MIGRATION_13_14
+        Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
+        .addMigrations(
+            MIGRATION_1_2,
+            MIGRATION_2_3,
+            MIGRATION_3_4,
+            MIGRATION_4_5,
+            MIGRATION_5_6,
+            MIGRATION_6_7,
+            MIGRATION_7_8,
+            MIGRATION_8_9,
+            MIGRATION_9_10,
+            MIGRATION_10_11,
+            MIGRATION_11_12,
+            MIGRATION_12_13,
+            MIGRATION_13_14
+        )
+        .addCallback(object : Callback() {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+
+                insertGuestCustomer(db)
+                // إضافة طرق الدفع
+                db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")
+                db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('بنك', '${PaymentType.BANK.name}')")
+                db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('محفظة', '${PaymentType.WALLET.name}')")
+            }
+
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                // هذا السطر هو الضمان الهندسي للمستخدمين القدامى
+                insertGuestCustomer(db)
+            }
+
+            private fun insertGuestCustomer(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "INSERT OR IGNORE INTO customers (id, name, phone, createdAt, syncStatus) " +
+                    "VALUES (-1, 'زبون زائر', '', 0, 'SYNCED')"
                 )
-                .addCallback(object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-
-                        insertGuestCustomer(db)
-                        // إضافة طرق الدفع
-                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('كاش', '${PaymentType.CASH.name}')")
-                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('بنك', '${PaymentType.BANK.name}')")
-                        db.execSQL("INSERT INTO payment_methods (name, type) VALUES ('محفظة', '${PaymentType.WALLET.name}')")
-                    }
-
-                    override fun onOpen(db: SupportSQLiteDatabase) {
-                        super.onOpen(db)
-                        // هذا السطر هو الضمان الهندسي للمستخدمين القدامى
-                        insertGuestCustomer(db)
-                    }
-
-                    private fun insertGuestCustomer(db: SupportSQLiteDatabase) {
-                        db.execSQL(
-                            "INSERT OR IGNORE INTO customers (id, name, phone, createdAt) VALUES (-1, 'زبون زائر', '', 0)"
-                        )
-                    }
-                })
-                .build()
+            }
+        })
+        .build()
     }
 }
 
