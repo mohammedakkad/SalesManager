@@ -16,7 +16,6 @@ import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.model.MerchantTier
 import com.trader.core.domain.repository.ActivationRepository
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.flow.*

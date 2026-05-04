@@ -1,58 +1,67 @@
 package com.trader.salesmanager.ui.navigation
 
-import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.BarChart
+import androidx.compose.material.icons.rounded.Inventory
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.navigation.*
-import androidx.navigation.compose.*
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.trader.salesmanager.ui.activation.ActivationScreen
 import com.trader.salesmanager.ui.activation.ActivationViewModel
-import com.trader.salesmanager.ui.activation.StartupState
 import com.trader.salesmanager.ui.activation.MerchantEvent
 import com.trader.salesmanager.ui.activation.MerchantWatcherViewModel
+import com.trader.salesmanager.ui.activation.StartupState
 import com.trader.salesmanager.ui.chat.ChatScreen
+import com.trader.salesmanager.ui.components.PremiumGate
 import com.trader.salesmanager.ui.customers.addedit.AddEditCustomerScreen
 import com.trader.salesmanager.ui.customers.details.CustomerDetailsScreen
 import com.trader.salesmanager.ui.customers.list.CustomersScreen
 import com.trader.salesmanager.ui.debts.DebtsScreen
 import com.trader.salesmanager.ui.home.HomeScreen
-import com.trader.salesmanager.ui.payments.PaymentMethodsScreen
-import com.trader.salesmanager.ui.reports.ReportsScreen
-import com.trader.salesmanager.ui.reports.DayTransactionsScreen
-import com.trader.salesmanager.ui.returns.ReturnProcessScreen
-import com.trader.salesmanager.ui.components.PremiumGate
-import androidx.compose.material.icons.rounded.Undo
-import androidx.compose.material.icons.rounded.Inventory
-import androidx.compose.material.icons.rounded.BarChart
-import com.trader.salesmanager.ui.inventory.list.InventoryListScreen
 import com.trader.salesmanager.ui.inventory.addedit.AddEditProductScreen
 import com.trader.salesmanager.ui.inventory.detail.ProductDetailScreen
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceItemsScreen
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceLineItem
-import com.trader.salesmanager.ui.inventory.invoice.SaleWeightUnit
+import com.trader.salesmanager.ui.inventory.list.InventoryListScreen
 import com.trader.salesmanager.ui.inventory.reports.StockReportsScreen
-import org.json.JSONArray
-import org.json.JSONObject
+import com.trader.salesmanager.ui.payments.PaymentMethodsScreen
+import com.trader.salesmanager.ui.reports.DayTransactionsScreen
+import com.trader.salesmanager.ui.reports.ReportsScreen
+import com.trader.salesmanager.ui.returns.ReturnProcessScreen
 import com.trader.salesmanager.ui.settings.SettingsScreen
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionScreen
 import com.trader.salesmanager.ui.transactions.details.TransactionDetailsScreen
 import com.trader.salesmanager.ui.transactions.list.TransactionsScreen
+import org.json.JSONArray
+import org.json.JSONObject
 import org.koin.androidx.compose.koinViewModel
 
 // تسلسل خطوط الفاتورة لنقلها عبر SavedStateHandle
 // ✅ يحفظ displayQty + displayWeightUnit حتى يتم إعادة بناء InvoiceLineItem بشكل صحيح
 private fun serializeLines(lines: List<InvoiceLineItem>): String {
     val arr = JSONArray()
-    lines.forEach {
-        line ->
+    lines.forEach { line ->
         arr.put(JSONObject().apply {
             put("productId", line.product.product.id)
             put("productName", line.product.product.name)
@@ -79,8 +88,7 @@ fun AppNavigation() {
     }
 
     LaunchedEffect(Unit) {
-        watcherVm.event.collect {
-            event ->
+        watcherVm.event.collect { event ->
             val msg = when (event) {
                 is MerchantEvent.Disabled -> "تم تعطيل حسابك من قِبل الإدارة."
                 is MerchantEvent.Deleted -> "تم حذف حسابك. تواصل مع الإدارة."
@@ -91,8 +99,7 @@ fun AppNavigation() {
         }
     }
 
-    liveBlockMessage?.let {
-        msg ->
+    liveBlockMessage?.let { msg ->
         AlertDialog(
             onDismissRequest = {},
             icon = {
@@ -125,6 +132,7 @@ fun AppNavigation() {
             SplashCheckScreen()
             return
         }
+
         is StartupState.Blocked -> {
             BlockedScreen(
                 message = s.message,
@@ -134,7 +142,9 @@ fun AppNavigation() {
                 }
             )
             return
-        } else -> {
+        }
+
+        else -> {
             /* ACTIVE or NeedActivation — continue to NavHost */
         }
     }
@@ -201,8 +211,8 @@ fun AppNavigation() {
                 onAddTransaction = {
                     navController.navigate(Screen.AddTransaction.createRoute())
                 },
-                onTransactionClick = {
-                    id -> navController.navigate(Screen.TransactionDetails.createRoute(id))
+                onTransactionClick = { id ->
+                    navController.navigate(Screen.TransactionDetails.createRoute(id))
                 }
             )
         }
@@ -242,8 +252,7 @@ fun AppNavigation() {
             listOf(navArgument("customerId") {
                 type = NavType.LongType
             })
-        ) {
-            back ->
+        ) { back ->
             val id = back.arguments!!.getLong("customerId")
             CustomerDetailsScreen(
                 customerId = id,
@@ -280,18 +289,17 @@ fun AppNavigation() {
                 type = NavType.LongType
                 defaultValue = -1L
             })
-        ) {
-            back ->
+        ) { back ->
             val preselectedId = back.arguments!!.getLong("customerId").takeIf {
                 it != -1L
             }
 
             val invoiceViewModel: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
-            org.koin.androidx.compose.koinViewModel()
+                org.koin.androidx.compose.koinViewModel()
 
             val linesJson by back.savedStateHandle
-            .getStateFlow<String?>("invoice_lines_json", null)
-            .collectAsState()
+                .getStateFlow<String?>("invoice_lines_json", null)
+                .collectAsState()
 
             // ✅ إصلاح race condition:
             // invoiceTotal كان يُعيَّن بعد linesJson فيخرج LaunchedEffect مبكراً.
@@ -308,16 +316,15 @@ fun AppNavigation() {
                 onNavigateUp = {
                     navController.navigateUp()
                 },
-                onNavigateToInvoiceItems = {
-                    customerName, existingLinesJson ->
+                onNavigateToInvoiceItems = { customerName, existingLinesJson ->
                     // ✅ نكتب في currentBackStackEntry (AddTransaction) قبل navigate
                     // InvoiceItems ستقرأ من previousBackStackEntry → هذه الشاشة
                     if (existingLinesJson != null) {
                         navController.currentBackStackEntry
-                        ?.savedStateHandle?.set("existing_lines_json", existingLinesJson)
+                            ?.savedStateHandle?.set("existing_lines_json", existingLinesJson)
                     } else {
                         navController.currentBackStackEntry
-                        ?.savedStateHandle?.remove<String>("existing_lines_json")
+                            ?.savedStateHandle?.remove<String>("existing_lines_json")
                     }
                     navController.navigate(Screen.InvoiceItems.createRoute(customerName))
                 },
@@ -329,14 +336,13 @@ fun AppNavigation() {
             listOf(navArgument("transactionId") {
                 type = NavType.LongType
             })
-        ) {
-            back ->
+        ) { back ->
             val invoiceViewModel: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
-            org.koin.androidx.compose.koinViewModel()
+                org.koin.androidx.compose.koinViewModel()
 
             val linesJson by back.savedStateHandle
-            .getStateFlow<String?>("invoice_lines_json", null)
-            .collectAsState()
+                .getStateFlow<String?>("invoice_lines_json", null)
+                .collectAsState()
 
             LaunchedEffect(linesJson) {
                 val json = linesJson ?: return@LaunchedEffect
@@ -351,14 +357,13 @@ fun AppNavigation() {
                     navController.navigateUp()
                 },
                 // ✅ أضف onNavigateToInvoiceItems
-                onNavigateToInvoiceItems = {
-                    customerName, existingLinesJson ->
+                onNavigateToInvoiceItems = { customerName, existingLinesJson ->
                     if (existingLinesJson != null) {
                         navController.currentBackStackEntry
-                        ?.savedStateHandle?.set("existing_lines_json", existingLinesJson)
+                            ?.savedStateHandle?.set("existing_lines_json", existingLinesJson)
                     } else {
                         navController.currentBackStackEntry
-                        ?.savedStateHandle?.remove<String>("existing_lines_json")
+                            ?.savedStateHandle?.remove<String>("existing_lines_json")
                     }
                     navController.navigate(Screen.InvoiceItems.createRoute(customerName))
                 },
@@ -370,8 +375,7 @@ fun AppNavigation() {
             listOf(navArgument("transactionId") {
                 type = NavType.LongType
             })
-        ) {
-            back ->
+        ) { back ->
             val id = back.arguments!!.getLong("transactionId")
             TransactionDetailsScreen(
                 transactionId = id,
@@ -381,10 +385,10 @@ fun AppNavigation() {
                 onEdit = {
                     navController.navigate(Screen.EditTransaction.createRoute(it))
                 },
-                onNavigateToReturn = {
-                    txId ->
+                onNavigateToReturn = { txId ->
                     // هذا هو السطر الذي يفتح شاشة المرتجعات
-                    navController.navigate(Screen.ReturnProcess.createRoute(txId)
+                    navController.navigate(
+                        Screen.ReturnProcess.createRoute(txId)
                     )
                 })
         }
@@ -403,8 +407,7 @@ fun AppNavigation() {
                 onNavigateUp = {
                     navController.navigateUp()
                 },
-                onViewDayTransactions = {
-                    dateMillis ->
+                onViewDayTransactions = { dateMillis ->
                     navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
                 }
             )
@@ -437,16 +440,15 @@ fun AppNavigation() {
             listOf(navArgument("dateMillis") {
                 type = NavType.LongType
             })
-        ) {
-            back ->
+        ) { back ->
             val dateMillis = back.arguments!!.getLong("dateMillis")
             DayTransactionsScreen(
                 dateMillis = dateMillis,
                 onNavigateUp = {
                     navController.navigateUp()
                 },
-                onTransactionClick = {
-                    id -> navController.navigate(Screen.TransactionDetails.createRoute(id))
+                onTransactionClick = { id ->
+                    navController.navigate(Screen.TransactionDetails.createRoute(id))
                 }
             )
         }
@@ -456,11 +458,11 @@ fun AppNavigation() {
                 onNavigateUp = {
                     navController.navigateUp()
                 },
-                onProductClick = {
-                    id -> navController.navigate(Screen.ProductDetail.createRoute(id))
+                onProductClick = { id ->
+                    navController.navigate(Screen.ProductDetail.createRoute(id))
                 },
-                onAddProduct = {
-                    barcode -> navController.navigate(Screen.AddProduct.createRoute(barcode))
+                onAddProduct = { barcode ->
+                    navController.navigate(Screen.AddProduct.createRoute(barcode))
                 },
                 onInventorySession = {
                     navController.navigate(Screen.InventorySession.route)
@@ -475,8 +477,7 @@ fun AppNavigation() {
             listOf(navArgument("barcode") {
                 type = NavType.StringType; defaultValue = ""
             })
-        ) {
-            back ->
+        ) { back ->
             val barcode = back.arguments?.getString("barcode")?.ifEmpty {
                 null
             }
@@ -492,8 +493,7 @@ fun AppNavigation() {
             listOf(navArgument("productId") {
                 type = NavType.StringType
             })
-        ) {
-            back ->
+        ) { back ->
             AddEditProductScreen(
                 productId = back.arguments!!.getString("productId"),
                 onNavigateUp = {
@@ -506,66 +506,65 @@ fun AppNavigation() {
             listOf(navArgument("productId") {
                 type = NavType.StringType
             })
-        ) {
-            back ->
+        ) { back ->
             val productId = back.arguments!!.getString("productId")!!
             ProductDetailScreen(
                 productId = productId,
                 onNavigateUp = {
                     navController.navigateUp()
                 },
-                onEdit = {
-                    id -> navController.navigate(Screen.EditProduct.createRoute(id))
+                onEdit = { id ->
+                    navController.navigate(Screen.EditProduct.createRoute(id))
                 }
             )
         }
         composable(Screen.InventorySession.route) {
             PremiumGate(
-                feature   = "جرد المخزون",
-                icon      = Icons.Rounded.Inventory,
+                feature = "جرد المخزون",
+                icon = Icons.Rounded.Inventory,
                 onUpgrade = { navController.navigate(Screen.Subscription.route) }
             ) {
-            com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
-                }
-            )
+                com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    }
+                )
+            }
         }
         composable(Screen.StockReports.route) {
             PremiumGate(
-                feature   = "تقارير المخزون",
-                icon      = Icons.Rounded.BarChart,
+                feature = "تقارير المخزون",
+                icon = Icons.Rounded.BarChart,
                 onUpgrade = { navController.navigate(Screen.Subscription.route) }
             ) {
-            StockReportsScreen(onNavigateUp = {
-                navController.navigateUp()
-            }) } // PremiumGate
+                StockReportsScreen(onNavigateUp = {
+                    navController.navigateUp()
+                })
+            } // PremiumGate
         }
         composable(
             Screen.InvoiceItems.route,
             listOf(navArgument("customerName") {
                 type = NavType.StringType
             })
-        ) {
-            back ->
+        ) { back ->
             val customerName = back.arguments?.getString("customerName")
-            ?.let {
-                java.net.URLDecoder.decode(it, "UTF-8")
-            } ?: ""
+                ?.let {
+                    java.net.URLDecoder.decode(it, "UTF-8")
+                } ?: ""
             val existingLinesJson = navController.previousBackStackEntry
-            ?.savedStateHandle?.get<String>("existing_lines_json")
+                ?.savedStateHandle?.get<String>("existing_lines_json")
             InvoiceItemsScreen(
                 customerName = customerName,
                 existingLinesJson = existingLinesJson,
                 onNavigateUp = {
                     navController.navigateUp()
                 },
-                onConfirm = {
-                    lines, total ->
+                onConfirm = { lines, total ->
                     navController.previousBackStackEntry
-                    ?.savedStateHandle?.remove<String>("existing_lines_json")
+                        ?.savedStateHandle?.remove<String>("existing_lines_json")
                     navController.previousBackStackEntry
-                    ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
+                        ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
                     navController.navigateUp()
                 }
             )
@@ -577,8 +576,8 @@ fun AppNavigation() {
         ) { back ->
             val txId = back.arguments!!.getLong("transactionId")
             ReturnProcessScreen(
-                transactionId   = txId,
-                onNavigateUp    = { navController.navigateUp() },
+                transactionId = txId,
+                onNavigateUp = { navController.navigateUp() },
                 onReturnSuccess = {
                     // ✅ يرجع لشاشة التفاصيل مباشرة
                     navController.popBackStack()
@@ -587,3 +586,5 @@ fun AppNavigation() {
         }
     }
 }
+
+//VXYAWGAT

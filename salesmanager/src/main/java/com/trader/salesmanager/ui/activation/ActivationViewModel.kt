@@ -123,11 +123,6 @@ sealed class StartupState {
             }
         }
 
-        fun deactivate() {
-            viewModelScope.launch {
-                repo.deactivate(); _startupState.value = StartupState.NeedActivation
-            }
-        }
 
         fun onNoInternetSnackbarShown() = _uiState.update {
             it.copy(showNoInternetSnackbar = false)
