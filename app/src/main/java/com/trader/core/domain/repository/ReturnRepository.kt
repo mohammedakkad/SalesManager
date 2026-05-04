@@ -19,6 +19,8 @@ interface ReturnRepository {
         returnInvoice: ReturnInvoice,
         items: List<ReturnItem>
     ): ReturnInvoice
+    
+    suspend fun getAlreadyReturnedQty(transactionId: Long, unitId: String): Double
 
     /** فواتير الإرجاع المرتبطة بعملية معينة */
     fun getReturnsByTransaction(transactionId: Long): Flow<List<ReturnInvoice>>
