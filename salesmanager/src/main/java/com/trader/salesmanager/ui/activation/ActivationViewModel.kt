@@ -9,13 +9,15 @@ import com.trader.core.util.NetworkMonitor
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import com.trader.core.data.remote.ValidationResult
+import com.trader.core.domain.model.MerchantTier
 
 sealed class StartupState {
-    object Checking : StartupState()
-    object Proceed : StartupState()
-    object NeedActivation : StartupState()
+    object Checking      : StartupState()
+    object Proceed       : StartupState()           // Premium — activation code
+    object ProceedFree   : StartupState()           // Free — self-registered
+    object NeedActivation: StartupState()
     data class Blocked(val message: String, val canRetry: Boolean = false) : StartupState()
-    }
+}
 
     class ActivationViewModel(
         private val repo: ActivationRepository,
@@ -40,7 +42,13 @@ sealed class StartupState {
             viewModelScope.launch {
                 val result = repo.verifyStatusOnStartup()
                 _startupState.value = when (result) {
-                    StartupStatus.ACTIVE -> StartupState.Proceed
+                    StartupStatus.ACTIVE -> {
+                        // Read tier and apply feature flags
+                        val tier = repo.getMerchantTier()
+                        com.trader.core.domain.model.FeatureFlags.applyTier(tier)
+                        if (repo.isSelfRegistered()) StartupState.ProceedFree
+                        else StartupState.Proceed
+                    }
                     StartupStatus.OFFLINE -> StartupState.Proceed
                     StartupStatus.NOT_ACTIVATED -> StartupState.NeedActivation
                     StartupStatus.DISABLED -> StartupState.Blocked(
@@ -124,4 +132,31 @@ sealed class StartupState {
         fun onNoInternetSnackbarShown() = _uiState.update {
             it.copy(showNoInternetSnackbar = false)
         }
+    
+    fun registerFree(context: android.content.Context) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            runCatching {
+                val deviceId = android.provider.Settings.Secure.getString(
+                    context.contentResolver,
+                    android.provider.Settings.Secure.ANDROID_ID
+                ) ?: System.currentTimeMillis().toString()
+                repo.registerFree(deviceId)
+                com.trader.core.domain.model.FeatureFlags.applyTier(MerchantTier.FREE)
+                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+            }.onFailure { e ->
+                _uiState.update { it.copy(
+                    isLoading = false,
+                    error = "فشل التسجيل: ${e.message ?: "تحقق من الإنترنت"}"
+                )}
+            }
+        }
     }
+
+    fun deactivate() {
+        viewModelScope.launch {
+            repo.deactivate()
+            _startupState.value = StartupState.NeedActivation
+        }
+    }
+}

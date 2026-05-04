@@ -28,6 +28,10 @@ import com.trader.salesmanager.ui.payments.PaymentMethodsScreen
 import com.trader.salesmanager.ui.reports.ReportsScreen
 import com.trader.salesmanager.ui.reports.DayTransactionsScreen
 import com.trader.salesmanager.ui.returns.ReturnProcessScreen
+import com.trader.salesmanager.ui.components.PremiumGate
+import androidx.compose.material.icons.rounded.Undo
+import androidx.compose.material.icons.rounded.Inventory
+import androidx.compose.material.icons.rounded.BarChart
 import com.trader.salesmanager.ui.inventory.list.InventoryListScreen
 import com.trader.salesmanager.ui.inventory.addedit.AddEditProductScreen
 import com.trader.salesmanager.ui.inventory.detail.ProductDetailScreen
@@ -516,6 +520,11 @@ fun AppNavigation() {
             )
         }
         composable(Screen.InventorySession.route) {
+            PremiumGate(
+                feature   = "جرد المخزون",
+                icon      = Icons.Rounded.Inventory,
+                onUpgrade = { navController.navigate(Screen.Subscription.route) }
+            ) {
             com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
                 onNavigateUp = {
                     navController.navigateUp()
@@ -523,9 +532,14 @@ fun AppNavigation() {
             )
         }
         composable(Screen.StockReports.route) {
+            PremiumGate(
+                feature   = "تقارير المخزون",
+                icon      = Icons.Rounded.BarChart,
+                onUpgrade = { navController.navigate(Screen.Subscription.route) }
+            ) {
             StockReportsScreen(onNavigateUp = {
                 navController.navigateUp()
-            })
+            }) } // PremiumGate
         }
         composable(
             Screen.InvoiceItems.route,

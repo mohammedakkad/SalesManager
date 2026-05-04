@@ -76,6 +76,8 @@ import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
 import kotlin.math.min
 import com.trader.salesmanager.util.export.*
+import com.trader.core.domain.model.FeatureFlags
+import com.trader.salesmanager.ui.components.PremiumLockChip
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -143,26 +145,33 @@ fun ReportsScreen(
                 },
                 actions = {
                     val isExporting = exportState is ExportState.Loading
-                    IconButton(
-                        onClick = {
-                            if (!isExporting) {
-                                exportVm.exportSalesReportExcel(
-                                    transactions = uiState.filteredTransactions,
-                                    periodLabel = uiState.period.name,
-                                    storeName = storeName,
-                                    dailySales = uiState.dailySales,
-                                    topSpenders = uiState.topSpenders,
-                                    paymentShares = uiState.paymentShares,
-                                    cacheDir = context.cacheDir
-                                )
+                    // ── Export — Premium only ──────────────────────────
+                    val flags by FeatureFlags.flow.collectAsState()
+                    if (flags.reportExport) {
+                        IconButton(
+                            onClick = {
+                                if (!isExporting) {
+                                    exportVm.exportSalesReportExcel(
+                                        transactions = uiState.filteredTransactions,
+                                        periodLabel = uiState.period.name,
+                                        storeName = storeName,
+                                        dailySales = uiState.dailySales,
+                                        topSpenders = uiState.topSpenders,
+                                        paymentShares = uiState.paymentShares,
+                                        cacheDir = context.cacheDir
+                                    )
+                                }
+                            }
+                        ) {
+                            if (isExporting) {
+                                CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = Emerald500)
+                            } else {
+                                Icon(Icons.Rounded.Analytics, contentDescription = "تصدير Excel", tint = Emerald500)
                             }
                         }
-                    ) {
-                        if (isExporting) {
-                            CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = Emerald500)
-                        } else {
-                            Icon(Icons.Rounded.Analytics, contentDescription = "تصدير Excel", tint = Emerald500)
-                        }
+                    } else {
+                        // 🔒 Free: show lock chip instead of button
+                        PremiumLockChip(feature = "تصدير", onUpgrade = { /* navigate to plans */ })
                     }
                 }
             )
@@ -712,37 +721,68 @@ private fun TimeSlotRow(label: String, value: Double, ratio: Float, color: Color
 
 // ── الـ Composables المشتركة (من الملف الأصلي) ───────────────
 @Composable
-private fun PeriodSwitcher(selected: ReportPeriod, onSelect: (ReportPeriod) -> Unit) {
-    val labels = mapOf(
+private fun PeriodSwitcher(
+    selected: ReportPeriod,
+    onSelect: (ReportPeriod) -> Unit,
+    onUpgrade: () -> Unit = {}
+) {
+    val flags by FeatureFlags.flow.collectAsState()
+
+    val allLabels = mapOf(
         ReportPeriod.TODAY to "اليوم",
-        ReportPeriod.WEEK to "الأسبوع",
+        ReportPeriod.WEEK  to "الأسبوع",
         ReportPeriod.MONTH to "الشهر"
     )
     Row(
         modifier = Modifier
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(14.dp))
-        .background(MaterialTheme.colorScheme.surfaceVariant)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        labels.forEach {
-            (period, label) ->
-            val isSelected = period == selected
+        allLabels.forEach { (period, label) ->
+            val isSelected  = period == selected
+            val isMonthLocked = period == ReportPeriod.MONTH && !flags.monthReport
+
             Box(
                 modifier = Modifier
-                .weight(1f)
-                .padding(4.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(if (isSelected) Emerald500 else Color.Transparent),
+                    .weight(1f)
+                    .padding(4.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(
+                        when {
+                            isMonthLocked -> Color.Transparent
+                            isSelected    -> Emerald500
+                            else          -> Color.Transparent
+                        }
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                TextButton(onClick = {
-                    onSelect(period)
-                }, modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        label,
-                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                    )
+                TextButton(
+                    onClick = { if (isMonthLocked) onUpgrade() else onSelect(period) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            label,
+                            color = when {
+                                isMonthLocked -> MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
+                                isSelected    -> Color.White
+                                else          -> MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                        )
+                        // 🔒 قفل صغير أمام "الشهر" للمستخدم المجاني
+                        if (isMonthLocked) {
+                            Icon(
+                                Icons.Rounded.Lock, null,
+                                modifier = Modifier.size(11.dp),
+                                tint = Color(0xFFFFA500)
+                            )
+                        }
+                    }
                 }
             }
         }
