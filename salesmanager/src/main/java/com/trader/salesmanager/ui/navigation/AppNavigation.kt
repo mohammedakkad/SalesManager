@@ -139,8 +139,12 @@ fun AppNavigation() {
         }
     }
 
-    val start = if (startupState == StartupState.Proceed)
-        Screen.Home.route else Screen.Activation.route
+    val start = if (startupState == StartupState.Proceed || startupState is StartupState.ProceedFree) {
+        Screen.Home.route
+    } else {
+        Screen.Activation.route
+    }
+
 
     NavHost(
         navController = navController,
@@ -167,14 +171,25 @@ fun AppNavigation() {
         }
     ) {
         composable(Screen.Activation.route) {
-            ActivationScreen(onActivated = {
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.Activation.route) {
-                        inclusive = true
+            ActivationScreen(
+                onActivated = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Activation.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                // هذه هي الميزة المطلوبة من الملف الثاني
+                onFreeStart = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Activation.route) {
+                            inclusive = true
+                        }
                     }
                 }
-            })
+            )
         }
+
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToCustomers = {
@@ -521,69 +536,79 @@ fun AppNavigation() {
         }
         composable(Screen.InventorySession.route) {
             PremiumGate(
-                feature   = "جرد المخزون",
-                icon      = Icons.Rounded.Inventory,
-                onUpgrade = { navController.navigate(Screen.Subscription.route) }
-            ) {
-            com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
+                feature = "جرد المخزون",
+                icon = Icons.Rounded.Inventory,
+                onUpgrade = {
+                    navController.navigate(Screen.Subscription.route)
                 }
-            )
-        }
-        composable(Screen.StockReports.route) {
-            PremiumGate(
-                feature   = "تقارير المخزون",
-                icon      = Icons.Rounded.BarChart,
-                onUpgrade = { navController.navigate(Screen.Subscription.route) }
             ) {
-            StockReportsScreen(onNavigateUp = {
-                navController.navigateUp()
-            }) } // PremiumGate
-        }
-        composable(
-            Screen.InvoiceItems.route,
-            listOf(navArgument("customerName") {
-                type = NavType.StringType
-            })
-        ) {
-            back ->
-            val customerName = back.arguments?.getString("customerName")
-            ?.let {
-                java.net.URLDecoder.decode(it, "UTF-8")
-            } ?: ""
-            val existingLinesJson = navController.previousBackStackEntry
-            ?.savedStateHandle?.get<String>("existing_lines_json")
-            InvoiceItemsScreen(
-                customerName = customerName,
-                existingLinesJson = existingLinesJson,
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onConfirm = {
-                    lines, total ->
-                    navController.previousBackStackEntry
-                    ?.savedStateHandle?.remove<String>("existing_lines_json")
-                    navController.previousBackStackEntry
-                    ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
-                    navController.navigateUp()
-                }
-            )
-        }
+                com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+            composable(Screen.StockReports.route) {
+                PremiumGate(
+                    feature = "تقارير المخزون",
+                    icon = Icons.Rounded.BarChart,
+                    onUpgrade = {
+                        navController.navigate(Screen.Subscription.route)
+                    }
+                ) {
+                    StockReportsScreen(onNavigateUp = {
+                        navController.navigateUp()
+                    })
+                } // PremiumGate
+            }
+            composable(
+                Screen.InvoiceItems.route,
+                listOf(navArgument("customerName") {
+                    type = NavType.StringType
+                })
+            ) {
+                back ->
+                val customerName = back.arguments?.getString("customerName")
+                ?.let {
+                    java.net.URLDecoder.decode(it, "UTF-8")
+                } ?: ""
+                val existingLinesJson = navController.previousBackStackEntry
+                ?.savedStateHandle?.get<String>("existing_lines_json")
+                InvoiceItemsScreen(
+                    customerName = customerName,
+                    existingLinesJson = existingLinesJson,
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    },
+                    onConfirm = {
+                        lines, total ->
+                        navController.previousBackStackEntry
+                        ?.savedStateHandle?.remove<String>("existing_lines_json")
+                        navController.previousBackStackEntry
+                        ?.savedStateHandle?.set("invoice_lines_json", serializeLines(lines))
+                        navController.navigateUp()
+                    }
+                )
+            }
 
-        composable(
-            route = Screen.ReturnProcess.route,
-            arguments = listOf(navArgument("transactionId") { type = NavType.LongType })
-        ) { back ->
-            val txId = back.arguments!!.getLong("transactionId")
-            ReturnProcessScreen(
-                transactionId   = txId,
-                onNavigateUp    = { navController.navigateUp() },
-                onReturnSuccess = {
-                    // ✅ يرجع لشاشة التفاصيل مباشرة
-                    navController.popBackStack()
-                }
-            )
+            composable(
+                route = Screen.ReturnProcess.route,
+                arguments = listOf(navArgument("transactionId") {
+                    type = NavType.LongType
+                })
+            ) {
+                back ->
+                val txId = back.arguments!!.getLong("transactionId")
+                ReturnProcessScreen(
+                    transactionId = txId,
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    },
+                    onReturnSuccess = {
+                        // ✅ يرجع لشاشة التفاصيل مباشرة
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
     }
-}

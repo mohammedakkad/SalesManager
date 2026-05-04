@@ -114,7 +114,7 @@ fun ActivationScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(Icons.Rounded.Stars, null,
-                                tint = Emerald300, modifier = Modifier.size(16.dp))
+                                tint = Emerald500.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
                         }
                         Text("لديك كود تفعيل؟",
                             color = Color.White, fontWeight = FontWeight.SemiBold,
