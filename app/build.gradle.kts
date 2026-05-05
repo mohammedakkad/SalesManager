@@ -51,4 +51,5 @@ dependencies {
     api(libs.firebase.config)
     api(libs.androidx.work.runtime)
     api(libs.koin.workmanager)
+    api(libs.okhttp3)
 }

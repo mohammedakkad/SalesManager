@@ -3,7 +3,6 @@ package com.trader.core.domain.model
 import com.google.firebase.Timestamp
 
 enum class MerchantStatus { ACTIVE, EXPIRED, DISABLED }
-enum class MerchantTier   { FREE, PREMIUM }            // ← NEW
 
 data class Merchant(
     val id: String               = "",
