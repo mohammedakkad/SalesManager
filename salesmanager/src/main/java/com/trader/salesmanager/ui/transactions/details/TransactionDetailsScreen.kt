@@ -32,6 +32,8 @@ import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.InvoiceSharer
 import kotlinx.coroutines.flow.map
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
 import com.trader.salesmanager.util.export.*
 
 import org.koin.androidx.compose.koinViewModel
@@ -91,6 +93,17 @@ fun TransactionDetailsScreen(
     // الانتقال للخلف فور اكتمال الحذف
     LaunchedEffect(uiState.isDeleted) {
         if (uiState.isDeleted) onNavigateUp()
+    }
+
+    // ✅ تحديث بيانات الإرجاع عند العودة لهذه الشاشة (بعد popBackStack)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.currentStateFlow.collect {
+            state ->
+            if (state == Lifecycle.State.RESUMED) {
+                viewModel.refreshReturnSummary()
+            }
+        }
     }
 
     if (showDeleteDialog) {
@@ -159,7 +172,6 @@ fun TransactionDetailsScreen(
                         Spacer(Modifier.weight(1f))
                         IconButton(
                             onClick = {
-                                // الربط البرمجي بالشاشة الجديدة
                                 onNavigateToReturn(transactionId)
                             },
                             modifier = Modifier
@@ -168,7 +180,7 @@ fun TransactionDetailsScreen(
                             .background(Color.White.copy(0.15f))
                         ) {
                             Icon(
-                                Icons.Rounded.AssignmentReturn, // أو Icons.Rounded.KeyboardReturn
+                                Icons.Rounded.AssignmentReturn,
                                 contentDescription = "مرتجع",
                                 tint = Color.White
                             )
@@ -221,13 +233,45 @@ fun TransactionDetailsScreen(
                             )
                         }
                         Column {
+                            // ✅ المبلغ الأصلي مشطوب إذا حدث إرجاع
+                            if (t.hasAnyReturn && t.amountChanged) {
+                                Text(
+                                    "₪${String.format("%.2f", t.originalAmount)}",
+                                    color = Color.White.copy(0.5f),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    textDecoration = TextDecoration.LineThrough
+                                )
+                            }
                             Text(
                                 "₪${String.format("%.2f", t.amount)}",
                                 color = Color.White,
                                 style = MaterialTheme.typography.displaySmall,
                                 fontWeight = FontWeight.Bold
                             )
-                            StatusChip(isPaid = t.isPaid)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                StatusChip(isPaid = t.isPaid)
+                                // ✅ Badge الإرجاع في الهيدر
+                                if (t.isFullyReturned || t.isPartiallyReturned) {
+                                    val returnColor = if (t.isFullyReturned) DebtRed else UnpaidAmber
+                                    val returnText = if (t.isFullyReturned) "↩ مرتجع كامل"
+                                    else "↩ مرتجع جزئي"
+                                    Surface(
+                                        shape = RoundedCornerShape(20.dp),
+                                        color = returnColor.copy(0.25f)
+                                    ) {
+                                        Text(
+                                            returnText,
+                                            Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -287,61 +331,75 @@ fun TransactionDetailsScreen(
                                 HorizontalDivider(color = appColors.divider)
                         }
                         HorizontalDivider(color = appColors.border, thickness = 1.dp)
-                        Column(Modifier.fillMaxWidth().padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Column(
+                            Modifier.fillMaxWidth().padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
                             val itemsTotal = uiState.invoiceItems.sumOf {
                                 it.totalPrice
                             }
-                            val baseAmount = t.amount - itemsTotal
+                            val baseAmount = (t.originalAmount - itemsTotal).coerceAtLeast(0.0)
+                            val hasReturn = uiState.returnSummary.totalRefunded > 0
 
-                            // ✅ إذا يوجد مبلغ أساسي (عملية أُضيفت أصناف عليها لاحقاً)
-                            // نُفصِّل المبلغين حتى يفهم التاجر التركيبة
+                            // مبلغ إضافي (عملية بدون أصناف أُضيفت لاحقاً)
                             if (baseAmount > 0.001) {
-                                Row(Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("مجموع الأصناف",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = appColors.textSubtle)
-                                    Text("₪${String.format("%.2f", itemsTotal)}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = appColors.textSubtle)
-                                }
-                                Row(Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("مبلغ إضافي",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = appColors.textSubtle)
-                                    Text("₪${String.format("%.2f", baseAmount)}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = appColors.textSubtle)
-                                }
+                                TotalsRow("مجموع الأصناف",
+                                    "₪${String.format("%.2f", itemsTotal)}", appColors.textSubtle)
+                                TotalsRow("مبلغ إضافي",
+                                    "₪${String.format("%.2f", baseAmount)}", appColors.textSubtle)
                                 HorizontalDivider(color = appColors.divider,
                                     modifier = Modifier.padding(vertical = 2.dp))
                             }
-                            // ✅ مبلغ الإرجاع إذا وُجد
-                            if (uiState.returnSummary.totalRefunded > 0) {
-                                Row(Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("إجمالي المرتجع",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = DebtRed)
-                                    Text("-₪${String.format("%.2f", uiState.returnSummary.totalRefunded)}",
+
+                            // ✅ قسم الإرجاع — مُفصَّل وواضح
+                            if (hasReturn) {
+                                // إجمالي قبل الإرجاع
+                                TotalsRow(
+                                    label = "إجمالي الأصناف",
+                                    value = "₪${String.format("%.2f", itemsTotal)}",
+                                    valueColor = appColors.textSubtle,
+                                    strikethrough = true
+                                )
+                                // المبلغ المرتجع — الكمية والمبلغ منفصلان
+                                Row(
+                                    Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Icon(Icons.Rounded.Undo, null,
+                                            tint = DebtRed, modifier = Modifier.size(14.dp))
+                                        Text("مرتجع",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = DebtRed)
+                                    }
+                                    Text(
+                                        // ✅ فصل الكمية عن العملة
+                                        "- ₪${String.format("%.2f", uiState.returnSummary.totalRefunded)}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = DebtRed,
-                                        fontWeight = FontWeight.SemiBold)
+                                        fontWeight = FontWeight.SemiBold
+                                    )
                                 }
                                 HorizontalDivider(color = appColors.divider,
                                     modifier = Modifier.padding(vertical = 2.dp))
                             }
-                            // ✅ الإجمالي دائماً من t.amount — يشمل الأصناف + المبلغ الإضافي
+
+                            // ✅ الإجمالي النهائي دائماً من t.amount
                             Row(Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("الإجمالي", fontWeight = FontWeight.Bold,
+                                Text("الإجمالي",
+                                    fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.bodyMedium)
-                                Text("₪${String.format("%.2f", t.amount)}",
+                                Text(
+                                    "₪${String.format("%.2f", t.amount)}",
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.titleSmall,
-                                    color = Violet500)
+                                    color = Violet500
+                                )
                             }
                         }
                     }
@@ -350,7 +408,6 @@ fun TransactionDetailsScreen(
         }
 
         // ── زر PDF في الهيدر يفتح Sheet مباشرة — لا نحتاج زر سفلي ──
-
         item {
             Spacer(Modifier.height(24.dp))
         }
@@ -459,6 +516,30 @@ private fun InvoiceItemRow(item: InvoiceItem, returnSummary: ReturnSummary) {
                     textDecoration = if (isFullReturn) TextDecoration.LineThrough else null)
             }
         }
+    }
+}
+
+@Composable
+private fun TotalsRow(
+    label: String,
+    value: String,
+    valueColor: Color = MaterialTheme.colorScheme.onSurface,
+    strikethrough: Boolean = false
+) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(label,
+            style = MaterialTheme.typography.bodySmall,
+            color = appColors.textSubtle)
+        Text(
+            value,
+            style = MaterialTheme.typography.bodySmall,
+            color = valueColor,
+            textDecoration = if (strikethrough) TextDecoration.LineThrough else null
+        )
     }
 }
 
