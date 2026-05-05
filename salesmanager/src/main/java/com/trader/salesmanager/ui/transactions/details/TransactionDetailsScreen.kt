@@ -32,6 +32,8 @@ import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.InvoiceSharer
 import kotlinx.coroutines.flow.map
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
 import com.trader.salesmanager.util.export.*
 
 import org.koin.androidx.compose.koinViewModel
@@ -53,10 +55,10 @@ fun TransactionDetailsScreen(
     val context = LocalContext.current
 
     val storeName by context.appDataStore.data
-        .map {
-            it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
-        }
-        .collectAsState(initial = "")
+    .map {
+        it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+    }
+    .collectAsState(initial = "")
 
     val exportVm: ExportViewModel = koinViewModel()
     val exportState by exportVm.state.collectAsState()
@@ -91,6 +93,18 @@ fun TransactionDetailsScreen(
     // الانتقال للخلف فور اكتمال الحذف
     LaunchedEffect(uiState.isDeleted) {
         if (uiState.isDeleted) onNavigateUp()
+    }
+
+    // ✅ تحديث بيانات الإرجاع عند العودة لهذه الشاشة (بعد popBackStack)
+    // combine في init يُعيد الحساب تلقائياً لكن هذا ضمان إضافي
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.currentStateFlow.collect {
+            state ->
+            if (state == Lifecycle.State.RESUMED) {
+                viewModel.refreshReturnSummary()
+            }
+        }
     }
 
     if (showDeleteDialog) {
@@ -143,13 +157,13 @@ fun TransactionDetailsScreen(
         item {
             Box(
                 Modifier.fillMaxWidth()
-                    .background(
-                        Brush.horizontalGradient(
-                            if (t.isPaid) listOf(Emerald700, PaidGreen)
-                            else listOf(Color(0xFFB45309), UnpaidAmber)
-                        )
+                .background(
+                    Brush.horizontalGradient(
+                        if (t.isPaid) listOf(Emerald700, PaidGreen)
+                        else listOf(Color(0xFFB45309), UnpaidAmber)
                     )
-                    .padding(top = 48.dp, bottom = 28.dp, start = 20.dp, end = 20.dp)
+                )
+                .padding(top = 48.dp, bottom = 28.dp, start = 20.dp, end = 20.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -163,9 +177,9 @@ fun TransactionDetailsScreen(
                                 onNavigateToReturn(transactionId)
                             },
                             modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(0.15f))
+                            .padding(horizontal = 4.dp)
+                            .clip(CircleShape)
+                            .background(Color.White.copy(0.15f))
                         ) {
                             Icon(
                                 Icons.Rounded.AssignmentReturn, // أو Icons.Rounded.KeyboardReturn
@@ -212,7 +226,7 @@ fun TransactionDetailsScreen(
                     ) {
                         Box(
                             Modifier.size(64.dp).clip(CircleShape)
-                                .background(Color.White.copy(0.2f)),
+                            .background(Color.White.copy(0.2f)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -221,13 +235,45 @@ fun TransactionDetailsScreen(
                             )
                         }
                         Column {
+                            // ✅ المبلغ الأصلي مشطوب إذا حدث إرجاع
+                            if (t.hasAnyReturn && t.amountChanged) {
+                                Text(
+                                    "₪${String.format("%.2f", t.originalAmount)}",
+                                    color = Color.White.copy(0.5f),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    textDecoration = TextDecoration.LineThrough
+                                )
+                            }
                             Text(
                                 "₪${String.format("%.2f", t.amount)}",
                                 color = Color.White,
                                 style = MaterialTheme.typography.displaySmall,
                                 fontWeight = FontWeight.Bold
                             )
-                            StatusChip(isPaid = t.isPaid)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                StatusChip(isPaid = t.isPaid)
+                                // ✅ Badge الإرجاع في الهيدر
+                                if (t.isFullyReturned || t.isPartiallyReturned) {
+                                    val returnColor = if (t.isFullyReturned) DebtRed else UnpaidAmber
+                                    val returnText = if (t.isFullyReturned) "↩ مرتجع كامل"
+                                    else "↩ مرتجع جزئي"
+                                    Surface(
+                                        shape = RoundedCornerShape(20.dp),
+                                        color = returnColor.copy(0.25f)
+                                    ) {
+                                        Text(
+                                            returnText,
+                                            Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -277,211 +323,269 @@ fun TransactionDetailsScreen(
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     Column(Modifier.fillMaxWidth()) {
-                        uiState.invoiceItems.forEachIndexed { index, item ->
+                        uiState.invoiceItems.forEachIndexed {
+                            index, item ->
                             InvoiceItemRow(
-                                item          = item,
+                                item = item,
                                 returnSummary = uiState.returnSummary
                             )
                             if (index < uiState.invoiceItems.lastIndex)
                                 HorizontalDivider(color = appColors.divider)
                         }
                         HorizontalDivider(color = appColors.border, thickness = 1.dp)
-                        Column(Modifier.fillMaxWidth().padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Column(
+                            Modifier.fillMaxWidth().padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
                             val itemsTotal = uiState.invoiceItems.sumOf {
                                 it.totalPrice
                             }
-                            val baseAmount = t.amount - itemsTotal
+                            val baseAmount = (t.originalAmount - itemsTotal).coerceAtLeast(0.0)
+                            val hasReturn = uiState.returnSummary.totalRefunded > 0
+                            val netItemsTotal = itemsTotal - uiState.returnSummary.totalRefunded
 
-                            // ✅ إذا يوجد مبلغ أساسي (عملية أُضيفت أصناف عليها لاحقاً)
-                            // نُفصِّل المبلغين حتى يفهم التاجر التركيبة
+                            // مبلغ إضافي (عملية بدون أصناف أُضيفت لاحقاً)
                             if (baseAmount > 0.001) {
-                                Row(Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("مجموع الأصناف",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = appColors.textSubtle)
-                                    Text("₪${String.format("%.2f", itemsTotal)}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = appColors.textSubtle)
-                                }
-                                Row(Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("مبلغ إضافي",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = appColors.textSubtle)
-                                    Text("₪${String.format("%.2f", baseAmount)}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = appColors.textSubtle)
-                                }
+                                TotalsRow("مجموع الأصناف",
+                                    "₪${String.format("%.2f", itemsTotal)}", appColors.textSubtle)
+                                TotalsRow("مبلغ إضافي",
+                                    "₪${String.format("%.2f", baseAmount)}", appColors.textSubtle)
                                 HorizontalDivider(color = appColors.divider,
                                     modifier = Modifier.padding(vertical = 2.dp))
                             }
-                            // ✅ مبلغ الإرجاع إذا وُجد
-                            if (uiState.returnSummary.totalRefunded > 0) {
-                                Row(Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("إجمالي المرتجع",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = DebtRed)
-                                    Text("-₪${String.format("%.2f", uiState.returnSummary.totalRefunded)}",
+
+                            // ✅ قسم الإرجاع — مُفصَّل وواضح
+                            if (hasReturn) {
+                                // إجمالي قبل الإرجاع
+                                TotalsRow(
+                                    label = "إجمالي الأصناف",
+                                    value = "₪${String.format("%.2f", itemsTotal)}",
+                                    valueColor = appColors.textSubtle,
+                                    strikethrough = true
+                                )
+                                // المبلغ المرتجع — الكمية والمبلغ منفصلان
+                                Row(
+                                    Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Icon(Icons.Rounded.Undo, null,
+                                            tint = DebtRed, modifier = Modifier.size(14.dp))
+                                        Text("مرتجع",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = DebtRed)
+                                    }
+                                    Text(
+                                        // ✅ فصل الكمية عن العملة
+                                        "- ₪${String.format("%.2f", uiState.returnSummary.totalRefunded)}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = DebtRed,
-                                        fontWeight = FontWeight.SemiBold)
+                                        fontWeight = FontWeight.SemiBold
+                                    )
                                 }
                                 HorizontalDivider(color = appColors.divider,
                                     modifier = Modifier.padding(vertical = 2.dp))
                             }
-                            // ✅ الإجمالي دائماً من t.amount — يشمل الأصناف + المبلغ الإضافي
+
+                            // ✅ الإجمالي النهائي دائماً من t.amount
                             Row(Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween) {
-                                Text("الإجمالي", fontWeight = FontWeight.Bold,
+                                Text("الإجمالي",
+                                    fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.bodyMedium)
-                                Text("₪${String.format("%.2f", t.amount)}",
+                                Text(
+                                    "₪${String.format("%.2f", t.amount)}",
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.titleSmall,
-                                    color = Violet500)
+                                    color = Violet500
+                                )
                             }
                         }
-                    }
+                        style = MaterialTheme.typography.bodySmall,
+                        color = DebtRed,
+                        fontWeight = FontWeight.SemiBold)
                 }
+                HorizontalDivider(color = appColors.divider,
+                    modifier = Modifier.padding(vertical = 2.dp))
+            }
+            // ✅ الإجمالي دائماً من t.amount — يشمل الأصناف + المبلغ الإضافي
+            Row(Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("الإجمالي", fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyMedium)
+                Text("₪${String.format("%.2f", t.amount)}",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Violet500)
             }
         }
-
-        // ── زر PDF في الهيدر يفتح Sheet مباشرة — لا نحتاج زر سفلي ──
-
-        item {
-            Spacer(Modifier.height(24.dp))
-        }
     }
+
+
+
+
+    // ── زر PDF في الهيدر يفتح Sheet مباشرة — لا نحتاج زر سفلي ──
+
+    item {
+        Spacer(Modifier.height(24.dp))
+    }
+}
 }
 
 @Composable
 private fun InvoiceItemRow(item: InvoiceItem, returnSummary: ReturnSummary) {
-    val returnedQty  = returnSummary.returnedByUnit[item.unitId] ?: 0.0
-    val isFullReturn = returnedQty >= item.quantity && returnedQty > 0
-    val isPartReturn = returnedQty > 0 && returnedQty < item.quantity
-    val netQty       = (item.quantity - returnedQty).coerceAtLeast(0.0)
+val returnedQty = returnSummary.returnedByUnit[item.unitId] ?: 0.0
+val isFullReturn = returnedQty >= item.quantity && returnedQty > 0
+val isPartReturn = returnedQty > 0 && returnedQty < item.quantity
+val netQty = (item.quantity - returnedQty).coerceAtLeast(0.0)
 
-    fun Double.fmt(): String = if (this == toLong().toDouble()) toLong().toString()
-    else String.format("%.3f", this).trimEnd('0').trimEnd('.')
+fun Double.fmt(): String = if (this == toLong().toDouble()) toLong().toString()
+else String.format("%.3f", this).trimEnd('0').trimEnd('.')
 
-    Row(
-        Modifier.fillMaxWidth().padding(14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        // أيقونة الصنف
-        Box(
-            Modifier.size(36.dp).clip(RoundedCornerShape(8.dp))
-                .background(if (isFullReturn) DebtRed.copy(0.1f) else Violet500.copy(0.1f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(item.productName.firstOrNull()?.toString() ?: "؟",
-                color = if (isFullReturn) DebtRed else Violet500,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.bodySmall)
-        }
+Row(
+Modifier.fillMaxWidth().padding(14.dp),
+verticalAlignment = Alignment.CenterVertically,
+horizontalArrangement = Arrangement.spacedBy(10.dp)
+) {
+// أيقونة الصنف
+Box(
+Modifier.size(36.dp).clip(RoundedCornerShape(8.dp))
+.background(if (isFullReturn) DebtRed.copy(0.1f) else Violet500.copy(0.1f)),
+contentAlignment = Alignment.Center
+) {
+Text(item.productName.firstOrNull()?.toString() ?: "؟",
+color = if (isFullReturn) DebtRed else Violet500,
+fontWeight = FontWeight.Bold,
+style = MaterialTheme.typography.bodySmall)
+}
 
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            // اسم الصنف + badge الإرجاع
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(item.productName,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (isFullReturn) appColors.textSubtle else appColors.textPrimary)
+Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+// اسم الصنف + badge الإرجاع
+Row(verticalAlignment = Alignment.CenterVertically,
+horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+Text(item.productName,
+fontWeight = FontWeight.SemiBold,
+style = MaterialTheme.typography.bodySmall,
+color = if (isFullReturn) appColors.textSubtle else appColors.textPrimary)
 
-                // ✅ Badge حالة الإرجاع
-                if (isFullReturn || isPartReturn) {
-                    val badgeColor = if (isFullReturn) DebtRed else UnpaidAmber
-                    val badgeText  = if (isFullReturn) "مرتجع كامل"
-                    else "أُرجع ${returnedQty.fmt()}"
-                    Surface(shape = RoundedCornerShape(20.dp), color = badgeColor.copy(0.12f)) {
-                        Text(badgeText,
-                            Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = badgeColor,
-                            fontWeight = FontWeight.SemiBold)
-                    }
-                }
-            }
+// ✅ Badge حالة الإرجاع
+if (isFullReturn || isPartReturn) {
+val badgeColor = if (isFullReturn) DebtRed else UnpaidAmber
+val badgeText = if (isFullReturn) "مرتجع كامل"
+else "أُرجع ${returnedQty.fmt()}"
+Surface(shape = RoundedCornerShape(20.dp), color = badgeColor.copy(0.12f)) {
+Text(badgeText,
+Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+style = MaterialTheme.typography.labelSmall,
+color = badgeColor,
+fontWeight = FontWeight.SemiBold)
+}
+}
+}
 
-            // ✅ الكمية: مشطوبة إذا تغيّرت + الكمية المتبقية
-            if (isFullReturn || isPartReturn) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    // الكمية الأصلية مشطوبة
-                    Text(
-                        "${item.quantity.fmt()} ${item.unitLabel}",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            textDecoration = TextDecoration.LineThrough
-                        ),
-                        color = appColors.textSubtle
-                    )
-                    if (!isFullReturn) {
-                        Icon(Icons.Rounded.ArrowForward, null,
-                            tint = appColors.textSubtle, modifier = Modifier.size(10.dp))
-                        Text("${netQty.fmt()} ${item.unitLabel}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = appColors.textPrimary,
-                            fontWeight = FontWeight.SemiBold)
-                    }
-                    Text("× ₪${String.format("%.2f", item.pricePerUnit)}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = appColors.textSubtle)
-                }
-            } else {
-                Text("${item.quantity.fmt()} ${item.unitLabel}  ×  ₪${String.format("%.2f", item.pricePerUnit)}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = appColors.textSubtle)
-            }
-        }
+// ✅ الكمية: مشطوبة إذا تغيّرت + الكمية المتبقية
+if (isFullReturn || isPartReturn) {
+Row(horizontalArrangement = Arrangement.spacedBy(6.dp),
+verticalAlignment = Alignment.CenterVertically) {
+// الكمية الأصلية مشطوبة
+Text(
+"${item.quantity.fmt()} ${item.unitLabel}",
+style = MaterialTheme.typography.labelSmall.copy(
+textDecoration = TextDecoration.LineThrough
+),
+color = appColors.textSubtle
+)
+if (!isFullReturn) {
+Icon(Icons.Rounded.ArrowForward, null,
+tint = appColors.textSubtle, modifier = Modifier.size(10.dp))
+Text("${netQty.fmt()} ${item.unitLabel}",
+style = MaterialTheme.typography.labelSmall,
+color = appColors.textPrimary,
+fontWeight = FontWeight.SemiBold)
+}
+Text("× ₪${String.format("%.2f", item.pricePerUnit)}",
+style = MaterialTheme.typography.labelSmall,
+color = appColors.textSubtle)
+}
+} else {
+Text("${item.quantity.fmt()} ${item.unitLabel}  ×  ₪${String.format("%.2f", item.pricePerUnit)}",
+style = MaterialTheme.typography.labelSmall,
+color = appColors.textSubtle)
+}
+}
 
-        // ✅ السعر الصافي — مشطوب إذا تغيّر
-        Column(horizontalAlignment = Alignment.End) {
-            if (isPartReturn) {
-                Text("₪${String.format("%.2f", item.totalPrice)}",
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        textDecoration = TextDecoration.LineThrough
-                    ),
-                    color = appColors.textSubtle)
-                Text("₪${String.format("%.2f", netQty * item.pricePerUnit)}",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = UnpaidAmber)
-            } else {
-                Text("₪${String.format("%.2f", item.totalPrice)}",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (isFullReturn) appColors.textSubtle else Violet500,
-                    textDecoration = if (isFullReturn) TextDecoration.LineThrough else null)
-            }
-        }
-    }
+// ✅ السعر الصافي — مشطوب إذا تغيّر
+Column(horizontalAlignment = Alignment.End) {
+if (isPartReturn) {
+Text("₪${String.format("%.2f", item.totalPrice)}",
+style = MaterialTheme.typography.labelSmall.copy(
+textDecoration = TextDecoration.LineThrough
+),
+color = appColors.textSubtle)
+Text("₪${String.format("%.2f", netQty * item.pricePerUnit)}",
+fontWeight = FontWeight.Bold,
+style = MaterialTheme.typography.bodySmall,
+color = UnpaidAmber)
+} else {
+Text("₪${String.format("%.2f", item.totalPrice)}",
+fontWeight = FontWeight.Bold,
+style = MaterialTheme.typography.bodySmall,
+color = if (isFullReturn) appColors.textSubtle else Violet500,
+textDecoration = if (isFullReturn) TextDecoration.LineThrough else null)
+}
+}
+}
+}
+
+@Composable
+private fun TotalsRow(
+label: String,
+value: String,
+valueColor: Color = MaterialTheme.colorScheme.onSurface,
+strikethrough: Boolean = false
+) {
+Row(
+Modifier.fillMaxWidth(),
+horizontalArrangement = Arrangement.SpaceBetween,
+verticalAlignment = Alignment.CenterVertically
+) {
+Text(label,
+style = MaterialTheme.typography.bodySmall,
+color = appColors.textSubtle)
+Text(
+value,
+style = MaterialTheme.typography.bodySmall,
+color = valueColor,
+textDecoration = if (strikethrough) TextDecoration.LineThrough else null
+)
+}
 }
 
 @Composable
 private fun DetailRow(icon: ImageVector, label: String, value: String, color: Color) {
-    Card(
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(0.06f)),
-        elevation = CardDefaults.cardElevation(0.dp)
-    ) {
-        Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                Modifier.size(40.dp).clip(CircleShape).background(color.copy(0.15f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(icon, null, tint = color, modifier = Modifier.size(20.dp))
-            }
-            Spacer(Modifier.width(14.dp))
-            Column {
-                Text(label, style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(value, style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold)
-            }
-        }
-    }
+Card(
+shape = RoundedCornerShape(14.dp),
+colors = CardDefaults.cardColors(containerColor = color.copy(0.06f)),
+elevation = CardDefaults.cardElevation(0.dp)
+) {
+Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+Box(
+Modifier.size(40.dp).clip(CircleShape).background(color.copy(0.15f)),
+contentAlignment = Alignment.Center
+) {
+Icon(icon, null, tint = color, modifier = Modifier.size(20.dp))
+}
+Spacer(Modifier.width(14.dp))
+Column {
+Text(label, style = MaterialTheme.typography.labelSmall,
+color = MaterialTheme.colorScheme.onSurfaceVariant)
+Text(value, style = MaterialTheme.typography.bodyLarge,
+fontWeight = FontWeight.SemiBold)
+}
+}
+}
 }

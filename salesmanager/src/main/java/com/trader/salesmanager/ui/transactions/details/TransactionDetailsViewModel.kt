@@ -32,33 +32,59 @@ class TransactionDetailsViewModel(
     val uiState: StateFlow<TransactionDetailsUiState> = _state.asStateFlow()
 
     init {
-        // ✅ مشكلة 5: Flow مستمر — يُحدِّث الشاشة فوراً عند أي تغيير في العملية
+        // ── Flow 1: العملية — يُحدَّث عند أي تغيير في DB ────────────
         viewModelScope.launch {
             transactionRepo.observeTransactionById(transactionId).collect {
-                    t ->
+                t ->
                 _state.update {
                     it.copy(transaction = t)
                 }
             }
         }
+
+        // ── Flow 2: الأصناف + الإرجاعات — مدمجان لضمان التحديث الفوري ─
+        // يُعيد حساب returnSummary تلقائياً عند:
+        // 1. إضافة فاتورة إرجاع جديدة
+        // 2. تعديل الأصناف
         viewModelScope.launch {
-            invoiceItemRepo.getItemsForTransaction(transactionId).collect { items ->
-                _state.update { current ->
-                    val sorted = items.sortedBy { it.productName }
+            combine(
+                invoiceItemRepo.getItemsForTransaction(transactionId),
+                returnRepo.getReturnsByTransaction(transactionId)
+            ) {
+                items, returns ->
+                Pair(items, returns)
+            }.collect {
+                (items, _) ->
+                // ✅ استقرار القائمة: تجاهل الفارغة اللحظية
+                val sorted = items.sortedBy {
+                    it.productName
+                }
+                _state.update {
+                    current ->
                     if (sorted.isEmpty() && current.invoiceItems.isNotEmpty()
                         && current.transaction?.hasItems == true) current
                     else current.copy(invoiceItems = sorted)
                 }
-                if (items.isNotEmpty()) loadReturnSummary(items)
+                // ✅ إعادة حساب ReturnSummary من DB عند أي تغيير
+                if (items.isNotEmpty()) {
+                    val summary = returnRepo.getReturnSummary(transactionId, items)
+                    _state.update {
+                        it.copy(returnSummary = summary)
+                    }
+                }
             }
         }
     }
 
-    fun loadReturnSummary(items: List<InvoiceItem> = _state.value.invoiceItems) {
+    // تُستدعى من الـ Screen عند العودة من ReturnProcessScreen
+    fun refreshReturnSummary() {
+        val items = _state.value.invoiceItems
         if (items.isEmpty()) return
         viewModelScope.launch {
             val summary = returnRepo.getReturnSummary(transactionId, items)
-            _state.update { it.copy(returnSummary = summary) }
+            _state.update {
+                it.copy(returnSummary = summary)
+            }
         }
     }
 
@@ -68,7 +94,7 @@ class TransactionDetailsViewModel(
             val items = _state.value.invoiceItems
             if (items.isNotEmpty()) {
                 items.forEach {
-                        item ->
+                    item ->
                     stockRepo.returnStock(
                         productId = item.productId,
                         unitId = item.unitId,
