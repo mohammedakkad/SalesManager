@@ -211,7 +211,7 @@ val salesManagerModule = module {
 
     viewModel {
         SubscriptionViewModel(
-            application          = get(),
+            application          = org.koin.android.ext.koin.androidApplication(),
             subscriptionManager  = get(),
             cloudinaryUploader   = get(),
             activationRepository = get()
