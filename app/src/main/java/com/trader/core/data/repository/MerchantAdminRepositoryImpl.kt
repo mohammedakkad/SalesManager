@@ -24,6 +24,9 @@ class MerchantAdminRepositoryImpl(private val service: MerchantAdminService) :
         id: String,
         isPermanent: Boolean,
         expiryDate: Timestamp?
-    ) =
-        service.setSubscriptionType(id, isPermanent, expiryDate)
+    ) {
+        // تمرير النص الذي يوثق حالة التحويل القسري
+        val newPlanName = if (isPermanent) "تم التحويل لدائم (بواسطة الإدارة)" else "تم التحويل لمؤقت (بواسطة الإدارة)"
+        service.setSubscriptionType(id, isPermanent, expiryDate, newPlanName)
+    }
 }

@@ -34,15 +34,12 @@ class FirebaseSyncService {
             } ?: return ValidationResult.NetworkError
 
             if (!snap.exists()) return ValidationResult.NotFound
-            
             val value = snap.value
-            
-            // 1. إذا كانت القيمة Boolean (كما في الإضافة الجديدة)
+
             if (value is Boolean) {
                 return if (value) ValidationResult.Active else ValidationResult.Disabled
             }
-            
-            // 2. إذا كانت القيمة String (كما يحدث عند التعطيل من الأدمن)
+
             if (value is String) {
                 return when (value.uppercase()) {
                     "ACTIVE", "TRUE" -> ValidationResult.Active
@@ -52,20 +49,30 @@ class FirebaseSyncService {
                     else -> ValidationResult.Active
                 }
             }
-            
-            // 3. إذا كانت القيمة Map 
+
             val map = value as? Map<*, *> ?: return ValidationResult.Active
-            when (map["status"] as? String) {
-                "ACTIVE" -> ValidationResult.Active
-                "DISABLED" -> ValidationResult.Disabled
-                "EXPIRED" -> ValidationResult.Expired
-                "DELETED" -> ValidationResult.NotFound
-                else -> ValidationResult.Active
+            val explicitStatus = map["status"] as? String ?: "ACTIVE"
+            
+            if (explicitStatus.uppercase() == "DISABLED") return ValidationResult.Disabled
+            if (explicitStatus.uppercase() == "EXPIRED") return ValidationResult.Expired
+            if (explicitStatus.uppercase() == "DELETED") return ValidationResult.NotFound
+
+            // ⏱️ التحقق الذكي من تاريخ الانتهاء مع فترة السماح (3 أيام)
+            val expiryMs = (map["subscriptionExpiry"] as? Number)?.toLong()
+            if (expiryMs != null) {
+                val now = System.currentTimeMillis()
+                val gracePeriodMs = 3L * 24 * 60 * 60 * 1000 // 3 أيام بالملي ثانية
+                if (now > expiryMs + gracePeriodMs) {
+                    return ValidationResult.Expired // 🔴 طرده لأن فترة السماح انتهت
+                }
             }
+
+            return ValidationResult.Active
         } catch (e: Exception) {
             ValidationResult.NetworkError
         }
     }
+
 
 
 
@@ -81,7 +88,6 @@ class FirebaseSyncService {
             } ?: return null
             
             if (!snap.exists()) return "DELETED"
-            
             val value = snap.value
             
             if (value is Boolean) {
@@ -93,7 +99,23 @@ class FirebaseSyncService {
             }
             
             val map = value as? Map<*, *> ?: return "ACTIVE"
-            map["status"] as? String ?: "ACTIVE"
+            val explicitStatus = map["status"] as? String ?: "ACTIVE"
+            
+            if (explicitStatus.uppercase() == "DISABLED") return "DISABLED"
+            if (explicitStatus.uppercase() == "EXPIRED") return "EXPIRED"
+            if (explicitStatus.uppercase() == "DELETED") return "DELETED"
+
+            // ⏱️ التحقق الذكي عند فتح التطبيق
+            val expiryMs = (map["subscriptionExpiry"] as? Number)?.toLong()
+            if (expiryMs != null) {
+                val now = System.currentTimeMillis()
+                val gracePeriodMs = 3L * 24 * 60 * 60 * 1000 
+                if (now > expiryMs + gracePeriodMs) {
+                    return "EXPIRED"
+                }
+            }
+
+            return "ACTIVE"
         } catch (e: Exception) {
             null
         }

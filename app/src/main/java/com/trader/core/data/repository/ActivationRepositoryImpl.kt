@@ -248,10 +248,13 @@ class ActivationRepositoryImpl(
                 "isPermanent"      to true,
                 "isSelfRegistered" to true,
                 "activationCode"   to "",
-                "createdAt"        to System.currentTimeMillis()
+                "createdAt"        to System.currentTimeMillis(),
+                // ✅ تغطية حالة الحساب المجاني
+                "planName"         to "باقة مجانية",
+                "paymentMethod"    to "تسجيل ذاتي (مجاني)"
             )).await()
 
-        // Save locally — treated as "activated" from now on
+        // Save locally
         context.appDataStore.edit {
             it[IS_ACTIVATED]       = true
             it[MERCHANT_CODE]      = merchantId

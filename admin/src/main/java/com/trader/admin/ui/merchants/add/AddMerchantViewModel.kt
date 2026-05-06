@@ -95,12 +95,14 @@ class AddMerchantViewModel(private val repo: MerchantAdminRepository) : ViewMode
                         status = MerchantStatus.ACTIVE,
                         isPermanent = s.isPermanent,
                         expiryDate = expiry,
-                        createdAt = Timestamp.now()
+                        createdAt = Timestamp.now(),
+                        // ✅ تغطية حالة الإضافة اليدوية
+                        planName = if (s.isPermanent) "دائم (إضافة يدوية)" else "مؤقت - ${s.durationDays} يوم",
+                        paymentMethod = "عن طريق الإدارة"
                     )
                 )
 
                 // 2. أضف رمز التفعيل في Realtime Database
-                // هذا ما يتحقق منه تطبيق البائع
                 rtdb.child("activation_codes").child(code).setValue(true).await()
 
                 _state.update {

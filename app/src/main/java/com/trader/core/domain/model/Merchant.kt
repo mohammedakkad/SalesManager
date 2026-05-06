@@ -15,5 +15,7 @@ data class Merchant(
     val isSelfRegistered: Boolean = false,              // ← NEW: free sign-up
     val expiryDate: Timestamp?   = null,
     val createdAt: Timestamp?    = null,
-    val lastSeen: Timestamp?     = null
+    val lastSeen: Timestamp?     = null,
+    val planName: String?        = null,
+    val paymentMethod: String?   = null
 )

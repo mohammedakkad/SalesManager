@@ -1,6 +1,7 @@
 package com.trader.core.data.repository
 
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore // ✅ إضافة Firestore
 import com.trader.core.domain.model.*
 import com.trader.core.domain.repository.SubscriptionRepository
 import kotlinx.coroutines.channels.awaitClose
@@ -28,23 +29,35 @@ class FirebaseSubscriptionRepositoryImpl(private val db: FirebaseDatabase) : Sub
 
     override suspend fun approveRequest(request: SubscriptionRequest, planDurationDays: Int) {
         val key = findRequestKey(request) ?: return
-        val expiry = System.currentTimeMillis() + (planDurationDays * 24 * 60 * 60 * 1000L)
+        val expiryMs = System.currentTimeMillis() + (planDurationDays * 24 * 60 * 60 * 1000L)
 
-        val updates = mapOf(
-            "subscription_requests/${request.merchantCode}/$key/status" to SubscriptionStatus.APPROVED.name,
-            "merchants/${request.merchantCode}/tier" to MerchantTier.PREMIUM.name,
-            "merchants/${request.merchantCode}/subscriptionExpiry" to expiry
-        )
-        db.reference.updateChildren(updates).await()
+        // 1. تحديث حالة الطلب في RTDB
+        db.reference.child("subscription_requests")
+            .child(request.merchantCode)
+            .child(key)
+            .child("status")
+            .setValue(SubscriptionStatus.APPROVED.name).await()
+
+        // 2. تحديث ملف التاجر في Firestore
+        val expiryTimestamp = com.google.firebase.Timestamp(java.util.Date(expiryMs))
+        FirebaseFirestore.getInstance().collection("merchants").document(request.merchantCode)
+            .update(
+                mapOf(
+                    "tier" to MerchantTier.PREMIUM.name,
+                    "expiryDate" to expiryTimestamp,
+                    "planName" to request.planType,
+                    "paymentMethod" to request.paymentMethod
+                )
+            ).await()
     }
 
     override suspend fun rejectRequest(request: SubscriptionRequest) {
         val key = findRequestKey(request) ?: return
-        val updates = mapOf(
-            "subscription_requests/${request.merchantCode}/$key/status" to SubscriptionStatus.REJECTED.name,
-            "merchants/${request.merchantCode}/tier" to MerchantTier.FREE.name
-        )
-        db.reference.updateChildren(updates).await()
+        db.reference.child("subscription_requests")
+            .child(request.merchantCode)
+            .child(key)
+            .child("status")
+            .setValue(SubscriptionStatus.REJECTED.name).await()
     }
 
     private suspend fun findRequestKey(request: SubscriptionRequest): String? {

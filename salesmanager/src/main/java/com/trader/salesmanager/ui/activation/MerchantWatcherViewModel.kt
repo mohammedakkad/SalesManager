@@ -55,12 +55,19 @@ class MerchantWatcherViewModel(
                     daysLeft ?: return@collect
                     _expiryBanner.value = daysLeft
                     when {
-                        daysLeft <= 0  -> {
-                            NotificationService.showExpiryWarning(context, 0)
+                        daysLeft <= -3L  -> { 
+                            // 🔴 انتهت فترة السماح بالكامل (تخطى 3 أيام بالسالب)
+                            NotificationService.showExpiryWarning(context, daysLeft)
                             _event.emit(MerchantEvent.Expired)
                             deactivate()
                         }
-                        daysLeft <= 7  -> {
+                        daysLeft in -2L..0L -> { 
+                            // 🟡 التاجر الآن يستهلك فترة السماح (سيظهر له شريط تحذيري أحمر في الواجهة)
+                            NotificationService.showExpiryWarning(context, daysLeft)
+                            _event.emit(MerchantEvent.ExpiryWarning(daysLeft))
+                        }
+                        daysLeft in 1L..7L  -> { 
+                            // 🟢 اقترب الانتهاء (تحذير طبيعي)
                             NotificationService.showExpiryWarning(context, daysLeft)
                             _event.emit(MerchantEvent.ExpiryWarning(daysLeft))
                         }

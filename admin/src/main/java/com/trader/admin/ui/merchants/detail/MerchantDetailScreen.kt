@@ -189,6 +189,21 @@ fun MerchantDetailScreen(
                             ExpiryCard(merchant = m, onAdjust = { showAdjustExpiry = true })
                         }
 
+                        // ✅ الكروت الجديدة لعرض تفاصيل الباقة والدفع
+                        DetailCard(
+                            label = "خطة الاشتراك الحالية",
+                            value = m.planName ?: "غير محددة (تاجر قديم)", 
+                            icon  = Icons.Rounded.Verified,
+                            color = Indigo400
+                        )
+                        
+                        DetailCard(
+                            label = "آخر طريقة دفع مستخدمة",
+                            value = m.paymentMethod ?: "نظام التفعيل المباشر",
+                            icon  = Icons.Rounded.Payments,
+                            color = Emerald400
+                        )
+
                         Spacer(Modifier.height(4.dp))
 
                         // ── Action buttons ────────────────────────────
