@@ -211,7 +211,7 @@ val salesManagerModule = module {
 
     viewModel {
         SubscriptionViewModel(
-            application          = androidContext() as android.app.Application,
+            application          = get(),
             subscriptionManager  = get(),
             cloudinaryUploader   = get(),
             activationRepository = get()
@@ -219,4 +219,11 @@ val salesManagerModule = module {
     }
     single { CloudinaryUploader(get()) }
     single { SubscriptionManager(androidContext()) }
+    single { 
+        okhttp3.OkHttpClient.Builder()
+            .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .build() 
+    }
+
 }
