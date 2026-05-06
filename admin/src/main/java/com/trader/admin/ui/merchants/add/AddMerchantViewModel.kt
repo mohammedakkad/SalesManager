@@ -32,27 +32,42 @@ class AddMerchantViewModel(private val repo: MerchantAdminRepository) : ViewMode
 
     private val rtdb = FirebaseDatabase.getInstance().reference
 
-    fun updateName(v: String) = _state.update { it.copy(name = v, error = null) }
-    fun updatePhone(v: String) = _state.update { it.copy(phone = v, error = null) }
-    fun updatePermanent(v: Boolean) = _state.update { it.copy(isPermanent = v) }
-    fun updateDuration(v: String) = _state.update { it.copy(durationDays = v) }
+    fun updateName(v: String) = _state.update {
+        it.copy(name = v, error = null)
+    }
+    fun updatePhone(v: String) = _state.update {
+        it.copy(phone = v, error = null)
+    }
+    fun updatePermanent(v: Boolean) = _state.update {
+        it.copy(isPermanent = v)
+    }
+    fun updateDuration(v: String) = _state.update {
+        it.copy(durationDays = v)
+    }
 
     fun save() {
+        if (_state.value.isLoading) return
         val s = _state.value
 
         // التحقق من المدخلات
         if (s.name.trim().length < 2) {
-            _state.update { it.copy(error = "اسم البائع يجب أن يكون حرفين على الأقل") }
+            _state.update {
+                it.copy(error = "اسم البائع يجب أن يكون حرفين على الأقل")
+            }
             return
         }
         if (s.phone.trim().length != 10) {
-            _state.update { it.copy(error = "رقم الهاتف يجب أن يكون 10 أرقام") }
+            _state.update {
+                it.copy(error = "رقم الهاتف يجب أن يكون 10 أرقام")
+            }
             return
         }
         if (!s.isPermanent) {
             val days = s.durationDays.toIntOrNull()
             if (days == null || days < 1) {
-                _state.update { it.copy(error = "أدخل عدد أيام صحيح") }
+                _state.update {
+                    it.copy(error = "أدخل عدد أيام صحيح")
+                }
                 return
             }
         }
@@ -60,12 +75,16 @@ class AddMerchantViewModel(private val repo: MerchantAdminRepository) : ViewMode
         val code = generateCode()
         val expiry = if (!s.isPermanent) {
             val days = s.durationDays.toIntOrNull() ?: 30
-            val cal = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, days) }
+            val cal = Calendar.getInstance().apply {
+                add(Calendar.DAY_OF_YEAR, days)
+            }
             Timestamp(cal.time)
         } else null
 
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
+            _state.update {
+                it.copy(isLoading = true, error = null)
+            }
             try {
                 // 1. أضف البائع في Firestore
                 repo.addMerchant(
@@ -84,16 +103,22 @@ class AddMerchantViewModel(private val repo: MerchantAdminRepository) : ViewMode
                 // هذا ما يتحقق منه تطبيق البائع
                 rtdb.child("activation_codes").child(code).setValue(true).await()
 
-                _state.update { it.copy(isLoading = false, isSaved = true, generatedCode = code) }
+                _state.update {
+                    it.copy(isLoading = false, isSaved = true, generatedCode = code)
+                }
 
             } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, error = "فشل الحفظ: ${e.message}") }
+                _state.update {
+                    it.copy(isLoading = false, error = "فشل الحفظ: ${e.message}")
+                }
             }
         }
     }
 
     private fun generateCode(): String {
         val chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-        return (1..8).map { chars.random() }.joinToString("")
+        return (1..8).map {
+            chars.random()
+        }.joinToString("")
     }
 }

@@ -29,15 +29,32 @@ class FirebaseSyncService {
 
     suspend fun validateCodeDetailed(code: String): ValidationResult {
         return try {
-            // ✅ Timeout 8 seconds — Firebase hangs indefinitely offline without it
             val snap = withTimeoutOrNull(8_000) {
                 db.reference.child("activation_codes").child(code).get().await()
-            } ?: return ValidationResult.NetworkError // timeout = no internet
+            } ?: return ValidationResult.NetworkError
 
             if (!snap.exists()) return ValidationResult.NotFound
-            val boolVal = snap.getValue(Boolean::class.java)
-            if (boolVal != null) return if (boolVal) ValidationResult.Active else ValidationResult.Disabled
-            val map = snap.value as? Map<*, *> ?: return ValidationResult.Active
+            
+            val value = snap.value
+            
+            // 1. إذا كانت القيمة Boolean (كما في الإضافة الجديدة)
+            if (value is Boolean) {
+                return if (value) ValidationResult.Active else ValidationResult.Disabled
+            }
+            
+            // 2. إذا كانت القيمة String (كما يحدث عند التعطيل من الأدمن)
+            if (value is String) {
+                return when (value.uppercase()) {
+                    "ACTIVE", "TRUE" -> ValidationResult.Active
+                    "DISABLED", "FALSE" -> ValidationResult.Disabled
+                    "EXPIRED" -> ValidationResult.Expired
+                    "DELETED" -> ValidationResult.NotFound
+                    else -> ValidationResult.Active
+                }
+            }
+            
+            // 3. إذا كانت القيمة Map 
+            val map = value as? Map<*, *> ?: return ValidationResult.Active
             when (map["status"] as? String) {
                 "ACTIVE" -> ValidationResult.Active
                 "DISABLED" -> ValidationResult.Disabled
@@ -51,6 +68,7 @@ class FirebaseSyncService {
     }
 
 
+
     // ── Activation ───────────────────────────────────────────────
     suspend fun validateCode(code: String): Boolean =
     validateCodeDetailed(code) == ValidationResult.Active
@@ -60,15 +78,25 @@ class FirebaseSyncService {
         return try {
             val snap = withTimeoutOrNull(8_000) {
                 db.reference.child("activation_codes").child(code).get().await()
-            } ?: return null // timeout = offline
+            } ?: return null
+            
             if (!snap.exists()) return "DELETED"
-            val boolVal = snap.getValue(Boolean::class.java)
-            if (boolVal != null) return if (boolVal) "ACTIVE" else "DISABLED"
-            val map = snap.value as? Map<*, *> ?: return "ACTIVE"
+            
+            val value = snap.value
+            
+            if (value is Boolean) {
+                return if (value) "ACTIVE" else "DISABLED"
+            }
+            
+            if (value is String) {
+                return if (value.equals("true", ignoreCase = true)) "ACTIVE" else value.uppercase()
+            }
+            
+            val map = value as? Map<*, *> ?: return "ACTIVE"
             map["status"] as? String ?: "ACTIVE"
         } catch (e: Exception) {
             null
-        } // null = offline, don't block
+        }
     }
 
     // ── One-time full fetch on activation ────────────────────────
