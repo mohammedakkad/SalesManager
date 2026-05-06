@@ -35,9 +35,9 @@ fun ActivationScreen(
     onFreeStart: () -> Unit,
     viewModel: ActivationViewModel = koinViewModel()
 ) {
-    val uiState      by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val startupState by viewModel.startupState.collectAsState()
-    val context      = LocalContext.current
+    val context = LocalContext.current
 
     // ── Navigation triggers ─────────────────────────────────────
     LaunchedEffect(uiState.isSuccess) { if (uiState.isSuccess) onActivated() }
@@ -75,19 +75,25 @@ fun ActivationScreen(
                     .background(Brush.radialGradient(listOf(Emerald500, Cyan500))),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Rounded.TrendingUp, null,
-                    tint = Color.White, modifier = Modifier.size(52.dp))
+                Icon(
+                    Icons.Rounded.TrendingUp, null,
+                    tint = Color.White, modifier = Modifier.size(52.dp)
+                )
             }
 
             Spacer(Modifier.height(24.dp))
 
-            Text("مدير المبيعات",
+            Text(
+                "مدير المبيعات",
                 style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold, color = Color.White)
+                fontWeight = FontWeight.Bold, color = Color.White
+            )
             Spacer(Modifier.height(6.dp))
-            Text("إدارة مبيعاتك بذكاء وسهولة",
+            Text(
+                "إدارة مبيعاتك بذكاء وسهولة",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(0.7f), textAlign = TextAlign.Center)
+                color = Color.White.copy(0.7f), textAlign = TextAlign.Center
+            )
 
             Spacer(Modifier.height(36.dp))
 
@@ -109,16 +115,24 @@ fun ActivationScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Box(
-                            modifier = Modifier.size(28.dp).clip(CircleShape)
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clip(CircleShape)
                                 .background(Emerald500.copy(0.3f)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Rounded.Stars, null,
-                                tint = Emerald500.copy(alpha = 0.7f), modifier = Modifier.size(16.dp))
+                            Icon(
+                                Icons.Rounded.Stars,
+                                null,
+                                tint = Emerald500.copy(alpha = 0.7f),
+                                modifier = Modifier.size(16.dp)
+                            )
                         }
-                        Text("لديك كود تفعيل؟",
+                        Text(
+                            "لديك كود تفعيل؟",
                             color = Color.White, fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.bodyMedium)
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
 
                     OutlinedTextField(
@@ -127,7 +141,14 @@ fun ActivationScreen(
                         label = { Text("كود التفعيل", color = Color.White.copy(0.7f)) },
                         leadingIcon = { Icon(Icons.Rounded.Lock, null, tint = Emerald400) },
                         isError = uiState.error != null,
-                        supportingText = uiState.error?.let { { Text(it, color = Color(0xFFF87171)) } },
+                        supportingText = uiState.error?.let {
+                            {
+                                Text(
+                                    it,
+                                    color = Color(0xFFF87171)
+                                )
+                            }
+                        },
                         singleLine = true,
                         enabled = !uiState.isLoading,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -145,29 +166,42 @@ fun ActivationScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
+                    val isActivating = uiState.loadingType == LoadingType.ACTIVATING_CODE
+
                     Button(
                         onClick = viewModel::activate,
-                        enabled = !uiState.isLoading && uiState.code.isNotEmpty(),
-                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                        enabled = uiState.loadingType == LoadingType.NONE && uiState.code.isNotEmpty(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Emerald500,
                             disabledContainerColor = Emerald700.copy(0.4f)
                         )
                     ) {
-                        AnimatedContent(uiState.isLoading, label = "btn") { loading ->
+                        AnimatedContent(isActivating, label = "btn") { loading ->
                             if (loading) {
-                                Row(horizontalArrangement = Arrangement.spacedBy(10.dp),
-                                    verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     CircularProgressIndicator(
-                                        Modifier.size(18.dp), color = Color.White, strokeWidth = 2.dp)
-                                    Text("جاري التحقق...",
-                                        color = Color.White, fontWeight = FontWeight.SemiBold)
+                                        Modifier.size(18.dp),
+                                        color = Color.White,
+                                        strokeWidth = 2.dp
+                                    )
+                                    Text(
+                                        "جاري التحقق...",
+                                        color = Color.White, fontWeight = FontWeight.SemiBold
+                                    )
                                 }
                             } else {
-                                Text("تفعيل التطبيق",
+                                Text(
+                                    "تفعيل التطبيق",
                                     color = Color.White, fontWeight = FontWeight.SemiBold,
-                                    style = MaterialTheme.typography.bodyLarge)
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
                             }
                         }
                     }
@@ -192,11 +226,13 @@ fun ActivationScreen(
                     shape = CircleShape,
                     color = Color.White.copy(0.12f)
                 ) {
-                    Text("أو",
+                    Text(
+                        "أو",
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                         color = Color.White.copy(0.7f),
                         style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
@@ -214,10 +250,14 @@ fun ActivationScreen(
 
             Spacer(Modifier.height(16.dp))
 
+            val isRegisteringFree = uiState.loadingType == LoadingType.REGISTERING_FREE
+
             OutlinedButton(
                 onClick = { viewModel.registerFree(context) },
-                enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
+                enabled = uiState.loadingType == LoadingType.NONE,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color.White,
@@ -232,25 +272,36 @@ fun ActivationScreen(
                     )
                 )
             ) {
-                AnimatedContent(uiState.isLoading, label = "freeBtn") { loading ->
+                AnimatedContent(isRegisteringFree, label = "freeBtn") { loading ->
                     if (loading) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             CircularProgressIndicator(
-                                Modifier.size(18.dp), color = Emerald400, strokeWidth = 2.dp)
-                            Text("جاري التسجيل...",
-                                color = Emerald400, fontWeight = FontWeight.SemiBold)
+                                Modifier.size(18.dp), color = Emerald400, strokeWidth = 2.dp
+                            )
+                            Text(
+                                "جاري التسجيل...",
+                                color = Emerald400, fontWeight = FontWeight.SemiBold
+                            )
                         }
                     } else {
-                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Rounded.RocketLaunch, null,
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Rounded.RocketLaunch, null,
                                 modifier = Modifier.size(20.dp),
-                                tint = Emerald400)
-                            Text("ابدأ مجاناً الآن",
+                                tint = Emerald400
+                            )
+                            Text(
+                                "ابدأ مجاناً الآن",
                                 color = Emerald400,
                                 fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.bodyLarge)
+                                style = MaterialTheme.typography.bodyLarge
+                            )
                         }
                     }
                 }
@@ -275,8 +326,8 @@ fun ActivationScreen(
 private fun FreeFeaturesList() {
     val benefits = listOf(
         Icons.Rounded.ReceiptLong to "عمليات بيع غير محدودة",
-        Icons.Rounded.People      to "إدارة زبائن كاملة",
-        Icons.Rounded.BarChart    to "تقارير أسبوعية",
+        Icons.Rounded.People to "إدارة زبائن كاملة",
+        Icons.Rounded.BarChart to "تقارير أسبوعية",
     )
 
     Card(
@@ -290,11 +341,13 @@ private fun FreeFeaturesList() {
                 .padding(horizontal = 18.dp, vertical = 14.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text("ما يمكنك فعله مجاناً:",
+            Text(
+                "ما يمكنك فعله مجاناً:",
                 color = Color.White.copy(0.6f),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.padding(bottom = 2.dp))
+                modifier = Modifier.padding(bottom = 2.dp)
+            )
 
             benefits.forEach { (icon, text) ->
                 Row(
@@ -308,14 +361,18 @@ private fun FreeFeaturesList() {
                             .background(Emerald500.copy(0.2f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(icon, null,
+                        Icon(
+                            icon, null,
                             tint = Emerald400,
-                            modifier = Modifier.size(14.dp))
+                            modifier = Modifier.size(14.dp)
+                        )
                     }
-                    Text(text,
+                    Text(
+                        text,
                         color = Color.White.copy(0.85f),
                         style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Medium)
+                        fontWeight = FontWeight.Medium
+                    )
                 }
             }
         }

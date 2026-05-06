@@ -2,7 +2,9 @@ package com.trader.salesmanager.di
 
 import com.trader.core.data.local.appDataStore
 import com.trader.core.data.local.db.AppDatabase
+import com.trader.core.data.manager.SubscriptionManager
 import com.trader.core.data.remote.ChatService
+import com.trader.core.data.remote.CloudinaryUploader
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.data.remote.ProductFirestoreService
 import com.trader.core.data.repository.*
@@ -36,6 +38,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import com.trader.salesmanager.util.export.ExportViewModel
 import com.trader.salesmanager.ui.returns.ReturnViewModel
+import com.trader.salesmanager.ui.subscription.SubscriptionViewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {
@@ -205,4 +208,15 @@ val salesManagerModule = module {
         params ->
         ReturnViewModel(get(), get(), get(), get(org.koin.core.qualifier.named("merchantId")), params.get())
     }
+
+    viewModel {
+        SubscriptionViewModel(
+            application          = get(),
+            subscriptionManager  = get(),
+            cloudinaryUploader   = get(),
+            activationRepository = get()
+        )
+    }
+    single { CloudinaryUploader(get()) }
+    single { SubscriptionManager(androidContext()) }
 }

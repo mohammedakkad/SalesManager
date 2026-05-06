@@ -52,4 +52,6 @@ dependencies {
     api(libs.androidx.work.runtime)
     api(libs.koin.workmanager)
     api(libs.okhttp3)
+    api(libs.gson)
+    api(libs.coil.compose)
 }

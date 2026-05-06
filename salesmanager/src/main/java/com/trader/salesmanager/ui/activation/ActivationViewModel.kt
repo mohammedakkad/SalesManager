@@ -82,40 +82,40 @@ sealed class StartupState {
             // NET_CAPABILITY_VALIDATED can be unreliable on some devices/networks.
             viewModelScope.launch {
                 _uiState.update {
-                    it.copy(isLoading = true, error = null)
+                    it.copy(loadingType = LoadingType.ACTIVATING_CODE, error = null)
                 }
                 when (repo.validateCodeDetailed(code)) {
                     ValidationResult.Active -> {
                         repo.saveActivationStatus(activated = true, code = code)
                         _uiState.update {
-                            it.copy(isLoading = false, isSuccess = true)
+                            it.copy(loadingType = LoadingType.NONE, isSuccess = true)
                         }
                     }
                     ValidationResult.Disabled -> {
                         _uiState.update {
                             it.copy(
-                                isLoading = false,
+                                loadingType = LoadingType.NONE,
                                 error = "هذا الحساب معطّل من قِبل الإدارة"
                             )}
                     }
                     ValidationResult.Expired -> {
                         _uiState.update {
                             it.copy(
-                                isLoading = false,
+                                loadingType = LoadingType.NONE,
                                 error = "انتهت مدة اشتراك هذا الكود"
                             )}
                     }
                     ValidationResult.NotFound -> {
                         _uiState.update {
                             it.copy(
-                                isLoading = false,
+                                loadingType = LoadingType.NONE,
                                 error = "كود التفعيل غير موجود"
                             )}
                     }
                     ValidationResult.NetworkError -> {
                         _uiState.update {
                             it.copy(
-                                isLoading = false,
+                                loadingType = LoadingType.NONE,
                                 error = "تعذّر الاتصال، تحقق من الإنترنت"
                             )}
                     }
@@ -130,7 +130,7 @@ sealed class StartupState {
     
     fun registerFree(context: android.content.Context) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update { it.copy(loadingType = LoadingType.REGISTERING_FREE, error = null) }
             runCatching {
                 val deviceId = android.provider.Settings.Secure.getString(
                     context.contentResolver,
@@ -138,10 +138,10 @@ sealed class StartupState {
                 ) ?: System.currentTimeMillis().toString()
                 repo.registerFree(deviceId)
                 com.trader.core.domain.model.FeatureFlags.applyTier(MerchantTier.FREE)
-                _uiState.update { it.copy(isLoading = false, isSuccess = true) }
+                _uiState.update { it.copy(loadingType = LoadingType.NONE, isSuccess = true) }
             }.onFailure { e ->
                 _uiState.update { it.copy(
-                    isLoading = false,
+                    loadingType = LoadingType.NONE,
                     error = "فشل التسجيل: ${e.message ?: "تحقق من الإنترنت"}"
                 )}
             }
