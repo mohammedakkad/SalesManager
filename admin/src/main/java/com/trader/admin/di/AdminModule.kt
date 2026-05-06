@@ -1,5 +1,6 @@
 package com.trader.admin.di
 
+import com.google.firebase.database.FirebaseDatabase
 import com.trader.core.data.remote.ChatService
 import com.trader.core.data.remote.MerchantAdminService
 import com.trader.core.data.repository.ChatRepositoryImpl
@@ -16,6 +17,12 @@ import com.trader.admin.ui.chat.detail.ChatDetailViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import com.trader.admin.ui.notifications.NotificationsViewModel
+import com.trader.admin.ui.requests.AdminRequestsViewModel
+import com.trader.admin.ui.subscriptionsettings.AdminSubscriptionViewModel
+import com.trader.core.data.repository.AdminSubscriptionSettingsRepositoryImpl
+import com.trader.core.data.repository.FirebaseSubscriptionRepositoryImpl
+import com.trader.core.domain.repository.AdminSubscriptionSettingsRepository
+import com.trader.core.domain.repository.SubscriptionRepository
 
 val adminModule = module {
     // Services
@@ -25,6 +32,7 @@ val adminModule = module {
     // Repositories
     single<MerchantAdminRepository> { MerchantAdminRepositoryImpl(get()) }
     single<ChatRepository>          { ChatRepositoryImpl(get()) }
+    single<AdminSubscriptionSettingsRepository> { AdminSubscriptionSettingsRepositoryImpl(get()) }
 
     // ViewModels
     viewModel { AuthViewModel() }
@@ -34,6 +42,14 @@ val adminModule = module {
     viewModel { params -> MerchantDetailViewModel(get(), params.get()) }
     viewModel { ChatListViewModel(get(), get()) }
     viewModel { params -> ChatDetailViewModel(get(), params.get()) }
-    
+    viewModel { AdminSubscriptionViewModel(get()) }
+
     viewModel { NotificationsViewModel(get()) }
+    single { FirebaseDatabase.getInstance() }
+    viewModel {
+        AdminRequestsViewModel(get())
+    }
+    single<SubscriptionRepository> {
+        FirebaseSubscriptionRepositoryImpl(get())
+    }
 }

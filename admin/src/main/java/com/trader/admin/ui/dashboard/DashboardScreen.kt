@@ -28,6 +28,7 @@ fun DashboardScreen(
     onNavigateToRequests: () -> Unit,
     onNavigateToChat: () -> Unit,
     onNavigateToNotifications: () -> Unit,
+    onNavigateToSubscriptionSettings: () -> Unit,
     onSignOut: () -> Unit,
     viewModel: DashboardViewModel = koinViewModel()
 ) {
@@ -53,7 +54,6 @@ fun DashboardScreen(
                     ) {
                         Icon(Icons.Rounded.Notifications, null, tint = Color.White)
                     }
-
                     IconButton(
                         onClick = onSignOut,
                         modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
@@ -99,6 +99,11 @@ fun DashboardScreen(
                     icon = Icons.Rounded.ReceiptLong, title = "طلبات الاشتراك",
                     subtitle = "مراجعة واعتماد اشتراكات البائعين", color = Emerald500,
                     onClick = onNavigateToRequests
+                )
+                ActionCard(
+                    icon = Icons.Rounded.Tune, title = "إعدادات الاشتراك",
+                    subtitle = "إدارة أسعار الباقات وطرق الدفع", color = Violet500,
+                    onClick = onNavigateToSubscriptionSettings
                 )
                 ActionCard(
                     icon = Icons.Rounded.Forum, title = "الدردشة والدعم",

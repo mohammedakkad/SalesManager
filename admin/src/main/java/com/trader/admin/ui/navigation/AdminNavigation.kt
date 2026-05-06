@@ -12,22 +12,25 @@ import com.trader.admin.ui.merchants.detail.MerchantDetailScreen
 import com.trader.admin.ui.chat.list.ChatListScreen
 import com.trader.admin.ui.chat.detail.ChatDetailScreen
 import com.trader.admin.ui.notifications.NotificationsScreen
+import com.trader.admin.ui.requests.AdminRequestsScreen
+import com.trader.admin.ui.subscriptionsettings.AdminSubscriptionScreen
 import org.koin.androidx.compose.koinViewModel
 
 sealed class AdminScreen(val route: String) {
-    object Login          : AdminScreen("login")
-    object Dashboard      : AdminScreen("dashboard")
-    object Merchants      : AdminScreen("merchants")
-    object AddMerchant    : AdminScreen("merchants/add")
-    object MerchantDetail : AdminScreen("merchants/{merchantId}") {
+    object Login                : AdminScreen("login")
+    object Dashboard            : AdminScreen("dashboard")
+    object Requests             : AdminScreen("requests")
+    object Merchants            : AdminScreen("merchants")
+    object AddMerchant          : AdminScreen("merchants/add")
+    object MerchantDetail       : AdminScreen("merchants/{merchantId}") {
         fun route(id: String) = "merchants/$id"
     }
-    object ChatList       : AdminScreen("chat")
-    object ChatDetail     : AdminScreen("chat/{activationCode}?name={merchantName}") {
-        // ✅ use activationCode — same as what merchant app uses
+    object ChatList             : AdminScreen("chat")
+    object ChatDetail           : AdminScreen("chat/{activationCode}?name={merchantName}") {
         fun route(activationCode: String, name: String) = "chat/$activationCode?name=$name"
     }
-    object Notifications  : AdminScreen("notifications")
+    object Notifications        : AdminScreen("notifications")
+    object SubscriptionSettings : AdminScreen("subscription_settings")
 }
 
 @Composable
@@ -37,7 +40,7 @@ fun AdminNavigation() {
     val authState by authVm.state.collectAsState()
 
     val start = if (authState.isAuthenticated) AdminScreen.Dashboard.route
-                else AdminScreen.Login.route
+    else AdminScreen.Login.route
 
     NavHost(navController = navController, startDestination = start) {
         composable(AdminScreen.Login.route) {
@@ -47,17 +50,29 @@ fun AdminNavigation() {
                 }
             })
         }
+
         composable(AdminScreen.Dashboard.route) {
             DashboardScreen(
-                onNavigateToMerchants = { navController.navigate(AdminScreen.Merchants.route) },
-                onNavigateToChat      = { navController.navigate(AdminScreen.ChatList.route) },
-                onNavigateToNotifications = { navController.navigate(AdminScreen.Notifications.route) },
-                onSignOut             = {
+                onNavigateToMerchants             = { navController.navigate(AdminScreen.Merchants.route) },
+                onNavigateToRequests              = { navController.navigate(AdminScreen.Requests.route) },
+                onNavigateToChat                  = { navController.navigate(AdminScreen.ChatList.route) },
+                onNavigateToNotifications         = { navController.navigate(AdminScreen.Notifications.route) },
+                onNavigateToSubscriptionSettings  = { navController.navigate(AdminScreen.SubscriptionSettings.route) },
+                onSignOut = {
                     authVm.signOut()
-                    navController.navigate(AdminScreen.Login.route) { popUpTo(0) { inclusive = true } }
+                    navController.navigate(AdminScreen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
+
+        composable(AdminScreen.Requests.route) {
+            AdminRequestsScreen(
+                onNavigateUp = { navController.navigateUp() }
+            )
+        }
+
         composable(AdminScreen.Merchants.route) {
             MerchantsScreen(
                 onNavigateUp    = { navController.navigateUp() },
@@ -65,9 +80,11 @@ fun AdminNavigation() {
                 onAddMerchant   = { navController.navigate(AdminScreen.AddMerchant.route) }
             )
         }
+
         composable(AdminScreen.AddMerchant.route) {
             AddMerchantScreen(onNavigateUp = { navController.navigateUp() })
         }
+
         composable(
             AdminScreen.MerchantDetail.route,
             listOf(navArgument("merchantId") { type = NavType.StringType })
@@ -77,15 +94,16 @@ fun AdminNavigation() {
                 onNavigateUp = { navController.navigateUp() }
             )
         }
+
         composable(AdminScreen.ChatList.route) {
             ChatListScreen(
                 onNavigateUp = { navController.navigateUp() },
-                // ✅ activationCode passed — matches merchant's Firestore path
                 onChatClick  = { code, name ->
                     navController.navigate(AdminScreen.ChatDetail.route(code, name))
                 }
             )
         }
+
         composable(
             AdminScreen.ChatDetail.route,
             listOf(
@@ -99,12 +117,16 @@ fun AdminNavigation() {
                 onNavigateUp = { navController.navigateUp() }
             )
         }
-        
+
         composable(
-            route = AdminScreen.Notifications.route,
+            route     = AdminScreen.Notifications.route,
             deepLinks = listOf(navDeepLink { uriPattern = "admin://notifications" })
         ) {
             NotificationsScreen(onNavigateUp = { navController.navigateUp() })
+        }
+
+        composable(AdminScreen.SubscriptionSettings.route) {
+            AdminSubscriptionScreen(onNavigateUp = { navController.navigateUp() })
         }
     }
 }
