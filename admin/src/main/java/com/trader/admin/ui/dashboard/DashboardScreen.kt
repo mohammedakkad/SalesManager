@@ -25,6 +25,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun DashboardScreen(
     onNavigateToMerchants: () -> Unit,
+    onNavigateToRequests: () -> Unit,
     onNavigateToChat: () -> Unit,
     onNavigateToNotifications: () -> Unit,
     onSignOut: () -> Unit,
@@ -35,11 +36,10 @@ fun DashboardScreen(
     Column(
         modifier = Modifier.fillMaxSize().background(Navy950).verticalScroll(rememberScrollState())
     ) {
-        // ── Header ─────────────────────────────────────────────
         Box(
             modifier = Modifier.fillMaxWidth()
-            .background(Brush.linearGradient(listOf(Indigo500, Violet500)))
-            .padding(top = 52.dp, bottom = 80.dp, start = 20.dp, end = 20.dp)
+                .background(Brush.linearGradient(listOf(Indigo500, Violet500)))
+                .padding(top = 52.dp, bottom = 80.dp, start = 20.dp, end = 20.dp)
         ) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Column {
@@ -47,7 +47,6 @@ fun DashboardScreen(
                     Text("لوحة إدارة البائعين", color = Color.White.copy(0.8f), style = MaterialTheme.typography.bodyMedium)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    // ← أضف زر الإشعارات
                     IconButton(
                         onClick = onNavigateToNotifications,
                         modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
@@ -66,7 +65,6 @@ fun DashboardScreen(
         }
 
         Column(modifier = Modifier.offset(y = (-56).dp).padding(horizontal = 16.dp)) {
-            // ── Stats Grid ──────────────────────────────────────
             Card(
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = Navy900),
@@ -89,7 +87,6 @@ fun DashboardScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // ── Quick Actions ────────────────────────────────────
             Text("الإجراءات السريعة", style = MaterialTheme.typography.titleMedium, color = Slate300, modifier = Modifier.padding(bottom = 12.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -97,6 +94,11 @@ fun DashboardScreen(
                     icon = Icons.Rounded.People, title = "إدارة البائعين",
                     subtitle = "${stats.total} بائع مسجل", color = Indigo500,
                     onClick = onNavigateToMerchants
+                )
+                ActionCard(
+                    icon = Icons.Rounded.ReceiptLong, title = "طلبات الاشتراك",
+                    subtitle = "مراجعة واعتماد اشتراكات البائعين", color = Emerald500,
+                    onClick = onNavigateToRequests
                 )
                 ActionCard(
                     icon = Icons.Rounded.Forum, title = "الدردشة والدعم",
