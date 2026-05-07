@@ -211,7 +211,7 @@ class FirebaseSyncService {
                     id = invoiceId,
                     originalTransactionId = m["originalTransactionId"].asLong() ?: return@mapNotNull null,
                     merchantId = merchantCode,
-                    returnType = runCatching { ReturnType.valueOf(m["returnType"] as? String ?: "") }.getOrDefault(ReturnType.CASH),
+                    returnType = runCatching { ReturnType.valueOf(m["returnType"] as? String ?: "") }.getOrDefault(ReturnType.PARTIAL),
                     totalRefund = m["totalRefund"].asDouble() ?: 0.0,
                     note = m["note"] as? String ?: "",
                     createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
