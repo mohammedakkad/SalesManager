@@ -7,8 +7,15 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ServerValue
-import com.trader.core.domain.model.*
+import com.trader.core.data.remote.FirebaseSyncService
+import com.trader.core.domain.model.MerchantTier
+import com.trader.core.domain.model.SubscriptionPaymentMethod
+import com.trader.core.domain.model.SubscriptionPlan
+import com.trader.core.domain.model.SubscriptionRequest
+import com.trader.core.domain.model.SubscriptionState
+import com.trader.core.domain.repository.ActivationRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import org.json.JSONArray
@@ -16,9 +23,12 @@ import org.json.JSONObject
 
 private val Context.subscriptionDataStore by preferencesDataStore(name = "subscription_prefs")
 
-class SubscriptionManager(private val context: Context) {
+class SubscriptionManager(
+    private val context: Context,
+    private val firebaseSyncService: FirebaseSyncService,
+    private val activationRepo: ActivationRepository
+) {
 
-    private val KEY_TIER = stringPreferencesKey("sub_tier")
     private val KEY_EXPIRY = longPreferencesKey("sub_expiry")
     private val KEY_GRACE_END = longPreferencesKey("sub_grace_end")
     private val KEY_SERVER_OFFSET = longPreferencesKey("sub_server_offset")
@@ -87,6 +97,32 @@ class SubscriptionManager(private val context: Context) {
         }
     }
 
+    suspend fun syncSubscriptionFromRemote(merchantCode: String) {
+        runCatching {
+            val snapshot = firebaseSyncService.fetchMerchantActivationData(merchantCode)
+            if (!snapshot.exists()) return
+
+            val tierRaw = snapshot.child("tier").getValue(String::class.java)
+            val tier = runCatching { MerchantTier.valueOf(tierRaw ?: "") }.getOrDefault(MerchantTier.FREE)
+            val expiry = snapshot.child("subscriptionExpiry").getValue(Long::class.java) ?: 0L
+
+            activationRepo.saveMerchantTier(tier)
+            updateLocalExpiryInfo(expiry)
+        }
+    }
+    private suspend fun updateLocalExpiryInfo(expiry: Long) {
+        context.subscriptionDataStore.edit { prefs ->
+            prefs[KEY_EXPIRY] = expiry
+            prefs[KEY_GRACE_END] = expiry + GRACE_PERIOD_MS
+        }
+    }
+
+    suspend fun clearPendingState() {
+        if (activationRepo.getMerchantTier() == MerchantTier.PENDING) {
+            activationRepo.saveMerchantTier(MerchantTier.FREE)
+        }
+    }
+
     private fun serializePlans(plans: List<SubscriptionPlan>): String {
         val arr = JSONArray()
         plans.forEach {
@@ -144,22 +180,23 @@ class SubscriptionManager(private val context: Context) {
         list
     }.getOrDefault(DEFAULT_METHODS)
 
-    val subscriptionState: Flow<SubscriptionState> =
-        context.subscriptionDataStore.data.map { prefs ->
-            val tierName = prefs[KEY_TIER] ?: MerchantTier.FREE.name
-            val tier =
-                runCatching { MerchantTier.valueOf(tierName) }.getOrDefault(MerchantTier.FREE)
-            val expiry = prefs[KEY_EXPIRY] ?: 0L
-            val graceEnd = prefs[KEY_GRACE_END] ?: 0L
-            val offset = prefs[KEY_SERVER_OFFSET] ?: 0L
-            val now = System.currentTimeMillis() + offset
-            val isExpired = tier == MerchantTier.PREMIUM && expiry > 0L && now > expiry
-            val isInGrace = isExpired && graceEnd > 0L && now <= graceEnd
-            SubscriptionState(tier, expiry, isExpired, isInGrace, graceEnd)
-        }
+    val subscriptionState: Flow<SubscriptionState> = combine(
+        context.subscriptionDataStore.data,
+        activationRepo.observeMerchantTier()
+    ) { prefs, tier ->
+        val expiry = prefs[KEY_EXPIRY] ?: 0L
+        val graceEnd = prefs[KEY_GRACE_END] ?: 0L
+        val offset = prefs[KEY_SERVER_OFFSET] ?: 0L
+        val now = System.currentTimeMillis() + offset
+
+        val isExpired = tier == MerchantTier.PREMIUM && expiry > 0L && now > expiry
+        val isInGrace = isExpired && graceEnd > 0L && now <= graceEnd
+
+        SubscriptionState(tier, expiry, isExpired, isInGrace, graceEnd)
+    }
 
     suspend fun markPending() {
-        context.subscriptionDataStore.edit { it[KEY_TIER] = MerchantTier.PENDING.name }
+        activationRepo.saveMerchantTier(MerchantTier.PENDING)
     }
 
     suspend fun pushSubscriptionRequest(merchantCode: String, request: SubscriptionRequest) {

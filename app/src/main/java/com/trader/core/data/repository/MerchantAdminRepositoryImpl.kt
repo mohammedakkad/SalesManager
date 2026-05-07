@@ -14,6 +14,10 @@ class MerchantAdminRepositoryImpl(private val service: MerchantAdminService) :
     override suspend fun addMerchant(merchant: Merchant): String = service.addMerchant(merchant)
     override suspend fun updateMerchant(merchant: Merchant) = service.updateMerchant(merchant)
     override suspend fun deleteMerchant(id: String) = service.deleteMerchant(id)
+    override suspend fun unlinkDevice(id: String) {
+        service.unlinkDevice(id)
+    }
+
     override suspend fun setMerchantStatus(id: String, status: MerchantStatus) =
         service.setStatus(id, status)
 
@@ -26,7 +30,8 @@ class MerchantAdminRepositoryImpl(private val service: MerchantAdminService) :
         expiryDate: Timestamp?
     ) {
         // تمرير النص الذي يوثق حالة التحويل القسري
-        val newPlanName = if (isPermanent) "تم التحويل لدائم (بواسطة الإدارة)" else "تم التحويل لمؤقت (بواسطة الإدارة)"
+        val newPlanName =
+            if (isPermanent) "تم التحويل لدائم (بواسطة الإدارة)" else "تم التحويل لمؤقت (بواسطة الإدارة)"
         service.setSubscriptionType(id, isPermanent, expiryDate, newPlanName)
     }
 }

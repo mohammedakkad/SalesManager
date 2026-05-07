@@ -2,148 +2,158 @@ package com.trader.salesmanager.ui.activation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.core.domain.model.MerchantStatus
-import com.trader.core.domain.repository.ActivationRepository
-import com.trader.core.domain.model.StartupStatus
-import com.trader.core.util.NetworkMonitor
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import com.trader.core.data.remote.ValidationResult
+import com.trader.core.domain.model.FeatureFlags
+import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.model.MerchantTier
+import com.trader.core.domain.model.StartupStatus
+import com.trader.core.domain.repository.ActivationRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 sealed class StartupState {
-    object Checking      : StartupState()
-    object Proceed       : StartupState()           // Premium — activation code
-    object ProceedFree   : StartupState()           // Free — self-registered
-    object NeedActivation: StartupState()
+    object Checking : StartupState()
+    object Proceed : StartupState()           // Premium — activation code
+    object ProceedFree : StartupState()           // Free — self-registered
+    object NeedActivation : StartupState()
     data class Blocked(val message: String, val canRetry: Boolean = false) : StartupState()
 }
 
-    class ActivationViewModel(
-        private val repo: ActivationRepository,
-        private val networkMonitor: NetworkMonitor
-    ) : ViewModel() {
+class ActivationViewModel(
+    private val repo: ActivationRepository
+) : ViewModel() {
 
-        private val _uiState = MutableStateFlow(ActivationUiState())
-        val uiState: StateFlow<ActivationUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ActivationUiState())
+    val uiState: StateFlow<ActivationUiState> = _uiState.asStateFlow()
 
-        private val _startupState = MutableStateFlow<StartupState>(StartupState.Checking)
-        val startupState: StateFlow<StartupState> = _startupState.asStateFlow()
+    private val _startupState = MutableStateFlow<StartupState>(StartupState.Checking)
+    val startupState: StateFlow<StartupState> = _startupState.asStateFlow()
 
-        val merchantStatus: StateFlow<MerchantStatus?> = repo.observeMerchantStatus()
+    val merchantStatus: StateFlow<MerchantStatus?> = repo.observeMerchantStatus()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
-        init {
-            checkStartup()
-        }
+    init {
+        checkStartup()
+    }
 
-        fun checkStartup() {
-            _startupState.value = StartupState.Checking
-            viewModelScope.launch {
-                val result = repo.verifyStatusOnStartup()
-                _startupState.value = when (result) {
-                    StartupStatus.ACTIVE -> {
-                        // Read tier and apply feature flags
-                        val tier = repo.getMerchantTier()
-                        com.trader.core.domain.model.FeatureFlags.applyTier(tier)
-                        if (repo.isSelfRegistered()) StartupState.ProceedFree
-                        else StartupState.Proceed
-                    }
-                    StartupStatus.OFFLINE -> StartupState.Proceed
-                    StartupStatus.NOT_ACTIVATED -> StartupState.NeedActivation
-                    StartupStatus.DISABLED -> StartupState.Blocked(
-                        message = "تم تعطيل حسابك من قِبل الإدارة.\nتواصل مع الإدارة لإعادة التفعيل.",
-                        canRetry = false
-                    )
-                    StartupStatus.EXPIRED -> StartupState.Blocked(
-                        message = "انتهت مدة اشتراكك.\nتواصل مع الإدارة لتجديد الاشتراك.",
-                        canRetry = false
-                    )
-                    StartupStatus.DELETED -> StartupState.Blocked(
-                        message = "كود التفعيل غير موجود.\nتواصل مع الإدارة للحصول على كود جديد.",
-                        canRetry = true
-                    )
-                }
-            }
-        }
-
-        fun updateCode(code: String) = _uiState.update {
-            it.copy(code = code, error = null)
-        }
-
-        fun activate() {
-            val code = _uiState.value.code.trim()
-            if (code.isEmpty()) {
-                _uiState.update {
-                    it.copy(error = "أدخل كود التفعيل")
-                }; return
-            }
-            // ✅ Don't block on isOnline() — let Firebase handle network errors.
-            // NET_CAPABILITY_VALIDATED can be unreliable on some devices/networks.
-            viewModelScope.launch {
-                _uiState.update {
-                    it.copy(loadingType = LoadingType.ACTIVATING_CODE, error = null)
-                }
-                when (repo.validateCodeDetailed(code)) {
-                    ValidationResult.Active -> {
-                        repo.saveActivationStatus(activated = true, code = code)
-                        _uiState.update {
-                            it.copy(loadingType = LoadingType.NONE, isSuccess = true)
-                        }
-                    }
-                    ValidationResult.Disabled -> {
-                        _uiState.update {
-                            it.copy(
-                                loadingType = LoadingType.NONE,
-                                error = "هذا الحساب معطّل من قِبل الإدارة"
-                            )}
-                    }
-                    ValidationResult.Expired -> {
-                        _uiState.update {
-                            it.copy(
-                                loadingType = LoadingType.NONE,
-                                error = "انتهت مدة اشتراك هذا الكود"
-                            )}
-                    }
-                    ValidationResult.NotFound -> {
-                        _uiState.update {
-                            it.copy(
-                                loadingType = LoadingType.NONE,
-                                error = "كود التفعيل غير موجود"
-                            )}
-                    }
-                    ValidationResult.NetworkError -> {
-                        _uiState.update {
-                            it.copy(
-                                loadingType = LoadingType.NONE,
-                                error = "تعذّر الاتصال، تحقق من الإنترنت"
-                            )}
-                    }
-                }
-            }
-        }
-
-
-        fun onNoInternetSnackbarShown() = _uiState.update {
-            it.copy(showNoInternetSnackbar = false)
-        }
-    
-    fun registerFree(context: android.content.Context) {
+    fun checkStartup() {
+        _startupState.value = StartupState.Checking
         viewModelScope.launch {
+            val result = repo.verifyStatusOnStartup()
+            handleStartupResult(result)
+        }
+    }
+
+    private suspend fun handleStartupResult(result: com.trader.core.domain.model.StartupStatus) {
+        _startupState.value = when (result) {
+            StartupStatus.ACTIVE -> {
+                val tier = repo.getMerchantTier()
+                FeatureFlags.applyTier(tier)
+                if (repo.isSelfRegistered()) StartupState.ProceedFree else StartupState.Proceed
+            }
+
+            StartupStatus.NOT_ACTIVATED -> StartupState.NeedActivation
+            StartupStatus.DISABLED -> StartupState.Blocked("الحساب معطل")
+            else -> StartupState.Blocked("انتهى الاشتراك")
+        }
+    }
+
+    fun updateCode(code: String) = _uiState.update {
+        it.copy(code = code, error = null)
+    }
+
+    fun activate() {
+        val code = _uiState.value.code.trim()
+        if (code.isEmpty()) {
+            _uiState.update {
+                it.copy(error = "أدخل كود التفعيل")
+            }; return
+        }
+        // ✅ Don't block on isOnline() — let Firebase handle network errors.
+        // NET_CAPABILITY_VALIDATED can be unreliable on some devices/networks.
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(loadingType = LoadingType.ACTIVATING_CODE, error = null)
+            }
+            when (repo.validateCodeDetailed(code)) {
+                ValidationResult.Active -> {
+                    repo.saveActivationStatus(activated = true, code = code)
+                    _uiState.update {
+                        it.copy(loadingType = LoadingType.NONE, isSuccess = true)
+                    }
+                }
+
+                ValidationResult.Disabled -> {
+                    _uiState.update {
+                        it.copy(
+                            loadingType = LoadingType.NONE,
+                            error = "هذا الحساب معطّل من قِبل الإدارة"
+                        )
+                    }
+                }
+
+                ValidationResult.Expired -> {
+                    _uiState.update {
+                        it.copy(
+                            loadingType = LoadingType.NONE,
+                            error = "انتهت مدة اشتراك هذا الكود"
+                        )
+                    }
+                }
+
+                ValidationResult.NotFound -> {
+                    _uiState.update {
+                        it.copy(
+                            loadingType = LoadingType.NONE,
+                            error = "كود التفعيل غير موجود"
+                        )
+                    }
+                }
+
+                ValidationResult.NetworkError -> {
+                    _uiState.update {
+                        it.copy(
+                            loadingType = LoadingType.NONE,
+                            error = "تعذّر الاتصال، تحقق من الإنترنت"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+
+    fun onNoInternetSnackbarShown() = _uiState.update {
+        it.copy(showNoInternetSnackbar = false)
+    }
+
+    fun registerFree() {
+        viewModelScope.launch {
+            // Set loading state to provide visual feedback
             _uiState.update { it.copy(loadingType = LoadingType.REGISTERING_FREE, error = null) }
+
             runCatching {
-                val deviceId = android.provider.Settings.Secure.getString(
-                    context.contentResolver,
-                    android.provider.Settings.Secure.ANDROID_ID
-                ) ?: System.currentTimeMillis().toString()
-                repo.registerFree(deviceId)
-                com.trader.core.domain.model.FeatureFlags.applyTier(MerchantTier.FREE)
-                _uiState.update { it.copy(loadingType = LoadingType.NONE, isSuccess = true) }
-            }.onFailure { e ->
-                _uiState.update { it.copy(
-                    loadingType = LoadingType.NONE,
-                    error = "فشل التسجيل: ${e.message ?: "تحقق من الإنترنت"}"
-                )}
+                repo.registerFree()
+            }.onSuccess {
+                // Apply business logic locally before navigating
+                FeatureFlags.applyTier(MerchantTier.FREE)
+
+                _uiState.update { it.copy(loadingType = LoadingType.NONE) }
+                // Trigger the specific observer for Free Start in ActivationScreen
+                _startupState.value = StartupState.ProceedFree
+            }.onFailure { exception ->
+                // propagate the error to the UI
+                _uiState.update {
+                    it.copy(
+                        loadingType = LoadingType.NONE,
+                        error = exception.message ?: "تعذر التسجيل، تحقق من اتصال الإنترنت"
+                    )
+                }
             }
         }
     }

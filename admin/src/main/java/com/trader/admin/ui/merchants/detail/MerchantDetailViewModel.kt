@@ -36,6 +36,15 @@ class MerchantDetailViewModel(
         }
     }
 
+    fun unlinkDevice() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repo.unlinkDevice(merchantId)
+            _merchant.value = repo.getMerchantById(merchantId)
+            _isLoading.value = false
+        }
+    }
+
     fun adjustExpiry(deltaDays: Int) {
         viewModelScope.launch {
             _isLoading.value = true

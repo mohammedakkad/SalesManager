@@ -1,13 +1,11 @@
 package com.trader.core.data.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.Preferences
+import android.provider.Settings
+import androidx.datastore.preferences.core.*
 import com.trader.core.data.local.appDataStore
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.trader.core.data.local.dao.*
 import com.trader.core.data.local.entity.*
@@ -21,7 +19,10 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.flow.*
 import com.trader.core.domain.model.StartupStatus
 import com.trader.core.data.remote.ValidationResult
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class ActivationRepositoryImpl(
     private val context: Context,
@@ -30,13 +31,17 @@ class ActivationRepositoryImpl(
     private val transactionDao: TransactionDao,
     private val paymentMethodDao: PaymentMethodDao,
     private val productDao: ProductDao,
-    private val productFirestoreService: ProductFirestoreService
+    private val productFirestoreService: ProductFirestoreService,
 ) : ActivationRepository {
 
-    private val IS_ACTIVATED       = booleanPreferencesKey("is_activated")
-    private val MERCHANT_CODE      = stringPreferencesKey("merchant_code")
-    private val MERCHANT_TIER      = stringPreferencesKey("merchant_tier")
-    private val IS_SELF_REGISTERED = booleanPreferencesKey("is_self_registered")
+    private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    override fun observeMerchantTier(): Flow<MerchantTier> =
+        context.appDataStore.data
+            .map { it[KEY_TIER] ?: MerchantTier.FREE.name }
+            .map { parseTier(it) }
+            .distinctUntilChanged()
 
     override suspend fun validateCode(code: String) = firebaseService.validateCode(code)
 
@@ -53,18 +58,27 @@ class ActivationRepositoryImpl(
         context.appDataStore.data.map { it[MERCHANT_CODE] ?: "" }.distinctUntilChanged()
 
     override suspend fun saveActivationStatus(activated: Boolean, code: String) {
+        val deviceId = getHardwareId()
         context.appDataStore.edit {
-            it[IS_ACTIVATED]  = activated
+            it[IS_ACTIVATED] = activated
             it[MERCHANT_CODE] = code
         }
         if (activated && code.isNotEmpty()) {
+            bindDeviceToCode(code, deviceId)
             fetchAndStoreAllData(code)
         }
     }
 
+    private suspend fun bindDeviceToCode(code: String, deviceId: String) {
+        firestore.collection(COLLECTION_MERCHANTS)
+            .document(code)
+            .update(FIELD_DEVICE_ID, deviceId)
+            .await()
+    }
+
     override suspend fun deactivate() {
         context.appDataStore.edit {
-            it[IS_ACTIVATED]  = false
+            it[IS_ACTIVATED] = false
             it[MERCHANT_CODE] = ""
         }
         customerDao.deleteAll()
@@ -74,97 +88,65 @@ class ActivationRepositoryImpl(
     }
 
     override fun observeMerchantStatus(): Flow<MerchantStatus?> = callbackFlow {
-        val code = getMerchantCode()
-        if (code.isEmpty()) {
-            trySend(null)
-            close()
-            return@callbackFlow
-        }
-
-        val listener = FirebaseFirestore.getInstance()
-            .collection("merchants")
-            .whereEqualTo("id", code)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null || snapshot == null) {
-                    trySend(null)
-                    return@addSnapshotListener
+        val id = getHardwareId()
+        val listener = firestore.collection(COLLECTION_MERCHANTS).document(id)
+            .addSnapshotListener { snap, _ ->
+                snap?.let {
+                    repositoryScope.launch { saveMerchantTier(parseTier(it.getString(FIELD_TIER))) }
+                    trySend(parseStatus(it.getString(FIELD_STATUS)))
                 }
-                if (snapshot.isEmpty) {
-                    trySend(null)
-                    return@addSnapshotListener
-                }
-                val doc    = snapshot.documents.firstOrNull()
-                val status = doc?.getString("status")?.let {
-                    runCatching { MerchantStatus.valueOf(it) }.getOrNull()
-                }
-                trySend(
-                    if (status == MerchantStatus.DISABLED || status == MerchantStatus.EXPIRED) status
-                    else null
-                )
             }
-
         awaitClose { listener.remove() }
     }
 
+    private fun parseTier(raw: String?) =
+        runCatching { MerchantTier.valueOf(raw!!) }.getOrDefault(MerchantTier.FREE)
+
+    private fun parseStatus(raw: String?) =
+        runCatching { MerchantStatus.valueOf(raw!!) }.getOrNull()
+
     private suspend fun fetchAndStoreAllData(code: String) {
-        val data = try {
-            firebaseService.fetchAllData(code)
-        } catch (e: Exception) {
-            return
+        val data = try { firebaseService.fetchAllData(code) } catch (e: Exception) { return }
+        data.customers.forEach { runCatching { customerDao.insertCustomer(CustomerEntity.fromDomain(it)) } }
+        data.paymentMethods.forEach { runCatching { paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(it)) } }
+        data.transactions.forEach { runCatching { transactionDao.insertTransaction(TransactionEntity.fromDomain(it)) } }
+        fetchProductsAndUnits(code)
+    }
+
+    private suspend fun fetchProductsAndUnits(code: String) = runCatching {
+        productFirestoreService.fetchAllProducts(code).forEach { product ->
+            val units = productFirestoreService.fetchUnitsForProduct(code, product.id)
+            productDao.insertProduct(product.toEntity())
+            productDao.insertUnits(units.map { it.toEntity() })
         }
-        data.customers.forEach { c ->
-            try { customerDao.insertCustomer(CustomerEntity.fromDomain(c)) } catch (_: Exception) {}
-        }
-        data.paymentMethods.forEach { m ->
-            try { paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(m)) } catch (_: Exception) {}
-        }
-        data.transactions.forEach { t ->
-            try { transactionDao.insertTransaction(TransactionEntity.fromDomain(t)) } catch (_: Exception) {}
-        }
-        try {
-            val products = productFirestoreService.fetchAllProducts(code)
-            products.forEach { product ->
-                try {
-                    val units = productFirestoreService.fetchUnitsForProduct(code, product.id)
-                    productDao.insertProduct(product.toEntity())
-                    productDao.insertUnits(units.map { it.toEntity() })
-                } catch (_: Exception) {}
-            }
-        } catch (_: Exception) {}
     }
 
     override suspend fun verifyStatusOnStartup(): StartupStatus {
-        val activated = isActivated()
-        if (!activated) return StartupStatus.NOT_ACTIVATED
-
-        val code = getMerchantCode()
-        if (code.isEmpty()) return StartupStatus.NOT_ACTIVATED
-
-        val status = firebaseService.getCodeStatus(code)
-            ?: return StartupStatus.OFFLINE
-
-        return when (status) {
-            "ACTIVE" -> StartupStatus.ACTIVE
-            "DISABLED" -> {
-                context.appDataStore.edit { it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = "" }
-                StartupStatus.DISABLED
-            }
-            "EXPIRED" -> {
-                context.appDataStore.edit { it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = "" }
-                StartupStatus.EXPIRED
-            }
-            "DELETED" -> {
-                context.appDataStore.edit { it[IS_ACTIVATED] = false; it[MERCHANT_CODE] = "" }
-                StartupStatus.DELETED
-            }
-            else -> StartupStatus.ACTIVE
+        val deviceId = getHardwareId()
+        return try {
+            val doc = findMerchantDocument(deviceId)
+            if (doc != null) restoreSession(doc) else StartupStatus.NOT_ACTIVATED
+        } catch (e: Exception) {
+            StartupStatus.OFFLINE
         }
     }
 
-    override suspend fun getMerchantTier(): MerchantTier {
-        val raw = context.appDataStore.data.map { it[MERCHANT_TIER] ?: "" }.first()
-        return runCatching { MerchantTier.valueOf(raw) }.getOrDefault(MerchantTier.FREE)
+    private suspend fun findMerchantDocument(deviceId: String): DocumentSnapshot? {
+        val directDoc = firestore.collection(COLLECTION_MERCHANTS).document(deviceId).get().await()
+        if (directDoc.exists()) return directDoc
+
+        return firestore.collection(COLLECTION_MERCHANTS)
+            .whereEqualTo(FIELD_DEVICE_ID, deviceId)
+            .limit(1)
+            .get()
+            .await()
+            .documents
+            .firstOrNull()
     }
+
+    override suspend fun getMerchantTier(): MerchantTier = parseTier(
+        context.appDataStore.data.map { it[MERCHANT_TIER] }.first()
+    )
 
     override suspend fun isSelfRegistered(): Boolean =
         context.appDataStore.data.map { it[IS_SELF_REGISTERED] ?: false }.first()
@@ -173,38 +155,65 @@ class ActivationRepositoryImpl(
         context.appDataStore.edit { it[MERCHANT_TIER] = tier.name }
     }
 
-    override suspend fun registerFree(deviceId: String) {
-        val merchantId = "free_${deviceId.take(12)}_${System.currentTimeMillis()}"
+    override suspend fun registerFree() {
+        val id = getHardwareId()
+        val merchantData = mapOf(
+            FIELD_ID to id,
+            FIELD_DEVICE_ID to id,
+            FIELD_TIER to MerchantTier.FREE.name,
+            FIELD_STATUS to STATUS_ACTIVE,
+            FIELD_IS_SELF_REG to true,
+            "createdAt" to com.google.firebase.Timestamp.now()
+        )
+        firestore.collection(COLLECTION_MERCHANTS).document(id).set(merchantData).await()
+        saveLocalSession(id, MerchantTier.FREE.name, true, true)
+    }
 
-        FirebaseFirestore.getInstance()
-            .collection("merchants")
-            .document(merchantId)
-            .set(
-                mapOf(
-                    "id"               to merchantId,
-                    "tier"             to MerchantTier.FREE.name,
-                    "status"           to "ACTIVE",
-                    "isPermanent"      to true,
-                    "isSelfRegistered" to true,
-                    "activationCode"   to "",
-                    "createdAt"        to com.google.firebase.Timestamp.now(),
-                    "planName"         to "باقة مجانية",
-                    "paymentMethod"    to "تسجيل ذاتي (مجاني)"
-                )
-            ).await()
+    @SuppressLint("HardwareIds")
+    private fun getHardwareId(): String = Settings.Secure.getString(
+        context.contentResolver, Settings.Secure.ANDROID_ID
+    ) ?: "unknown_device"
 
-        FirebaseDatabase.getInstance()
-            .reference
-            .child("activation_codes")
-            .child(merchantId)
-            .setValue(mapOf("status" to "ACTIVE"))
-            .await()
+    private suspend fun restoreSession(doc: DocumentSnapshot): StartupStatus {
+        val status = doc.getString(FIELD_STATUS) ?: STATUS_ACTIVE
+        val tier = doc.getString(FIELD_TIER) ?: MerchantTier.FREE.name
+        val isSelfReg = doc.getBoolean(FIELD_IS_SELF_REG) ?: false
 
+        saveLocalSession(doc.id, tier, status == STATUS_ACTIVE, isSelfReg)
+        return mapToStartupStatus(status)
+    }
+
+    private suspend fun saveLocalSession(code: String, tier: String, active: Boolean, self: Boolean) {
         context.appDataStore.edit {
-            it[IS_ACTIVATED]       = true
-            it[MERCHANT_CODE]      = merchantId
-            it[MERCHANT_TIER]      = MerchantTier.FREE.name
-            it[IS_SELF_REGISTERED] = true
+            it[KEY_CODE] = code
+            it[KEY_TIER] = tier
+            it[KEY_ACTIVATED] = active
+            it[IS_SELF_REGISTERED] = self
         }
+    }
+
+    private fun mapToStartupStatus(status: String) = when (status) {
+        STATUS_ACTIVE -> StartupStatus.ACTIVE
+        STATUS_DISABLED -> StartupStatus.DISABLED
+        else -> StartupStatus.EXPIRED
+    }
+
+    companion object {
+        private const val COLLECTION_MERCHANTS = "merchants"
+        private const val FIELD_STATUS = "status"
+        private const val FIELD_TIER = "tier"
+        private const val FIELD_ID = "id"
+        private const val FIELD_DEVICE_ID = "deviceId"
+        private const val FIELD_IS_SELF_REG = "isSelfRegistered"
+        private const val STATUS_ACTIVE = "ACTIVE"
+        private const val STATUS_DISABLED = "DISABLED"
+
+        private val MERCHANT_TIER = stringPreferencesKey("merchant_tier")
+        private val MERCHANT_CODE = stringPreferencesKey("merchant_code")
+        private val IS_ACTIVATED = booleanPreferencesKey("is_activated")
+        private val IS_SELF_REGISTERED = booleanPreferencesKey("is_self_registered")
+        private val KEY_TIER = stringPreferencesKey("merchant_tier")
+        private val KEY_CODE = stringPreferencesKey("merchant_code")
+        private val KEY_ACTIVATED = booleanPreferencesKey("is_activated")
     }
 }

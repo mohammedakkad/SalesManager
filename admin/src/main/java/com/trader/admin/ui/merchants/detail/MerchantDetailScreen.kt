@@ -14,6 +14,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -102,7 +104,9 @@ fun MerchantDetailScreen(
     }
 
     Scaffold(containerColor = Navy950) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
+        Box(Modifier
+            .fillMaxSize()
+            .padding(padding)) {
             merchant?.let { m ->
                 Column(
                     modifier = Modifier
@@ -132,7 +136,10 @@ fun MerchantDetailScreen(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
                                 Box(
-                                    Modifier.size(64.dp).clip(CircleShape).background(Color.White.copy(0.2f)),
+                                    Modifier
+                                        .size(64.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.White.copy(0.2f)),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
@@ -152,7 +159,9 @@ fun MerchantDetailScreen(
 
                     // ── Content ───────────────────────────────────────
                     Column(
-                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
 
@@ -203,6 +212,54 @@ fun MerchantDetailScreen(
                             icon  = Icons.Rounded.Payments,
                             color = Emerald400
                         )
+
+                        DetailCard(
+                            label = "تاريخ التسجيل",
+                            value = m.createdAt?.toDate()?.let {
+                                java.text.SimpleDateFormat("yyyy/MM/dd", java.util.Locale.getDefault()).format(it)
+                            } ?: "غير معروف",
+                            icon = Icons.Rounded.History,
+                            color = Slate400
+                        )
+
+                        DetailCard(
+                            label = "معرف الجهاز (Device ID)",
+                            value = m.deviceId ?: "غير مرتبط",
+                            icon = if (m.deviceId != null) Icons.Rounded.PhonelinkLock else Icons.Rounded.PhonelinkSetup,
+                            color = if (m.deviceId != null) Indigo400 else Slate600
+                        )
+
+                        if (m.deviceId != null) {
+                            var showUnlinkConfirm by remember { mutableStateOf(false) }
+
+                            Button(
+                                onClick = { showUnlinkConfirm = true },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(52.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = DisabledRose.copy(0.1f), contentColor = DisabledRose)
+                            ) {
+                                Icon(Icons.Rounded.PhonelinkErase, null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text("فك ارتباط الجهاز")
+                            }
+
+                            if (showUnlinkConfirm) {
+                                AlertDialog(
+                                    onDismissRequest = { showUnlinkConfirm = false },
+                                    title = { Text("فك الارتباط") },
+                                    text = { Text("هل أنت متأكد من فك ارتباط هذا الجهاز؟ سيتمكن التاجر من تسجيل الدخول من جهاز آخر.") },
+                                    confirmButton = {
+                                        TextButton(onClick = {
+                                            viewModel.unlinkDevice()
+                                            showUnlinkConfirm = false
+                                        }) { Text("تأكيد الفك", color = DisabledRose) }
+                                    },
+                                    dismissButton = { TextButton(onClick = { showUnlinkConfirm = false }) { Text("إلغاء") } }
+                                )
+                            }
+                        }
 
                         Spacer(Modifier.height(4.dp))
 
@@ -261,7 +318,9 @@ fun MerchantDetailScreen(
             // Loading overlay
             if (isLoading) {
                 Box(
-                    Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.4f)),
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.4f)),
                     contentAlignment = Alignment.Center
                 ) { CircularProgressIndicator(color = Indigo400) }
             }
@@ -269,7 +328,9 @@ fun MerchantDetailScreen(
             // Copy snackbar
             AnimatedVisibility(
                 visible = copiedSnack,
-                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 24.dp),
                 enter = slideInVertically { it } + fadeIn(),
                 exit  = slideOutVertically { it } + fadeOut()
             ) {
@@ -301,11 +362,16 @@ private fun ActivationCodeCard(code: String, onCopy: () -> Unit) {
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                Modifier.size(40.dp).clip(CircleShape).background(Indigo400.copy(0.15f)),
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Indigo400.copy(0.15f)),
                 contentAlignment = Alignment.Center
             ) { Icon(Icons.Rounded.Key, null, tint = Indigo400, modifier = Modifier.size(20.dp)) }
             Spacer(Modifier.width(14.dp))
@@ -335,10 +401,14 @@ private fun ExpiryCard(merchant: Merchant, onAdjust: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = Navy900),
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
-        Column(Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(Modifier
+            .fillMaxWidth()
+            .padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    Modifier.size(40.dp).clip(CircleShape)
+                    Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
                         .background((if (isExpired) ExpiredAmber else Cyan500).copy(0.15f)),
                     contentAlignment = Alignment.Center
                 ) {
@@ -625,11 +695,16 @@ private fun DetailCard(
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                Modifier.size(40.dp).clip(CircleShape).background(color.copy(0.15f)),
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(color.copy(0.15f)),
                 contentAlignment = Alignment.Center
             ) { Icon(icon, null, tint = color, modifier = Modifier.size(20.dp)) }
             Spacer(Modifier.width(14.dp))

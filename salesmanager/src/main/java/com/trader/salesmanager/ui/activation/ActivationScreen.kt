@@ -253,7 +253,7 @@ fun ActivationScreen(
             val isRegisteringFree = uiState.loadingType == LoadingType.REGISTERING_FREE
 
             OutlinedButton(
-                onClick = { viewModel.registerFree(context) },
+                onClick = { viewModel.registerFree() },
                 enabled = uiState.loadingType == LoadingType.NONE,
                 modifier = Modifier
                     .fillMaxWidth()

@@ -93,10 +93,11 @@ val salesManagerModule = module {
     single<String>(org.koin.core.qualifier.named("merchantId")) {
         runBlocking {
             androidContext().appDataStore.data
-            .map {
-                prefs -> prefs[androidx.datastore.preferences.core.stringPreferencesKey("merchant_code")] ?: ""
-            }
-            .first()
+                .map { prefs ->
+                    prefs[androidx.datastore.preferences.core.stringPreferencesKey("merchant_code")]
+                        ?: ""
+                }
+                .first()
         }
     }
 
@@ -120,30 +121,51 @@ val salesManagerModule = module {
         MerchantStatusRepositoryImpl()
     }
     single<ProductRepository> {
-        ProductRepositoryImpl(get(),get(), get(), get(), get<NetworkMonitor>())
+        ProductRepositoryImpl(get(), get(), get(), get(), get<NetworkMonitor>())
     }
     single<StockRepository> {
-        StockRepositoryImpl(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        StockRepositoryImpl(
+            get(),
+            get(),
+            get(),
+            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+        )
     }
     single<InvoiceItemRepository> {
-        InvoiceItemRepositoryImpl(get(),get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        InvoiceItemRepositoryImpl(
+            get(),
+            get(),
+            get(),
+            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+        )
     }
     single<InventoryRepository> {
-        InventoryRepositoryImpl(get(),get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        InventoryRepositoryImpl(
+            get(),
+            get(),
+            get(),
+            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+        )
     }
     single<ReturnRepository> {
-        ReturnRepositoryImpl(get(), get(),get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        ReturnRepositoryImpl(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+        )
     }
 
     // ── ViewModels ───────────────────────────────────────────────
     viewModel {
-        ActivationViewModel(get(), get())
+        ActivationViewModel(get())
     }
     viewModel {
         ExportViewModel()
     }
     viewModel {
-        MerchantWatcherViewModel(get(), get(), androidContext())
+        MerchantWatcherViewModel(get(), get())
     }
     viewModel {
         HomeViewModel(get(), get(), get())
@@ -154,24 +176,30 @@ val salesManagerModule = module {
     viewModel {
         AddEditCustomerViewModel(get())
     }
-    viewModel {
-        params -> CustomerDetailsViewModel(get(), get(), params.get())
+    viewModel { params ->
+        CustomerDetailsViewModel(get(), get(), params.get())
     }
     viewModel {
         TransactionsViewModel(get())
     }
-    viewModel {
-        params ->
-        TransactionDetailsViewModel(params.get(), get(), get(), get(),get())
+    viewModel { params ->
+        TransactionDetailsViewModel(params.get(), get(), get(), get(), get())
     }
     viewModel {
-        AddEditTransactionViewModel(get(), get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        AddEditTransactionViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+        )
     }
     viewModel {
         ReportsViewModel(get(), get())
     }
-    viewModel {
-        params -> DayTransactionsViewModel(get(), params.get())
+    viewModel { params ->
+        DayTransactionsViewModel(get(), params.get())
     }
     viewModel {
         PaymentMethodsViewModel(get())
@@ -192,11 +220,15 @@ val salesManagerModule = module {
     viewModel {
         AddEditProductViewModel(get())
     }
-    viewModel {
-        params -> ProductDetailViewModel(get(), get(), params.get())
+    viewModel { params ->
+        ProductDetailViewModel(get(), get(), params.get())
     }
     viewModel {
-        InventorySessionViewModel(get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        InventorySessionViewModel(
+            get(),
+            get(),
+            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+        )
     }
     viewModel {
         InvoiceItemsViewModel(get())
@@ -204,26 +236,32 @@ val salesManagerModule = module {
     viewModel {
         StockReportsViewModel(get(), get())
     }
-    viewModel {
-        params ->
-        ReturnViewModel(get(), get(), get(), get(org.koin.core.qualifier.named("merchantId")), params.get())
+    viewModel { params ->
+        ReturnViewModel(
+            get(),
+            get(),
+            get(),
+            get(org.koin.core.qualifier.named("merchantId")),
+            params.get()
+        )
     }
 
     viewModel {
         SubscriptionViewModel(
-            application          = get(),
-            subscriptionManager  = get(),
-            cloudinaryUploader   = get(),
-            activationRepository = get()
+            application = get(),
+            subscriptionManager = get(),
+            cloudinaryUploader = get(),
+            activationRepository = get(),
+            firebaseSyncService = get()
         )
     }
     single { CloudinaryUploader(get()) }
-    single { SubscriptionManager(androidContext()) }
-    single { 
+    single { SubscriptionManager(androidContext(), get(), get()) }
+    single {
         okhttp3.OkHttpClient.Builder()
             .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
             .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-            .build() 
+            .build()
     }
 
 }

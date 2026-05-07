@@ -3,8 +3,10 @@ package com.trader.admin.ui.merchants.list
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -57,7 +59,7 @@ fun MerchantsScreen(
                     }
                     Spacer(Modifier.height(12.dp))
                     OutlinedTextField(
-                        value = state.search, onValueChange = viewModel::setSearch,
+                        value = state.searchQuery, onValueChange = viewModel::setSearch,
                         placeholder = { Text("بحث بالاسم أو الرقم...", color = Color.White.copy(0.5f)) },
                         leadingIcon = { Icon(Icons.Rounded.Search, null, tint = Color.White.copy(0.7f)) },
                         shape = RoundedCornerShape(14.dp),
@@ -69,12 +71,26 @@ fun MerchantsScreen(
                         singleLine = true, modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(Modifier.height(10.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf(null to "الكل", MerchantStatus.ACTIVE to "نشط",
-                            MerchantStatus.EXPIRED to "منتهي", MerchantStatus.DISABLED to "معطل"
-                        ).forEach { (status, label) ->
-                            val sel = state.filter == status
-                            FilterChip(selected = sel, onClick = { viewModel.setFilter(status) },
+
+                    // ✅ إضافة أزرار الفلترة للأجهزة المرتبطة في شريط السحب الأفقي
+                    Row(
+                        modifier = Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        listOf(
+                            MerchantFilter.ALL to "الكل",
+                            MerchantFilter.ACTIVE to "نشط",
+                            MerchantFilter.EXPIRED to "منتهي",
+                            MerchantFilter.DISABLED to "معطل",
+                            MerchantFilter.FREE to "مجاني",
+                            MerchantFilter.PREMIUM to "مدفوع",
+                            MerchantFilter.LINKED to "مرتبط بجهاز",
+                            MerchantFilter.UNLINKED to "غير مرتبط"
+                        ).forEach { (filterEnum, label) ->
+                            val sel = state.activeFilter == filterEnum
+                            FilterChip(
+                                selected = sel,
+                                onClick = { viewModel.setFilter(filterEnum) },
                                 label = { Text(label, style = MaterialTheme.typography.labelSmall, fontWeight = if (sel) FontWeight.Bold else FontWeight.Normal) },
                                 colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = Color.White, selectedLabelColor = Indigo500,
@@ -94,8 +110,11 @@ fun MerchantsScreen(
                     AnimatedVisibility(visible,
                         enter = slideInVertically(animationSpec = tween(300, index * 40)) + fadeIn()
                     ) {
-                        MerchantCard(merchant = merchant, onClick = { onMerchantClick(merchant.id) },
-                            onToggle = { viewModel.setStatus(merchant.id, if (merchant.status == MerchantStatus.ACTIVE) MerchantStatus.DISABLED else MerchantStatus.ACTIVE) })
+                        MerchantCard(
+                            merchant = merchant,
+                            onClick = { onMerchantClick(merchant.id) },
+                            onToggle = { viewModel.toggleMerchantStatus(merchant.id, merchant.status) }
+                        )
                     }
                 }
                 item { Spacer(Modifier.height(80.dp)) }
@@ -116,6 +135,9 @@ private fun MerchantCard(merchant: Merchant, onClick: () -> Unit, onToggle: () -
         MerchantStatus.EXPIRED  -> "منتهي"
         MerchantStatus.DISABLED -> "معطل"
     }
+
+    val displayName = merchant.name.ifBlank { "تاجر مجاني #${merchant.id.takeLast(4)}" }
+
     Card(
         modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = Navy900), elevation = CardDefaults.cardElevation(2.dp)
@@ -126,13 +148,17 @@ private fun MerchantCard(merchant: Merchant, onClick: () -> Unit, onToggle: () -
                     .background(Brush.radialGradient(listOf(Indigo500.copy(0.3f), Indigo500.copy(0.1f)))),
                 contentAlignment = Alignment.Center
             ) {
-                Text(merchant.name.firstOrNull()?.uppercaseChar()?.toString() ?: "?",
+                Text(displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "?",
                     color = Indigo400, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
             }
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(merchant.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = Slate100)
-                Text(merchant.phone, style = MaterialTheme.typography.bodySmall, color = Slate400)
+                Text(displayName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = Slate100)
+
+                if (merchant.phone.isNotBlank()) {
+                    Text(merchant.phone, style = MaterialTheme.typography.bodySmall, color = Slate400)
+                }
+
                 Text("كود: ${merchant.activationCode}", style = MaterialTheme.typography.labelSmall, color = Slate600)
             }
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(6.dp)) {

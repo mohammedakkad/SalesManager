@@ -11,6 +11,7 @@ interface MerchantAdminRepository {
     suspend fun addMerchant(merchant: Merchant): String
     suspend fun updateMerchant(merchant: Merchant)
     suspend fun deleteMerchant(id: String)
+    suspend fun unlinkDevice(id: String)
     suspend fun setMerchantStatus(id: String, status: MerchantStatus)
     /** Adjusts expiry date by deltaDays (+extend / -reduce). No-op for permanent merchants. */
     suspend fun adjustExpiry(id: String, deltaDays: Int)

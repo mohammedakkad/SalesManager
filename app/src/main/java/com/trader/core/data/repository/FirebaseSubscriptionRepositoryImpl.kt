@@ -1,6 +1,10 @@
 package com.trader.core.data.repository
 
+import com.google.firebase.Timestamp
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.trader.core.domain.model.*
 import com.trader.core.domain.repository.SubscriptionRepository
@@ -8,19 +12,24 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 
 class FirebaseSubscriptionRepositoryImpl(private val db: FirebaseDatabase) : SubscriptionRepository {
 
+    private val firestore = FirebaseFirestore.getInstance()
+
     override fun getPendingRequests(): Flow<List<SubscriptionRequest>> = callbackFlow {
-        val ref      = db.getReference("subscription_requests")
-        val listener = ref.addValueEventListener(object : com.google.firebase.database.ValueEventListener {
-            override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
+        val ref = db.getReference("subscription_requests")
+        val listener = ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 val requests = snapshot.children.flatMap { merchant ->
                     merchant.children.mapNotNull { it.getValue(SubscriptionRequest::class.java) }
                 }.filter { it.status == SubscriptionStatus.PENDING.name }
+
                 trySend(requests.sortedByDescending { it.requestedAt })
             }
-            override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
+
+            override fun onCancelled(error: DatabaseError) {
                 close(error.toException())
             }
         })
@@ -30,29 +39,31 @@ class FirebaseSubscriptionRepositoryImpl(private val db: FirebaseDatabase) : Sub
     override suspend fun approveRequest(request: SubscriptionRequest, planDurationDays: Int) {
         val key = findRequestKey(request) ?: return
 
-        val expiryMs        = System.currentTimeMillis() + (planDurationDays * 24L * 60L * 60L * 1_000L)
-        val expiryTimestamp = com.google.firebase.Timestamp(java.util.Date(expiryMs))
+        // 1. Calculate Expiry Date (Ensure Long calculation to prevent Int overflow)
+        val dayInMs = 24L * 60L * 60L * 1000L
+        val expiryMs = System.currentTimeMillis() + (planDurationDays.toLong() * dayInMs)
+        val expiryTimestamp = Timestamp(Date(expiryMs))
 
-        db.reference
-            .child("subscription_requests")
+        // 2. Update Realtime Database (Request Status Only)
+        db.getReference("subscription_requests")
             .child(request.merchantCode)
             .child(key)
             .child("status")
             .setValue(SubscriptionStatus.APPROVED.name)
             .await()
 
+        // 3. Update Firestore (Merchant Permissions - Triggers Merchant App UI Unlock)
         val firestoreDocId = resolveFirestoreDocId(request.merchantCode)
-
-        FirebaseFirestore.getInstance()
-            .collection("merchants")
+        firestore.collection("merchants")
             .document(firestoreDocId)
             .update(
                 mapOf(
-                    "tier"          to MerchantTier.PREMIUM.name,
-                    "status"        to MerchantStatus.ACTIVE.name,
-                    "expiryDate"    to expiryTimestamp,
-                    "planName"      to request.planType,
-                    "paymentMethod" to request.paymentMethod
+                    "tier" to MerchantTier.PREMIUM.name,
+                    "status" to MerchantStatus.ACTIVE.name,
+                    "expiryDate" to expiryTimestamp,
+                    "planName" to request.planType,
+                    "paymentMethod" to request.paymentMethod,
+                    "updatedAt" to Timestamp.now()
                 )
             ).await()
     }
@@ -69,11 +80,12 @@ class FirebaseSubscriptionRepositoryImpl(private val db: FirebaseDatabase) : Sub
     }
 
     private suspend fun resolveFirestoreDocId(merchantCode: String): String {
-        val querySnapshot = FirebaseFirestore.getInstance()
-            .collection("merchants")
+        val querySnapshot = firestore.collection("merchants")
             .whereEqualTo("id", merchantCode)
             .get()
             .await()
+
+        // Fallback to merchantCode if doc ID isn't found via query
         return querySnapshot.documents.firstOrNull()?.id ?: merchantCode
     }
 
@@ -83,6 +95,7 @@ class FirebaseSubscriptionRepositoryImpl(private val db: FirebaseDatabase) : Sub
             .equalTo(request.requestedAt.toDouble())
             .get()
             .await()
+
         return snapshot.children.firstOrNull()?.key
     }
 }

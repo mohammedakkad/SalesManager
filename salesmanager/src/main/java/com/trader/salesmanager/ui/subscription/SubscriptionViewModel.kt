@@ -6,10 +6,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.trader.core.data.manager.SubscriptionManager
 import com.trader.core.data.remote.CloudinaryUploader
+import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.SubscriptionPaymentMethod
 import com.trader.core.domain.model.SubscriptionPlan
 import com.trader.core.domain.model.SubscriptionRequest
 import com.trader.core.domain.model.SubscriptionState
+import com.trader.core.domain.model.SubscriptionStatus
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.util.ImageCompressor
 import kotlinx.coroutines.flow.*
@@ -19,7 +21,8 @@ class SubscriptionViewModel(
     application: Application,
     private val subscriptionManager: SubscriptionManager,
     private val cloudinaryUploader: CloudinaryUploader,
-    private val activationRepository: ActivationRepository
+    private val activationRepository: ActivationRepository,
+    private val firebaseSyncService: FirebaseSyncService
 ) : AndroidViewModel(application) {
 
     private val _baseUiState = MutableStateFlow(SubscriptionUiState())
@@ -46,10 +49,7 @@ class SubscriptionViewModel(
         )
 
     init {
-        viewModelScope.launch {
-            subscriptionManager.syncServerTimeOffset()
-            subscriptionManager.syncAdminConfig()
-        }
+        initializeSubscriptionLogic()
     }
 
     fun selectPlan(plan: SubscriptionPlan) {
@@ -98,5 +98,33 @@ class SubscriptionViewModel(
 
     fun clearError() {
         _baseUiState.update { it.copy(error = null) }
+    }
+
+    private fun initializeSubscriptionLogic() {
+        viewModelScope.launch {
+            subscriptionManager.syncServerTimeOffset()
+            subscriptionManager.syncAdminConfig()
+            observeRemoteSubscriptionChanges()
+        }
+    }
+
+    private fun observeRemoteSubscriptionChanges() {
+        viewModelScope.launch {
+            val merchantCode = activationRepository.getMerchantCode()
+            firebaseSyncService.observeSubscriptionRequestStatus(merchantCode)
+                .collect { status ->
+                    handleSubscriptionStatusChange(status, merchantCode)
+                }
+        }
+    }
+
+    private suspend fun handleSubscriptionStatusChange(
+        status: SubscriptionStatus,
+        merchantCode: String
+    ) {
+        if (status == SubscriptionStatus.APPROVED) {
+            subscriptionManager.syncSubscriptionFromRemote(merchantCode)
+            _baseUiState.update { it.copy(isSuccess = true) }
+        }
     }
 }
