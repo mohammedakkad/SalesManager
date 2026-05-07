@@ -32,30 +32,41 @@ class ActivationRepositoryImpl(
     private val paymentMethodDao: PaymentMethodDao,
     private val productDao: ProductDao,
     private val productFirestoreService: ProductFirestoreService,
+    private val returnDao: ReturnDao // ✅ 1. تمت إضافة ReturnDao هنا
 ) : ActivationRepository {
 
     private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
     override fun observeMerchantTier(): Flow<MerchantTier> =
-        context.appDataStore.data
-            .map { it[KEY_TIER] ?: MerchantTier.FREE.name }
-            .map { parseTier(it) }
-            .distinctUntilChanged()
+    context.appDataStore.data
+    .map {
+        it[KEY_TIER] ?: MerchantTier.FREE.name
+    }
+    .map {
+        parseTier(it)
+    }
+    .distinctUntilChanged()
 
     override suspend fun validateCode(code: String) = firebaseService.validateCode(code)
 
     override suspend fun validateCodeDetailed(code: String): ValidationResult =
-        firebaseService.validateCodeDetailed(code)
+    firebaseService.validateCodeDetailed(code)
 
     override suspend fun isActivated() =
-        context.appDataStore.data.map { it[IS_ACTIVATED] ?: false }.first()
+    context.appDataStore.data.map {
+        it[IS_ACTIVATED] ?: false
+    }.first()
 
     override suspend fun getMerchantCode() =
-        context.appDataStore.data.map { it[MERCHANT_CODE] ?: "" }.first()
+    context.appDataStore.data.map {
+        it[MERCHANT_CODE] ?: ""
+    }.first()
 
     override fun observeMerchantCode(): Flow<String> =
-        context.appDataStore.data.map { it[MERCHANT_CODE] ?: "" }.distinctUntilChanged()
+    context.appDataStore.data.map {
+        it[MERCHANT_CODE] ?: ""
+    }.distinctUntilChanged()
 
     override suspend fun saveActivationStatus(activated: Boolean, code: String) {
         val deviceId = getHardwareId()
@@ -71,9 +82,9 @@ class ActivationRepositoryImpl(
 
     private suspend fun bindDeviceToCode(code: String, deviceId: String) {
         firestore.collection(COLLECTION_MERCHANTS)
-            .document(code)
-            .update(FIELD_DEVICE_ID, deviceId)
-            .await()
+        .document(code)
+        .update(FIELD_DEVICE_ID, deviceId)
+        .await()
     }
 
     override suspend fun deactivate() {
@@ -90,34 +101,75 @@ class ActivationRepositoryImpl(
     override fun observeMerchantStatus(): Flow<MerchantStatus?> = callbackFlow {
         val id = getHardwareId()
         val listener = firestore.collection(COLLECTION_MERCHANTS).document(id)
-            .addSnapshotListener { snap, _ ->
-                snap?.let {
-                    repositoryScope.launch { saveMerchantTier(parseTier(it.getString(FIELD_TIER))) }
-                    trySend(parseStatus(it.getString(FIELD_STATUS)))
+        .addSnapshotListener {
+            snap, _ ->
+            snap?.let {
+                repositoryScope.launch {
+                    saveMerchantTier(parseTier(it.getString(FIELD_TIER)))
                 }
+                trySend(parseStatus(it.getString(FIELD_STATUS)))
             }
-        awaitClose { listener.remove() }
+        }
+        awaitClose {
+            listener.remove()
+        }
     }
 
     private fun parseTier(raw: String?) =
-        runCatching { MerchantTier.valueOf(raw!!) }.getOrDefault(MerchantTier.FREE)
+    runCatching {
+        MerchantTier.valueOf(raw!!)
+    }.getOrDefault(MerchantTier.FREE)
 
     private fun parseStatus(raw: String?) =
-        runCatching { MerchantStatus.valueOf(raw!!) }.getOrNull()
+    runCatching {
+        MerchantStatus.valueOf(raw!!)
+    }.getOrNull()
 
     private suspend fun fetchAndStoreAllData(code: String) {
-        val data = try { firebaseService.fetchAllData(code) } catch (e: Exception) { return }
-        data.customers.forEach { runCatching { customerDao.insertCustomer(CustomerEntity.fromDomain(it)) } }
-        data.paymentMethods.forEach { runCatching { paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(it)) } }
-        data.transactions.forEach { runCatching { transactionDao.insertTransaction(TransactionEntity.fromDomain(it)) } }
+        val data = try {
+            firebaseService.fetchAllData(code)
+        } catch (e: Exception) {
+            return
+        }
+
+        data.customers.forEach {
+            runCatching {
+                customerDao.insertCustomer(CustomerEntity.fromDomain(it))
+            }
+        }
+        data.paymentMethods.forEach {
+            runCatching {
+                paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(it))
+            }
+        }
+        data.transactions.forEach {
+            runCatching {
+                transactionDao.insertTransaction(TransactionEntity.fromDomain(it))
+            }
+        }
+
+        // ✅ 2. جلب المرتجعات وحفظها في التخزين المحلي (Room) بأمان
+        data.returns.forEach {
+            (invoice, items) ->
+            runCatching {
+                returnDao.insertReturnInvoice(invoice.toEntity())
+                returnDao.insertReturnItems(items.map {
+                    it.toEntity()
+                })
+            }
+        }
+
         fetchProductsAndUnits(code)
     }
 
     private suspend fun fetchProductsAndUnits(code: String) = runCatching {
-        productFirestoreService.fetchAllProducts(code).forEach { product ->
+        productFirestoreService.fetchAllProducts(code).forEach {
+            product ->
             val units = productFirestoreService.fetchUnitsForProduct(code, product.id)
             productDao.insertProduct(product.toEntity())
-            productDao.insertUnits(units.map { it.toEntity() })
+            productDao.insertUnits(units.map {
+                it.toEntity()
+            })
         }
     }
 
@@ -136,23 +188,29 @@ class ActivationRepositoryImpl(
         if (directDoc.exists()) return directDoc
 
         return firestore.collection(COLLECTION_MERCHANTS)
-            .whereEqualTo(FIELD_DEVICE_ID, deviceId)
-            .limit(1)
-            .get()
-            .await()
-            .documents
-            .firstOrNull()
+        .whereEqualTo(FIELD_DEVICE_ID, deviceId)
+        .limit(1)
+        .get()
+        .await()
+        .documents
+        .firstOrNull()
     }
 
     override suspend fun getMerchantTier(): MerchantTier = parseTier(
-        context.appDataStore.data.map { it[MERCHANT_TIER] }.first()
+        context.appDataStore.data.map {
+            it[MERCHANT_TIER]
+        }.first()
     )
 
     override suspend fun isSelfRegistered(): Boolean =
-        context.appDataStore.data.map { it[IS_SELF_REGISTERED] ?: false }.first()
+    context.appDataStore.data.map {
+        it[IS_SELF_REGISTERED] ?: false
+    }.first()
 
     override suspend fun saveMerchantTier(tier: MerchantTier) {
-        context.appDataStore.edit { it[MERCHANT_TIER] = tier.name }
+        context.appDataStore.edit {
+            it[MERCHANT_TIER] = tier.name
+        }
     }
 
     override suspend fun registerFree() {

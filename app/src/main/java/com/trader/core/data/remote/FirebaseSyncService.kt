@@ -16,7 +16,10 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeoutOrNull
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.SubscriptionStatus
-
+import com.trader.core.domain.model.ReturnInvoice
+import com.trader.core.domain.model.ReturnItem
+import com.trader.core.domain.model.ReturnType
+import com.trader.core.domain.model.TransactionReturnStatus
 
 class FirebaseSyncService {
     private val db = FirebaseDatabase.getInstance()
@@ -154,6 +157,8 @@ class FirebaseSyncService {
     // ── One-time full fetch on activation ────────────────────────
     suspend fun fetchAllData(merchantCode: String): MerchantData {
         val root = db.reference.child("merchants").child(merchantCode)
+        
+        // 1. Fetch Customers
         val customers = try {
             root.child("customers").get().await().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
@@ -164,23 +169,21 @@ class FirebaseSyncService {
                     createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
                 )
             }
-        } catch (e: Exception) {
-            emptyList()
-        }
+        } catch (e: Exception) { emptyList() }
+
+        // 2. Fetch Payment Methods
         val paymentMethods = try {
             root.child("payment_methods").get().await().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 PaymentMethod(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
                     name = m["name"] as? String ?: return@mapNotNull null,
-                    type = runCatching {
-                        PaymentType.valueOf(m["type"] as? String ?: "")
-                    }.getOrDefault(PaymentType.OTHER)
+                    type = runCatching { PaymentType.valueOf(m["type"] as? String ?: "") }.getOrDefault(PaymentType.OTHER)
                 )
             }
-        } catch (e: Exception) {
-            emptyList()
-        }
+        } catch (e: Exception) { emptyList() }
+
+        // 3. Fetch Transactions (With Return Status)
         val transactions = try {
             root.child("transactions").get().await().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
@@ -188,6 +191,8 @@ class FirebaseSyncService {
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
                     customerId = m["customerId"].asLong() ?: return@mapNotNull null,
                     amount = m["amount"].asDouble() ?: return@mapNotNull null,
+                    originalAmount = m["originalAmount"].asDouble() ?: m["amount"].asDouble() ?: 0.0,
+                    returnStatus = runCatching { TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE") }.getOrDefault(TransactionReturnStatus.NONE),
                     isPaid = m["isPaid"] as? Boolean ?: false,
                     paymentMethodId = m["paymentMethodId"].asLong(),
                     note = m["note"] as? String ?: "",
@@ -195,11 +200,46 @@ class FirebaseSyncService {
                     paidAt = m["paidAt"].asLong()
                 )
             }
-        } catch (e: Exception) {
-            emptyList()
-        }
-        return MerchantData(customers, transactions, paymentMethods)
+        } catch (e: Exception) { emptyList() }
+
+        // 4. Fetch Returns
+        val returns = try {
+            root.child("return_invoices").get().await().children.mapNotNull { snap ->
+                val m = snap.value as? Map<*, *> ?: return@mapNotNull null
+                val invoiceId = m["id"] as? String ?: snap.key ?: return@mapNotNull null
+                val invoice = ReturnInvoice(
+                    id = invoiceId,
+                    originalTransactionId = m["originalTransactionId"].asLong() ?: return@mapNotNull null,
+                    merchantId = merchantCode,
+                    returnType = runCatching { ReturnType.valueOf(m["returnType"] as? String ?: "") }.getOrDefault(ReturnType.CASH),
+                    totalRefund = m["totalRefund"].asDouble() ?: 0.0,
+                    note = m["note"] as? String ?: "",
+                    createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
+                )
+                
+                val itemsMap = m["items"] as? Map<*, *> ?: emptyMap<Any, Any>()
+                val items = itemsMap.values.mapNotNull { itemRaw ->
+                    val im = itemRaw as? Map<*, *> ?: return@mapNotNull null
+                    ReturnItem(
+                        id = im["id"] as? String ?: return@mapNotNull null,
+                        returnInvoiceId = invoiceId,
+                        productId = im["productId"] as? String ?: "",
+                        productName = im["productName"] as? String ?: "",
+                        unitId = im["unitId"] as? String ?: "",
+                        unitLabel = im["unitLabel"] as? String ?: "",
+                        originalQuantity = im["originalQuantity"].asDouble() ?: 0.0,
+                        returnedQuantity = im["returnedQty"].asDouble() ?: 0.0, // from Firebase push
+                        pricePerUnit = im["pricePerUnit"].asDouble() ?: 0.0,
+                        totalRefund = im["totalRefund"].asDouble() ?: 0.0
+                    )
+                }
+                Pair(invoice, items)
+            }
+        } catch (e: Exception) { emptyList() }
+
+        return MerchantData(customers, transactions, paymentMethods, returns)
     }
+
 
     // ── Real-time streams (callbackFlow) ─────────────────────────
     fun observeCustomers(merchantCode: String): Flow<List<Customer>> = callbackFlow {
@@ -310,11 +350,42 @@ class FirebaseSyncService {
             .setValue(
                 mapOf(
                     "id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
+                    "originalAmount" to t.originalAmount, "returnStatus" to t.returnStatus.name,
                     "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
                     "note" to t.note, "date" to t.date, "paidAt" to t.paidAt
                 )
             ).await()
     }
+    
+    suspend fun pushReturnInvoice(merchantCode: String, returnInvoice: ReturnInvoice, items: List<ReturnItem>) {
+        withTimeoutOrNull(8_000) {
+            val ref = db.reference.child("merchants").child(merchantCode).child("return_invoices").child(returnInvoice.id)
+            ref.setValue(mapOf(
+                "id" to returnInvoice.id,
+                "originalTransactionId" to returnInvoice.originalTransactionId,
+                "returnType" to returnInvoice.returnType.name,
+                "totalRefund" to returnInvoice.totalRefund,
+                "note" to returnInvoice.note,
+                "createdAt" to returnInvoice.createdAt,
+                "merchantId" to merchantCode,
+                "items" to items.associate {
+                    it.id to mapOf(
+                        "id" to it.id,
+                        "productId" to it.productId,
+                        "productName" to it.productName,
+                        "unitId" to it.unitId,
+                        "unitLabel" to it.unitLabel,
+                        "originalQuantity" to it.originalQuantity,
+                        "returnedQty" to it.returnedQuantity,
+                        "pricePerUnit" to it.pricePerUnit,
+                        "totalRefund" to it.totalRefund
+                    )
+                }
+            )).await()
+        }
+    }
+    
+
 
     suspend fun deleteTransaction(merchantCode: String, id: Long) {
         db.reference.child("merchants").child(merchantCode).child("transactions")
@@ -401,7 +472,8 @@ class FirebaseSyncService {
 data class MerchantData(
     val customers: List<Customer>,
     val transactions: List<AppTransaction>,
-    val paymentMethods: List<PaymentMethod>
+    val paymentMethods: List<PaymentMethod>,
+    val returns: List<Pair<ReturnInvoice, List<ReturnItem>>> = emptyList() // ✅ Added
 )
 
 sealed class ValidationResult {
