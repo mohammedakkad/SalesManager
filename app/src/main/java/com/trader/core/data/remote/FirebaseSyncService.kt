@@ -20,6 +20,7 @@ import com.trader.core.domain.model.ReturnInvoice
 import com.trader.core.domain.model.ReturnItem
 import com.trader.core.domain.model.ReturnType
 import com.trader.core.domain.model.TransactionReturnStatus
+import java.util.UUID
 
 class FirebaseSyncService {
     private val db = FirebaseDatabase.getInstance()
@@ -211,7 +212,7 @@ class FirebaseSyncService {
             emptyList()
         }
 
-        // ✅ 4. Fetch Invoice Items FIRST (To rescue missing return item fields later)
+        // 4. Fetch Invoice Items FIRST
         val invoiceItems = try {
             root.child("invoice_items").get().await().children.mapNotNull {
                 snap ->
@@ -233,7 +234,7 @@ class FirebaseSyncService {
             emptyList()
         }
 
-        // ✅ 5. Fetch Returns (Now we can rescue missing data using invoiceItems)
+        // 5. Fetch Returns (Bulletproof Parsing)
         val returns = try {
             root.child("return_invoices").get().await().children.mapNotNull {
                 snap ->
@@ -253,13 +254,19 @@ class FirebaseSyncService {
                     createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
                 )
 
-                val itemsMap = m["items"] as? Map<*, *> ?: emptyMap<Any, Any>()
-                val items = itemsMap.mapNotNull {
-                    (key, itemRaw) ->
+                // ✅ المعالجة الآمنة للـ items سواء كانت List أو Map
+                val itemsRaw = m["items"]
+                val itemsIterable = when (itemsRaw) {
+                    is Map<*, *> -> itemsRaw.values
+                    is List<*> -> itemsRaw.filterNotNull()
+                    else -> emptyList<Any>()
+                }
+
+                val items = itemsIterable.mapNotNull { itemRaw ->
                     val im = itemRaw as? Map<*, *> ?: return@mapNotNull null
                     val pId = im["productId"] as? String ?: ""
 
-                    // 🚨 عملية الإنقاذ (Data Rescue): البحث عن الصنف في الفاتورة الأصلية لتعويض الحقول المفقودة القديمة
+                    // محاولة الاسترداد من الفاتورة الأصلية
                     val matchedInvoiceItem = invoiceItems.firstOrNull {
                         it.transactionId == originalTxId && it.productId == pId
                     }
@@ -270,20 +277,19 @@ class FirebaseSyncService {
                     val fallbackOrigQty = matchedInvoiceItem?.quantity ?: 0.0
                     val finalOrigQty = im["originalQuantity"].asDouble() ?: fallbackOrigQty
 
-                    if (finalUnitId.isEmpty()) return@mapNotNull null // حماية أخيرة إذا استحال الإنقاذ
-
+                    // ✅ لا نرفض العنصر حتى لو كانت المعرفات مفقودة جزئياً، نعطيه قيم افتراضية آمنة
                     ReturnItem(
-                        id = im["id"] as? String ?: key.toString(),
+                        id = im["id"] as? String ?: UUID.randomUUID().toString(),
                         returnInvoiceId = invoiceId,
                         productId = pId,
-                        productName = im["productName"] as? String ?: "",
-                        unitId = finalUnitId, // 🚀 تم الإنقاذ بنجاح!
-                        unitLabel = im["unitLabel"] as? String ?: "",
-                        originalQuantity = finalOrigQty, // 🚀 تم الإنقاذ بنجاح!
+                        productName = im["productName"] as? String ?: matchedInvoiceItem?.productName ?: "",
+                        unitId = finalUnitId,
+                        unitLabel = im["unitLabel"] as? String ?: matchedInvoiceItem?.unitLabel ?: "",
+                        originalQuantity = finalOrigQty,
                         returnedQuantity = im["returnedQty"].asDouble() ?: 0.0,
                         costPricePerUnit = im["costPricePerUnit"].asDouble() ?: 0.0,
                         lostProfit = im["lostProfit"].asDouble() ?: 0.0,
-                        pricePerUnit = im["pricePerUnit"].asDouble() ?: 0.0,
+                        pricePerUnit = im["pricePerUnit"].asDouble() ?: matchedInvoiceItem?.pricePerUnit ?: 0.0,
                         totalRefund = im["totalRefund"].asDouble() ?: 0.0
                     )
                 }
@@ -466,9 +472,7 @@ class FirebaseSyncService {
             override fun onCancelled(error: DatabaseError) {}
         }
         ref.addValueEventListener(listener)
-        awaitClose {
-            ref.removeEventListener(listener)
-        }
+        awaitClose { ref.removeEventListener(listener) }
     }
 
     suspend fun pushInvoiceItems(merchantCode: String, items: List<InvoiceItem>) {
@@ -494,9 +498,7 @@ class FirebaseSyncService {
     suspend fun deleteInvoiceItemsForTransaction(merchantCode: String, transactionId: Long) {
         val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
         val snap = ref.orderByChild("transactionId").equalTo(transactionId.toDouble()).get().await()
-        snap.children.forEach {
-            it.ref.removeValue().await()
-        }
+        snap.children.forEach { it.ref.removeValue().await() }
     }
 
     companion object {
@@ -520,4 +522,4 @@ sealed class ValidationResult {
     object Expired : ValidationResult()
     object NotFound : ValidationResult()
     object NetworkError : ValidationResult()
-    }
+}

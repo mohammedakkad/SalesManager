@@ -17,7 +17,7 @@ class ReturnRepositoryImpl(
     private val db: AppDatabase,
     private val stockRepo: StockRepository,
     private val transactionRepo: TransactionRepository,
-    private val invoiceItemRepo: InvoiceItemRepository, // ✅ مطلوب لـ computeReturnStatus
+    private val invoiceItemRepo: InvoiceItemRepository,
     private val merchantId: String
 ) : ReturnRepository {
 
@@ -99,7 +99,6 @@ class ReturnRepositoryImpl(
         }
 
         // ✅ Firebase في الخلفية — لا ينتظر (لا يعلق UI عند ضعف الاتصال)
-        // فشل الرفع لا يؤثر على الحفظ المحلي — المزامنة تحدث عند إعادة الاتصال
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
             runCatching {
                 pushToFirebase(returnInvoice, items)
@@ -123,7 +122,11 @@ class ReturnRepositoryImpl(
 
         if (returnedByUnit.isEmpty()) return ReturnSummary.NONE
 
-        val totalRefunded = returnedByUnit.values.sum()
+        // ✅ الإصلاح المالي: حساب المبلغ المُسترد بضرب الكمية في سعر الوحدة
+        val totalRefunded = invoiceItems.sumOf { item ->
+            val qty = returnedByUnit[item.unitId] ?: 0.0
+            qty * item.pricePerUnit
+        }
 
         // ✅ الحالة: مكتمل إذا كل صنف أُرجع بكامل كميته
         val allFullyReturned = invoiceItems.all {
@@ -206,14 +209,13 @@ class ReturnRepositoryImpl(
     // ── Firebase — مع timeout لمنع التعليق أثناء ضعف الاتصال ─────
     private suspend fun pushToFirebase(returnInvoice: ReturnInvoice, items: List<ReturnItem>) {
         withTimeout(8_000) {
-            // ✅ 8 ثوانٍ حد أقصى — لا يعلق إلى الأبد
             val ref = FirebaseDatabase.getInstance().reference
-            .child("merchants").child(merchantId)
-            .child("return_invoices").child(returnInvoice.id)
+                .child("merchants").child(merchantId)
+                .child("return_invoices").child(returnInvoice.id)
 
             ref.setValue(mapOf(
-                "id"                    to returnInvoice.id,           // ✅ required for fetchAllData
-                "merchantId"            to merchantId,                 // ✅ required for fetchAllData
+                "id"                    to returnInvoice.id,
+                "merchantId"            to merchantId,
                 "originalTransactionId" to returnInvoice.originalTransactionId,
                 "returnType"            to returnInvoice.returnType.name,
                 "totalRefund"           to returnInvoice.totalRefund,
@@ -221,13 +223,13 @@ class ReturnRepositoryImpl(
                 "createdAt"             to returnInvoice.createdAt,
                 "items" to items.associate { item ->
                     item.id to mapOf(
-                        "id"               to item.id,               // ✅ im["id"] check in fetchAllData
+                        "id"               to item.id,
                         "productId"        to item.productId,
                         "productName"      to item.productName,
-                        "unitId"           to item.unitId,           // ✅ was missing
+                        "unitId"           to item.unitId,
                         "unitLabel"        to item.unitLabel,
-                        "originalQuantity" to item.originalQuantity, // ✅ was missing
-                        "returnedQty"      to item.returnedQuantity,  // key matches fetchAllData
+                        "originalQuantity" to item.originalQuantity,
+                        "returnedQty"      to item.returnedQuantity,
                         "pricePerUnit"     to item.pricePerUnit,
                         "costPricePerUnit" to item.costPricePerUnit,
                         "totalRefund"      to item.totalRefund,
