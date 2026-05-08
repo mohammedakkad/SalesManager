@@ -131,7 +131,7 @@ class ActivationRepositoryImpl(
         // ✅ 2. Insert Invoice Items BEFORE returns
         data.invoiceItems.forEach { item ->
             runCatching { 
-                invoiceItemDao.insertInvoiceItem(
+                invoiceItemDao.insertAll(
                     com.trader.core.data.local.entity.InvoiceItemEntity(
                         id = item.id, 
                         transactionId = item.transactionId, 
