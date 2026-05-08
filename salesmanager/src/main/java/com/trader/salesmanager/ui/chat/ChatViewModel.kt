@@ -26,9 +26,10 @@ data class ChatUiState(
     val showDeleteDialog: Boolean = false
 ) {
     val visibleMessages: List<ChatMessage>
-    get() = messages.filter {
-        it.id !in locallyDeletedIds
-    }
+        get() = messages.filter { m ->
+            // ✅ Filter out locally deleted IDs AND Firestore snapshots that are still pending in the local DB
+            m.id !in locallyDeletedIds && pendingMessages.none { p -> p.tempId == m.id }
+        }
 
     val selectedMessages: List<ChatMessage>
     get() = messages.filter {
@@ -111,30 +112,32 @@ class ChatViewModel(
         val text = _uiState.value.inputText.trim()
         val id = _uiState.value.merchantId
         if (text.isEmpty() || id.isEmpty()) return
-        val tempId = UUID.randomUUID().toString()
-        _uiState.update {
-            it.copy(inputText = "")
-        }
+
+        // ✅ Unified ID capture
+        val msgId = UUID.randomUUID().toString()
+
+        _uiState.update { it.copy(inputText = "") }
+
         viewModelScope.launch {
-            pendingDao.insert(PendingMessageEntity(tempId = tempId, merchantId = id, text = text, senderName = "تاجر"))
+            // ✅ Use same msgId for both
+            pendingDao.insert(PendingMessageEntity(tempId = msgId, merchantId = id, text = text, senderName = "تاجر"))
             try {
-                chatRepo.sendMessage(id, ChatMessage(text = text, senderId = id, senderName = "تاجر"))
-                pendingDao.delete(tempId)
+                chatRepo.sendMessage(id, ChatMessage(id = msgId, text = text, senderId = id, senderName = "تاجر"))
+                pendingDao.delete(msgId)
             } catch (e: Exception) {
-                pendingDao.setFailed(tempId, true)
+                pendingDao.setFailed(msgId, true)
             }
         }
     }
 
     fun retryMessage(tempId: String) {
-        val msg = _uiState.value.pendingMessages.find {
-            it.tempId == tempId
-        } ?: return
+        val msg = _uiState.value.pendingMessages.find { it.tempId == tempId } ?: return
         val id = _uiState.value.merchantId
         viewModelScope.launch {
             pendingDao.setFailed(tempId, false)
             try {
-                chatRepo.sendMessage(id, ChatMessage(text = msg.text, senderId = id, senderName = "تاجر"))
+                // ✅ Pass existing tempId into ChatMessage constructor
+                chatRepo.sendMessage(id, ChatMessage(id = tempId, text = msg.text, senderId = id, senderName = "تاجر"))
                 pendingDao.delete(tempId)
             } catch (e: Exception) {
                 pendingDao.setFailed(tempId, true)

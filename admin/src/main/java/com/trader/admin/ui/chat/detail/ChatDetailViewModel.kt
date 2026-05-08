@@ -16,35 +16,36 @@ data class AdminChatUiState(
     val isSelectionMode: Boolean = false,
     val locallyDeletedIds: Set<String> = emptySet(),
     val pendingOwnDeleteIds: Set<String> = emptySet(),
-    val showDeleteDialog: Boolean = false
+    val showDeleteDialog: Boolean = false,
+    val errorMessage: String? = null
 ) {
     val visibleMessages: List<ChatMessage>
-    get() = messages.filter {
-        it.id !in locallyDeletedIds
-    }
+        get() = messages.filter {
+            it.id !in locallyDeletedIds
+        }
 
     val selectedMessages: List<ChatMessage>
-    get() = messages.filter {
-        it.id in selectedIds
-    }
+        get() = messages.filter {
+            it.id in selectedIds
+        }
 
     // الأدمن يملك جميع رسائله بـ SENDER_ADMIN
     val canEdit: Boolean
-    get() = selectedIds.size == 1 &&
-    selectedMessages.firstOrNull()
-    ?.let {
-        it.senderId == SENDER_ADMIN && !it.isDeleted
-    } == true
+        get() = selectedIds.size == 1 &&
+                selectedMessages.firstOrNull()
+                    ?.let {
+                        it.senderId == SENDER_ADMIN && !it.isDeleted
+                    } == true
 
     val canCopy: Boolean
-    get() = selectedMessages.any {
-        !it.isDeleted
-    }
+        get() = selectedMessages.any {
+            !it.isDeleted
+        }
 
     val anySelectedOwn: Boolean
-    get() = selectedMessages.any {
-        it.senderId == SENDER_ADMIN
-    }
+        get() = selectedMessages.any {
+            it.senderId == SENDER_ADMIN
+        }
 }
 
 class ChatDetailViewModel(
@@ -57,20 +58,22 @@ class ChatDetailViewModel(
 
     init {
         viewModelScope.launch {
-            repo.getMessages(merchantId).collect {
-                msgs ->
-                _uiState.update {
-                    it.copy(messages = msgs.sortedByDescending {
-                        m -> m.timestamp
-                    })
+            repo.getMessages(merchantId)
+                .catch { e ->
+                    _uiState.update { it.copy(errorMessage = e.message) }
                 }
-                msgs.filter {
-                    !it.isRead && it.senderId != SENDER_ADMIN
+                .collect { msgs ->
+                    _uiState.update { state ->
+                        state.copy(messages = msgs.sortedByDescending { it.timestamp })
+                    }
+
+                    // Optimization: Batch mark as read
+                    val unreadIds = msgs.filter { !it.isRead && it.senderId != SENDER_ADMIN }
+                        .map { it.id }
+                    if (unreadIds.isNotEmpty()) {
+                        repo.markAllAsRead(merchantId, unreadIds)
+                    }
                 }
-                .forEach {
-                    repo.markAsRead(merchantId, it.id)
-                }
-            }
         }
     }
 
@@ -90,7 +93,14 @@ class ChatDetailViewModel(
             it.copy(inputText = "")
         }
         viewModelScope.launch {
-            repo.sendMessage(merchantId, ChatMessage(text = t, senderId = SENDER_ADMIN, senderName = "الإدارة"))
+            try {
+                repo.sendMessage(
+                    merchantId,
+                    ChatMessage(text = t, senderId = SENDER_ADMIN, senderName = "الإدارة")
+                )
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = "فشل في إرسال الرسالة: ${e.message}") }
+            }
         }
     }
 
@@ -104,7 +114,12 @@ class ChatDetailViewModel(
             cancelEdit(); return
         }
         _uiState.update {
-            it.copy(editingMessage = null, inputText = "", isSelectionMode = false, selectedIds = emptySet())
+            it.copy(
+                editingMessage = null,
+                inputText = "",
+                isSelectionMode = false,
+                selectedIds = emptySet()
+            )
         }
         viewModelScope.launch {
             repo.editMessage(merchantId, msg.id, newText)
@@ -143,23 +158,28 @@ class ChatDetailViewModel(
         val msg = _uiState.value.selectedMessages.firstOrNull() ?: return
         if (msg.senderId != SENDER_ADMIN) return
         _uiState.update {
-            it.copy(editingMessage = msg, inputText = msg.text, selectedIds = emptySet(), isSelectionMode = false)
+            it.copy(
+                editingMessage = msg,
+                inputText = msg.text,
+                selectedIds = emptySet(),
+                isSelectionMode = false
+            )
         }
     }
 
     // ── نسخ ──────────────────────────────────────────────────────
 
     fun buildCopyText(): String =
-    _uiState.value.selectedMessages
-    .filter {
-        !it.isDeleted
-    }
-    .sortedBy {
-        it.timestamp?.seconds ?: 0L
-    }
-    .joinToString("\n") {
-        it.text
-    }
+        _uiState.value.selectedMessages
+            .filter {
+                !it.isDeleted
+            }
+            .sortedBy {
+                it.timestamp?.seconds ?: 0L
+            }
+            .joinToString("\n") {
+                it.text
+            }
 
     // ── حذف ذكي ──────────────────────────────────────────────────
 
@@ -184,8 +204,10 @@ class ChatDetailViewModel(
         }
         if (ownIds.isNotEmpty()) {
             _uiState.update {
-                it.copy(pendingOwnDeleteIds = ownIds, showDeleteDialog = true,
-                    selectedIds = emptySet(), isSelectionMode = false)
+                it.copy(
+                    pendingOwnDeleteIds = ownIds, showDeleteDialog = true,
+                    selectedIds = emptySet(), isSelectionMode = false
+                )
             }
         } else {
             _uiState.update {
@@ -197,26 +219,30 @@ class ChatDetailViewModel(
     fun confirmDeleteForMe() {
         val ids = _uiState.value.pendingOwnDeleteIds
         _uiState.update {
-            it.copy(locallyDeletedIds = it.locallyDeletedIds + ids,
-                pendingOwnDeleteIds = emptySet(), showDeleteDialog = false)
+            it.copy(
+                locallyDeletedIds = it.locallyDeletedIds + ids,
+                pendingOwnDeleteIds = emptySet(), showDeleteDialog = false
+            )
         }
     }
 
     fun confirmDeleteForEveryone() {
         val ids = _uiState.value.pendingOwnDeleteIds
         _uiState.update {
-            it.copy(locallyDeletedIds = it.locallyDeletedIds + ids,
-                pendingOwnDeleteIds = emptySet(), showDeleteDialog = false)
+            it.copy(
+                locallyDeletedIds = it.locallyDeletedIds + ids,
+                pendingOwnDeleteIds = emptySet(), showDeleteDialog = false
+            )
         }
         viewModelScope.launch {
-            ids.forEach {
-                id ->
+            ids.forEach { id ->
                 try {
                     repo.deleteMessage(merchantId, id)
                     _uiState.update {
                         it.copy(locallyDeletedIds = it.locallyDeletedIds - id)
                     }
-                } catch (_: Exception) {}
+                } catch (_: Exception) {
+                }
             }
         }
     }

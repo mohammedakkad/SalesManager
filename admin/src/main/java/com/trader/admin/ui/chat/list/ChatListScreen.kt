@@ -24,16 +24,19 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ChatListScreen(
     onNavigateUp: () -> Unit,
-    // passes activationCode (not merchantId) so both sides use same Firestore path
-    onChatClick: (activationCode: String, merchantName: String) -> Unit,
+    // ✅ Renamed parameter for clarity: now strictly expects the unique merchant ID
+    onChatClick: (merchantId: String, merchantName: String) -> Unit,
     viewModel: ChatListViewModel = koinViewModel()
 ) {
     val chats by viewModel.chats.collectAsState()
 
     Scaffold(containerColor = Navy950) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)) {
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(Brush.horizontalGradient(listOf(Cyan500, Indigo500)))
                     .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
@@ -43,12 +46,16 @@ fun ChatListScreen(
                     }
                     Spacer(Modifier.width(8.dp))
                     Column {
-                        Text("الدردشة والدعم",
+                        Text(
+                            "الدردشة والدعم",
                             style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold, color = Color.White)
-                        Text("${chats.size} محادثة",
+                            fontWeight = FontWeight.Bold, color = Color.White
+                        )
+                        Text(
+                            "${chats.size} محادثة",
                             color = Color.White.copy(0.7f),
-                            style = MaterialTheme.typography.bodySmall)
+                            style = MaterialTheme.typography.bodySmall
+                        )
                     }
                 }
             }
@@ -56,9 +63,11 @@ fun ChatListScreen(
             if (chats.isEmpty()) {
                 Box(Modifier.fillMaxSize(), Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Rounded.Forum, null,
+                        Icon(
+                            Icons.Rounded.Forum, null,
                             modifier = Modifier.size(64.dp),
-                            tint = Slate600)
+                            tint = Slate600
+                        )
                         Spacer(Modifier.height(8.dp))
                         Text("لا يوجد بائعون بعد", color = Slate400)
                     }
@@ -69,15 +78,21 @@ fun ChatListScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     itemsIndexed(chats, key = { _, c -> c.merchant.id }) { index, item ->
-                        val visible = remember { MutableTransitionState(false).apply { targetState = true } }
+                        val visible =
+                            remember { MutableTransitionState(false).apply { targetState = true } }
                         AnimatedVisibility(
                             visible,
-                            enter = slideInVertically(animationSpec = tween(300, index * 40)) + fadeIn()
+                            enter = slideInVertically(
+                                animationSpec = tween(
+                                    300,
+                                    index * 40
+                                )
+                            ) + fadeIn()
                         ) {
                             ChatListItem(
                                 item = item,
-                                // ✅ pass activationCode so admin writes to same path as merchant
-                                onClick = { onChatClick(item.merchant.activationCode, item.merchant.name) }
+                                // ✅ FIX: Pass merchant.id instead of activationCode to prevent blank segments
+                                onClick = { onChatClick(item.merchant.id, item.merchant.name) }
                             )
                         }
                     }
@@ -98,8 +113,17 @@ private fun ChatListItem(item: ChatListItem, onClick: () -> Unit) {
     ) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(48.dp).clip(CircleShape)
-                    .background(Brush.radialGradient(listOf(Cyan500.copy(0.3f), Cyan500.copy(0.1f)))),
+                Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(
+                        Brush.radialGradient(
+                            listOf(
+                                Cyan500.copy(0.3f),
+                                Cyan500.copy(0.1f)
+                            )
+                        )
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -111,22 +135,37 @@ private fun ChatListItem(item: ChatListItem, onClick: () -> Unit) {
             }
             Spacer(Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(item.merchant.name,
+                Text(
+                    item.merchant.name,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold, color = Slate100)
-                Text(item.merchant.phone,
-                    style = MaterialTheme.typography.bodySmall, color = Slate400)
-                Text("كود: ${item.merchant.activationCode}",
-                    style = MaterialTheme.typography.labelSmall, color = Slate600)
+                    fontWeight = FontWeight.SemiBold, color = Slate100
+                )
+                Text(
+                    item.merchant.phone,
+                    style = MaterialTheme.typography.bodySmall, color = Slate400
+                )
+
+                // Keep the label for reference, but handle blank values gracefully
+                val codeLabel =
+                    if (item.merchant.activationCode.isBlank()) "غير مفعل" else item.merchant.activationCode
+                Text(
+                    "كود: $codeLabel",
+                    style = MaterialTheme.typography.labelSmall, color = Slate600
+                )
             }
             if (item.unreadCount > 0) {
                 Box(
-                    Modifier.size(24.dp).clip(CircleShape).background(Indigo500),
+                    Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(Indigo500),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("${item.unreadCount}", color = Color.White,
+                    Text(
+                        "${item.unreadCount}", color = Color.White,
                         style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
             Spacer(Modifier.width(8.dp))

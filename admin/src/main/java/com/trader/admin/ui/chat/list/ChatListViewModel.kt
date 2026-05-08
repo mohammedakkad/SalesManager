@@ -19,7 +19,7 @@ class ChatListViewModel(
         .map { merchants ->
             merchants.map { m ->
                 val unread = chatRepo
-                    .getUnreadCount(m.activationCode, excludeSenderId = SENDER_ADMIN)
+                    .getUnreadCount(m.id, excludeSenderId = SENDER_ADMIN)
                     .firstOrNull() ?: 0
                 ChatListItem(m, unread)
             }

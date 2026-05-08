@@ -527,6 +527,7 @@ private fun ChatInputBar(
                 },
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(24.dp),
+                minLines = 1,
                 maxLines = 5,
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Emerald500,
