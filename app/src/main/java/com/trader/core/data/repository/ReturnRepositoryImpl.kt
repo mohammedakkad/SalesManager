@@ -4,24 +4,71 @@ import androidx.room.withTransaction
 import com.google.firebase.database.FirebaseDatabase
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.local.entity.*
+import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.*
 import com.trader.core.domain.repository.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.launch
-
 
 class ReturnRepositoryImpl(
     private val db: AppDatabase,
     private val stockRepo: StockRepository,
     private val transactionRepo: TransactionRepository,
     private val invoiceItemRepo: InvoiceItemRepository,
-    private val merchantId: String
+    private val merchantId: String,
+    private val activationRepo: ActivationRepository, // ✅ Added for Realtime Sync
+    private val sync: FirebaseSyncService             // ✅ Added for Realtime Sync
 ) : ReturnRepository {
 
     private val dao = db.returnDao()
+    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    init {
+        startRealtimeSync()
+    }
+
+    // ✅ دالة التزامن اللحظي المضافة لتطبيق الـ SSOT
+    private fun startRealtimeSync() {
+        syncScope.launch {
+            activationRepo.observeMerchantCode()
+                .filter { it.isNotEmpty() } // Wait for valid code
+                .distinctUntilChanged()
+                .collectLatest { code ->
+                    sync.observeReturnInvoices(code).collect { remoteReturns ->
+                        val remoteIds = remoteReturns.map { it.first.id }.toSet()
+
+                        // 1. Upsert remote changes
+                        remoteReturns.forEach { (invoice, items) ->
+                            try {
+                                dao.insertReturnWithItems(
+                                    invoice.copy(syncStatus = SyncStatus.SYNCED).toEntity(),
+                                    items.map { it.toEntity() }
+                                )
+                            } catch (e: Exception) {
+                                // Fallback silently on constraint issues if related data hasn't synced yet
+                            }
+                        }
+
+                        // 2. Cleanup locally deleted remote records
+                        val localIds = dao.getAllReturnIds()
+                        localIds.forEach { localId ->
+                            if (localId !in remoteIds) {
+                                dao.deleteReturnInvoiceById(localId)
+                            }
+                        }
+                    }
+                }
+        }
+    }
 
     override suspend fun processReturn(
         returnInvoice: ReturnInvoice,
@@ -50,10 +97,10 @@ class ReturnRepositoryImpl(
 
             // ── 2. حفظ فاتورة الإرجاع ───────────────────────────────
             val invoiceWithMerchant = returnInvoice.copy(merchantId = merchantId)
-            dao.insertReturnInvoice(invoiceWithMerchant.toEntity())
-            dao.insertReturnItems(items.map {
-                it.toEntity()
-            })
+            dao.insertReturnWithItems(
+                invoiceWithMerchant.toEntity(), 
+                items.map { it.toEntity() }
+            )
 
             // ── 3. إعادة المخزون (يفشل بصمت إذا الصنف محذوف) ────────
             items.forEach {

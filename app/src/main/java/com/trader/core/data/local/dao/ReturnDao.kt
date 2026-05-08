@@ -29,6 +29,13 @@ interface ReturnDao {
         insertReturnItems(items)
     }
 
+    // ── Deletion & Sync Cleanup ─────────────────────────────────
+    @Query("SELECT id FROM return_invoices")
+    suspend fun getAllReturnIds(): List<String>
+
+    @Query("DELETE FROM return_invoices WHERE id = :id")
+    suspend fun deleteReturnInvoiceById(id: String)
+
     // ── Queries ────────────────────────────────────────────────
     @Query("SELECT * FROM return_invoices WHERE originalTransactionId = :transactionId ORDER BY createdAt DESC")
     fun getReturnsByTransaction(transactionId: Long): Flow<List<ReturnInvoiceEntity>>
