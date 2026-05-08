@@ -32,7 +32,7 @@ class ActivationRepositoryImpl(
     private val paymentMethodDao: PaymentMethodDao,
     private val productDao: ProductDao,
     private val productFirestoreService: ProductFirestoreService,
-    private val returnDao: ReturnDao // ✅ 1. تمت إضافة ReturnDao هنا
+    private val returnDao: ReturnDao
 ) : ActivationRepository {
 
     private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -148,7 +148,10 @@ class ActivationRepositoryImpl(
             }
         }
 
-        // ✅ 2. جلب المرتجعات وحفظها في التخزين المحلي (Room) بأمان
+        // ✅ 1. استدعاء الأصناف والوحدات أولاً لتلبية شرط الـ Foreign Key
+        fetchProductsAndUnits(code)
+
+        // ✅ 2. جلب المرتجعات وحفظها بأمان بعد أن أصبح جدول الأصناف جاهزاً
         data.returns.forEach {
             (invoice, items) ->
             runCatching {
@@ -158,8 +161,6 @@ class ActivationRepositoryImpl(
                 })
             }
         }
-
-        fetchProductsAndUnits(code)
     }
 
     private suspend fun fetchProductsAndUnits(code: String) = runCatching {
