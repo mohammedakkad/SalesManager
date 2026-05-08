@@ -142,7 +142,8 @@ class ActivationRepositoryImpl(
                         quantity = item.quantity, 
                         pricePerUnit = item.pricePerUnit, 
                         totalPrice = item.totalPrice, 
-                        merchantId = code
+                        merchantId = code,
+                        syncStatus = "SYNCED"
                     )
                 ) 
             }
