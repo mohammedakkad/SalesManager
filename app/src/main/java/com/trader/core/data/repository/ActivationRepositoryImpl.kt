@@ -19,6 +19,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.flow.*
 import com.trader.core.domain.model.StartupStatus
 import com.trader.core.data.remote.ValidationResult
+import com.trader.core.domain.model.SyncStatus // ✅ Added import
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,7 +34,7 @@ class ActivationRepositoryImpl(
     private val productDao: ProductDao,
     private val productFirestoreService: ProductFirestoreService,
     private val returnDao: ReturnDao,
-    private val invoiceItemDao: InvoiceItemDao // ✅ 1. Added
+    private val invoiceItemDao: InvoiceItemDao
 ) : ActivationRepository {
 
     private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -41,8 +42,12 @@ class ActivationRepositoryImpl(
 
     override fun observeMerchantTier(): Flow<MerchantTier> =
     context.appDataStore.data
-    .map { it[KEY_TIER] ?: MerchantTier.FREE.name }
-    .map { parseTier(it) }
+    .map {
+        it[KEY_TIER] ?: MerchantTier.FREE.name
+    }
+    .map {
+        parseTier(it)
+    }
     .distinctUntilChanged()
 
     override suspend fun validateCode(code: String) = firebaseService.validateCode(code)
@@ -51,13 +56,19 @@ class ActivationRepositoryImpl(
     firebaseService.validateCodeDetailed(code)
 
     override suspend fun isActivated() =
-    context.appDataStore.data.map { it[IS_ACTIVATED] ?: false }.first()
+    context.appDataStore.data.map {
+        it[IS_ACTIVATED] ?: false
+    }.first()
 
     override suspend fun getMerchantCode() =
-    context.appDataStore.data.map { it[MERCHANT_CODE] ?: "" }.first()
+    context.appDataStore.data.map {
+        it[MERCHANT_CODE] ?: ""
+    }.first()
 
     override fun observeMerchantCode(): Flow<String> =
-    context.appDataStore.data.map { it[MERCHANT_CODE] ?: "" }.distinctUntilChanged()
+    context.appDataStore.data.map {
+        it[MERCHANT_CODE] ?: ""
+    }.distinctUntilChanged()
 
     override suspend fun saveActivationStatus(activated: Boolean, code: String) {
         val deviceId = getHardwareId()
@@ -92,7 +103,8 @@ class ActivationRepositoryImpl(
     override fun observeMerchantStatus(): Flow<MerchantStatus?> = callbackFlow {
         val id = getHardwareId()
         val listener = firestore.collection(COLLECTION_MERCHANTS).document(id)
-        .addSnapshotListener { snap, _ ->
+        .addSnapshotListener {
+            snap, _ ->
             snap?.let {
                 repositoryScope.launch {
                     saveMerchantTier(parseTier(it.getString(FIELD_TIER)))
@@ -100,14 +112,20 @@ class ActivationRepositoryImpl(
                 trySend(parseStatus(it.getString(FIELD_STATUS)))
             }
         }
-        awaitClose { listener.remove() }
+        awaitClose {
+            listener.remove()
+        }
     }
 
     private fun parseTier(raw: String?) =
-    runCatching { MerchantTier.valueOf(raw!!) }.getOrDefault(MerchantTier.FREE)
+    runCatching {
+        MerchantTier.valueOf(raw!!)
+    }.getOrDefault(MerchantTier.FREE)
 
     private fun parseStatus(raw: String?) =
-    runCatching { MerchantStatus.valueOf(raw!!) }.getOrNull()
+    runCatching {
+        MerchantStatus.valueOf(raw!!)
+    }.getOrNull()
 
     private suspend fun fetchAndStoreAllData(code: String) {
         val data = try {
@@ -117,51 +135,64 @@ class ActivationRepositoryImpl(
         }
 
         data.customers.forEach {
-            runCatching { customerDao.insertCustomer(CustomerEntity.fromDomain(it)) }
+            runCatching {
+                customerDao.insertCustomer(CustomerEntity.fromDomain(it))
+            }
         }
         data.paymentMethods.forEach {
-            runCatching { paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(it)) }
+            runCatching {
+                paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(it))
+            }
         }
         data.transactions.forEach {
-            runCatching { transactionDao.insertTransaction(TransactionEntity.fromDomain(it)) }
+            runCatching {
+                transactionDao.insertTransaction(TransactionEntity.fromDomain(it))
+            }
         }
 
         fetchProductsAndUnits(code)
 
-        // ✅ 2. Insert Invoice Items BEFORE returns
-        data.invoiceItems.forEach { item ->
-            runCatching { 
+        data.invoiceItems.forEach {
+            item ->
+            runCatching {
                 invoiceItemDao.insertInvoiceItem(
                     com.trader.core.data.local.entity.InvoiceItemEntity(
-                        id = item.id, 
-                        transactionId = item.transactionId, 
-                        productId = item.productId, 
-                        productName = item.productName, 
-                        unitId = item.unitId, 
-                        unitLabel = item.unitLabel, 
-                        quantity = item.quantity, 
-                        pricePerUnit = item.pricePerUnit, 
-                        totalPrice = item.totalPrice, 
+                        id = item.id,
+                        transactionId = item.transactionId,
+                        productId = item.productId,
+                        productName = item.productName,
+                        unitId = item.unitId,
+                        unitLabel = item.unitLabel,
+                        quantity = item.quantity,
+                        pricePerUnit = item.pricePerUnit,
+                        totalPrice = item.totalPrice,
                         merchantId = code,
                         syncStatus = "SYNCED"
                     )
-                ) 
+                )
             }
         }
 
-        data.returns.forEach { (invoice, items) ->
+        // ✅ 3. حفظ المرتجعات كـ SYNCED حتى لا يتم رفعها مجدداً
+        data.returns.forEach {
+            (invoice, items) ->
             runCatching {
-                returnDao.insertReturnInvoice(invoice.toEntity())
-                returnDao.insertReturnItems(items.map { it.toEntity() })
+                returnDao.insertReturnInvoice(invoice.copy(syncStatus = SyncStatus.SYNCED).toEntity())
+                returnDao.insertReturnItems(items.map {
+                    it.toEntity()
+                })
             }
         }
     }
 
     private suspend fun fetchProductsAndUnits(code: String) = runCatching {
-        productFirestoreService.fetchAllProducts(code).forEach { product ->
+        productFirestoreService.fetchAllProducts(code).forEach {
+            product ->
             val units = productFirestoreService.fetchUnitsForProduct(code, product.id)
             productDao.insertProduct(product.toEntity())
-            productDao.insertUnits(units.map { it.toEntity() })
+            productDao.insertUnits(units.map {
+                it.toEntity()
+            })
         }
     }
 
@@ -189,14 +220,20 @@ class ActivationRepositoryImpl(
     }
 
     override suspend fun getMerchantTier(): MerchantTier = parseTier(
-        context.appDataStore.data.map { it[MERCHANT_TIER] }.first()
+        context.appDataStore.data.map {
+            it[MERCHANT_TIER]
+        }.first()
     )
 
     override suspend fun isSelfRegistered(): Boolean =
-    context.appDataStore.data.map { it[IS_SELF_REGISTERED] ?: false }.first()
+    context.appDataStore.data.map {
+        it[IS_SELF_REGISTERED] ?: false
+    }.first()
 
     override suspend fun saveMerchantTier(tier: MerchantTier) {
-        context.appDataStore.edit { it[MERCHANT_TIER] = tier.name }
+        context.appDataStore.edit {
+            it[MERCHANT_TIER] = tier.name
+        }
     }
 
     override suspend fun registerFree() {
