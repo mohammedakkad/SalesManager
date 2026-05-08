@@ -411,7 +411,7 @@ private fun ReturnLineCard(
                             ) {
                                 StepperButton(
                                     icon = Icons.Rounded.Remove,
-                                    enabled = line.returnQty > 1,
+                                    enabled = line.returnQty > 0.0, // ✅ تعديل لمنع القفل للكسور
                                     onClick = {
                                         onQtyChange(line.returnQty - 1)
                                     }
@@ -584,7 +584,13 @@ private fun ConfirmReturnBottomSheet(
                         modifier = Modifier.size(18.dp)
                     )
                     Text(
-                        "سيتم تسجيل خسارة ₪${String.format(Locale.US, "%.2f", state.totalLostProfit)} من هامش الربح",
+                        "سيتم تسجيل خسارة ₪${
+                            String.format(
+                                Locale.US,
+                                "%.2f",
+                                state.totalLostProfit
+                            )
+                        } من هامش الربح",
                         color = DebtRed, style = MaterialTheme.typography.bodySmall
                     )
                 }

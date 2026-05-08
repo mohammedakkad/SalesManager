@@ -230,11 +230,12 @@ class FirebaseSyncService {
                 )
 
                 val itemsMap = m["items"] as? Map<*, *> ?: emptyMap<Any, Any>()
-                val items = itemsMap.values.mapNotNull {
-                    itemRaw ->
+                // ✅ استخدام mapNotNull مع (key, itemRaw) للحصول على الـ Key كبديل في حال فقدان الـ id
+                val items = itemsMap.mapNotNull {
+                    (key, itemRaw) ->
                     val im = itemRaw as? Map<*, *> ?: return@mapNotNull null
                     ReturnItem(
-                        id = im["id"] as? String ?: snap.key.toString(),
+                        id = im["id"] as? String ?: key.toString(), // ✅ الاعتماد على الـ Key كخيار بديل قوي
                         returnInvoiceId = invoiceId,
                         productId = im["productId"] as? String ?: "",
                         productName = im["productName"] as? String ?: "",
@@ -254,7 +255,7 @@ class FirebaseSyncService {
             emptyList()
         }
 
-        // ✅ 5. Fetch Invoice Items
+        // 5. Fetch Invoice Items
         val invoiceItems = try {
             root.child("invoice_items").get().await().children.mapNotNull {
                 snap ->
@@ -508,7 +509,7 @@ data class MerchantData(
     val transactions: List<AppTransaction>,
     val paymentMethods: List<PaymentMethod>,
     val returns: List<Pair<ReturnInvoice, List<ReturnItem>>> = emptyList(),
-    val invoiceItems: List<InvoiceItem> = emptyList() // ✅ Added
+    val invoiceItems: List<InvoiceItem> = emptyList()
 )
 
 sealed class ValidationResult {
