@@ -225,10 +225,12 @@ class FirebaseSyncService {
                         returnInvoiceId = invoiceId,
                         productId = im["productId"] as? String ?: "",
                         productName = im["productName"] as? String ?: "",
-                        unitId = im["unitId"] as? String ?: "",
+                        unitId = im["unitId"] as? String ?: return@mapNotNull null, // hardened
                         unitLabel = im["unitLabel"] as? String ?: "",
                         originalQuantity = im["originalQuantity"].asDouble() ?: 0.0,
-                        returnedQuantity = im["returnedQty"].asDouble() ?: 0.0, // from Firebase push
+                        returnedQuantity  = im["returnedQty"].asDouble()      ?: 0.0,
+                        costPricePerUnit  = im["costPricePerUnit"].asDouble() ?: 0.0,
+                        lostProfit        = im["lostProfit"].asDouble()       ?: 0.0,
                         pricePerUnit = im["pricePerUnit"].asDouble() ?: 0.0,
                         totalRefund = im["totalRefund"].asDouble() ?: 0.0
                     )

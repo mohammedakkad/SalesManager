@@ -212,20 +212,28 @@ class ReturnRepositoryImpl(
             .child("return_invoices").child(returnInvoice.id)
 
             ref.setValue(mapOf(
+                "id"                    to returnInvoice.id,           // ✅ required for fetchAllData
+                "merchantId"            to merchantId,                 // ✅ required for fetchAllData
                 "originalTransactionId" to returnInvoice.originalTransactionId,
-                "returnType" to returnInvoice.returnType.name,
-                "totalRefund" to returnInvoice.totalRefund,
-                "note" to returnInvoice.note,
-                "createdAt" to returnInvoice.createdAt,
-                "items" to items.associate {
-                    it.id to mapOf(
-                        "productId" to it.productId,
-                        "productName" to it.productName,
-                        "unitLabel" to it.unitLabel,
-                        "returnedQty" to it.returnedQuantity,
-                        "pricePerUnit" to it.pricePerUnit,
-                        "totalRefund" to it.totalRefund
-                    )}
+                "returnType"            to returnInvoice.returnType.name,
+                "totalRefund"           to returnInvoice.totalRefund,
+                "note"                  to returnInvoice.note,
+                "createdAt"             to returnInvoice.createdAt,
+                "items" to items.associate { item ->
+                    item.id to mapOf(
+                        "id"               to item.id,               // ✅ im["id"] check in fetchAllData
+                        "productId"        to item.productId,
+                        "productName"      to item.productName,
+                        "unitId"           to item.unitId,           // ✅ was missing
+                        "unitLabel"        to item.unitLabel,
+                        "originalQuantity" to item.originalQuantity, // ✅ was missing
+                        "returnedQty"      to item.returnedQuantity,  // key matches fetchAllData
+                        "pricePerUnit"     to item.pricePerUnit,
+                        "costPricePerUnit" to item.costPricePerUnit,
+                        "totalRefund"      to item.totalRefund,
+                        "lostProfit"       to item.lostProfit
+                    )
+                }
             )).await()
             dao.markSynced(returnInvoice.id)
         }
