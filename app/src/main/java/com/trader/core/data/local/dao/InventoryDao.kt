@@ -14,6 +14,9 @@ interface InvoiceItemDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<InvoiceItemEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertInvoiceItem(item: InvoiceItemEntity)
+
     @Query("SELECT * FROM invoice_items WHERE transactionId = :transactionId ORDER BY rowid ASC")
     fun getForTransaction(transactionId: Long): Flow<List<InvoiceItemEntity>>
 
