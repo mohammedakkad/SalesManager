@@ -15,6 +15,20 @@ interface ReturnDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertReturnItems(items: List<ReturnItemEntity>)
 
+    /**
+     * Atomic insert: inserts the invoice and all its items in a single DB transaction.
+     * Prevents the Room Flow race condition where observers on return_invoices fire
+     * before return_items are written, causing getReturnSummary to calculate 0.0.
+     */
+    @Transaction
+    suspend fun insertReturnWithItems(
+        invoice: ReturnInvoiceEntity,
+        items: List<ReturnItemEntity>
+    ) {
+        insertReturnInvoice(invoice)
+        insertReturnItems(items)
+    }
+
     // ── Queries ────────────────────────────────────────────────
     @Query("SELECT * FROM return_invoices WHERE originalTransactionId = :transactionId ORDER BY createdAt DESC")
     fun getReturnsByTransaction(transactionId: Long): Flow<List<ReturnInvoiceEntity>>

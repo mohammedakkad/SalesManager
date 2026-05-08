@@ -183,10 +183,12 @@ class ActivationRepositoryImpl(
         data.returns.forEach {
             (invoice, items) ->
             runCatching {
-                returnDao.insertReturnInvoice(invoice.copy(syncStatus = SyncStatus.SYNCED).toEntity())
-                returnDao.insertReturnItems(items.map {
-                    it.toEntity()
-                })
+                returnDao.insertReturnWithItems(
+                    invoice.copy(syncStatus = SyncStatus.SYNCED).toEntity(),
+                    items.map {
+                        it.toEntity()
+                    }
+                )
             }
         }
     }

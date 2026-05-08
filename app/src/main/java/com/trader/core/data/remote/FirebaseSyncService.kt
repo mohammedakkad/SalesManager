@@ -26,11 +26,11 @@ class FirebaseSyncService {
     private val db = FirebaseDatabase.getInstance()
 
     private fun Any?.asLong(): Long? = when (this) {
-        is Long -> this; is Int -> toLong(); is Double -> toLong(); else -> null
+        is Long -> this; is Int -> toLong(); is Double -> toLong(); is String -> toLongOrNull(); else -> null
     }
 
     private fun Any?.asDouble(): Double? = when (this) {
-        is Double -> this; is Long -> toDouble(); is Int -> toDouble(); else -> null
+        is Double -> this; is Long -> toDouble(); is Int -> toDouble(); is String -> toDoubleOrNull(); else -> null
     }
 
     suspend fun validateCodeDetailed(code: String): ValidationResult {
@@ -240,7 +240,7 @@ class FirebaseSyncService {
                 snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 val invoiceId = m["id"] as? String ?: snap.key ?: return@mapNotNull null
-                val originalTxId = m["originalTransactionId"].asLong() ?: return@mapNotNull null
+                val originalTxId = m["originalTransactionId"].asLong() ?: m["transactionId"].asLong() ?: return@mapNotNull null
 
                 val invoice = ReturnInvoice(
                     id = invoiceId,
@@ -262,7 +262,8 @@ class FirebaseSyncService {
                     else -> emptyList<Any>()
                 }
 
-                val items = itemsIterable.mapNotNull { itemRaw ->
+                val items = itemsIterable.mapNotNull {
+                    itemRaw ->
                     val im = itemRaw as? Map<*, *> ?: return@mapNotNull null
                     val pId = im["productId"] as? String ?: ""
 
@@ -286,7 +287,7 @@ class FirebaseSyncService {
                         unitId = finalUnitId,
                         unitLabel = im["unitLabel"] as? String ?: matchedInvoiceItem?.unitLabel ?: "",
                         originalQuantity = finalOrigQty,
-                        returnedQuantity = im["returnedQty"].asDouble() ?: 0.0,
+                        returnedQuantity = im["returnedQty"].asDouble() ?: im["returnedQuantity"].asDouble() ?: 0.0,
                         costPricePerUnit = im["costPricePerUnit"].asDouble() ?: 0.0,
                         lostProfit = im["lostProfit"].asDouble() ?: 0.0,
                         pricePerUnit = im["pricePerUnit"].asDouble() ?: matchedInvoiceItem?.pricePerUnit ?: 0.0,
@@ -472,7 +473,9 @@ class FirebaseSyncService {
             override fun onCancelled(error: DatabaseError) {}
         }
         ref.addValueEventListener(listener)
-        awaitClose { ref.removeEventListener(listener) }
+        awaitClose {
+            ref.removeEventListener(listener)
+        }
     }
 
     suspend fun pushInvoiceItems(merchantCode: String, items: List<InvoiceItem>) {
@@ -498,7 +501,9 @@ class FirebaseSyncService {
     suspend fun deleteInvoiceItemsForTransaction(merchantCode: String, transactionId: Long) {
         val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
         val snap = ref.orderByChild("transactionId").equalTo(transactionId.toDouble()).get().await()
-        snap.children.forEach { it.ref.removeValue().await() }
+        snap.children.forEach {
+            it.ref.removeValue().await()
+        }
     }
 
     companion object {
@@ -522,4 +527,4 @@ sealed class ValidationResult {
     object Expired : ValidationResult()
     object NotFound : ValidationResult()
     object NetworkError : ValidationResult()
-}
+    }
