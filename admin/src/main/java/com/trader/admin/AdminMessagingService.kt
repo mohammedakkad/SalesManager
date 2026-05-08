@@ -6,12 +6,14 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.trader.core.domain.model.MerchantStatus
 import java.util.concurrent.TimeUnit
+import androidx.core.net.toUri
 
 class AdminMessagingService : FirebaseMessagingService() {
 
@@ -48,10 +50,10 @@ class AdminMessagingService : FirebaseMessagingService() {
             }
         }
 
-        private fun showNotification(context: Context, title: String, body: String) {
+        internal fun showNotification(context: Context, title: String, body: String) {
             val deepLinkIntent = Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("admin://notifications"),
+                "admin://notifications".toUri(),
                 context,
                 AdminMainActivity::class.java
             )
@@ -90,11 +92,15 @@ class AdminMessagingService : FirebaseMessagingService() {
     }
 
     private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID, "تنبيهات الإدارة",
-            NotificationManager.IMPORTANCE_HIGH
-        ).apply {
-            description = "تنبيهات انتهاء اشتراك البائعين"
+        val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel(
+                CHANNEL_ID, "تنبيهات الإدارة",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "تنبيهات انتهاء اشتراك البائعين"
+            }
+        } else {
+            TODO("VERSION.SDK_INT < O")
         }
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)

@@ -15,7 +15,6 @@ data class MerchantsUiState(
     val merchants: List<Merchant> = emptyList(),
     val isLoading: Boolean = false,
     val activeFilter: MerchantFilter = MerchantFilter.ALL,
-    val searchQuery: String = "",
     val errorMessage: String? = null
 )
 
@@ -26,6 +25,7 @@ class MerchantsViewModel(private val repo: MerchantAdminRepository) : ViewModel(
 
     private val _filter = MutableStateFlow(MerchantFilter.ALL)
     private val _search = MutableStateFlow("")
+    val search = _search.asStateFlow()
     private val _isLoading = MutableStateFlow(true)
 
     // 2. استخدام التجميع الذكي (Flow Combination) مع تحسين الأداء
@@ -38,7 +38,6 @@ class MerchantsViewModel(private val repo: MerchantAdminRepository) : ViewModel(
         MerchantsUiState(
             merchants = filteredList,
             activeFilter = filter,
-            searchQuery = query,
             isLoading = _isLoading.value
         )
     }.stateIn(

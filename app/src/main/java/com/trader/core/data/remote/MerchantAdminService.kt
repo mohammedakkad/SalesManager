@@ -37,7 +37,7 @@ class MerchantAdminService {
                         tier = runCatching {
                             MerchantTier.valueOf(data["tier"] as? String ?: "FREE")
                         }.getOrDefault(MerchantTier.FREE),
-                        deviceId = data["deviceId"] as? String,
+                        deviceId = data["deviceId"] as? String, // ✅ Integrity maintained
                         isSelfRegistered = data["isSelfRegistered"] as? Boolean == true,
                         planName = data["planName"] as? String,
                         paymentMethod = data["paymentMethod"] as? String
@@ -73,6 +73,7 @@ class MerchantAdminService {
                 tier = runCatching {
                     MerchantTier.valueOf(data["tier"] as? String ?: "FREE")
                 }.getOrDefault(MerchantTier.FREE),
+                deviceId = data["deviceId"] as? String, // ✅ Fixed: mapping added
                 isSelfRegistered = data["isSelfRegistered"] as? Boolean ?: false,
                 planName = data["planName"] as? String,
                 paymentMethod = data["paymentMethod"] as? String
@@ -176,6 +177,7 @@ class MerchantAdminService {
         "createdAt" to (createdAt ?: Timestamp.now()),
         "lastSeen" to lastSeen,
         "tier" to tier.name,
+        "deviceId" to deviceId,
         "isSelfRegistered" to isSelfRegistered,
         "planName" to planName,
         "paymentMethod" to paymentMethod

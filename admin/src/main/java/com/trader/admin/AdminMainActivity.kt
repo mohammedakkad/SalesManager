@@ -10,6 +10,7 @@ import com.trader.admin.ui.theme.AdminTheme
 class AdminMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AdminAlertsWorker.startPeriodicChecks(this)
         enableEdgeToEdge()
         setContent {
             AdminTheme {
