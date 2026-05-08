@@ -24,7 +24,6 @@ import com.trader.core.domain.model.TransactionReturnStatus
 class FirebaseSyncService {
     private val db = FirebaseDatabase.getInstance()
 
-    // ── Type-safe Int/Long helpers ───────────────────────────────
     private fun Any?.asLong(): Long? = when (this) {
         is Long -> this; is Int -> toLong(); is Double -> toLong(); else -> null
     }
@@ -63,13 +62,12 @@ class FirebaseSyncService {
             if (explicitStatus.uppercase() == "EXPIRED") return ValidationResult.Expired
             if (explicitStatus.uppercase() == "DELETED") return ValidationResult.NotFound
 
-            // ⏱️ التحقق الذكي من تاريخ الانتهاء مع فترة السماح (3 أيام)
             val expiryMs = (map["subscriptionExpiry"] as? Number)?.toLong()
             if (expiryMs != null) {
                 val now = System.currentTimeMillis()
-                val gracePeriodMs = 3L * 24 * 60 * 60 * 1000 // 3 أيام بالملي ثانية
+                val gracePeriodMs = 3L * 24 * 60 * 60 * 1000
                 if (now > expiryMs + gracePeriodMs) {
-                    return ValidationResult.Expired // 🔴 طرده لأن فترة السماح انتهت
+                    return ValidationResult.Expired
                 }
             }
 
@@ -101,7 +99,9 @@ class FirebaseSyncService {
         }
 
         nodeReference.addValueEventListener(listener)
-        awaitClose { nodeReference.removeEventListener(listener) }
+        awaitClose {
+            nodeReference.removeEventListener(listener)
+        }
     }
 
     suspend fun fetchMerchantActivationData(merchantCode: String): DataSnapshot {
@@ -109,11 +109,9 @@ class FirebaseSyncService {
     }
 
 
-    // ── Activation ───────────────────────────────────────────────
     suspend fun validateCode(code: String): Boolean =
-        validateCodeDetailed(code) == ValidationResult.Active
+    validateCodeDetailed(code) == ValidationResult.Active
 
-    // Check current status without full validation (used on app startup)
     suspend fun getCodeStatus(code: String): String? {
         return try {
             val snap = withTimeoutOrNull(8_000) {
@@ -138,7 +136,6 @@ class FirebaseSyncService {
             if (explicitStatus.uppercase() == "EXPIRED") return "EXPIRED"
             if (explicitStatus.uppercase() == "DELETED") return "DELETED"
 
-            // ⏱️ التحقق الذكي عند فتح التطبيق
             val expiryMs = (map["subscriptionExpiry"] as? Number)?.toLong()
             if (expiryMs != null) {
                 val now = System.currentTimeMillis()
@@ -154,13 +151,13 @@ class FirebaseSyncService {
         }
     }
 
-    // ── One-time full fetch on activation ────────────────────────
     suspend fun fetchAllData(merchantCode: String): MerchantData {
         val root = db.reference.child("merchants").child(merchantCode)
-        
+
         // 1. Fetch Customers
         val customers = try {
-            root.child("customers").get().await().children.mapNotNull { snap ->
+            root.child("customers").get().await().children.mapNotNull {
+                snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 Customer(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
@@ -169,30 +166,40 @@ class FirebaseSyncService {
                     createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
                 )
             }
-        } catch (e: Exception) { emptyList() }
+        } catch (e: Exception) {
+            emptyList()
+        }
 
         // 2. Fetch Payment Methods
         val paymentMethods = try {
-            root.child("payment_methods").get().await().children.mapNotNull { snap ->
+            root.child("payment_methods").get().await().children.mapNotNull {
+                snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 PaymentMethod(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
                     name = m["name"] as? String ?: return@mapNotNull null,
-                    type = runCatching { PaymentType.valueOf(m["type"] as? String ?: "") }.getOrDefault(PaymentType.OTHER)
+                    type = runCatching {
+                        PaymentType.valueOf(m["type"] as? String ?: "")
+                    }.getOrDefault(PaymentType.OTHER)
                 )
             }
-        } catch (e: Exception) { emptyList() }
+        } catch (e: Exception) {
+            emptyList()
+        }
 
-        // 3. Fetch Transactions (With Return Status)
+        // 3. Fetch Transactions
         val transactions = try {
-            root.child("transactions").get().await().children.mapNotNull { snap ->
+            root.child("transactions").get().await().children.mapNotNull {
+                snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 AppTransaction(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
                     customerId = m["customerId"].asLong() ?: return@mapNotNull null,
                     amount = m["amount"].asDouble() ?: return@mapNotNull null,
                     originalAmount = m["originalAmount"].asDouble() ?: m["amount"].asDouble() ?: 0.0,
-                    returnStatus = runCatching { TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE") }.getOrDefault(TransactionReturnStatus.NONE),
+                    returnStatus = runCatching {
+                        TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE")
+                    }.getOrDefault(TransactionReturnStatus.NONE),
                     isPaid = m["isPaid"] as? Boolean ?: false,
                     paymentMethodId = m["paymentMethodId"].asLong(),
                     note = m["note"] as? String ?: "",
@@ -200,55 +207,84 @@ class FirebaseSyncService {
                     paidAt = m["paidAt"].asLong()
                 )
             }
-        } catch (e: Exception) { emptyList() }
+        } catch (e: Exception) {
+            emptyList()
+        }
 
         // 4. Fetch Returns
         val returns = try {
-            root.child("return_invoices").get().await().children.mapNotNull { snap ->
+            root.child("return_invoices").get().await().children.mapNotNull {
+                snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 val invoiceId = m["id"] as? String ?: snap.key ?: return@mapNotNull null
                 val invoice = ReturnInvoice(
                     id = invoiceId,
                     originalTransactionId = m["originalTransactionId"].asLong() ?: return@mapNotNull null,
                     merchantId = merchantCode,
-                    returnType = runCatching { ReturnType.valueOf(m["returnType"] as? String ?: "") }.getOrDefault(ReturnType.PARTIAL),
+                    returnType = runCatching {
+                        ReturnType.valueOf(m["returnType"] as? String ?: "")
+                    }.getOrDefault(ReturnType.PARTIAL),
                     totalRefund = m["totalRefund"].asDouble() ?: 0.0,
                     note = m["note"] as? String ?: "",
                     createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
                 )
-                
+
                 val itemsMap = m["items"] as? Map<*, *> ?: emptyMap<Any, Any>()
-                val items = itemsMap.values.mapNotNull { itemRaw ->
+                val items = itemsMap.values.mapNotNull {
+                    itemRaw ->
                     val im = itemRaw as? Map<*, *> ?: return@mapNotNull null
                     ReturnItem(
-                        id = im["id"] as? String ?: return@mapNotNull null,
+                        id = im["id"] as? String ?: snap.key.toString(),
                         returnInvoiceId = invoiceId,
                         productId = im["productId"] as? String ?: "",
                         productName = im["productName"] as? String ?: "",
-                        unitId = im["unitId"] as? String ?: return@mapNotNull null, // hardened
+                        unitId = im["unitId"] as? String ?: return@mapNotNull null,
                         unitLabel = im["unitLabel"] as? String ?: "",
                         originalQuantity = im["originalQuantity"].asDouble() ?: 0.0,
-                        returnedQuantity  = im["returnedQty"].asDouble()      ?: 0.0,
-                        costPricePerUnit  = im["costPricePerUnit"].asDouble() ?: 0.0,
-                        lostProfit        = im["lostProfit"].asDouble()       ?: 0.0,
+                        returnedQuantity = im["returnedQty"].asDouble() ?: 0.0,
+                        costPricePerUnit = im["costPricePerUnit"].asDouble() ?: 0.0,
+                        lostProfit = im["lostProfit"].asDouble() ?: 0.0,
                         pricePerUnit = im["pricePerUnit"].asDouble() ?: 0.0,
                         totalRefund = im["totalRefund"].asDouble() ?: 0.0
                     )
                 }
                 Pair(invoice, items)
             }
-        } catch (e: Exception) { emptyList() }
+        } catch (e: Exception) {
+            emptyList()
+        }
 
-        return MerchantData(customers, transactions, paymentMethods, returns)
+        // ✅ 5. Fetch Invoice Items
+        val invoiceItems = try {
+            root.child("invoice_items").get().await().children.mapNotNull {
+                snap ->
+                val m = snap.value as? Map<*, *> ?: return@mapNotNull null
+                InvoiceItem(
+                    id = m["id"] as? String ?: return@mapNotNull null,
+                    transactionId = m["transactionId"].asLong() ?: return@mapNotNull null,
+                    productId = m["productId"] as? String ?: "",
+                    productName = m["productName"] as? String ?: "",
+                    unitId = m["unitId"] as? String ?: "",
+                    unitLabel = m["unitLabel"] as? String ?: "",
+                    quantity = m["quantity"].asDouble() ?: 0.0,
+                    pricePerUnit = m["pricePerUnit"].asDouble() ?: 0.0,
+                    totalPrice = m["totalPrice"].asDouble() ?: 0.0,
+                    merchantId = merchantCode
+                )
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+
+        return MerchantData(customers, transactions, paymentMethods, returns, invoiceItems)
     }
 
-
-    // ── Real-time streams (callbackFlow) ─────────────────────────
     fun observeCustomers(merchantCode: String): Flow<List<Customer>> = callbackFlow {
         val ref = db.reference.child("merchants").child(merchantCode).child("customers")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
-                trySend(snap.children.mapNotNull { child ->
+                trySend(snap.children.mapNotNull {
+                    child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
                         Customer(
@@ -261,7 +297,6 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-
             override fun onCancelled(error: DatabaseError) {}
         }
         ref.addValueEventListener(listener)
@@ -274,7 +309,8 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("transactions")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
-                trySend(snap.children.mapNotNull { child ->
+                trySend(snap.children.mapNotNull {
+                    child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
                         AppTransaction(
@@ -291,7 +327,6 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-
             override fun onCancelled(error: DatabaseError) {}
         }
         ref.addValueEventListener(listener)
@@ -304,7 +339,8 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("payment_methods")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
-                trySend(snap.children.mapNotNull { child ->
+                trySend(snap.children.mapNotNull {
+                    child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
                         PaymentMethod(
@@ -318,7 +354,6 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-
             override fun onCancelled(error: DatabaseError) {}
         }
         ref.addValueEventListener(listener)
@@ -327,38 +362,37 @@ class FirebaseSyncService {
         }
     }
 
-    // ── Push helpers ─────────────────────────────────────────────
     fun pushCustomer(merchantCode: String, c: Customer) {
         db.reference.child("merchants").child(merchantCode).child("customers")
-            .child(c.id.toString())
-            .setValue(
-                mapOf(
-                    "id" to c.id,
-                    "name" to c.name,
-                    "phone" to c.phone,
-                    "createdAt" to c.createdAt
-                )
+        .child(c.id.toString())
+        .setValue(
+            mapOf(
+                "id" to c.id,
+                "name" to c.name,
+                "phone" to c.phone,
+                "createdAt" to c.createdAt
             )
+        )
     }
 
     fun deleteCustomer(merchantCode: String, id: Long) {
         db.reference.child("merchants").child(merchantCode).child("customers").child(id.toString())
-            .removeValue()
+        .removeValue()
     }
 
     suspend fun pushTransaction(merchantCode: String, t: AppTransaction) {
         db.reference.child("merchants").child(merchantCode).child("transactions")
-            .child(t.id.toString())
-            .setValue(
-                mapOf(
-                    "id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
-                    "originalAmount" to t.originalAmount, "returnStatus" to t.returnStatus.name,
-                    "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
-                    "note" to t.note, "date" to t.date, "paidAt" to t.paidAt
-                )
-            ).await()
+        .child(t.id.toString())
+        .setValue(
+            mapOf(
+                "id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
+                "originalAmount" to t.originalAmount, "returnStatus" to t.returnStatus.name,
+                "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
+                "note" to t.note, "date" to t.date, "paidAt" to t.paidAt
+            )
+        ).await()
     }
-    
+
     suspend fun pushReturnInvoice(merchantCode: String, returnInvoice: ReturnInvoice, items: List<ReturnItem>) {
         withTimeoutOrNull(8_000) {
             val ref = db.reference.child("merchants").child(merchantCode).child("return_invoices").child(returnInvoice.id)
@@ -386,31 +420,29 @@ class FirebaseSyncService {
             )).await()
         }
     }
-    
-
 
     suspend fun deleteTransaction(merchantCode: String, id: Long) {
         db.reference.child("merchants").child(merchantCode).child("transactions")
-            .child(id.toString()).removeValue().await()
+        .child(id.toString()).removeValue().await()
     }
 
     fun pushPaymentMethod(merchantCode: String, m: PaymentMethod) {
         db.reference.child("merchants").child(merchantCode).child("payment_methods")
-            .child(m.id.toString())
-            .setValue(mapOf("id" to m.id, "name" to m.name, "type" to m.type.name))
+        .child(m.id.toString())
+        .setValue(mapOf("id" to m.id, "name" to m.name, "type" to m.type.name))
     }
 
     fun deletePaymentMethod(merchantCode: String, id: Long) {
         db.reference.child("merchants").child(merchantCode).child("payment_methods")
-            .child(id.toString()).removeValue()
+        .child(id.toString()).removeValue()
     }
 
-    // ── Invoice Items ────────────────────────────────────────────
     fun observeInvoiceItems(merchantCode: String): Flow<List<InvoiceItem>> = callbackFlow {
         val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
-                trySend(snap.children.mapNotNull { child ->
+                trySend(snap.children.mapNotNull {
+                    child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
                         InvoiceItem(
@@ -428,7 +460,6 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-
             override fun onCancelled(error: DatabaseError) {}
         }
         ref.addValueEventListener(listener)
@@ -439,7 +470,8 @@ class FirebaseSyncService {
 
     suspend fun pushInvoiceItems(merchantCode: String, items: List<InvoiceItem>) {
         val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
-        items.forEach { item ->
+        items.forEach {
+            item ->
             ref.child(item.id).setValue(
                 mapOf(
                     "id" to item.id,
@@ -475,7 +507,8 @@ data class MerchantData(
     val customers: List<Customer>,
     val transactions: List<AppTransaction>,
     val paymentMethods: List<PaymentMethod>,
-    val returns: List<Pair<ReturnInvoice, List<ReturnItem>>> = emptyList() // ✅ Added
+    val returns: List<Pair<ReturnInvoice, List<ReturnItem>>> = emptyList(),
+    val invoiceItems: List<InvoiceItem> = emptyList() // ✅ Added
 )
 
 sealed class ValidationResult {
@@ -484,4 +517,4 @@ sealed class ValidationResult {
     object Expired : ValidationResult()
     object NotFound : ValidationResult()
     object NetworkError : ValidationResult()
-}
+    }

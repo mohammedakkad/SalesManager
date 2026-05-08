@@ -44,7 +44,6 @@ fun ReturnProcessScreen(
         }
     }
 
-    // ── حوار القفل (خطة مجانية) ─────────────────────────────────
     if (state.processingState is com.trader.core.domain.model.ReturnUiState.PartialReturnLocked) {
         PartialReturnLockedDialog(
             onDismiss = viewModel::dismissConfirmSheet,
@@ -62,7 +61,6 @@ fun ReturnProcessScreen(
             .padding(bottom = padding.calculateBottomPadding())
         ) {
 
-            // ── Header gradient ──────────────────────────────────
             Box(
                 modifier = Modifier
                 .fillMaxWidth()
@@ -115,7 +113,6 @@ fun ReturnProcessScreen(
                 return@Scaffold
             }
 
-            // ── قائمة الأصناف ────────────────────────────────────
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(16.dp),
@@ -146,7 +143,6 @@ fun ReturnProcessScreen(
                     )
                 }
 
-                // ── حقل الملاحظة ──────────────────────────────
                 item {
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(
@@ -173,7 +169,6 @@ fun ReturnProcessScreen(
                 }
             }
 
-            // ── زر التأكيد ───────────────────────────────────────
             AnimatedVisibility(
                 visible = state.canConfirm,
                 enter = slideInVertically {
@@ -199,13 +194,7 @@ fun ReturnProcessScreen(
                         Icon(Icons.Rounded.Undo, null, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "تأكيد الإرجاع · ₪${
-                                String.format(
-                                    Locale.US,
-                                    "%.2f",
-                                    state.totalRefund
-                                )
-                            }",
+                            "تأكيد الإرجاع · ₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.bodyLarge
                         )
@@ -224,7 +213,6 @@ fun ReturnProcessScreen(
     }
 }
 
-// ── بطاقة صنف واحد (Swipe-to-select + Stepper) ──────────────────
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ReturnLineCard(
@@ -344,7 +332,7 @@ private fun ReturnLineCard(
                             }
                             Text("·", color = appColors.textSubtle)
                             Text(
-                                "₪${String.format(java.util.Locale.US, "%.2f", line.invoiceItem.pricePerUnit)}",
+                                "₪${String.format(Locale.US, "%.2f", line.invoiceItem.pricePerUnit)}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = appColors.textSubtle
                             )
@@ -371,7 +359,7 @@ private fun ReturnLineCard(
                     ) {
                         Column(horizontalAlignment = Alignment.End) {
                             Text(
-                                "₪${String.format(java.util.Locale.US, "%.2f", line.refundAmount)}",
+                                "₪${String.format(Locale.US, "%.2f", line.refundAmount)}",
                                 color = Violet500,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Black
@@ -384,7 +372,7 @@ private fun ReturnLineCard(
                                     Icon(Icons.Rounded.TrendingDown, null,
                                         tint = DebtRed, modifier = Modifier.size(10.dp))
                                     Text(
-                                        "₪${String.format(java.util.Locale.US, "%.2f", line.lostProfit)}",
+                                        "₪${String.format(Locale.US, "%.2f", line.lostProfit)}",
                                         color = DebtRed,
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold
@@ -395,9 +383,9 @@ private fun ReturnLineCard(
                     }
                 }
 
-                // ✅ إصلاح الخلل هنا: الاستناد حصراً إلى isPartialEnabled
+                // ✅ إصلاح الخلل هنا: الاستناد إلى القيمة > 0.0 بدلاً من الشرط الخاطئ
                 AnimatedVisibility(
-                    visible = isSelected && line.maxReturnable > 1 && isPartialEnabled,
+                    visible = isSelected && line.maxReturnable > 0.0,
                     enter = expandVertically(spring(Spring.DampingRatioMediumBouncy)) + fadeIn(),
                     exit = shrinkVertically(tween(200)) + fadeOut()
                 ) {
@@ -596,13 +584,7 @@ private fun ConfirmReturnBottomSheet(
                         modifier = Modifier.size(18.dp)
                     )
                     Text(
-                        "سيتم تسجيل خسارة ₪${
-                            String.format(
-                                Locale.US,
-                                "%.2f",
-                                state.totalLostProfit
-                            )
-                        } من هامش الربح",
+                        "سيتم تسجيل خسارة ₪${String.format(Locale.US, "%.2f", state.totalLostProfit)} من هامش الربح",
                         color = DebtRed, style = MaterialTheme.typography.bodySmall
                     )
                 }
