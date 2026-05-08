@@ -38,7 +38,6 @@ fun ReturnProcessScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    // ✅ لا حاجة لـ LaunchedEffect لاستدعاء load() — يحدث في init{}
     LaunchedEffect(state.processingState) {
         if (state.processingState is com.trader.core.domain.model.ReturnUiState.Success) {
             onReturnSuccess()
@@ -49,27 +48,30 @@ fun ReturnProcessScreen(
     if (state.processingState is com.trader.core.domain.model.ReturnUiState.PartialReturnLocked) {
         PartialReturnLockedDialog(
             onDismiss = viewModel::dismissConfirmSheet,
-            onUpgrade = { /* TODO: navigate to subscription */ }
+            onUpgrade = {
+                /* TODO: navigate to subscription */
+            }
         )
     }
 
-    Scaffold(containerColor = appColors.screenBackground) { padding ->
+    Scaffold(containerColor = appColors.screenBackground) {
+        padding ->
         Column(
             Modifier
-                .fillMaxSize()
-                .padding(bottom = padding.calculateBottomPadding())
+            .fillMaxSize()
+            .padding(bottom = padding.calculateBottomPadding())
         ) {
 
             // ── Header gradient ──────────────────────────────────
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Brush.linearGradient(
-                            listOf(Emerald700, PaidGreen)
-                        )
+                .fillMaxWidth()
+                .background(
+                    Brush.linearGradient(
+                        listOf(Emerald700, PaidGreen)
                     )
-                    .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
+                )
+                .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -90,7 +92,6 @@ fun ReturnProcessScreen(
                         }
                     }
                     Spacer(Modifier.height(12.dp))
-                    // ملخص سريع
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         SummaryPill("${state.selectedLines.size} أصناف", Icons.Rounded.Inventory2)
                         SummaryPill(
@@ -129,12 +130,19 @@ fun ReturnProcessScreen(
                     )
                 }
 
-                itemsIndexed(state.lines, key = { _, l -> l.invoiceItem.id }) { index, line ->
+                itemsIndexed(state.lines, key = {
+                    _, l -> l.invoiceItem.id
+                }) {
+                    index, line ->
                     ReturnLineCard(
                         line = line,
                         isPartialEnabled = state.isPartialEnabled,
-                        onToggle = { viewModel.toggleLine(index) },
-                        onQtyChange = { viewModel.updateQty(index, it) }
+                        onToggle = {
+                            viewModel.toggleLine(index)
+                        },
+                        onQtyChange = {
+                            viewModel.updateQty(index, it)
+                        }
                     )
                 }
 
@@ -144,8 +152,12 @@ fun ReturnProcessScreen(
                     OutlinedTextField(
                         value = state.note,
                         onValueChange = viewModel::updateNote,
-                        label = { Text("سبب الإرجاع (اختياري)") },
-                        leadingIcon = { Icon(Icons.Rounded.Notes, null, tint = Violet500) },
+                        label = {
+                            Text("سبب الإرجاع (اختياري)")
+                        },
+                        leadingIcon = {
+                            Icon(Icons.Rounded.Notes, null, tint = Violet500)
+                        },
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -156,14 +168,20 @@ fun ReturnProcessScreen(
                     )
                 }
 
-                item { Spacer(Modifier.height(80.dp)) }
+                item {
+                    Spacer(Modifier.height(80.dp))
+                }
             }
 
             // ── زر التأكيد ───────────────────────────────────────
             AnimatedVisibility(
                 visible = state.canConfirm,
-                enter = slideInVertically { it } + fadeIn(),
-                exit = slideOutVertically { it } + fadeOut()
+                enter = slideInVertically {
+                    it
+                } + fadeIn(),
+                exit = slideOutVertically {
+                    it
+                } + fadeOut()
             ) {
                 Surface(
                     shadowElevation = 12.dp,
@@ -172,9 +190,9 @@ fun ReturnProcessScreen(
                     Button(
                         onClick = viewModel::showConfirmSheet,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .height(54.dp),
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .height(54.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Violet500)
                     ) {
@@ -197,7 +215,6 @@ fun ReturnProcessScreen(
         }
     }
 
-    // ── Bottom Sheet تأكيد ───────────────────────────────────────
     if (state.showConfirmSheet) {
         ConfirmReturnBottomSheet(
             state = state,
@@ -216,7 +233,7 @@ private fun ReturnLineCard(
     onToggle: () -> Unit,
     onQtyChange: (Double) -> Unit
 ) {
-    val isEnabled  = line.canReturn
+    val isEnabled = line.canReturn
     val isSelected = line.isSelected
 
     val animatedElevation by animateDpAsState(
@@ -233,39 +250,42 @@ private fun ReturnLineCard(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .graphicsLayer { alpha = animatedAlpha; scaleX = animatedScale; scaleY = animatedScale }
+        .fillMaxWidth()
+        .padding(vertical = 4.dp)
+        .graphicsLayer {
+            alpha = animatedAlpha; scaleX = animatedScale; scaleY = animatedScale
+        }
     ) {
-        // ── ظل ملون خلف البطاقة عند الاختيار ──────────────────
         if (isSelected) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 6.dp)
-                    .height(60.dp)
-                    .align(Alignment.BottomCenter)
-                    .clip(RoundedCornerShape(24.dp))
-                    .background(
-                        Brush.horizontalGradient(listOf(Violet500.copy(0.25f), Cyan500.copy(0.2f)))
-                    )
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp)
+                .height(60.dp)
+                .align(Alignment.BottomCenter)
+                .clip(RoundedCornerShape(24.dp))
+                .background(
+                    Brush.horizontalGradient(listOf(Violet500.copy(0.25f), Cyan500.copy(0.2f)))
+                )
             )
         }
 
         Surface(
             modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(24.dp))
-                .clickable(enabled = isEnabled) { onToggle() }
-                .then(
-                    if (isSelected) Modifier.border(
-                        width = 1.5.dp,
-                        brush = Brush.linearGradient(listOf(Violet500, Cyan500)),
-                        shape = RoundedCornerShape(24.dp)
-                    ) else Modifier.border(
-                        1.dp, appColors.border.copy(0.4f), RoundedCornerShape(24.dp)
-                    )
-                ),
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp))
+            .clickable(enabled = isEnabled) {
+                onToggle()
+            }
+            .then(
+                if (isSelected) Modifier.border(
+                    width = 1.5.dp,
+                    brush = Brush.linearGradient(listOf(Violet500, Cyan500)),
+                    shape = RoundedCornerShape(24.dp)
+                ) else Modifier.border(
+                    1.dp, appColors.border.copy(0.4f), RoundedCornerShape(24.dp)
+                )
+            ),
             color = if (isSelected) Violet500.copy(0.05f) else appColors.cardBackground,
             shadowElevation = animatedElevation,
         ) {
@@ -275,20 +295,20 @@ private fun ReturnLineCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    // ── أيقونة الحالة مع Animation ───────────────
                     Box(
                         modifier = Modifier
-                            .size(38.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (isSelected)
-                                    Brush.linearGradient(listOf(Violet500, Cyan500))
-                                else
-                                    Brush.linearGradient(listOf(appColors.border.copy(0.2f), appColors.border.copy(0.3f)))
-                            ),
+                        .size(38.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (isSelected)
+                                Brush.linearGradient(listOf(Violet500, Cyan500))
+                            else
+                                Brush.linearGradient(listOf(appColors.border.copy(0.2f), appColors.border.copy(0.3f)))
+                        ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Crossfade(targetState = isSelected, animationSpec = tween(250), label = "icon") { selected ->
+                        Crossfade(targetState = isSelected, animationSpec = tween(250), label = "icon") {
+                            selected ->
                             Icon(
                                 if (selected) Icons.Rounded.Check else Icons.Rounded.Undo,
                                 null,
@@ -298,30 +318,28 @@ private fun ReturnLineCard(
                         }
                     }
 
-                    // ── تفاصيل الصنف ─────────────────────────────
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
                             line.productName,
-                            style     = MaterialTheme.typography.titleSmall,
+                            style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.ExtraBold,
-                            color      = if (isSelected) Violet500 else appColors.textPrimary,
-                            maxLines   = 1
+                            color = if (isSelected) Violet500 else appColors.textPrimary,
+                            maxLines = 1
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            // Badge وحدة
                             Surface(
                                 color = if (isSelected) Violet500.copy(0.1f) else appColors.border.copy(0.15f),
                                 shape = RoundedCornerShape(6.dp)
                             ) {
                                 Text(
                                     line.unitLabel,
-                                    modifier   = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                    style      = MaterialTheme.typography.labelSmall,
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
-                                    color      = if (isSelected) Violet500 else appColors.textSubtle
+                                    color = if (isSelected) Violet500 else appColors.textSubtle
                                 )
                             }
                             Text("·", color = appColors.textSubtle)
@@ -330,7 +348,6 @@ private fun ReturnLineCard(
                                 style = MaterialTheme.typography.labelSmall,
                                 color = appColors.textSubtle
                             )
-                            // الكمية المتبقية
                             if (line.maxReturnable < line.invoiceItem.quantity) {
                                 Text("·", color = appColors.textSubtle)
                                 Text(
@@ -343,17 +360,20 @@ private fun ReturnLineCard(
                         }
                     }
 
-                    // ── مبلغ الإرجاع بانتقال أنيق ───────────────
                     AnimatedVisibility(
                         visible = isSelected,
-                        enter = fadeIn(tween(200)) + slideInHorizontally { it / 2 },
-                        exit  = fadeOut(tween(150)) + slideOutHorizontally { it / 2 }
+                        enter = fadeIn(tween(200)) + slideInHorizontally {
+                            it / 2
+                        },
+                        exit = fadeOut(tween(150)) + slideOutHorizontally {
+                            it / 2
+                        }
                     ) {
                         Column(horizontalAlignment = Alignment.End) {
                             Text(
                                 "₪${String.format(java.util.Locale.US, "%.2f", line.refundAmount)}",
-                                color      = Violet500,
-                                style      = MaterialTheme.typography.titleMedium,
+                                color = Violet500,
+                                style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Black
                             )
                             if (line.lostProfit > 0) {
@@ -375,12 +395,11 @@ private fun ReturnLineCard(
                     }
                 }
 
-                // ── Stepper كبسولة عائمة ─────────────────────────
+                // ✅ إصلاح الخلل هنا: الاستناد حصراً إلى isPartialEnabled
                 AnimatedVisibility(
-                    visible = isSelected && line.maxReturnable > 1 &&
-                            (isPartialEnabled || line.maxReturnable == line.invoiceItem.quantity),
+                    visible = isSelected && line.maxReturnable > 1 && isPartialEnabled,
                     enter = expandVertically(spring(Spring.DampingRatioMediumBouncy)) + fadeIn(),
-                    exit  = shrinkVertically(tween(200)) + fadeOut()
+                    exit = shrinkVertically(tween(200)) + fadeOut()
                 ) {
                     Column {
                         Spacer(Modifier.height(14.dp))
@@ -394,59 +413,60 @@ private fun ReturnLineCard(
                         ) {
                             Text(
                                 "الكمية المُرجَعة",
-                                style      = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.SemiBold,
-                                color      = appColors.textSecondary
+                                color = appColors.textSecondary
                             )
-                            // ── Stepper ──────────────────────────
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 StepperButton(
-                                    icon    = Icons.Rounded.Remove,
+                                    icon = Icons.Rounded.Remove,
                                     enabled = line.returnQty > 1,
-                                    onClick = { onQtyChange(line.returnQty - 1) }
+                                    onClick = {
+                                        onQtyChange(line.returnQty - 1)
+                                    }
                                 )
-                                // عداد مع animation
                                 Box(
                                     modifier = Modifier
-                                        .widthIn(min = 72.dp)
-                                        .height(36.dp)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(
-                                            Brush.horizontalGradient(
-                                                listOf(Violet500.copy(0.08f), Cyan500.copy(0.06f))
-                                            )
-                                        ),
+                                    .widthIn(min = 72.dp)
+                                    .height(36.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        Brush.horizontalGradient(
+                                            listOf(Violet500.copy(0.08f), Cyan500.copy(0.06f))
+                                        )
+                                    ),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         "${line.returnQty.toInt()} / ${line.maxReturnable.toInt()}",
-                                        style      = MaterialTheme.typography.bodyMedium,
+                                        style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = FontWeight.Black,
-                                        color      = Violet500
+                                        color = Violet500
                                     )
                                 }
                                 StepperButton(
-                                    icon    = Icons.Rounded.Add,
+                                    icon = Icons.Rounded.Add,
                                     enabled = line.returnQty < line.maxReturnable,
-                                    onClick = { onQtyChange(line.returnQty + 1) }
+                                    onClick = {
+                                        onQtyChange(line.returnQty + 1)
+                                    }
                                 )
                             }
                         }
                     }
                 }
 
-                // ── حالة مكتمل الإرجاع ───────────────────────────
                 if (!isEnabled) {
                     Spacer(Modifier.height(10.dp))
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(appColors.textSubtle.copy(0.06f))
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(appColors.textSubtle.copy(0.06f))
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -455,8 +475,8 @@ private fun ReturnLineCard(
                         Spacer(Modifier.width(6.dp))
                         Text(
                             "تم إرجاع كامل الكمية مسبقاً",
-                            style      = MaterialTheme.typography.labelSmall,
-                            color      = appColors.textSubtle,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = appColors.textSubtle,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
@@ -471,14 +491,16 @@ private fun StepperButton(icon: ImageVector, enabled: Boolean, onClick: () -> Un
     val scale by animateFloatAsState(if (enabled) 1f else 0.85f, label = "btn")
     Box(
         modifier = Modifier
-            .size(36.dp)
-            .graphicsLayer { scaleX = scale; scaleY = scale }
-            .clip(CircleShape)
-            .background(
-                if (enabled) Brush.linearGradient(listOf(Violet500, Cyan500))
-                else Brush.linearGradient(listOf(appColors.border.copy(0.2f), appColors.border.copy(0.2f)))
-            )
-            .clickable(enabled = enabled, onClick = onClick),
+        .size(36.dp)
+        .graphicsLayer {
+            scaleX = scale; scaleY = scale
+        }
+        .clip(CircleShape)
+        .background(
+            if (enabled) Brush.linearGradient(listOf(Violet500, Cyan500))
+            else Brush.linearGradient(listOf(appColors.border.copy(0.2f), appColors.border.copy(0.2f)))
+        )
+        .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Icon(
@@ -489,7 +511,6 @@ private fun StepperButton(icon: ImageVector, enabled: Boolean, onClick: () -> Un
     }
 }
 
-// ── Bottom Sheet التأكيد النهائي ─────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ConfirmReturnBottomSheet(
@@ -504,20 +525,21 @@ private fun ConfirmReturnBottomSheet(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 32.dp),
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Icon
             Box(
                 modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(Violet500.copy(0.1f))
-                    .align(Alignment.CenterHorizontally),
+                .size(64.dp)
+                .clip(CircleShape)
+                .background(Violet500.copy(0.1f))
+                .align(Alignment.CenterHorizontally),
                 contentAlignment = Alignment.Center
-            ) { Icon(Icons.Rounded.Undo, null, tint = Violet500, modifier = Modifier.size(32.dp)) }
+            ) {
+                Icon(Icons.Rounded.Undo, null, tint = Violet500, modifier = Modifier.size(32.dp))
+            }
 
             Text(
                 "تأكيد الإرجاع",
@@ -527,8 +549,8 @@ private fun ConfirmReturnBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ملخص الأصناف
-            state.selectedLines.forEach { line ->
+            state.selectedLines.forEach {
+                line ->
                 Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
                     Text(
                         "${line.productName} × ${line.returnQty.toInt()} ${line.unitLabel}",
@@ -545,7 +567,6 @@ private fun ConfirmReturnBottomSheet(
 
             HorizontalDivider(color = appColors.divider)
 
-            // الإجمالي
             Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
                 Text(
                     "إجمالي الاسترداد",
@@ -558,14 +579,13 @@ private fun ConfirmReturnBottomSheet(
                 )
             }
 
-            // تحذير الخسارة
             if (state.totalLostProfit > 0) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(DebtRed.copy(0.08f))
-                        .padding(12.dp),
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(DebtRed.copy(0.08f))
+                    .padding(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -588,22 +608,23 @@ private fun ConfirmReturnBottomSheet(
                 }
             }
 
-            // أزرار
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
                     onClick = onDismiss,
                     modifier = Modifier
-                        .weight(1f)
-                        .height(52.dp),
+                    .weight(1f)
+                    .height(52.dp),
                     shape = RoundedCornerShape(14.dp)
-                ) { Text("إلغاء") }
+                ) {
+                    Text("إلغاء")
+                }
 
                 Button(
                     onClick = onConfirm,
                     enabled = state.processingState !is com.trader.core.domain.model.ReturnUiState.Loading,
                     modifier = Modifier
-                        .weight(2f)
-                        .height(52.dp),
+                    .weight(2f)
+                    .height(52.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Violet500)
                 ) {
@@ -624,7 +645,6 @@ private fun ConfirmReturnBottomSheet(
     }
 }
 
-// ── حوار الميزة المقفولة ─────────────────────────────────────────
 @Composable
 private fun PartialReturnLockedDialog(onDismiss: () -> Unit, onUpgrade: () -> Unit) {
     AlertDialog(
@@ -638,7 +658,9 @@ private fun PartialReturnLockedDialog(onDismiss: () -> Unit, onUpgrade: () -> Un
                 modifier = Modifier.size(36.dp)
             )
         },
-        title = { Text("ميزة مدفوعة", fontWeight = FontWeight.Bold) },
+        title = {
+            Text("ميزة مدفوعة", fontWeight = FontWeight.Bold)
+        },
         text = {
             Text(
                 "الإرجاع الجزئي (اختيار أصناف محددة) متاح في الخطة المتقدمة والبريميوم.\nالخطة المجانية تدعم الإرجاع الكامل فقط.",
@@ -654,12 +676,13 @@ private fun PartialReturnLockedDialog(onDismiss: () -> Unit, onUpgrade: () -> Un
             }
         },
         dismissButton = {
-            OutlinedButton(onClick = onDismiss) { Text("إلغاء") }
+            OutlinedButton(onClick = onDismiss) {
+                Text("إلغاء")
+            }
         }
     )
 }
 
-// ── Helper composables ────────────────────────────────────────────
 @Composable
 private fun SummaryPill(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector) {
     Surface(shape = RoundedCornerShape(20.dp), color = Color.White.copy(0.15f)) {
