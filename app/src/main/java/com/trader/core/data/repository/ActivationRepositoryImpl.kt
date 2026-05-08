@@ -19,7 +19,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.flow.*
 import com.trader.core.domain.model.StartupStatus
 import com.trader.core.data.remote.ValidationResult
-import com.trader.core.domain.model.SyncStatus // ✅ Added import
+import com.trader.core.domain.model.SyncStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -100,16 +100,23 @@ class ActivationRepositoryImpl(
         productDao.deleteAllProducts()
     }
 
+    // ✅ إصلاح خلل الإشعار الكاذب "تم حذف حسابك"
     override fun observeMerchantStatus(): Flow<MerchantStatus?> = callbackFlow {
         val id = getHardwareId()
         val listener = firestore.collection(COLLECTION_MERCHANTS).document(id)
         .addSnapshotListener {
-            snap, _ ->
-            snap?.let {
+            snap, error ->
+            // 1. إذا كان هناك خطأ (مثل انقطاع النت)، لا تفعل شيئاً
+            if (error != null) return@addSnapshotListener
+
+            if (snap != null && snap.exists()) {
                 repositoryScope.launch {
-                    saveMerchantTier(parseTier(it.getString(FIELD_TIER)))
+                    saveMerchantTier(parseTier(snap.getString(FIELD_TIER)))
                 }
-                trySend(parseStatus(it.getString(FIELD_STATUS)))
+                trySend(parseStatus(snap.getString(FIELD_STATUS)))
+            } else if (snap != null && !snap.exists() && !snap.metadata.isFromCache) {
+                // 2. 🚀 لا ترسل null (حذف الحساب) إلا إذا كان السيرفر هو من أكد الحذف وليس الكاش المحلي!
+                trySend(null)
             }
         }
         awaitClose {
@@ -173,7 +180,6 @@ class ActivationRepositoryImpl(
             }
         }
 
-        // ✅ 3. حفظ المرتجعات كـ SYNCED حتى لا يتم رفعها مجدداً
         data.returns.forEach {
             (invoice, items) ->
             runCatching {
@@ -196,13 +202,24 @@ class ActivationRepositoryImpl(
         }
     }
 
+    // ✅ إصلاح خلل الحظر عند انقطاع الإنترنت
     override suspend fun verifyStatusOnStartup(): StartupStatus {
         val deviceId = getHardwareId()
+        val locallyActivated = isActivated() // فحص هل هو مسجل محلياً
+
         return try {
             val doc = findMerchantDocument(deviceId)
-            if (doc != null) restoreSession(doc) else StartupStatus.NOT_ACTIVATED
+            if (doc != null && doc.exists()) {
+                restoreSession(doc)
+            } else if (locallyActivated) {
+                // 🚀 إذا كان مسجلاً محلياً ولم نجد الدوكيومنت بسبب الكاش، دعه يدخل
+                StartupStatus.ACTIVE
+            } else {
+                StartupStatus.NOT_ACTIVATED
+            }
         } catch (e: Exception) {
-            StartupStatus.OFFLINE
+            // 🚀 إذا فشل الاتصال (أوفلاين)، دعه يدخل إذا كان مسجلاً مسبقاً
+            if (locallyActivated) StartupStatus.ACTIVE else StartupStatus.OFFLINE
         }
     }
 
