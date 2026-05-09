@@ -2,8 +2,14 @@ package com.trader.salesmanager.ui.reports
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.trader.core.domain.model.DailySalesProfit
+import com.trader.core.domain.model.DebtAging
+import com.trader.core.domain.model.FeatureFlags
+import com.trader.core.domain.model.FinancialReportTotals
+import com.trader.core.domain.model.InventoryValue
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.CustomerRepository
+import com.trader.core.domain.repository.ReportsRepository
 import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.DateUtils.todayEnd
 import com.trader.core.util.DateUtils.todayStart
@@ -18,6 +24,7 @@ enum class ReportPeriod {
 data class DaySalesEntry(val label: String, val total: Double, val paid: Double)
 data class CustomerRank(val name: String, val amount: Double)
 data class PaymentShare(val name: String, val amount: Double)
+data class SalesProfitDayEntry(val label: String, val sales: Double, val profit: Double)
 
 // ── تحليل حسب وقت اليوم ─────────────────────────────────────
 data class TimeOfDayAnalysis(
@@ -37,6 +44,12 @@ data class ReportsUiState(
     val paymentShares: List<PaymentShare> = emptyList(),
     val topSpenders: List<CustomerRank> = emptyList(),
     val topDebtors: List<CustomerRank> = emptyList(),
+    val isAdvancedReportsEnabled: Boolean = false,
+    val netProfit: Double = 0.0,
+    val inventoryCostValue: Double = 0.0,
+    val inventorySaleValue: Double = 0.0,
+    val debtAging: DebtAging = DebtAging(),
+    val salesProfitLast7Days: List<SalesProfitDayEntry> = emptyList(),
 
     // ── تقويم ────────────────────────────────────────────────
     val calendarMonth: Int = Calendar.getInstance().get(Calendar.MONTH), // 0-based
@@ -55,7 +68,8 @@ data class ReportsUiState(
 
 class ReportsViewModel(
     private val txRepo: TransactionRepository,
-    private val customerRepo: CustomerRepository
+    private val customerRepo: CustomerRepository,
+    private val reportsRepo: ReportsRepository
 ) : ViewModel() {
 
     private val _period = MutableStateFlow(ReportPeriod.MONTH)
@@ -63,14 +77,68 @@ class ReportsViewModel(
     private val _calendarYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
     private val _selectedDay = MutableStateFlow<Int?>(null)
 
+    private data class PeriodFinancials(
+        val period: ReportPeriod,
+        val totals: FinancialReportTotals
+    )
+
+    private data class ReportAnalyticsState(
+        val periodFinancials: PeriodFinancials,
+        val inventoryValue: InventoryValue,
+        val debtAging: DebtAging,
+        val salesProfitLast7Days: List<SalesProfitDayEntry>,
+        val flags: FeatureFlags.FlagSet
+    )
+
+    private val periodFinancials = _period.flatMapLatest {
+        period ->
+        val (start, end) = periodRange(period)
+        reportsRepo.observeFinancialReportTotals(start, end)
+            .map {
+                totals -> PeriodFinancials(period, totals)
+            }
+    }
+
+    private val lastSevenDaysSalesProfit = reportsRepo
+        .observeDailySalesProfit(
+            startDate = lastSevenDaysStart(),
+            endDate = todayEnd(),
+            timezoneOffsetMillis = currentTimezoneOffsetMillis()
+        )
+        .map(::fillLastSevenDays)
+
+    private val debtAging = reportsRepo.observeDebtAging(
+        oneWeekAgo = daysAgo(7),
+        oneMonthAgo = monthsAgo(1),
+        threeMonthsAgo = monthsAgo(3)
+    )
+
+    private val reportAnalytics = combine(
+        periodFinancials,
+        reportsRepo.observeInventoryValue(),
+        debtAging,
+        lastSevenDaysSalesProfit,
+        FeatureFlags.flow
+    ) {
+        financials, inventoryValue, debtAging, salesProfit, flags ->
+        ReportAnalyticsState(
+            periodFinancials = financials,
+            inventoryValue = inventoryValue,
+            debtAging = debtAging,
+            salesProfitLast7Days = salesProfit,
+            flags = flags
+        )
+    }
+
     val uiState: StateFlow<ReportsUiState> = combine(
         txRepo.getAllTransactions(),
-        _period,
+        reportAnalytics,
         _calendarMonth,
         _calendarYear,
         _selectedDay
     ) {
-        transactions, period, month, year, selectedDay ->
+        transactions, analytics, month, year, selectedDay ->
+        val period = analytics.periodFinancials.period
         val (start, end) = periodRange(period)
         val filtered = transactions.filter {
             it.date in start..end
@@ -101,14 +169,24 @@ class ReportsViewModel(
             buildTodayAnalysis(transactions)
         }
 
+        val totals = analytics.periodFinancials.totals
+        val inventory = analytics.inventoryValue
+
         buildState(filtered, transactions, period).copy(
+            totalAmount = totals.totalSales,
             calendarMonth = month,
             calendarYear = year,
             selectedDay = selectedDay,
             dayTotals = dayTotals,
             selectedDayTransactions = selectedDayTx,
             selectedDaySummary = Triple(selTotal, selPaid, selUnpaid),
-            todayAnalysis = todayAnalysis
+            todayAnalysis = todayAnalysis,
+            isAdvancedReportsEnabled = analytics.flags.isAdvancedReportsEnabled,
+            netProfit = totals.netProfit,
+            inventoryCostValue = inventory.costValue,
+            inventorySaleValue = inventory.saleValue,
+            debtAging = analytics.debtAging,
+            salesProfitLast7Days = analytics.salesProfitLast7Days
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ReportsUiState())
 
@@ -206,6 +284,49 @@ class ReportsViewModel(
         }
         return TimeOfDayAnalysis(morning, afternoon, evening)
     }
+
+    private fun fillLastSevenDays(rows: List<DailySalesProfit>): List<SalesProfitDayEntry> {
+        val byDay = rows.associateBy {
+            it.dayStartMillis
+        }
+        val dayFmt = SimpleDateFormat("dd/MM", Locale.getDefault())
+        val cal = Calendar.getInstance().apply {
+            timeInMillis = lastSevenDaysStart()
+        }
+        return (0 until 7).map {
+            val dayStart = cal.timeInMillis
+            val row = byDay[dayStart]
+            val entry = SalesProfitDayEntry(
+                label = dayFmt.format(Date(dayStart)),
+                sales = row?.sales ?: 0.0,
+                profit = row?.profit ?: 0.0
+            )
+            cal.add(Calendar.DAY_OF_YEAR, 1)
+            entry
+        }
+    }
+
+    private fun lastSevenDaysStart(): Long {
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            add(Calendar.DAY_OF_YEAR, -6)
+        }
+        return cal.timeInMillis
+    }
+
+    private fun daysAgo(days: Int): Long = Calendar.getInstance().apply {
+        add(Calendar.DAY_OF_YEAR, -days)
+    }.timeInMillis
+
+    private fun monthsAgo(months: Int): Long = Calendar.getInstance().apply {
+        add(Calendar.MONTH, -months)
+    }.timeInMillis
+
+    private fun currentTimezoneOffsetMillis(): Long =
+        TimeZone.getDefault().getOffset(System.currentTimeMillis()).toLong()
 
     private fun periodRange(p: ReportPeriod): Pair<Long, Long> {
         val cal = Calendar.getInstance()

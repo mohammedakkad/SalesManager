@@ -14,8 +14,8 @@ import com.trader.core.BuildConfig
  *
  * Remote Config keys (all Boolean unless noted):
  *   month_report, returns_system, inventory_session, stock_reports,
- *   barcode_scanner, advanced_analytics, report_export, admin_chat,
- *   multi_unit, cost_price_tracking
+ *   barcode_scanner, advanced_analytics, is_advanced_reports_enabled,
+ *   report_export, admin_chat, multi_unit, cost_price_tracking
  *
  * Firebase Console → Remote Config → create params with these keys.
  * Set default value = false for FREE, true for PREMIUM condition.
@@ -32,6 +32,7 @@ object RemoteConfigManager {
         "stock_reports"       to false,
         "barcode_scanner"     to false,
         "advanced_analytics"  to false,
+        "is_advanced_reports_enabled" to false,
         "report_export"       to false,
         "admin_chat"          to false,
         "multi_unit"          to false,

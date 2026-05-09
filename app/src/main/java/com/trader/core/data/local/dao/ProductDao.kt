@@ -14,6 +14,11 @@ data class ProductWithUnitsRelation(
     val units: List<ProductUnitEntity>
 )
 
+data class InventoryValueProjection(
+    val costValue: Double,
+    val saleValue: Double
+)
+
 @Dao
 interface ProductDao {
     // ── Products ─────────────────────────────────────────────────
@@ -54,6 +59,17 @@ interface ProductDao {
 
     @Query("UPDATE products SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markProductSynced(id: String)
+
+    @Query(
+        """
+        SELECT
+            COALESCE(SUM(quantityInStock * costPrice), 0.0) AS costValue,
+            COALESCE(SUM(quantityInStock * price), 0.0) AS saleValue
+        FROM product_units
+        WHERE quantityInStock > 0
+        """
+    )
+    fun observeInventoryValue(): Flow<InventoryValueProjection>
 
     @Transaction
     suspend fun upsertProductWithUnits(

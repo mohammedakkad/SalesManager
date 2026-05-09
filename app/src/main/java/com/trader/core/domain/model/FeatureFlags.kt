@@ -47,6 +47,7 @@ object FeatureFlags {
         val weightConversion:  Boolean = false
     ) {
         val isPremium: Boolean get() = tier == MerchantTier.PREMIUM
+        val isAdvancedReportsEnabled: Boolean get() = advancedAnalytics
     }
 
     // ── FREE defaults ───────────────────────────────────────────
@@ -75,6 +76,7 @@ object FeatureFlags {
 
     /** Current snapshot — use `flow.collectAsState()` in Composables */
     val current: FlagSet get() = _flow.value
+    val isAdvancedReportsEnabled: Boolean get() = current.isAdvancedReportsEnabled
 
     /** Called by RemoteConfigManager after fetching config */
     fun applyTier(tier: MerchantTier) {
@@ -90,7 +92,8 @@ object FeatureFlags {
             inventorySession  = overrides["inventory_session"]   ?: base.inventorySession,
             stockReports      = overrides["stock_reports"]       ?: base.stockReports,
             barcodeScanner    = overrides["barcode_scanner"]     ?: base.barcodeScanner,
-            advancedAnalytics = overrides["advanced_analytics"]  ?: base.advancedAnalytics,
+            advancedAnalytics = (overrides["advanced_analytics"] ?: base.advancedAnalytics) ||
+                (overrides["is_advanced_reports_enabled"] ?: false),
             reportExport      = overrides["report_export"]       ?: base.reportExport,
             adminChat         = overrides["admin_chat"]          ?: base.adminChat,
             multiUnit         = overrides["multi_unit"]          ?: base.multiUnit,
