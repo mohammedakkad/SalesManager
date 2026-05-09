@@ -147,12 +147,15 @@ class SubscriptionManager(
                 SubscriptionPlan(
                     obj.getString("id"), obj.getString("arabicLabel"),
                     obj.getString("priceLabel"), obj.getString("periodLabel"),
-                    obj.optString("savingBadge", null), obj.getBoolean("isRecommended")
+                    obj.optionalString("savingBadge"), obj.getBoolean("isRecommended")
                 )
             )
         }
         list
     }.getOrDefault(DEFAULT_PLANS)
+
+    private fun JSONObject.optionalString(key: String): String? =
+        if (has(key) && !isNull(key)) optString(key).takeIf { it.isNotBlank() } else null
 
     private fun serializeMethods(methods: List<SubscriptionPaymentMethod>): String {
         val arr = JSONArray()
