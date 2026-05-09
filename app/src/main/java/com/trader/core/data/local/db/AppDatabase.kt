@@ -21,9 +21,10 @@ import com.trader.core.domain.model.PaymentType
         InventorySessionEntity::class,
         InventorySessionItemEntity::class,
         ReturnInvoiceEntity::class,
-        ReturnItemEntity::class
+        ReturnItemEntity::class,
+        SessionEntity::class
     ],
-    version = 13,
+    version = 14,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -36,6 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun invoiceItemDao(): InvoiceItemDao
     abstract fun inventoryDao(): InventoryDao
     abstract fun returnDao(): ReturnDao
+    abstract fun sessionDao(): SessionDao
 
     companion object {
         const val DB_NAME = "sales_manager.db"
@@ -347,48 +349,18 @@ abstract class AppDatabase : RoomDatabase() {
 
         val MIGRATION_13_14 = object : Migration(13, 14) {
             override fun migrate(db: SupportSQLiteDatabase) {
-
-                // ── 1. تعديل جدول transactions ────────────────────────────
-                db.execSQL("ALTER TABLE transactions ADD COLUMN returnStatus TEXT NOT NULL DEFAULT 'NONE'")
-                db.execSQL("ALTER TABLE transactions ADD COLUMN originalAmount REAL NOT NULL DEFAULT 0.0")
-                // نملأ originalAmount بقيمة amount الحالية للصفوف القديمة
-                db.execSQL("UPDATE transactions SET originalAmount = amount WHERE originalAmount = 0.0")
-
-                // ── 2. جدول return_invoices ───────────────────────────────
                 db.execSQL(
                     """
-            CREATE TABLE IF NOT EXISTS return_invoices (
-                id                    TEXT PRIMARY KEY NOT NULL,
-                originalTransactionId INTEGER NOT NULL,
-                merchantId            TEXT NOT NULL DEFAULT '',
-                returnType            TEXT NOT NULL DEFAULT 'PARTIAL',
-                totalRefund           REAL NOT NULL DEFAULT 0.0,
-                note                  TEXT NOT NULL DEFAULT '',
-                createdAt             LONG NOT NULL,
-                syncStatus            TEXT NOT NULL DEFAULT 'PENDING'
-            )
-        """.trimIndent()
+                    CREATE TABLE IF NOT EXISTS sessions (
+                        id         TEXT NOT NULL PRIMARY KEY,
+                        deviceId   TEXT NOT NULL,
+                        deviceName TEXT NOT NULL,
+                        loginDate  INTEGER NOT NULL,
+                        lastActive INTEGER NOT NULL
+                    )
+                    """.trimIndent()
                 )
-
-                // ── 3. جدول return_items ──────────────────────────────────
-                db.execSQL(
-                    """
-            CREATE TABLE IF NOT EXISTS return_items (
-                id               TEXT PRIMARY KEY NOT NULL,
-                returnInvoiceId  TEXT NOT NULL,
-                productId        TEXT NOT NULL DEFAULT '',
-                productName      TEXT NOT NULL DEFAULT '',
-                unitId           TEXT NOT NULL DEFAULT '',
-                unitLabel        TEXT NOT NULL DEFAULT '',
-                originalQuantity REAL NOT NULL DEFAULT 0.0,
-                returnedQuantity REAL NOT NULL DEFAULT 0.0,
-                pricePerUnit     REAL NOT NULL DEFAULT 0.0,
-                FOREIGN KEY (returnInvoiceId) REFERENCES return_invoices(id) ON DELETE CASCADE
-            )
-        """.trimIndent()
-                )
-
-                db.execSQL("CREATE INDEX IF NOT EXISTS index_return_items_returnInvoiceId ON return_items(returnInvoiceId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_sessions_lastActive ON sessions(lastActive)")
             }
         }
 

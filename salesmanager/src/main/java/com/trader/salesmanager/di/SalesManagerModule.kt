@@ -73,6 +73,9 @@ val salesManagerModule = module {
     single {
         get<AppDatabase>().returnDao()
     }
+    single {
+        get<AppDatabase>().sessionDao()
+    }
 
     // ── Remote ───────────────────────────────────────────────────
     single {
@@ -103,7 +106,7 @@ val salesManagerModule = module {
 
     // ── Repositories ─────────────────────────────────────────────
     single<ActivationRepository> {
-        ActivationRepositoryImpl(androidContext(), get(), get(), get(), get(), get(), get(),get(),get())
+        ActivationRepositoryImpl(androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     single<CustomerRepository> {
         CustomerRepositoryImpl(get(), get(), get(), get())
@@ -170,7 +173,7 @@ val salesManagerModule = module {
         ExportViewModel()
     }
     viewModel {
-        MerchantWatcherViewModel(get(), get())
+        MerchantWatcherViewModel(get(), get(), get())
     }
     viewModel {
         HomeViewModel(get(), get(), get())
