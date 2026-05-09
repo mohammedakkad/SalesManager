@@ -158,6 +158,9 @@ val salesManagerModule = module {
             get()
         )
     }
+    single<ReportsRepository> {
+        ReportsRepositoryImpl(get(), get(), get())
+    }
 
     // ── ViewModels ───────────────────────────────────────────────
     viewModel {
@@ -198,7 +201,7 @@ val salesManagerModule = module {
         )
     }
     viewModel {
-        ReportsViewModel(get(), get())
+        ReportsViewModel(get(), get(), get())
     }
     viewModel { params ->
         DayTransactionsViewModel(get(), params.get())

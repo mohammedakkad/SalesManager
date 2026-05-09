@@ -4,6 +4,17 @@ import androidx.room.*
 import com.trader.core.data.local.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
 
+data class DebtAgingProjection(
+    val lessThanWeekAmount: Double,
+    val oneWeekToOneMonthAmount: Double,
+    val oneMonthToThreeMonthsAmount: Double,
+    val moreThanThreeMonthsAmount: Double,
+    val lessThanWeekCount: Int,
+    val oneWeekToOneMonthCount: Int,
+    val oneMonthToThreeMonthsCount: Int,
+    val moreThanThreeMonthsCount: Int
+)
+
 @Dao
 interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY date DESC")
@@ -33,6 +44,28 @@ interface TransactionDao {
     suspend fun getPaidAmountByDate(startDate: Long, endDate: Long): Double
     @Query("SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE isPaid = 0 AND customerId = :customerId")
     suspend fun getUnpaidAmountByCustomer(customerId: Long): Double
+
+    @Query(
+        """
+        SELECT
+            COALESCE(SUM(CASE WHEN date > :oneWeekAgo THEN amount ELSE 0.0 END), 0.0) AS lessThanWeekAmount,
+            COALESCE(SUM(CASE WHEN date <= :oneWeekAgo AND date > :oneMonthAgo THEN amount ELSE 0.0 END), 0.0) AS oneWeekToOneMonthAmount,
+            COALESCE(SUM(CASE WHEN date <= :oneMonthAgo AND date > :threeMonthsAgo THEN amount ELSE 0.0 END), 0.0) AS oneMonthToThreeMonthsAmount,
+            COALESCE(SUM(CASE WHEN date <= :threeMonthsAgo THEN amount ELSE 0.0 END), 0.0) AS moreThanThreeMonthsAmount,
+            COALESCE(SUM(CASE WHEN date > :oneWeekAgo THEN 1 ELSE 0 END), 0) AS lessThanWeekCount,
+            COALESCE(SUM(CASE WHEN date <= :oneWeekAgo AND date > :oneMonthAgo THEN 1 ELSE 0 END), 0) AS oneWeekToOneMonthCount,
+            COALESCE(SUM(CASE WHEN date <= :oneMonthAgo AND date > :threeMonthsAgo THEN 1 ELSE 0 END), 0) AS oneMonthToThreeMonthsCount,
+            COALESCE(SUM(CASE WHEN date <= :threeMonthsAgo THEN 1 ELSE 0 END), 0) AS moreThanThreeMonthsCount
+        FROM transactions
+        WHERE isPaid = 0
+        """
+    )
+    fun observeDebtAging(
+        oneWeekAgo: Long,
+        oneMonthAgo: Long,
+        threeMonthsAgo: Long
+    ): Flow<DebtAgingProjection>
+
     @Query("DELETE FROM transactions") suspend fun deleteAll()
     
     @Query("UPDATE transactions SET syncStatus = 'SYNCED' WHERE id = :id")

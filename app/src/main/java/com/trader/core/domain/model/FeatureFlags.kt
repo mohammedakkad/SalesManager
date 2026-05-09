@@ -47,6 +47,7 @@ object FeatureFlags {
         val weightConversion:  Boolean = false
     ) {
         val isPremium: Boolean get() = tier == MerchantTier.PREMIUM
+        val isAdvancedReportsEnabled: Boolean get() = advancedAnalytics
     }
 
     // ── FREE defaults ───────────────────────────────────────────
@@ -90,7 +91,9 @@ object FeatureFlags {
             inventorySession  = overrides["inventory_session"]   ?: base.inventorySession,
             stockReports      = overrides["stock_reports"]       ?: base.stockReports,
             barcodeScanner    = overrides["barcode_scanner"]     ?: base.barcodeScanner,
-            advancedAnalytics = overrides["advanced_analytics"]  ?: base.advancedAnalytics,
+            advancedAnalytics = overrides["is_advanced_reports_enabled"]
+                ?: overrides["advanced_analytics"]
+                ?: base.advancedAnalytics,
             reportExport      = overrides["report_export"]       ?: base.reportExport,
             adminChat         = overrides["admin_chat"]          ?: base.adminChat,
             multiUnit         = overrides["multi_unit"]          ?: base.multiUnit,

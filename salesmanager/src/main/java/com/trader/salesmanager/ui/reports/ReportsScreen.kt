@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -55,6 +56,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -67,6 +69,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.trader.core.domain.model.DebtAging
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
@@ -75,6 +78,8 @@ import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
 import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
+import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 import com.trader.salesmanager.util.export.*
 import com.trader.core.domain.model.FeatureFlags
@@ -193,13 +198,28 @@ fun ReportsScreen(
 
             // ── Summary Cards ────────────────────────────────────
             item {
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    SummaryCard("الإجمالي", uiState.totalAmount, Emerald500, Modifier.weight(1f))
-                    SummaryCard("المدفوع", uiState.paidAmount, PaidGreen, Modifier.weight(1f))
-                    SummaryCard("الديون", uiState.unpaidAmount, DebtRed, Modifier.weight(1f))
+                if (uiState.isAdvancedReportsEnabled) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        SummaryCard("إجمالي المبيعات", uiState.totalAmount, Emerald500, Modifier.fillMaxWidth())
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            MetricCard("صافي الربح", uiState.netProfit, PaidGreen, Modifier.weight(1f))
+                            MetricCard("قيمة المخزون", uiState.inventorySaleValue, Violet500, Modifier.weight(1f))
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            MetricCard("تكلفة المخزون", uiState.inventoryCostValue, UnpaidAmber, Modifier.weight(1f))
+                            MetricCard("ديون متأخرة", uiState.debtAging.totalAmount, DebtRed, Modifier.weight(1f))
+                        }
+                    }
+                } else {
+                    SummaryCard("إجمالي المبيعات", uiState.totalAmount, Emerald500, Modifier.fillMaxWidth())
                 }
             }
 
+            if (!uiState.isAdvancedReportsEnabled) {
+                item {
+                    PremiumReportsLockedPreview()
+                }
+            } else {
             // ── تقويم الشهر ──────────────────────────────────────
             item {
                 CalendarCard(
@@ -233,6 +253,23 @@ fun ReportsScreen(
             }
 
             // ── Line Chart ───────────────────────────────────────
+            if (uiState.salesProfitLast7Days.isNotEmpty()) {
+                item {
+                    ChartCard("المبيعات مقابل الربح - آخر 7 أيام") {
+                        SalesProfitBarChart(
+                            data = uiState.salesProfitLast7Days,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(190.dp)
+                        )
+                    }
+                }
+            }
+
+            item {
+                DebtAgingCard(uiState.debtAging)
+            }
+
             if (uiState.dailySales.isNotEmpty()) {
                 item {
                     ChartCard("منحنى المبيعات اليومية") {
@@ -307,6 +344,7 @@ fun ReportsScreen(
                         RankList(uiState.topDebtors, DebtRed)
                     }
                 }
+            }
             }
         }
     }
@@ -823,6 +861,178 @@ private fun SummaryCard(label: String, value: Double, color: Color, modifier: Mo
 }
 
 @Composable
+private fun MetricCard(label: String, value: Double, color: Color, modifier: Modifier) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = color.copy(0.1f)),
+        elevation = CardDefaults.cardElevation(1.dp)
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    Modifier
+                        .size(10.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                )
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+            Text(
+                String.format("%.0f", value),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.ExtraBold,
+                color = color
+            )
+        }
+    }
+}
+
+@Composable
+private fun PremiumReportsLockedPreview() {
+    Card(shape = RoundedCornerShape(22.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Box {
+            Column(
+                modifier = Modifier
+                    .blur(5.dp)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    MetricCard("صافي الربح", 1280.0, PaidGreen, Modifier.weight(1f))
+                    MetricCard("قيمة المخزون", 18450.0, Violet500, Modifier.weight(1f))
+                }
+                SalesProfitBarChart(
+                    data = listOf(
+                        SalesProfitDayEntry("1", 850.0, 230.0),
+                        SalesProfitDayEntry("2", 1200.0, 420.0),
+                        SalesProfitDayEntry("3", 640.0, 180.0),
+                        SalesProfitDayEntry("4", 1580.0, 610.0),
+                        SalesProfitDayEntry("5", 960.0, 300.0),
+                        SalesProfitDayEntry("6", 1420.0, 520.0),
+                        SalesProfitDayEntry("7", 1100.0, 390.0)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                )
+            }
+            Surface(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f)
+            ) {
+                Column(
+                    modifier = Modifier.padding(22.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        Icons.Rounded.Lock,
+                        contentDescription = null,
+                        tint = UnpaidAmber,
+                        modifier = Modifier.size(34.dp)
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    Text(
+                        "التقارير الذكية متاحة في الخطة المميزة",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        "فعّل التحليلات المتقدمة لعرض صافي الربح، قيمة المخزون، أعمار الديون، ومقارنة المبيعات بالربح.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DebtAgingCard(debtAging: DebtAging) {
+    ChartCard("تحليل أعمار الديون") {
+        val rows = listOf(
+            Triple("أقل من أسبوع", debtAging.lessThanWeekAmount, debtAging.lessThanWeekCount),
+            Triple("أسبوع إلى شهر", debtAging.oneWeekToOneMonthAmount, debtAging.oneWeekToOneMonthCount),
+            Triple("شهر إلى 3 أشهر", debtAging.oneMonthToThreeMonthsAmount, debtAging.oneMonthToThreeMonthsCount),
+            Triple("أكثر من 3 أشهر", debtAging.moreThanThreeMonthsAmount, debtAging.moreThanThreeMonthsCount)
+        )
+        val maxAmount = rows.maxOf {
+            it.second
+        }.takeIf {
+            it > 0
+        } ?: 1.0
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            rows.forEachIndexed {
+                index, row ->
+                val color = when (index) {
+                    0 -> UnpaidAmber
+                    1 -> Color(0xFFF97316)
+                    2 -> Color(0xFFEF4444)
+                    else -> DebtRed
+                }
+                AgingRow(
+                    label = row.first,
+                    amount = row.second,
+                    count = row.third,
+                    ratio = (row.second / maxAmount).toFloat(),
+                    color = color
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AgingRow(label: String, amount: Double, count: Int, ratio: Float, color: Color) {
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(label, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
+            Text(
+                "${String.format("%.0f", amount)} · $count",
+                style = MaterialTheme.typography.labelMedium,
+                color = color,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Spacer(Modifier.height(5.dp))
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(color.copy(0.12f))
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth(ratio.coerceIn(0f, 1f))
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(color)
+            )
+        }
+    }
+}
+
+@Composable
 private fun ChartCard(title: String, content: @Composable () -> Unit) {
     Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -928,6 +1138,105 @@ private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
                 Size(barW, unpaidH), androidx.compose.ui.geometry.CornerRadius(4.dp.toPx())
             )
         }
+    }
+}
+
+@Composable
+private fun SalesProfitBarChart(data: List<SalesProfitDayEntry>, modifier: Modifier) {
+    val progress = remember {
+        Animatable(0f)
+    }
+    LaunchedEffect(data) {
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing))
+    }
+    val anim by progress.asState()
+    val axisColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
+
+    Column {
+        Canvas(modifier = modifier) {
+            if (data.isEmpty()) return@Canvas
+            val maxValue = data.maxOf {
+                max(it.sales, abs(it.profit))
+            }.takeIf {
+                it > 0
+            } ?: 1.0
+
+            val baseline = size.height * 0.72f
+            val positiveHeight = baseline
+            val negativeHeight = size.height - baseline
+            val groupW = size.width / data.size
+            val barW = groupW * 0.22f
+            val gap = 3.dp.toPx()
+
+            drawLine(
+                color = axisColor,
+                start = Offset(0f, baseline),
+                end = Offset(size.width, baseline),
+                strokeWidth = 1.dp.toPx()
+            )
+
+            data.forEachIndexed {
+                index, entry ->
+                val groupLeft = index * groupW
+                val salesLeft = groupLeft + groupW * 0.25f
+                val profitLeft = salesLeft + barW + gap
+                val salesH = (entry.sales / maxValue * positiveHeight * anim).toFloat()
+                val profitRatio = (abs(entry.profit) / maxValue).toFloat()
+                val profitH = if (entry.profit >= 0) {
+                    profitRatio * positiveHeight * anim
+                } else {
+                    profitRatio * negativeHeight * anim
+                }
+
+                drawRoundRect(
+                    color = Emerald500,
+                    topLeft = Offset(salesLeft, baseline - salesH),
+                    size = Size(barW, salesH),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(5.dp.toPx())
+                )
+                drawRoundRect(
+                    color = if (entry.profit >= 0) PaidGreen else DebtRed,
+                    topLeft = Offset(
+                        profitLeft,
+                        if (entry.profit >= 0) baseline - profitH else baseline
+                    ),
+                    size = Size(barW, profitH),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(5.dp.toPx())
+                )
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ColorDotLabel("المبيعات", Emerald500)
+            ColorDotLabel("الربح", PaidGreen)
+            Text(
+                data.joinToString("  ") {
+                    it.label
+                },
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Composable
+private fun ColorDotLabel(label: String, color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+        Box(
+            Modifier
+                .size(8.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
