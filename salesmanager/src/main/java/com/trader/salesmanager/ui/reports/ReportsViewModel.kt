@@ -14,6 +14,7 @@ import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.DateUtils.todayEnd
 import com.trader.core.util.DateUtils.todayStart
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -77,17 +78,21 @@ class ReportsViewModel(
     private val _calendarYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
     private val _selectedDay = MutableStateFlow<Int?>(null)
 
+    private val _uiState = MutableStateFlow(ReportsUiState())
+    val uiState: StateFlow<ReportsUiState> = _uiState.asStateFlow()
+
+    private var hasFetchedAdvancedAnalytics = false
+
     private data class PeriodFinancials(
         val period: ReportPeriod,
         val totals: FinancialReportTotals
     )
 
-    private data class ReportAnalyticsState(
-        val periodFinancials: PeriodFinancials,
+    private data class AdvancedAnalyticsState(
+        val netProfit: Double,
         val inventoryValue: InventoryValue,
         val debtAging: DebtAging,
-        val salesProfitLast7Days: List<SalesProfitDayEntry>,
-        val flags: FeatureFlags.FlagSet
+        val salesProfitLast7Days: List<SalesProfitDayEntry>
     )
 
     private val periodFinancials = _period.flatMapLatest {
@@ -113,32 +118,107 @@ class ReportsViewModel(
         threeMonthsAgo = monthsAgo(3)
     )
 
-    private val reportAnalytics = combine(
-        periodFinancials,
-        reportsRepo.observeInventoryValue(),
-        debtAging,
-        lastSevenDaysSalesProfit,
-        FeatureFlags.flow
-    ) {
-        financials, inventoryValue, debtAging, salesProfit, flags ->
-        ReportAnalyticsState(
-            periodFinancials = financials,
-            inventoryValue = inventoryValue,
-            debtAging = debtAging,
-            salesProfitLast7Days = salesProfit,
-            flags = flags
-        )
+    init {
+        observeBaseReports()
+        observeFeatureFlags()
     }
 
-    val uiState: StateFlow<ReportsUiState> = combine(
-        txRepo.getAllTransactions(),
-        reportAnalytics,
-        _calendarMonth,
-        _calendarYear,
-        _selectedDay
-    ) {
-        transactions, analytics, month, year, selectedDay ->
-        val period = analytics.periodFinancials.period
+    private fun observeFeatureFlags() {
+        viewModelScope.launch {
+            FeatureFlags.flow.collect {
+                flags ->
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        isAdvancedReportsEnabled = flags.isAdvancedReportsEnabled
+                    )
+                }
+                if (flags.isAdvancedReportsEnabled && !hasFetchedAdvancedAnalytics) {
+                    hasFetchedAdvancedAnalytics = true
+                    observeAdvancedAnalytics()
+                }
+            }
+        }
+    }
+
+    private fun observeBaseReports() {
+        viewModelScope.launch {
+            combine(
+                txRepo.getAllTransactions(),
+                periodFinancials,
+                _calendarMonth,
+                _calendarYear,
+                _selectedDay
+            ) {
+                transactions, financials, month, year, selectedDay ->
+                buildBaseState(
+                    transactions = transactions,
+                    periodFinancials = financials,
+                    month = month,
+                    year = year,
+                    selectedDay = selectedDay
+                )
+            }.collect {
+                baseState ->
+                _uiState.update {
+                    current ->
+                    baseState.copy(
+                        isLoading = current.isLoading,
+                        isAdvancedReportsEnabled = current.isAdvancedReportsEnabled,
+                        netProfit = if (current.isAdvancedReportsEnabled) current.netProfit else 0.0,
+                        inventoryCostValue = if (current.isAdvancedReportsEnabled) current.inventoryCostValue else 0.0,
+                        inventorySaleValue = if (current.isAdvancedReportsEnabled) current.inventorySaleValue else 0.0,
+                        debtAging = if (current.isAdvancedReportsEnabled) current.debtAging else DebtAging(),
+                        salesProfitLast7Days = if (current.isAdvancedReportsEnabled) current.salesProfitLast7Days else emptyList()
+                    )
+                }
+            }
+        }
+    }
+
+    private fun observeAdvancedAnalytics() {
+        viewModelScope.launch {
+            combine(
+                periodFinancials,
+                reportsRepo.observeInventoryValue(),
+                debtAging,
+                lastSevenDaysSalesProfit
+            ) {
+                financials, inventoryValue, debtAgingValue, salesProfit ->
+                AdvancedAnalyticsState(
+                    netProfit = financials.totals.netProfit,
+                    inventoryValue = inventoryValue,
+                    debtAging = debtAgingValue,
+                    salesProfitLast7Days = salesProfit
+                )
+            }.collect {
+                analytics ->
+                _uiState.update {
+                    current ->
+                    if (!current.isAdvancedReportsEnabled) {
+                        current
+                    } else {
+                        current.copy(
+                            netProfit = analytics.netProfit,
+                            inventoryCostValue = analytics.inventoryValue.costValue,
+                            inventorySaleValue = analytics.inventoryValue.saleValue,
+                            debtAging = analytics.debtAging,
+                            salesProfitLast7Days = analytics.salesProfitLast7Days
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun buildBaseState(
+        transactions: List<Transaction>,
+        periodFinancials: PeriodFinancials,
+        month: Int,
+        year: Int,
+        selectedDay: Int?
+    ): ReportsUiState {
+        val period = periodFinancials.period
         val (start, end) = periodRange(period)
         val filtered = transactions.filter {
             it.date in start..end
@@ -169,26 +249,17 @@ class ReportsViewModel(
             buildTodayAnalysis(transactions)
         }
 
-        val totals = analytics.periodFinancials.totals
-        val inventory = analytics.inventoryValue
-
-        buildState(filtered, transactions, period).copy(
-            totalAmount = totals.totalSales,
+        return buildState(filtered, transactions, period).copy(
+            totalAmount = periodFinancials.totals.totalSales,
             calendarMonth = month,
             calendarYear = year,
             selectedDay = selectedDay,
             dayTotals = dayTotals,
             selectedDayTransactions = selectedDayTx,
             selectedDaySummary = Triple(selTotal, selPaid, selUnpaid),
-            todayAnalysis = todayAnalysis,
-            isAdvancedReportsEnabled = analytics.flags.isAdvancedReportsEnabled,
-            netProfit = totals.netProfit,
-            inventoryCostValue = inventory.costValue,
-            inventorySaleValue = inventory.saleValue,
-            debtAging = analytics.debtAging,
-            salesProfitLast7Days = analytics.salesProfitLast7Days
+            todayAnalysis = todayAnalysis
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ReportsUiState())
+    }
 
     fun setPeriod(p: ReportPeriod) {
         _period.value = p
@@ -429,8 +500,7 @@ class ReportsViewModel(
             dailySales = dailySales,
             paymentShares = paymentShares,
             topSpenders = topSpenders,
-            topDebtors = topDebtors,
-            isLoading = false
+            topDebtors = topDebtors
         )
     }
 }
