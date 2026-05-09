@@ -2,9 +2,7 @@ name: Build SalesManager Release APK
 
 on:
   push:
-    branches:
-      - production
-      - develop
+    branches: ['**']
     tags:
       - 'salesmanager-v*'       # إصدار برودكشن  → salesmanager-v1.0.1
       - 'salesmanagertest-v*'   # إصدار اختبار   → salesmanagertest-v1.0.1
