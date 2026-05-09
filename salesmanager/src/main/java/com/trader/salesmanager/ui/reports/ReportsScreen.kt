@@ -57,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
@@ -86,8 +87,10 @@ import com.trader.salesmanager.ui.components.PremiumLockChip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.map
 import com.trader.core.data.local.appDataStore
+import com.trader.salesmanager.ui.theme.Cyan500
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,16 +99,16 @@ fun ReportsScreen(
     onViewDayTransactions: (Long) -> Unit = {},
     viewModel: ReportsViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val storeName by context.appDataStore.data
-    .map {
-        it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
-    }
-    .collectAsState(initial = "")
+        .map {
+            it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+        }
+        .collectAsState(initial = "")
 
     val exportVm: ExportViewModel = koinViewModel()
-    val exportState by exportVm.state.collectAsState()
+    val exportState by exportVm.state.collectAsStateWithLifecycle()
     var showExportSheet by remember {
         mutableStateOf(false)
     }
@@ -120,13 +123,19 @@ fun ReportsScreen(
         ExportSuccessBottomSheet(
             state = success,
             onShare = {
-                ExportManager.shareFile(context, file, success.type.mimeType); showExportSheet = false
+                ExportManager.shareFile(context, file, success.type.mimeType); showExportSheet =
+                false
             },
             onWhatsApp = {
-                ExportManager.shareToWhatsApp(context, file, success.type.mimeType); showExportSheet = false
+                ExportManager.shareToWhatsApp(
+                    context,
+                    file,
+                    success.type.mimeType
+                ); showExportSheet = false
             },
             onDownload = {
-                ExportManager.saveToDownloads(context, file, success.fileName); showExportSheet = false; exportVm.reset()
+                ExportManager.saveToDownloads(context, file, success.fileName); showExportSheet =
+                false; exportVm.reset()
             },
             onDismiss = {
                 showExportSheet = false; exportVm.reset()
@@ -149,7 +158,7 @@ fun ReportsScreen(
                 actions = {
                     val isExporting = exportState is ExportState.Loading
                     // ── Export — Premium only ──────────────────────────
-                    val flags by FeatureFlags.flow.collectAsState()
+                    val flags by FeatureFlags.flow.collectAsStateWithLifecycle()
                     if (flags.reportExport) {
                         IconButton(
                             onClick = {
@@ -167,9 +176,17 @@ fun ReportsScreen(
                             }
                         ) {
                             if (isExporting) {
-                                CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = Emerald500)
+                                CircularProgressIndicator(
+                                    Modifier.size(18.dp),
+                                    strokeWidth = 2.dp,
+                                    color = Emerald500
+                                )
                             } else {
-                                Icon(Icons.Rounded.Analytics, contentDescription = "تصدير Excel", tint = Emerald500)
+                                Icon(
+                                    Icons.Rounded.Analytics,
+                                    contentDescription = "تصدير Excel",
+                                    tint = Emerald500
+                                )
                             }
                         }
                     } else {
@@ -179,12 +196,11 @@ fun ReportsScreen(
                 }
             )
         }
-    ) {
-        padding ->
+    ) { padding ->
         LazyColumn(
             modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = padding.calculateBottomPadding()),
+                .fillMaxSize()
+                .padding(padding),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -197,18 +213,48 @@ fun ReportsScreen(
             item {
                 if (uiState.isAdvancedReportsEnabled) {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        SummaryCard("إجمالي المبيعات", uiState.totalAmount, Emerald500, Modifier.fillMaxWidth())
+                        SummaryCard(
+                            "إجمالي المبيعات",
+                            uiState.totalAmount,
+                            Emerald500,
+                            Modifier.fillMaxWidth()
+                        )
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            MetricCard("صافي الربح", uiState.netProfit, PaidGreen, Modifier.weight(1f))
-                            MetricCard("قيمة المخزون", uiState.inventorySaleValue, Violet500, Modifier.weight(1f))
+                            MetricCard(
+                                "صافي الربح",
+                                uiState.netProfit,
+                                PaidGreen,
+                                Modifier.weight(1f)
+                            )
+                            MetricCard(
+                                "قيمة المخزون",
+                                uiState.inventorySaleValue,
+                                Violet500,
+                                Modifier.weight(1f)
+                            )
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            MetricCard("تكلفة المخزون", uiState.inventoryCostValue, UnpaidAmber, Modifier.weight(1f))
-                            MetricCard("ديون متأخرة", uiState.debtAging.totalAmount, DebtRed, Modifier.weight(1f))
+                            MetricCard(
+                                "تكلفة المخزون",
+                                uiState.inventoryCostValue,
+                                UnpaidAmber,
+                                Modifier.weight(1f)
+                            )
+                            MetricCard(
+                                "ديون متأخرة",
+                                uiState.debtAging.totalAmount,
+                                DebtRed,
+                                Modifier.weight(1f)
+                            )
                         }
                     }
                 } else {
-                    SummaryCard("إجمالي المبيعات", uiState.totalAmount, Emerald500, Modifier.fillMaxWidth())
+                    SummaryCard(
+                        "إجمالي المبيعات",
+                        uiState.totalAmount,
+                        Emerald500,
+                        Modifier.fillMaxWidth()
+                    )
                 }
             }
 
@@ -217,131 +263,134 @@ fun ReportsScreen(
                     PremiumReportsLockedPreview()
                 }
             } else {
-            // ── تقويم الشهر ──────────────────────────────────────
-            item {
-                CalendarCard(
-                    month = uiState.calendarMonth,
-                    year = uiState.calendarYear,
-                    dayTotals = uiState.dayTotals,
-                    selectedDay = uiState.selectedDay,
-                    onDayClick = viewModel::selectDay,
-                    onPrev = viewModel::prevMonth,
-                    onNext = viewModel::nextMonth
-                )
-            }
-
-            // ── عمليات اليوم المحدد ──────────────────────────────
-            if (uiState.selectedDay != null) {
+                // ── تقويم الشهر ──────────────────────────────────────
                 item {
-                    SelectedDayDetail(
-                        onViewTransactions = onViewDayTransactions,
-                        day = uiState.selectedDay!!,
+                    CalendarCard(
                         month = uiState.calendarMonth,
                         year = uiState.calendarYear,
-                        transactions = uiState.selectedDayTransactions,
-                        summary = uiState.selectedDaySummary
+                        dayTotals = uiState.dayTotals,
+                        selectedDay = uiState.selectedDay,
+                        onDayClick = viewModel::selectDay,
+                        onPrev = viewModel::prevMonth,
+                        onNext = viewModel::nextMonth
                     )
                 }
-            }
 
-            // ── تحليل اليوم (صباح / ظهر / مساء) ─────────────────
-            item {
-                TodayAnalysisCard(analysis = uiState.todayAnalysis)
-            }
-
-            // ── Line Chart ───────────────────────────────────────
-            if (uiState.salesProfitLast7Days.isNotEmpty()) {
-                item {
-                    ChartCard("المبيعات مقابل الربح - آخر 7 أيام") {
-                        SalesProfitBarChart(
-                            data = uiState.salesProfitLast7Days,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(190.dp)
+                // ── عمليات اليوم المحدد ──────────────────────────────
+                if (uiState.selectedDay != null) {
+                    item {
+                        SelectedDayDetail(
+                            onViewTransactions = onViewDayTransactions,
+                            day = uiState.selectedDay!!,
+                            month = uiState.calendarMonth,
+                            year = uiState.calendarYear,
+                            transactions = uiState.selectedDayTransactions,
+                            summary = uiState.selectedDaySummary
                         )
                     }
                 }
-            }
 
-            item {
-                DebtAgingCard(uiState.debtAging)
-            }
-
-            if (uiState.dailySales.isNotEmpty()) {
+                // ── تحليل اليوم (صباح / ظهر / مساء) ─────────────────
                 item {
-                    ChartCard("منحنى المبيعات اليومية") {
-                        LineChart(uiState.dailySales, Modifier
-                            .fillMaxWidth()
-                            .height(180.dp))
-                    }
+                    TodayAnalysisCard(analysis = uiState.todayAnalysis)
                 }
-            }
 
-            // ── Bar Chart ────────────────────────────────────────
-            if (uiState.dailySales.isNotEmpty()) {
-                item {
-                    ChartCard("مدفوع مقابل غير مدفوع") {
-                        BarChart(uiState.dailySales, Modifier
-                            .fillMaxWidth()
-                            .height(160.dp))
-                    }
-                }
-            }
-
-            // ── Donut Chart ──────────────────────────────────────
-            if (uiState.paymentShares.isNotEmpty()) {
-                item {
-                    ChartCard("توزيع طرق الدفع") {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            DonutChart(uiState.paymentShares, Modifier.size(140.dp))
-                            Spacer(Modifier.width(16.dp))
-                            val donutColors = listOf(
-                                Emerald500,
-                                Color(0xFF3B82F6),
-                                Color(0xFFF59E0B),
-                                Color(0xFFEF4444),
-                                Color(0xFF8B5CF6)
+                // ── Line Chart ───────────────────────────────────────
+                if (uiState.salesProfitLast7Days.isNotEmpty()) {
+                    item {
+                        ChartCard("المبيعات مقابل الربح - آخر 7 أيام") {
+                            SalesProfitBarChart(
+                                data = uiState.salesProfitLast7Days,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(190.dp)
                             )
-                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                uiState.paymentShares.forEachIndexed {
-                                    i, share ->
-                                    val total =
-                                    uiState.paymentShares.sumOf {
-                                        it.amount
-                                    }.takeIf {
-                                        it > 0
+                        }
+                    }
+                }
+
+                item {
+                    DebtAgingCard(uiState.debtAging)
+                }
+
+                if (uiState.dailySales.isNotEmpty()) {
+                    item {
+                        ChartCard("منحنى المبيعات اليومية") {
+                            LineChart(
+                                uiState.dailySales, Modifier
+                                    .fillMaxWidth()
+                                    .height(180.dp)
+                            )
+                        }
+                    }
+                }
+
+                // ── Bar Chart ────────────────────────────────────────
+                if (uiState.dailySales.isNotEmpty()) {
+                    item {
+                        ChartCard("مدفوع مقابل غير مدفوع") {
+                            BarChart(
+                                uiState.dailySales, Modifier
+                                    .fillMaxWidth()
+                                    .height(160.dp)
+                            )
+                        }
+                    }
+                }
+
+                // ── Donut Chart ──────────────────────────────────────
+                if (uiState.paymentShares.isNotEmpty()) {
+                    item {
+                        ChartCard("توزيع طرق الدفع") {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                DonutChart(uiState.paymentShares, Modifier.size(140.dp))
+                                Spacer(Modifier.width(16.dp))
+                                val donutColors = listOf(
+                                    Emerald500,
+                                    Color(0xFF3B82F6),
+                                    Color(0xFFF59E0B),
+                                    Color(0xFFEF4444),
+                                    Color(0xFF8B5CF6)
+                                )
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    uiState.paymentShares.forEachIndexed { i, share ->
+                                        val total =
+                                            uiState.paymentShares.sumOf {
+                                                it.amount
+                                            }.takeIf {
+                                                it > 0
+                                            }
+                                                ?: 1.0
+                                        LegendItem(
+                                            share.name,
+                                            (share.amount / total * 100).toInt(),
+                                            donutColors[i % donutColors.size]
+                                        )
                                     }
-                                    ?: 1.0
-                                    LegendItem(
-                                        share.name,
-                                        (share.amount / total * 100).toInt(),
-                                        donutColors[i % donutColors.size]
-                                    )
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            // ── Top Spenders / Debtors ───────────────────────────
-            if (uiState.topSpenders.isNotEmpty()) {
-                item {
-                    ChartCard("أعلى 5 زبائن شراءً") {
-                        RankList(
-                            uiState.topSpenders,
-                            Emerald500
-                        )
+                // ── Top Spenders / Debtors ───────────────────────────
+                if (uiState.topSpenders.isNotEmpty()) {
+                    item {
+                        ChartCard("أعلى 5 زبائن شراءً") {
+                            RankList(
+                                uiState.topSpenders,
+                                Emerald500
+                            )
+                        }
                     }
                 }
-            }
-            if (uiState.topDebtors.isNotEmpty()) {
-                item {
-                    ChartCard("أعلى 5 زبائن ديناً") {
-                        RankList(uiState.topDebtors, DebtRed)
+                if (uiState.topDebtors.isNotEmpty()) {
+                    item {
+                        ChartCard("أعلى 5 زبائن ديناً") {
+                            RankList(uiState.topDebtors, DebtRed)
+                        }
                     }
                 }
-            }
             }
         }
     }
@@ -406,8 +455,7 @@ private fun CalendarCard(
             // أيام الأسبوع
             val weekDays = listOf("أح", "إث", "ثل", "أر", "خم", "جم", "سب")
             Row(modifier = Modifier.fillMaxWidth()) {
-                weekDays.forEach {
-                    d ->
+                weekDays.forEach { d ->
                     Text(
                         d, modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center,
@@ -433,13 +481,13 @@ private fun CalendarCard(
                         } else {
                             val hasData = dayTotals.containsKey(day)
                             val intensity =
-                            if (hasData) (dayTotals[day]!! / maxDayTotal).toFloat() else 0f
+                                if (hasData) (dayTotals[day]!! / maxDayTotal).toFloat() else 0f
                             val isSelected = day == selectedDay
                             val isToday = run {
                                 val now = Calendar.getInstance()
                                 day == now.get(Calendar.DAY_OF_MONTH) &&
-                                month == now.get(Calendar.MONTH) &&
-                                year == now.get(Calendar.YEAR)
+                                        month == now.get(Calendar.MONTH) &&
+                                        year == now.get(Calendar.YEAR)
                             }
 
                             CalendarDay(
@@ -481,11 +529,11 @@ private fun CalendarDay(
 
     Box(
         modifier = modifier
-        .aspectRatio(1f)
-        .padding(2.dp)
-        .clip(CircleShape)
-        .background(bgColor)
-        .clickable(onClick = onClick),
+            .aspectRatio(1f)
+            .padding(2.dp)
+            .clip(CircleShape)
+            .background(bgColor)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -498,9 +546,9 @@ private fun CalendarDay(
             if (hasData && !isSelected) {
                 Box(
                     Modifier
-                    .size(4.dp)
-                    .clip(CircleShape)
-                    .background(Emerald500)
+                        .size(4.dp)
+                        .clip(CircleShape)
+                        .background(Emerald500)
                 )
             }
         }
@@ -527,9 +575,9 @@ private fun SelectedDayDetail(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(Emerald500),
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(Emerald500),
                     Alignment.Center
                 ) {
                     Text(
@@ -550,8 +598,8 @@ private fun SelectedDayDetail(
                 // لا توجد عمليات
                 Box(
                     modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 24.dp),
+                        .fillMaxWidth()
+                        .padding(vertical = 24.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -581,20 +629,19 @@ private fun SelectedDayDetail(
                 Spacer(Modifier.height(10.dp))
 
                 // قائمة العمليات
-                transactions.take(5).forEach {
-                    tx ->
+                transactions.take(5).forEach { tx ->
                     Row(
                         modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 5.dp),
+                            .fillMaxWidth()
+                            .padding(vertical = 5.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Box(
                             Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
-                            .background(if (tx.isPaid) PaidGreen else UnpaidAmber)
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(if (tx.isPaid) PaidGreen else UnpaidAmber)
                         )
                         Text(
                             tx.customerName.ifEmpty {
@@ -619,8 +666,8 @@ private fun SelectedDayDetail(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp),
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -639,8 +686,8 @@ private fun SelectedDayDetail(
                         onViewTransactions(cal.timeInMillis)
                     },
                     modifier = Modifier
-                    .fillMaxWidth()
-                    .height(46.dp),
+                        .fillMaxWidth()
+                        .height(46.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
                 ) {
@@ -678,9 +725,9 @@ private fun DaySummaryChip(label: String, value: Double, color: Color, modifier:
 @Composable
 private fun TodayAnalysisCard(analysis: TimeOfDayAnalysis) {
     val total = (analysis.morningTotal + analysis.afternoonTotal + analysis.eveningTotal)
-    .takeIf {
-        it > 0
-    } ?: 1.0
+        .takeIf {
+            it > 0
+        } ?: 1.0
 
     Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -702,8 +749,7 @@ private fun TodayAnalysisCard(analysis: TimeOfDayAnalysis) {
                 Triple("🌅 الصباح", analysis.morningTotal, Color(0xFFF59E0B)),
                 Triple("☀️ الظهيرة", analysis.afternoonTotal, Color(0xFF06B6D4)),
                 Triple("🌙 المساء", analysis.eveningTotal, Color(0xFF8B5CF6))
-            ).forEach {
-                (label, value, color) ->
+            ).forEach { (label, value, color) ->
                 TimeSlotRow(label, value, (value / total).toFloat(), color)
                 Spacer(Modifier.height(10.dp))
             }
@@ -739,17 +785,17 @@ private fun TimeSlotRow(label: String, value: Double, ratio: Float, color: Color
         Spacer(Modifier.height(4.dp))
         Box(
             modifier = Modifier
-            .fillMaxWidth()
-            .height(8.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(color.copy(0.12f))
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(color.copy(0.12f))
         ) {
             Box(
                 modifier = Modifier
-                .fillMaxWidth(anim)
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(4.dp))
-                .background(Brush.horizontalGradient(listOf(color.copy(0.7f), color)))
+                    .fillMaxWidth(anim)
+                    .fillMaxHeight()
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Brush.horizontalGradient(listOf(color.copy(0.7f), color)))
             )
         }
     }
@@ -762,11 +808,11 @@ private fun PeriodSwitcher(
     onSelect: (ReportPeriod) -> Unit,
     onUpgrade: () -> Unit = {}
 ) {
-    val flags by FeatureFlags.flow.collectAsState()
+    val flags by FeatureFlags.flow.collectAsStateWithLifecycle()
 
     val allLabels = mapOf(
         ReportPeriod.TODAY to "اليوم",
-        ReportPeriod.WEEK  to "الأسبوع",
+        ReportPeriod.WEEK to "الأسبوع",
         ReportPeriod.MONTH to "الشهر"
     )
     Row(
@@ -776,7 +822,7 @@ private fun PeriodSwitcher(
             .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         allLabels.forEach { (period, label) ->
-            val isSelected  = period == selected
+            val isSelected = period == selected
             val isMonthLocked = period == ReportPeriod.MONTH && !flags.monthReport
 
             Box(
@@ -787,8 +833,8 @@ private fun PeriodSwitcher(
                     .background(
                         when {
                             isMonthLocked -> Color.Transparent
-                            isSelected    -> Emerald500
-                            else          -> Color.Transparent
+                            isSelected -> Emerald500
+                            else -> Color.Transparent
                         }
                     ),
                 contentAlignment = Alignment.Center
@@ -804,9 +850,12 @@ private fun PeriodSwitcher(
                         Text(
                             label,
                             color = when {
-                                isMonthLocked -> MaterialTheme.colorScheme.onSurfaceVariant.copy(0.4f)
-                                isSelected    -> Color.White
-                                else          -> MaterialTheme.colorScheme.onSurfaceVariant
+                                isMonthLocked -> MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                    0.4f
+                                )
+
+                                isSelected -> Color.White
+                                else -> MaterialTheme.colorScheme.onSurfaceVariant
                             },
                             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                         )
@@ -863,7 +912,6 @@ private fun MetricCard(label: String, value: Double, color: Color, modifier: Mod
         modifier = modifier,
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = color.copy(0.1f)),
-        elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -964,9 +1012,21 @@ private fun DebtAgingCard(debtAging: DebtAging) {
     ChartCard("تحليل أعمار الديون") {
         val rows = listOf(
             Triple("أقل من أسبوع", debtAging.lessThanWeekAmount, debtAging.lessThanWeekCount),
-            Triple("أسبوع إلى شهر", debtAging.oneWeekToOneMonthAmount, debtAging.oneWeekToOneMonthCount),
-            Triple("شهر إلى 3 أشهر", debtAging.oneMonthToThreeMonthsAmount, debtAging.oneMonthToThreeMonthsCount),
-            Triple("أكثر من 3 أشهر", debtAging.moreThanThreeMonthsAmount, debtAging.moreThanThreeMonthsCount)
+            Triple(
+                "أسبوع إلى شهر",
+                debtAging.oneWeekToOneMonthAmount,
+                debtAging.oneWeekToOneMonthCount
+            ),
+            Triple(
+                "شهر إلى 3 أشهر",
+                debtAging.oneMonthToThreeMonthsAmount,
+                debtAging.oneMonthToThreeMonthsCount
+            ),
+            Triple(
+                "أكثر من 3 أشهر",
+                debtAging.moreThanThreeMonthsAmount,
+                debtAging.moreThanThreeMonthsCount
+            )
         )
         val maxAmount = rows.maxOf {
             it.second
@@ -974,8 +1034,7 @@ private fun DebtAgingCard(debtAging: DebtAging) {
             it > 0
         } ?: 1.0
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            rows.forEachIndexed {
-                index, row ->
+            rows.forEachIndexed { index, row ->
                 val color = when (index) {
                     0 -> UnpaidAmber
                     1 -> Color(0xFFF97316)
@@ -1047,9 +1106,9 @@ private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
     }
     LaunchedEffect(Unit) {
         progress.snapTo(0f); progress.animateTo(
-            1f,
-            tween(1500, easing = FastOutSlowInEasing)
-        )
+        1f,
+        tween(1500, easing = FastOutSlowInEasing)
+    )
     }
     val anim by progress.asState()
 
@@ -1061,18 +1120,16 @@ private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
             it > 0
         } ?: 1.0
         val stepX = size.width / (data.size - 1).coerceAtLeast(1)
-        val points = data.mapIndexed {
-            i, e ->
+        val points = data.mapIndexed { i, e ->
             Offset(
                 i * stepX,
                 size.height * (1f - (e.total / maxVal).toFloat())
             )
         }
         val visible =
-        points.take((points.size * anim).toInt().coerceAtLeast(1).coerceAtMost(points.size))
+            points.take((points.size * anim).toInt().coerceAtLeast(1).coerceAtMost(points.size))
         val path = Path().apply {
-            visible.forEachIndexed {
-                i, pt ->
+            visible.forEachIndexed { i, pt ->
                 if (i == 0) moveTo(pt.x, pt.y) else lineTo(
                     pt.x,
                     pt.y
@@ -1082,8 +1139,7 @@ private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
         }
         drawPath(path, Brush.verticalGradient(listOf(Emerald500.copy(0.15f), Color.Transparent)))
         val linePath = Path().apply {
-            visible.forEachIndexed {
-                i, pt ->
+            visible.forEachIndexed { i, pt ->
                 if (i == 0) moveTo(pt.x, pt.y) else lineTo(
                     pt.x,
                     pt.y
@@ -1091,8 +1147,7 @@ private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
             }
         }
         drawPath(linePath, Emerald500, style = Stroke(3.dp.toPx(), cap = StrokeCap.Round))
-        visible.forEach {
-            pt ->
+        visible.forEach { pt ->
             drawCircle(Color.White, 5.dp.toPx(), pt)
             drawCircle(Emerald500, 3.dp.toPx(), pt)
         }
@@ -1106,9 +1161,9 @@ private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
     }
     LaunchedEffect(Unit) {
         progress.snapTo(0f); progress.animateTo(
-            1f,
-            tween(1200, easing = FastOutSlowInEasing)
-        )
+        1f,
+        tween(1200, easing = FastOutSlowInEasing)
+    )
     }
     val anim by progress.asState()
 
@@ -1121,8 +1176,7 @@ private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
         } ?: 1.0
         val groupW = size.width / data.size
         val barW = groupW * 0.35f
-        data.forEachIndexed {
-            i, entry ->
+        data.forEachIndexed { i, entry ->
             val left = i * groupW + barW * 0.2f
             val paidH = (entry.paid / maxVal * size.height * anim).toFloat()
             val unpaidH = ((entry.total - entry.paid) / maxVal * size.height * anim).toFloat()
@@ -1148,92 +1202,152 @@ private fun SalesProfitBarChart(data: List<SalesProfitDayEntry>, modifier: Modif
         progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing))
     }
     val anim by progress.asState()
+
+    val gridColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
     val axisColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
 
-    Column {
-        Canvas(modifier = modifier) {
-            if (data.isEmpty()) return@Canvas
-            val maxValue = data.maxOf {
-                max(it.sales, abs(it.profit))
-            }.takeIf {
-                it > 0
-            } ?: 1.0
-
-            val baseline = size.height * 0.72f
-            val positiveHeight = baseline
-            val negativeHeight = size.height - baseline
-            val groupW = size.width / data.size
-            val barW = groupW * 0.22f
-            val gap = 3.dp.toPx()
-
-            drawLine(
-                color = axisColor,
-                start = Offset(0f, baseline),
-                end = Offset(size.width, baseline),
-                strokeWidth = 1.dp.toPx()
-            )
-
-            data.forEachIndexed {
-                index, entry ->
-                val groupLeft = index * groupW
-                val salesLeft = groupLeft + groupW * 0.25f
-                val profitLeft = salesLeft + barW + gap
-                val salesH = (entry.sales / maxValue * positiveHeight * anim).toFloat()
-                val profitRatio = (abs(entry.profit) / maxValue).toFloat()
-                val profitH = if (entry.profit >= 0) {
-                    profitRatio * positiveHeight * anim
-                } else {
-                    profitRatio * negativeHeight * anim
-                }
-
-                drawRoundRect(
-                    color = Emerald500,
-                    topLeft = Offset(salesLeft, baseline - salesH),
-                    size = Size(barW, salesH),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(5.dp.toPx())
-                )
-                drawRoundRect(
-                    color = if (entry.profit >= 0) PaidGreen else DebtRed,
-                    topLeft = Offset(
-                        profitLeft,
-                        if (entry.profit >= 0) baseline - profitH else baseline
-                    ),
-                    size = Size(barW, profitH),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(5.dp.toPx())
-                )
-            }
-        }
-        Spacer(Modifier.height(8.dp))
+    Column(Modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ColorDotLabel("المبيعات", Emerald500)
-            ColorDotLabel("الربح", PaidGreen)
-            Text(
-                data.joinToString("  ") {
-                    it.label
-                },
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+            ColorDotLabel("الربح", Cyan500)
+        }
+
+        Canvas(modifier = modifier) {
+            if (data.isEmpty()) return@Canvas
+
+            val cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
+            val h = size.height
+            val w = size.width
+
+            val maxUp = max(
+                data.maxOf { it.sales },
+                data.maxOf { max(0.0, it.profit) }
+            ).coerceAtLeast(1.0)
+            val minProfit = data.minOf { it.profit }
+            val maxDown = if (minProfit < 0) -minProfit else 0.0
+            val totalMag = maxUp + maxDown
+
+            val yZero = when {
+                maxDown <= 1e-9 -> h
+                maxUp <= 1e-9 -> 0f
+                else -> (h * (maxUp / totalMag)).toFloat()
+            }
+
+            val posSpan = yZero
+            val negSpan = h - yZero
+            val safeMaxDown = maxDown.coerceAtLeast(1e-9)
+
+            // Horizontal grid (reference lines), evenly spaced
+            repeat(4) { i ->
+                val y = h * (i + 1) / 5f
+                drawLine(
+                    color = gridColor,
+                    start = Offset(0f, y),
+                    end = Offset(w, y),
+                    strokeWidth = 1.dp.toPx()
+                )
+            }
+
+            // Zero / baseline
+            drawLine(
+                color = axisColor,
+                start = Offset(0f, yZero),
+                end = Offset(w, yZero),
+                strokeWidth = 1.dp.toPx()
             )
+
+            val groupWidth = w / data.size
+            val gap = 4.dp.toPx()
+            val pairPadding = groupWidth * 0.06f
+
+            data.forEachIndexed { index, entry ->
+                val inner = groupWidth - 2f * pairPadding
+                val barW = max((inner - gap) / 2f, 2.dp.toPx())
+                val pairWidth = barW * 2f + gap
+                val groupLeft = index * groupWidth
+                val startX = groupLeft + (groupWidth - pairWidth) / 2f
+                val salesLeft = startX
+                val profitLeft = startX + barW + gap
+
+                val salesH = (entry.sales / maxUp * posSpan * anim).toFloat().coerceAtLeast(0f)
+                drawRoundRect(
+                    color = Cyan500,
+                    topLeft = Offset(salesLeft, yZero - salesH),
+                    size = Size(barW, salesH),
+                    cornerRadius = cornerRadius
+                )
+
+                if (entry.profit >= 0) {
+                    val profitH =
+                        (entry.profit / maxUp * posSpan * anim).toFloat().coerceAtLeast(0f)
+                    drawRoundRect(
+                        color = PaidGreen,
+                        topLeft = Offset(profitLeft, yZero - profitH),
+                        size = Size(barW, profitH),
+                        cornerRadius = cornerRadius
+                    )
+                } else {
+                    val profitH =
+                        (-entry.profit / safeMaxDown * negSpan * anim).toFloat().coerceAtLeast(0f)
+                    drawRoundRect(
+                        color = DebtRed,
+                        topLeft = Offset(profitLeft, yZero),
+                        size = Size(barW, profitH),
+                        cornerRadius = cornerRadius
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
+        ) {
+            data.forEach { entry ->
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    Text(
+                        text = entry.label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
 private fun ColorDotLabel(label: String, color: Color) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
         Box(
             Modifier
                 .size(8.dp)
                 .clip(CircleShape)
                 .background(color)
         )
-        Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -1251,9 +1365,9 @@ private fun DonutChart(data: List<PaymentShare>, modifier: Modifier) {
     }
     LaunchedEffect(Unit) {
         progress.snapTo(0f); progress.animateTo(
-            1f,
-            tween(1400, easing = FastOutSlowInEasing)
-        )
+        1f,
+        tween(1400, easing = FastOutSlowInEasing)
+    )
     }
     val anim by progress.asState()
     val total = data.sumOf {
@@ -1266,8 +1380,7 @@ private fun DonutChart(data: List<PaymentShare>, modifier: Modifier) {
         val radius = min(size.width, size.height) / 2f - stroke / 2f
         val center = Offset(size.width / 2f, size.height / 2f)
         var startAngle = -90f
-        data.forEachIndexed {
-            i, share ->
+        data.forEachIndexed { i, share ->
             val sweep = (share.amount / total * 360 * anim).toFloat()
             drawArc(
                 donutColors[i % donutColors.size], startAngle, sweep, false,
@@ -1285,10 +1398,12 @@ private fun LegendItem(label: String, percent: Int, color: Color) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Box(Modifier
-            .size(10.dp)
-            .clip(CircleShape)
-            .background(color))
+        Box(
+            Modifier
+                .size(10.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
         Text("$label ($percent%)", style = MaterialTheme.typography.labelSmall)
     }
 }
@@ -1301,8 +1416,7 @@ private fun RankList(items: List<CustomerRank>, color: Color) {
         it > 0
     } ?: 1.0
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        items.forEachIndexed {
-            i, item ->
+        items.forEachIndexed { i, item ->
             val barProgress = remember {
                 Animatable(0f)
             }
@@ -1338,17 +1452,17 @@ private fun RankList(items: List<CustomerRank>, color: Color) {
                     Spacer(Modifier.height(3.dp))
                     Box(
                         Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(color.copy(0.15f))
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(color.copy(0.15f))
                     ) {
                         Box(
                             Modifier
-                            .fillMaxWidth(prog)
-                            .fillMaxHeight()
-                            .clip(RoundedCornerShape(3.dp))
-                            .background(color)
+                                .fillMaxWidth(prog)
+                                .fillMaxHeight()
+                                .clip(RoundedCornerShape(3.dp))
+                                .background(color)
                         )
                     }
                 }

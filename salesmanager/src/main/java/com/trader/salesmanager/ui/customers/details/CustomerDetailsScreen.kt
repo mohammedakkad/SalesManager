@@ -260,7 +260,7 @@ Scaffold(
                     },
                     modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                     shape = RoundedCornerShape(14.dp),
                     color = Violet500.copy(if (isExporting) 0.06f else 0.08f),
                     border = BorderStroke(1.dp, Violet500.copy(if (isExporting) 0.2f else 0.3f))

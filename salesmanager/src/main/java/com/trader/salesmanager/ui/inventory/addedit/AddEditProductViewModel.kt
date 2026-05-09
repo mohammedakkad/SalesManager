@@ -40,7 +40,7 @@ data class UnitDraft(
     val unitLabel: String = "حبة",
     val price: String = "",
     val costPrice: String = "",
-    val quantityInStock: String = "0",
+    val quantityInStock: String = "",
     val itemsPerCarton: String = "",
     val lowStockThreshold: String = "5",
     val isDefault: Boolean = false,

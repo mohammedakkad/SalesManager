@@ -372,7 +372,7 @@ private fun UnitEditor(
                     onUpdatePrice(it)
                 },
                 label = {
-                    Text("السعر ₪")
+                    Text("سعر البيع ₪")
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true, modifier = Modifier.weight(1f)
