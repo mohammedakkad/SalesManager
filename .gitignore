@@ -76,3 +76,4 @@ schemas/
 /salesmanager/google-services.json
 keystore_base64.txt
 keystore.properties
+.cursorrules
