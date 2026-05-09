@@ -100,6 +100,7 @@ fun ReportsScreen(
     viewModel: ReportsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val flags by FeatureFlags.flow.collectAsStateWithLifecycle(initialValue = FeatureFlags.current)
     val context = LocalContext.current
     val storeName by context.appDataStore.data
         .map {
@@ -158,7 +159,6 @@ fun ReportsScreen(
                 actions = {
                     val isExporting = exportState is ExportState.Loading
                     // ── Export — Premium only ──────────────────────────
-                    val flags by FeatureFlags.flow.collectAsStateWithLifecycle()
                     if (flags.reportExport) {
                         IconButton(
                             onClick = {
@@ -206,7 +206,11 @@ fun ReportsScreen(
         ) {
             // ── Period Switcher ──────────────────────────────────
             item {
-                PeriodSwitcher(selected = uiState.period, onSelect = viewModel::setPeriod)
+                PeriodSwitcher(
+                    selected = uiState.period,
+                    onSelect = viewModel::setPeriod,
+                    flags = flags
+                )
             }
 
             // ── Summary Cards ────────────────────────────────────
@@ -258,7 +262,18 @@ fun ReportsScreen(
                 }
             }
 
-            if (!uiState.isAdvancedReportsEnabled) {
+            if (uiState.isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Emerald500)
+                    }
+                }
+            } else if (!uiState.isAdvancedReportsEnabled) {
                 item {
                     PremiumReportsLockedPreview()
                 }
@@ -806,10 +821,9 @@ private fun TimeSlotRow(label: String, value: Double, ratio: Float, color: Color
 private fun PeriodSwitcher(
     selected: ReportPeriod,
     onSelect: (ReportPeriod) -> Unit,
+    flags: FeatureFlags.FlagSet,
     onUpgrade: () -> Unit = {}
 ) {
-    val flags by FeatureFlags.flow.collectAsStateWithLifecycle()
-
     val allLabels = mapOf(
         ReportPeriod.TODAY to "اليوم",
         ReportPeriod.WEEK to "الأسبوع",
