@@ -2,6 +2,7 @@ package com.trader.salesmanager.ui.settings
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
@@ -37,20 +40,26 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 val STORE_NAME_KEY = stringPreferencesKey("store_name")
+val MERCHANT_CODE_KEY = stringPreferencesKey("merchant_code")
 
 @Composable
 fun SettingsScreen(
     onNavigateUp: () -> Unit,
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToChat: () -> Unit = {},
+    onNavigateToSessions: () -> Unit = {},
     updateViewModel: AppUpdateViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
 
     // اسم المحل من DataStore
     val storeName by context.appDataStore.data
         .map { it[STORE_NAME_KEY] ?: "" }
+        .collectAsState(initial = "")
+    val merchantCode by context.appDataStore.data
+        .map { it[MERCHANT_CODE_KEY] ?: "" }
         .collectAsState(initial = "")
 
     var showStoreNameDialog by remember { mutableStateOf(false) }
@@ -133,6 +142,14 @@ fun SettingsScreen(
                     color = Emerald500,
                     onClick = { showStoreNameDialog = true }
                 )
+                MerchantCodeCard(
+                    merchantCode = merchantCode,
+                    onCopy = {
+                        if (merchantCode.isBlank()) return@MerchantCodeCard
+                        clipboardManager.setText(AnnotatedString(merchantCode))
+                        Toast.makeText(context, "تم نسخ الكود", Toast.LENGTH_SHORT).show()
+                    }
+                )
 
                 // ── الوضع الليلي ───────────────────────────────────
                 DarkModeSettingItem()
@@ -154,6 +171,13 @@ fun SettingsScreen(
                     color = Violet500,
                     onClick = onNavigateToChat
                 )
+                SettingItem(
+                    icon = Icons.Rounded.Devices,
+                    title = "الأجهزة النشطة",
+                    subtitle = "إدارة جلسات تسجيل الدخول للأجهزة",
+                    color = MaterialTheme.colorScheme.primary,
+                    onClick = onNavigateToSessions
+                )
 
                 // ── التحديثات ──────────────────────────────────────
                 UpdateSettingItem(
@@ -173,6 +197,52 @@ fun SettingsScreen(
                         updateViewModel.checkForUpdate(versionCode)
                     },
                     onInstall = { updateViewModel.install(context) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MerchantCodeCard(
+    merchantCode: String,
+    onCopy: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Key,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = "كود التاجر",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = merchantCode.ifEmpty { "سيظهر الكود بعد تفعيل الحساب" },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            IconButton(onClick = onCopy, enabled = merchantCode.isNotBlank()) {
+                Icon(
+                    imageVector = Icons.Rounded.ContentCopy,
+                    contentDescription = "نسخ كود التاجر"
                 )
             }
         }

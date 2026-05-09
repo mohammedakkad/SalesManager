@@ -39,6 +39,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import com.trader.salesmanager.util.export.ExportViewModel
 import com.trader.salesmanager.ui.returns.ReturnViewModel
 import com.trader.salesmanager.ui.subscription.SubscriptionViewModel
+import com.trader.salesmanager.ui.settings.SessionsViewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {
@@ -220,6 +221,14 @@ val salesManagerModule = module {
     }
     viewModel {
         AppUpdateViewModel()
+    }
+    viewModel {
+        SessionsViewModel(
+            sessionDao = get(),
+            firebaseSyncService = get(),
+            merchantCode = get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            application = get()
+        )
     }
     // ── Inventory ─────────────────────────────────────────────────
     viewModel {

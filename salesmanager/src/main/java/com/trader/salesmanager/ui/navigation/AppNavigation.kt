@@ -43,6 +43,7 @@ import com.trader.salesmanager.ui.inventory.reports.StockReportsScreen
 import org.json.JSONArray
 import org.json.JSONObject
 import com.trader.salesmanager.ui.settings.SettingsScreen
+import com.trader.salesmanager.ui.settings.SessionsScreen
 import com.trader.salesmanager.ui.subscription.SubscriptionScreen
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionScreen
 import com.trader.salesmanager.ui.transactions.details.TransactionDetailsScreen
@@ -431,6 +432,16 @@ fun AppNavigation() {
                 },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chat.route)
+                },
+                onNavigateToSessions = {
+                    navController.navigate(Screen.Sessions.route)
+                }
+            )
+        }
+        composable(Screen.Sessions.route) {
+            SessionsScreen(
+                onNavigateUp = {
+                    navController.navigateUp()
                 }
             )
         }

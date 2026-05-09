@@ -620,6 +620,16 @@ class FirebaseSyncService {
         }
     }
 
+    suspend fun revokeSession(merchantCode: String, sessionId: String) {
+        db.reference
+            .child("merchants")
+            .child(merchantCode)
+            .child("sessions")
+            .child(sessionId)
+            .removeValue()
+            .await()
+    }
+
     companion object {
         private const val PATH_SUBSCRIPTION_REQUESTS = "subscription_requests"
         private const val PATH_ACTIVATION_CODES = "activation_codes"
