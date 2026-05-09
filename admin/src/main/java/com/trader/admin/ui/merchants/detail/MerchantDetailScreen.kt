@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.Merchant
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.admin.ui.theme.*
@@ -39,8 +40,8 @@ fun MerchantDetailScreen(
     merchantId: String, onNavigateUp: () -> Unit,
     viewModel: MerchantDetailViewModel = koinViewModel(parameters = { parametersOf(merchantId) })
 ) {
-    val merchant   by viewModel.merchant.collectAsState()
-    val isLoading  by viewModel.isLoading.collectAsState()
+    val merchant   by viewModel.merchant.collectAsStateWithLifecycle()
+    val isLoading  by viewModel.isLoading.collectAsStateWithLifecycle()
     val context    = LocalContext.current
 
     var showDelete         by remember { mutableStateOf(false) }

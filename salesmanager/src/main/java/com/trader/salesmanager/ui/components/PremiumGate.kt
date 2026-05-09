@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.FeatureFlags
 import com.trader.salesmanager.ui.theme.*
 
@@ -31,7 +32,7 @@ fun PremiumGate(
     onUpgrade: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    val flags by FeatureFlags.flow.collectAsState()
+    val flags by FeatureFlags.flow.collectAsStateWithLifecycle()
     if (flags.isPremium) {
         content()
     } else {

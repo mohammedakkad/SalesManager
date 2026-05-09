@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.admin.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
@@ -28,7 +29,7 @@ fun LoginScreen(
     onAuthenticated: () -> Unit,
     viewModel: AuthViewModel = koinViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.isAuthenticated) {
         if (state.isAuthenticated) onAuthenticated()

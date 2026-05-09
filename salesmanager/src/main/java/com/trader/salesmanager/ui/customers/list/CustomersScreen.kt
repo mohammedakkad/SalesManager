@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.model.SyncStatus
 import com.trader.salesmanager.ui.components.*
@@ -33,8 +34,8 @@ fun CustomersScreen(
     onAddCustomer: () -> Unit,
     viewModel: CustomersViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val deleteConfirm by viewModel.deleteConfirm.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val deleteConfirm by viewModel.deleteConfirm.collectAsStateWithLifecycle()
 
     // ✅ dialog حذف ذكي — يعرض عدد العمليات المرتبطة
     deleteConfirm?.let { state ->

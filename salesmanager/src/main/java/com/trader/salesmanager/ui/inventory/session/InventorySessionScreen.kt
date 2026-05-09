@@ -13,6 +13,7 @@ import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -33,8 +34,8 @@ fun InventorySessionScreen(
     onNavigateUp: () -> Unit,
     viewModel: InventorySessionViewModel = koinViewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
-    val items by viewModel.sessionItems.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val items by viewModel.sessionItems.collectAsStateWithLifecycle()
 
     var showFinishDialog by remember {
         mutableStateOf(false)

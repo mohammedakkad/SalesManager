@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.admin.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
@@ -28,7 +29,7 @@ fun ChatListScreen(
     onChatClick: (merchantId: String, merchantName: String) -> Unit,
     viewModel: ChatListViewModel = koinViewModel()
 ) {
-    val chats by viewModel.chats.collectAsState()
+    val chats by viewModel.chats.collectAsStateWithLifecycle()
 
     Scaffold(containerColor = Navy950) { padding ->
         Column(modifier = Modifier

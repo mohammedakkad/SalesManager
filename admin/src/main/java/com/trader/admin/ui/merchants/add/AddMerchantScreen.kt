@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.admin.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
@@ -31,7 +32,7 @@ fun AddMerchantScreen(
     onNavigateUp: () -> Unit,
     viewModel: AddMerchantViewModel = koinViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val clipboard = LocalClipboardManager.current
 
     // عند الحفظ الناجح اعرض الكود ثم ارجع

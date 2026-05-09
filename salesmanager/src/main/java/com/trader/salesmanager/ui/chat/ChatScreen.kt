@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.entity.PendingMessageEntity
 import com.trader.core.domain.model.ChatMessage
 import com.trader.core.domain.model.MessageStatus
@@ -38,7 +39,7 @@ import java.util.*
 
 @Composable
 fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewModel()) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     val clipboard = LocalClipboardManager.current
 

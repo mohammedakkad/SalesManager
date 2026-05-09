@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
@@ -33,7 +34,7 @@ fun AddEditCustomerScreen(
     onNavigateUp: () -> Unit,
     viewModel: AddEditCustomerViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(customerId) {
         viewModel.loadCustomer(customerId)

@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.trader.admin.ui.theme.*
 import com.trader.core.domain.model.SubscriptionRequest
@@ -36,7 +37,7 @@ fun AdminRequestsScreen(
     onNavigateUp: () -> Unit,
     viewModel: AdminRequestsViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     var previewUrl by remember { mutableStateOf<String?>(null) }
 

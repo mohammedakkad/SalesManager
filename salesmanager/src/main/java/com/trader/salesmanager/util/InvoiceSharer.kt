@@ -2,15 +2,12 @@ package com.trader.salesmanager.util
 
 import android.content.Context
 import android.content.Intent
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.trader.core.data.local.appDataStore
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.model.Transaction
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 object InvoiceSharer {
 
@@ -23,7 +20,7 @@ object InvoiceSharer {
         context: Context,
         transaction: Transaction,
         items: List<InvoiceItem>,
-        storeName: String   // ← يُمرَّر من الـ UI عبر collectAsState
+        storeName: String   // ← يُمرَّر من الـ UI عبر collectAsStateWithLifecycle
     ) {
         val text = buildInvoiceText(transaction, items, storeName)
         openWhatsApp(context, text)

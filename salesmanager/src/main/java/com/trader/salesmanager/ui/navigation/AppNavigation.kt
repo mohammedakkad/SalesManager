@@ -32,6 +32,7 @@ import com.trader.salesmanager.ui.components.PremiumGate
 import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material.icons.rounded.Inventory
 import androidx.compose.material.icons.rounded.BarChart
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.salesmanager.ui.inventory.list.InventoryListScreen
 import com.trader.salesmanager.ui.inventory.addedit.AddEditProductScreen
 import com.trader.salesmanager.ui.inventory.detail.ProductDetailScreen
@@ -73,7 +74,7 @@ fun AppNavigation() {
     val activationVm: ActivationViewModel = koinViewModel()
     val watcherVm: MerchantWatcherViewModel = koinViewModel()
 
-    val startupState by activationVm.startupState.collectAsState()
+    val startupState by activationVm.startupState.collectAsStateWithLifecycle()
     var liveBlockMessage by remember {
         mutableStateOf<String?>(null)
     }
@@ -306,7 +307,7 @@ fun AppNavigation() {
 
             val linesJson by back.savedStateHandle
                 .getStateFlow<String?>("invoice_lines_json", null)
-                .collectAsState()
+                .collectAsStateWithLifecycle()
 
             LaunchedEffect(linesJson) {
                 val json = linesJson ?: return@LaunchedEffect
@@ -345,7 +346,7 @@ fun AppNavigation() {
 
             val linesJson by back.savedStateHandle
                 .getStateFlow<String?>("invoice_lines_json", null)
-                .collectAsState()
+                .collectAsStateWithLifecycle()
 
             LaunchedEffect(linesJson) {
                 val json = linesJson ?: return@LaunchedEffect

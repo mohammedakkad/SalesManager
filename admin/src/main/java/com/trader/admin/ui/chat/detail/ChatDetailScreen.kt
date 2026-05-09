@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.ChatMessage
 import com.trader.core.domain.model.MessageStatus
 import com.trader.core.domain.model.SENDER_ADMIN
@@ -42,7 +43,7 @@ fun ChatDetailScreen(
     onNavigateUp: () -> Unit,
     viewModel: ChatDetailViewModel = koinViewModel(parameters = { parametersOf(merchantId) })
 ) {
-val uiState by viewModel.uiState.collectAsState()
+val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 val listState = rememberLazyListState()
 val clipboard = LocalClipboardManager.current
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.Transaction
 import com.trader.core.util.DateUtils.toDateString
 import com.trader.salesmanager.ui.components.StatusChip
@@ -35,7 +36,7 @@ fun TransactionsScreen(
     onAddTransaction: () -> Unit,
     viewModel: TransactionsViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,

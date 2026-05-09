@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.admin.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
@@ -32,7 +33,7 @@ fun DashboardScreen(
     onSignOut: () -> Unit,
     viewModel: DashboardViewModel = koinViewModel()
 ) {
-    val stats by viewModel.stats.collectAsState()
+    val stats by viewModel.stats.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier.fillMaxSize().background(Navy950).verticalScroll(rememberScrollState())

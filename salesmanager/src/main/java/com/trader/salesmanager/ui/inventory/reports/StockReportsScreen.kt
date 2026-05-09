@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.ProductWithUnits
 import com.trader.core.domain.model.UnitType
 import com.trader.salesmanager.ui.theme.*
@@ -33,7 +34,7 @@ fun StockReportsScreen(
     onNavigateUp: () -> Unit,
     viewModel: StockReportsViewModel = koinViewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedTab by remember { mutableIntStateOf(0) }
 
     LazyColumn(

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.TransactionRepository
@@ -125,7 +126,7 @@ fun DayTransactionsScreen(
     onTransactionClick: (Long) -> Unit,
     viewModel: DayTransactionsViewModel = koinViewModel(parameters = { parametersOf(dateMillis) })
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val dateLabel = remember(dateMillis) {
         SimpleDateFormat("EEEE، d MMMM yyyy", Locale("ar")).format(Date(dateMillis))
     }

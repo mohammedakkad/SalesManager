@@ -26,6 +26,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 
@@ -35,8 +36,8 @@ fun ActivationScreen(
     onFreeStart: () -> Unit,
     viewModel: ActivationViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val startupState by viewModel.startupState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val startupState by viewModel.startupState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     // ── Navigation triggers ─────────────────────────────────────

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.Merchant
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.admin.ui.theme.*
@@ -32,7 +33,7 @@ fun MerchantsScreen(
     onAddMerchant: () -> Unit,
     viewModel: MerchantsViewModel = koinViewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val search = viewModel.search.value
 
     Scaffold(

@@ -33,7 +33,7 @@ import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.export.*
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.flow.map
@@ -49,7 +49,7 @@ fun InventoryListScreen(
     onStockReports: () -> Unit = {},
     viewModel: InventoryListViewModel = koinViewModel()
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showScanner by remember {
         mutableStateOf(false)
@@ -65,7 +65,7 @@ fun InventoryListScreen(
     .collectAsState(initial = "")
 
     val exportVm: ExportViewModel = koinViewModel()
-    val exportState by exportVm.state.collectAsState()
+    val exportState by exportVm.state.collectAsStateWithLifecycle()
     var showExportSheet by remember {
         mutableStateOf(false)
     }

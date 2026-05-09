@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
  * Fallback defaults = most restrictive (FREE) — never crash offline.
  *
  * Usage in any Composable:
- *   val flags by FeatureFlags.flow.collectAsState()
+ *   val flags by FeatureFlags.flow.collectAsStateWithLifecycle()
  *   if (flags.returnsSystem) { ... }
  */
 object FeatureFlags {
@@ -74,7 +74,7 @@ object FeatureFlags {
     private val _flow = MutableStateFlow(FREE_FLAGS)
     val flow: StateFlow<FlagSet> = _flow.asStateFlow()
 
-    /** Current snapshot — use `flow.collectAsState()` in Composables */
+    /** Current snapshot — use `flow.collectAsStateWithLifecycle()` in Composables */
     val current: FlagSet get() = _flow.value
     val isAdvancedReportsEnabled: Boolean get() = current.isAdvancedReportsEnabled
 

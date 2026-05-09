@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -36,7 +37,7 @@ fun ReturnProcessScreen(
     onReturnSuccess: () -> Unit,
     viewModel: ReturnViewModel = koinViewModel { parametersOf(transactionId, Unit) }
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.processingState) {
         if (state.processingState is com.trader.core.domain.model.ReturnUiState.Success) {

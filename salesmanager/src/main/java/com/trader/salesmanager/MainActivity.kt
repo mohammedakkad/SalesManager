@@ -8,8 +8,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.salesmanager.service.NotificationService
 import com.trader.salesmanager.ui.navigation.AppNavigation
 import com.trader.salesmanager.ui.theme.SalesManagerTheme
@@ -18,9 +20,6 @@ import com.trader.salesmanager.update.BackgroundUpdateWorker
 import com.trader.salesmanager.update.UpdateUiState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-import androidx.lifecycle.lifecycleScope // حل مشكلة Unresolved reference 'lifecycleScope'
-import kotlinx.coroutines.launch
-import com.trader.core.data.migration.FirestoreMigrationHelper // تأكد أن هذا المسار يطابق ملف الهيلبر
 class MainActivity : ComponentActivity() {
 
     private val updateViewModel: AppUpdateViewModel by viewModel()
@@ -53,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SalesManagerTheme(context = this@MainActivity) {
-                val updateState by updateViewModel.state.collectAsState()
+                val updateState by updateViewModel.state.collectAsStateWithLifecycle()
 
                 // عند وجود تحديث — نبدأ التحميل في الخلفية تلقائياً (بدون Dialog إجباري)
                 LaunchedEffect(updateState) {

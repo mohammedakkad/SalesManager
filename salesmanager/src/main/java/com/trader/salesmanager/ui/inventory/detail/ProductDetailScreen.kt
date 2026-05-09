@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.*
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
@@ -37,7 +38,7 @@ fun ProductDetailScreen(
     onEdit: (String) -> Unit,
     viewModel: ProductDetailViewModel = koinViewModel(parameters = { parametersOf(productId) })
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showDelete by remember { mutableStateOf(false) }
     var expandedUnit by remember { mutableStateOf<String?>(null) }
 
@@ -225,7 +226,7 @@ private fun UnitCard(
     onDeductStock: () -> Unit,
     movementsFlow: kotlinx.coroutines.flow.Flow<List<StockMovement>>
 ) {
-    val movements by movementsFlow.collectAsState(initial = emptyList())
+    val movements by movementsFlow.collectAsStateWithLifecycle(emptyList())
     val isLow = unit.quantityInStock > 0 && unit.quantityInStock <= unit.lowStockThreshold
     val isOut = unit.quantityInStock <= 0
     val statusColor = when {

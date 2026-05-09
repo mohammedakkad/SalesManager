@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.components.AnimatedCounter
 import com.trader.salesmanager.ui.theme.*
@@ -48,7 +49,7 @@ fun HomeScreen(
     onTransactionClick: (Long) -> Unit,
     viewModel: HomeViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
 
     Scaffold(

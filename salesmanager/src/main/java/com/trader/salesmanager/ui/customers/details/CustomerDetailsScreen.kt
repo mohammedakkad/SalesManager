@@ -2,11 +2,9 @@ package com.trader.salesmanager.ui.customers.details
 
 import android.content.Intent
 import android.net.Uri
-import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -25,19 +23,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.trader.core.data.local.appDataStore
 import com.trader.core.domain.model.Transaction
+import com.trader.core.util.DateUtils.toDateString
 import com.trader.salesmanager.ui.components.*
 import com.trader.salesmanager.ui.theme.*
-import com.trader.core.util.DateUtils.toDateString
 import com.trader.salesmanager.util.export.*
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.foundation.BorderStroke
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import com.trader.core.data.local.appDataStore
 
 @Composable
 fun CustomerDetailsScreen(
@@ -48,7 +43,7 @@ fun CustomerDetailsScreen(
     onTransactionClick: (Long) -> Unit,
     viewModel: CustomerDetailsViewModel = koinViewModel(parameters = { parametersOf(customerId) })
 ) {
-val uiState by viewModel.uiState.collectAsState()
+val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 val context = LocalContext.current
 val name = uiState.customer?.name ?: ""
 val phone = uiState.customer?.phone ?: ""
@@ -65,7 +60,7 @@ val storeName by context.appDataStore.data
 .collectAsState(initial = "")
 
 val exportVm: ExportViewModel = koinViewModel()
-val exportState by exportVm.state.collectAsState()
+val exportState by exportVm.state.collectAsStateWithLifecycle()
 var showExportSheet by remember {
     mutableStateOf(false)
 }

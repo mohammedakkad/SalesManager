@@ -144,7 +144,7 @@ fun SalesManagerTheme(
     // قراءة الإعداد من DataStore
     val isDark by context.appDataStore.data
     .map {
-        it[DARK_MODE_KEY] ?: false
+        it[DARK_MODE_KEY] == true
     }
     .collectAsState(initial = false)
 

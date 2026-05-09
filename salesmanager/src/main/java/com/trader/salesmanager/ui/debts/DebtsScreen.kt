@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.salesmanager.ui.components.*
 import com.trader.salesmanager.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
@@ -28,7 +29,7 @@ fun DebtsScreen(
     onCustomerClick: (Long) -> Unit,
     viewModel: DebtsViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold { padding ->
         Column(

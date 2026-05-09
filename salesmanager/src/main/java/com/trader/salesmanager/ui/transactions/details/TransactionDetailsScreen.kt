@@ -4,7 +4,6 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -19,23 +18,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
 import com.trader.core.domain.model.InvoiceItem
-import com.trader.core.domain.model.Transaction
-import androidx.compose.ui.text.style.TextDecoration
 import com.trader.core.domain.model.ReturnSummary
-import com.trader.core.domain.model.TransactionReturnStatus
 import com.trader.core.util.DateUtils.toDateTimeString
 import com.trader.salesmanager.ui.components.StatusChip
 import com.trader.salesmanager.ui.theme.*
-import com.trader.salesmanager.ui.theme.appColors
-import com.trader.salesmanager.util.InvoiceSharer
-import kotlinx.coroutines.flow.map
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.Lifecycle
 import com.trader.salesmanager.util.export.*
-
+import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -48,7 +43,7 @@ fun TransactionDetailsScreen(
     onNavigateToReturn: (Long) -> Unit,
     viewModel: TransactionDetailsViewModel = koinViewModel { parametersOf(transactionId) }
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showDeleteDialog by remember {
         mutableStateOf(false)
     }
@@ -61,7 +56,7 @@ fun TransactionDetailsScreen(
     .collectAsState(initial = "")
 
     val exportVm: ExportViewModel = koinViewModel()
-    val exportState by exportVm.state.collectAsState()
+    val exportState by exportVm.state.collectAsStateWithLifecycle()
     var showExportSheet by remember {
         mutableStateOf(false)
     }

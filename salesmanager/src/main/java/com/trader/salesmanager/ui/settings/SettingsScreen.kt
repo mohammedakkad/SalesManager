@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.isDarkTheme
@@ -64,7 +65,7 @@ fun SettingsScreen(
     }
 
     // حالة التحديث
-    val updateState by updateViewModel.state.collectAsState()
+    val updateState by updateViewModel.state.collectAsStateWithLifecycle()
     val isChecking = updateState is UpdateUiState.Checking
     val latestVersion = when (val s = updateState) {
         is UpdateUiState.UpdateAvailable -> s.info.versionName

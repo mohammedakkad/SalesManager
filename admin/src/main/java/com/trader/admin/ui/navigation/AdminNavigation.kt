@@ -1,6 +1,7 @@
 package com.trader.admin.ui.navigation
 
 import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.*
 import androidx.navigation.compose.*
 import com.trader.admin.ui.auth.LoginScreen
@@ -39,7 +40,7 @@ sealed class AdminScreen(val route: String) {
 fun AdminNavigation() {
     val navController = rememberNavController()
     val authVm: AuthViewModel = koinViewModel()
-    val authState by authVm.state.collectAsState()
+    val authState by authVm.state.collectAsStateWithLifecycle()
 
     val start = if (authState.isAuthenticated) AdminScreen.Dashboard.route
     else AdminScreen.Login.route

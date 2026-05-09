@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.repository.PaymentMethodRepository
 import com.trader.salesmanager.ui.theme.*
@@ -35,7 +36,7 @@ fun AddEditTransactionScreen(
     onNavigateToInvoiceItems: (customerName: String, existingLinesJson: String?) -> Unit = { _, _ -> },
     viewModel: AddEditTransactionViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val paymentRepo: PaymentMethodRepository = koinInject()
 
     LaunchedEffect(Unit) {
