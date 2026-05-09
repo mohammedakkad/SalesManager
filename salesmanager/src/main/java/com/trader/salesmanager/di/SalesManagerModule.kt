@@ -39,6 +39,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import com.trader.salesmanager.util.export.ExportViewModel
 import com.trader.salesmanager.ui.returns.ReturnViewModel
 import com.trader.salesmanager.ui.subscription.SubscriptionViewModel
+import com.trader.salesmanager.ui.settings.SessionsViewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {
@@ -73,6 +74,9 @@ val salesManagerModule = module {
     single {
         get<AppDatabase>().returnDao()
     }
+    single {
+        get<AppDatabase>().sessionDao()
+    }
 
     // ── Remote ───────────────────────────────────────────────────
     single {
@@ -103,7 +107,7 @@ val salesManagerModule = module {
 
     // ── Repositories ─────────────────────────────────────────────
     single<ActivationRepository> {
-        ActivationRepositoryImpl(androidContext(), get(), get(), get(), get(), get(), get(),get(),get())
+        ActivationRepositoryImpl(androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
     single<CustomerRepository> {
         CustomerRepositoryImpl(get(), get(), get(), get())
@@ -170,7 +174,7 @@ val salesManagerModule = module {
         ExportViewModel()
     }
     viewModel {
-        MerchantWatcherViewModel(get(), get())
+        MerchantWatcherViewModel(get(), get(), get())
     }
     viewModel {
         HomeViewModel(get(), get(), get())
@@ -217,6 +221,14 @@ val salesManagerModule = module {
     }
     viewModel {
         AppUpdateViewModel()
+    }
+    viewModel {
+        SessionsViewModel(
+            sessionDao = get(),
+            firebaseSyncService = get(),
+            merchantCode = get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            application = get()
+        )
     }
     // ── Inventory ─────────────────────────────────────────────────
     viewModel {

@@ -106,6 +106,31 @@ class FirebaseSyncService {
         }
     }
 
+    fun observeCurrentSession(merchantCode: String, sessionId: String): Flow<Boolean> = callbackFlow {
+        val ref = db.reference
+            .child("merchants")
+            .child(merchantCode)
+            .child("sessions")
+            .child(sessionId)
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                trySend(snapshot.exists())
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                close(error.toException())
+            }
+        }
+
+        runCatching { ref.addValueEventListener(listener) }
+            .onFailure { close(it) }
+
+        awaitClose {
+            runCatching { ref.removeEventListener(listener) }
+        }
+    }
+
     suspend fun fetchMerchantActivationData(merchantCode: String): DataSnapshot {
         return db.getReference(PATH_ACTIVATION_CODES).child(merchantCode).get().await()
     }
@@ -593,6 +618,16 @@ class FirebaseSyncService {
         snap.children.forEach {
             it.ref.removeValue().await()
         }
+    }
+
+    suspend fun revokeSession(merchantCode: String, sessionId: String) {
+        db.reference
+            .child("merchants")
+            .child(merchantCode)
+            .child("sessions")
+            .child(sessionId)
+            .removeValue()
+            .await()
     }
 
     companion object {
