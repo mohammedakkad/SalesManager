@@ -42,6 +42,8 @@ import com.trader.salesmanager.util.export.ExportViewModel
 import com.trader.salesmanager.ui.returns.ReturnViewModel
 import com.trader.salesmanager.ui.subscription.SubscriptionViewModel
 import com.trader.salesmanager.ui.settings.sessions.SessionsViewModel
+import com.trader.salesmanager.ui.employees.EmployeeManagementViewModel
+import com.trader.salesmanager.ui.employees.PinLockViewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {
@@ -250,6 +252,16 @@ val salesManagerModule = module {
             merchantCode = get(qualifier = org.koin.core.qualifier.named("merchantId")),
             currentDeviceId = get(qualifier = org.koin.core.qualifier.named("currentDeviceId"))
         )
+    }
+    // ── Employees / RBAC (Phase 4.3) ─────────────────────────────
+    viewModel {
+        PinLockViewModel(
+            sessionManager = get(),
+            employeeRepository = get()
+        )
+    }
+    viewModel {
+        EmployeeManagementViewModel(repository = get())
     }
     // ── Inventory ─────────────────────────────────────────────────
     viewModel {

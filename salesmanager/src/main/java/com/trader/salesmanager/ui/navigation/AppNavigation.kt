@@ -44,6 +44,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import com.trader.salesmanager.ui.settings.SettingsScreen
 import com.trader.salesmanager.ui.settings.sessions.SessionsScreen
+import com.trader.salesmanager.ui.employees.EmployeeManagementScreen
+import com.trader.salesmanager.ui.employees.PinLockScreen
 import com.trader.salesmanager.ui.subscription.SubscriptionScreen
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionScreen
 import com.trader.salesmanager.ui.transactions.details.TransactionDetailsScreen
@@ -610,6 +612,22 @@ fun AppNavigation() {
 
         composable(Screen.Subscription.route) {
             SubscriptionScreen(onNavigateUp = { navController.navigateUp() })
+        }
+
+        // ── Phase 4.3 — RBAC / Employees ─────────────────────────
+        composable(Screen.PinLock.route) {
+            PinLockScreen(
+                onUnlocked = { _, _ ->
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.PinLock.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(Screen.EmployeeManagement.route) {
+            EmployeeManagementScreen(
+                onNavigateUp = { navController.navigateUp() }
+            )
         }
     }
 }

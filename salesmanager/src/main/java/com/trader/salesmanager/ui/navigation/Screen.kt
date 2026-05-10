@@ -65,4 +65,8 @@ sealed class Screen(val route: String) {
     object ReturnProcess : Screen("return_process/{transactionId}") {
         fun createRoute(transactionId: Long) = "return_process/$transactionId"
     }
+
+    // ── Phase 4.3 — RBAC / Employees ──────────────────────────
+    object PinLock : Screen("pin_lock")
+    object EmployeeManagement : Screen("employee_management")
 }
