@@ -1,5 +1,6 @@
 package com.trader.salesmanager.di
 
+import android.provider.Settings
 import com.trader.core.data.local.appDataStore
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.manager.SubscriptionManager
@@ -39,7 +40,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import com.trader.salesmanager.util.export.ExportViewModel
 import com.trader.salesmanager.ui.returns.ReturnViewModel
 import com.trader.salesmanager.ui.subscription.SubscriptionViewModel
-import com.trader.salesmanager.ui.settings.SessionsViewModel
+import com.trader.salesmanager.ui.settings.sessions.SessionsViewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {
@@ -103,6 +104,12 @@ val salesManagerModule = module {
                 }
                 .first()
         }
+    }
+    single<String>(org.koin.core.qualifier.named("currentDeviceId")) {
+        Settings.Secure.getString(
+            androidContext().contentResolver,
+            Settings.Secure.ANDROID_ID
+        ) ?: "unknown_device"
     }
 
     // ── Repositories ─────────────────────────────────────────────
@@ -225,9 +232,8 @@ val salesManagerModule = module {
     viewModel {
         SessionsViewModel(
             sessionDao = get(),
-            firebaseSyncService = get(),
             merchantCode = get(qualifier = org.koin.core.qualifier.named("merchantId")),
-            application = get()
+            currentDeviceId = get(qualifier = org.koin.core.qualifier.named("currentDeviceId"))
         )
     }
     // ── Inventory ─────────────────────────────────────────────────
