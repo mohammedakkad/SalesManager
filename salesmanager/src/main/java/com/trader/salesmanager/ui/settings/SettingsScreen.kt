@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -49,8 +48,6 @@ fun SettingsScreen(
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToChat: () -> Unit = {},
     onNavigateToSessions: () -> Unit = {},
-    onNavigateToEmployeeManagement: () -> Unit = {},
-    onLogout: () -> Unit = {},
     updateViewModel: AppUpdateViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -180,24 +177,6 @@ fun SettingsScreen(
                     subtitle = "إدارة جلسات تسجيل الدخول للأجهزة",
                     color = MaterialTheme.colorScheme.primary,
                     onClick = onNavigateToSessions
-                )
-
-                // ── إدارة الموظفين (Phase 4.3 — RBAC) ──────────────
-                SettingItem(
-                    icon = Icons.Rounded.AdminPanelSettings,
-                    title = "إدارة الموظفين",
-                    subtitle = "إضافة وحذف الموظفين وتعيين الصلاحيات",
-                    color = Violet500,
-                    onClick = onNavigateToEmployeeManagement
-                )
-
-                // ── تسجيل الخروج ───────────────────────────────────
-                SettingItem(
-                    icon = Icons.AutoMirrored.Rounded.Logout,
-                    title = "تسجيل الخروج",
-                    subtitle = "إنهاء الجلسة الحالية والعودة لشاشة القفل",
-                    color = DebtRed,
-                    onClick = onLogout
                 )
 
                 // ── التحديثات ──────────────────────────────────────
