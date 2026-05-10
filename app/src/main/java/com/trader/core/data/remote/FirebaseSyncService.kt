@@ -21,6 +21,8 @@ import com.trader.core.domain.model.ReturnInvoice
 import com.trader.core.domain.model.ReturnItem
 import com.trader.core.domain.model.ReturnType
 import com.trader.core.domain.model.TransactionReturnStatus
+import com.trader.core.domain.model.Employee
+import com.trader.core.domain.model.EmployeeRole
 import java.util.UUID
 
 class FirebaseSyncService {
@@ -628,6 +630,57 @@ class FirebaseSyncService {
             .child(sessionId)
             .removeValue()
             .await()
+    }
+
+    // ── Employee Sync ──────────────────────────────────────────────────
+
+    fun observeEmployees(merchantCode: String): Flow<List<Employee>> = callbackFlow {
+        val ref = db.reference.child("merchants").child(merchantCode).child("employees")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snap: DataSnapshot) {
+                trySend(snap.children.mapNotNull { child ->
+                    val m = child.value as? Map<*, *> ?: return@mapNotNull null
+                    runCatching {
+                        Employee(
+                            id = m["id"] as? String ?: child.key ?: return@mapNotNull null,
+                            merchantId = merchantCode,
+                            name = m["name"] as? String ?: return@mapNotNull null,
+                            pinCode = m["pinCode"] as? String ?: return@mapNotNull null,
+                            role = runCatching {
+                                EmployeeRole.valueOf(m["role"] as? String ?: "")
+                            }.getOrDefault(EmployeeRole.CASHIER),
+                            createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
+                        )
+                    }.getOrNull()
+                })
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        ref.addValueEventListener(listener)
+        awaitClose { ref.removeEventListener(listener) }
+    }
+
+    suspend fun pushEmployee(merchantCode: String, e: Employee) {
+        runCatching {
+            db.reference.child("merchants").child(merchantCode).child("employees")
+                .child(e.id)
+                .setValue(
+                    mapOf(
+                        "id" to e.id,
+                        "name" to e.name,
+                        "pinCode" to e.pinCode,
+                        "role" to e.role.name,
+                        "createdAt" to e.createdAt
+                    )
+                ).await()
+        }
+    }
+
+    suspend fun deleteEmployee(merchantCode: String, employeeId: String) {
+        runCatching {
+            db.reference.child("merchants").child(merchantCode).child("employees")
+                .child(employeeId).removeValue().await()
+        }
     }
 
     companion object {

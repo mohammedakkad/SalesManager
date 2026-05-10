@@ -3,6 +3,7 @@ package com.trader.salesmanager.di
 import android.provider.Settings
 import com.trader.core.data.local.appDataStore
 import com.trader.core.data.local.db.AppDatabase
+import com.trader.core.data.manager.EmployeeSessionManager
 import com.trader.core.data.manager.SubscriptionManager
 import com.trader.core.data.remote.ChatService
 import com.trader.core.data.remote.CloudinaryUploader
@@ -77,6 +78,9 @@ val salesManagerModule = module {
     }
     single {
         get<AppDatabase>().sessionDao()
+    }
+    single {
+        get<AppDatabase>().employeeDao()
     }
 
     // ── Remote ───────────────────────────────────────────────────
@@ -171,6 +175,17 @@ val salesManagerModule = module {
     }
     single<ReportsRepository> {
         ReportsRepositoryImpl(get(), get(), get())
+    }
+    single<EmployeeRepository> {
+        EmployeeRepositoryImpl(
+            get(),
+            get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            get(),
+            get()
+        )
+    }
+    single {
+        EmployeeSessionManager(get())
     }
 
     // ── ViewModels ───────────────────────────────────────────────

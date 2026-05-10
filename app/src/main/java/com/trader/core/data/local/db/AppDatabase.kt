@@ -22,9 +22,10 @@ import com.trader.core.domain.model.PaymentType
         InventorySessionItemEntity::class,
         ReturnInvoiceEntity::class,
         ReturnItemEntity::class,
-        SessionEntity::class
+        SessionEntity::class,
+        EmployeeEntity::class
     ],
-    version = 14,
+    version = 15,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -38,6 +39,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun inventoryDao(): InventoryDao
     abstract fun returnDao(): ReturnDao
     abstract fun sessionDao(): SessionDao
+    abstract fun employeeDao(): EmployeeDao
 
     companion object {
         const val DB_NAME = "sales_manager.db"
@@ -364,6 +366,25 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_14_15 = object : Migration(14, 15) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS employees (
+                        id         TEXT NOT NULL PRIMARY KEY,
+                        merchantId TEXT NOT NULL,
+                        name       TEXT NOT NULL,
+                        pinCode    TEXT NOT NULL,
+                        role       TEXT NOT NULL,
+                        createdAt  INTEGER NOT NULL,
+                        syncStatus TEXT NOT NULL DEFAULT 'PENDING'
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_employees_merchantId ON employees(merchantId)")
+            }
+        }
+
         // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
         Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
@@ -380,7 +401,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_10_11,
             MIGRATION_11_12,
             MIGRATION_12_13,
-            MIGRATION_13_14
+            MIGRATION_13_14,
+            MIGRATION_14_15
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
