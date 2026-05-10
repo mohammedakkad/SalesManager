@@ -46,6 +46,8 @@ import com.trader.salesmanager.ui.settings.SettingsScreen
 import com.trader.salesmanager.ui.settings.sessions.SessionsScreen
 import com.trader.salesmanager.ui.employees.EmployeeManagementScreen
 import com.trader.salesmanager.ui.employees.PinLockScreen
+import com.trader.core.data.manager.EmployeeSessionManager
+import org.koin.compose.koinInject
 import com.trader.salesmanager.ui.subscription.SubscriptionScreen
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionScreen
 import com.trader.salesmanager.ui.transactions.details.TransactionDetailsScreen
@@ -144,12 +146,16 @@ fun AppNavigation() {
         }
     }
 
-    val start =
-        if (startupState == StartupState.Proceed || startupState is StartupState.ProceedFree) {
-            Screen.Home.route
-        } else {
+    // ── Phase 4.3: gate Home behind PinLock when there is no active employee ──
+    val sessionManager: EmployeeSessionManager = koinInject()
+    val activeEmployee by sessionManager.currentActiveEmployee.collectAsStateWithLifecycle()
+
+    val start = when {
+        startupState != StartupState.Proceed && startupState !is StartupState.ProceedFree ->
             Screen.Activation.route
-        }
+        activeEmployee == null -> Screen.PinLock.route
+        else -> Screen.Home.route
+    }
 
 
     NavHost(
@@ -437,6 +443,15 @@ fun AppNavigation() {
                 },
                 onNavigateToSessions = {
                     navController.navigate(Screen.Sessions.route)
+                },
+                onNavigateToEmployeeManagement = {
+                    navController.navigate(Screen.EmployeeManagement.route)
+                },
+                onLogout = {
+                    sessionManager.logout()
+                    navController.navigate(Screen.PinLock.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
