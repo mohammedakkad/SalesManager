@@ -1,0 +1,120 @@
+package com.trader.core.data.local.dao
+
+import androidx.room.*
+import com.trader.core.data.local.entity.ProductEntity
+import com.trader.core.data.local.entity.ProductUnitEntity
+import kotlinx.coroutines.flow.Flow
+
+data class ProductWithUnitsRelation(
+    @Embedded val product: ProductEntity,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "productId"
+    )
+    val units: List<ProductUnitEntity>
+)
+
+data class InventoryValueProjection(
+    val costValue: Double,
+    val saleValue: Double
+)
+
+@Dao
+interface ProductDao {
+    // ── Products ─────────────────────────────────────────────────
+
+    @Transaction
+    @Query("SELECT * FROM products ORDER BY name ASC")
+    suspend fun getAllWithUnitsOnce(): List<ProductWithUnitsRelation>
+
+    @Transaction
+    @Query("SELECT * FROM products ORDER BY name ASC")
+    fun getAllWithUnits(): Flow<List<ProductWithUnitsRelation>>
+
+
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE name LIKE '%' || :query || '%' ORDER BY name ASC")
+    fun searchWithUnits(query: String): Flow<List<ProductWithUnitsRelation>>
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE barcode = :barcode LIMIT 1")
+    suspend fun getByBarcode(barcode: String): ProductWithUnitsRelation?
+
+    @Transaction
+    @Query("SELECT * FROM products WHERE id = :id LIMIT 1")
+    suspend fun getById(id: String): ProductWithUnitsRelation?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProduct(product: ProductEntity)
+
+    @Update
+    suspend fun updateProduct(product: ProductEntity)
+
+    @Query("DELETE FROM products WHERE id = :id")
+    suspend fun deleteProduct(id: String)
+
+    @Query("SELECT * FROM products WHERE syncStatus = 'PENDING'")
+    suspend fun getPendingProducts(): List<ProductEntity>
+
+    @Query("UPDATE products SET syncStatus = 'SYNCED' WHERE id = :id")
+    suspend fun markProductSynced(id: String)
+
+    @Query(
+        """
+        SELECT
+            COALESCE(SUM(quantityInStock * costPrice), 0.0) AS costValue,
+            COALESCE(SUM(quantityInStock * price), 0.0) AS saleValue
+        FROM product_units
+        WHERE quantityInStock > 0
+        """
+    )
+    fun observeInventoryValue(): Flow<InventoryValueProjection>
+
+    @Transaction
+    suspend fun upsertProductWithUnits(
+        product: ProductEntity,
+        units: List<ProductUnitEntity>
+    ) {
+        insertProduct(product) // ✅ المنتج أولاً
+        insertUnits(units) // ✅ الوحدات ثانياً
+    }
+
+    // ── Units ─────────────────────────────────────────────────────
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUnit(unit: ProductUnitEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUnits(units: List<ProductUnitEntity>) // قائمة
+
+    // للحذف الحقيقي فقط عند تعديل الوحدات (أضاف أو حذف وحدة)
+    @Query("DELETE FROM product_units WHERE productId = :productId AND id NOT IN (:keepIds)")
+    suspend fun deleteRemovedUnits(productId: String, keepIds: List<String>)
+
+    @Update
+    suspend fun updateUnit(unit: ProductUnitEntity)
+
+    @Query("DELETE FROM product_units WHERE id = :id")
+    suspend fun deleteUnit(id: String)
+
+    @Query("SELECT * FROM product_units WHERE productId = :productId")
+    suspend fun getUnitsForProduct(productId: String): List<ProductUnitEntity>
+
+    @Query("SELECT * FROM product_units WHERE syncStatus = 'PENDING'")
+    suspend fun getPendingUnits(): List<ProductUnitEntity>
+
+    @Query("UPDATE product_units SET syncStatus = 'SYNCED' WHERE id = :id")
+    suspend fun markUnitSynced(id: String)
+
+
+    // ── Stock updates ─────────────────────────────────────────────
+
+    @Query("UPDATE product_units SET quantityInStock = :qty, updatedAt = :now, syncStatus = 'PENDING' WHERE id = :unitId")
+    suspend fun updateQuantity(unitId: String, qty: Double, now: Long = System.currentTimeMillis())
+
+    @Query("SELECT quantityInStock FROM product_units WHERE id = :unitId")
+    suspend fun getQuantity(unitId: String): Double?
+
+    @Query("DELETE FROM products") suspend fun deleteAllProducts()
+}
