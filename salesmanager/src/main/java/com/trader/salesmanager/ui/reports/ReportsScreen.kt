@@ -97,6 +97,7 @@ import com.trader.salesmanager.ui.theme.Cyan500
 fun ReportsScreen(
     onNavigateUp: () -> Unit,
     onViewDayTransactions: (Long) -> Unit = {},
+    onUpgrade: () -> Unit = {},
     viewModel: ReportsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -191,7 +192,7 @@ fun ReportsScreen(
                         }
                     } else {
                         // 🔒 Free: show lock chip instead of button
-                        PremiumLockChip(feature = "تصدير", onUpgrade = { /* navigate to plans */ })
+                        PremiumLockChip(feature = "تصدير", onUpgrade = onUpgrade)
                     }
                 }
             )
@@ -209,7 +210,8 @@ fun ReportsScreen(
                 PeriodSwitcher(
                     selected = uiState.period,
                     onSelect = viewModel::setPeriod,
-                    flags = flags
+                    flags = flags,
+                    onUpgrade = onUpgrade
                 )
             }
 

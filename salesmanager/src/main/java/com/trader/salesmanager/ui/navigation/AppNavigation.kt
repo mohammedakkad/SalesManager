@@ -414,6 +414,9 @@ fun AppNavigation() {
                 },
                 onViewDayTransactions = { dateMillis ->
                     navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
+                },
+                onUpgrade = {
+                    navController.navigate(Screen.Subscription.route)
                 }
             )
         }
