@@ -111,34 +111,35 @@ class ActivationRepositoryImpl(
     // ✅ إصلاح خلل الإشعار الكاذب "تم حذف حسابك"
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeMerchantStatus(): Flow<MerchantStatus?> =
-    observeMerchantCode().flatMapLatest {
-        merchantCode ->
-        if (merchantCode.isBlank()) {
-            flowOf(null)
-        } else {
-            callbackFlow {
-                val listener = firestore.collection(COLLECTION_MERCHANTS).document(merchantCode)
-                .addSnapshotListener {
-                    snap, error ->
-                    // 1. إذا كان هناك خطأ (مثل انقطاع النت)، لا تفعل شيئاً
-                    if (error != null) return@addSnapshotListener
+        context.appDataStore.data
+            .map { it[MERCHANT_CODE] ?: "" }
+            .distinctUntilChanged()
+            .flatMapLatest { merchantCode ->
+                if (merchantCode.isBlank()) {
+                    flowOf(null)
+                } else {
+                    callbackFlow {
+                        val listener = firestore.collection(COLLECTION_MERCHANTS).document(merchantCode)
+                            .addSnapshotListener { snap, error ->
+                                // 1. إذا كان هناك خطأ (مثل انقطاع النت)، لا تفعل شيئاً
+                                if (error != null) return@addSnapshotListener
 
-                    if (snap != null && snap.exists()) {
-                        repositoryScope.launch {
-                            saveMerchantTier(parseTier(snap.getString(FIELD_TIER)))
+                                if (snap != null && snap.exists()) {
+                                    repositoryScope.launch {
+                                        saveMerchantTier(parseTier(snap.getString(FIELD_TIER)))
+                                    }
+                                    trySend(parseStatus(snap.getString(FIELD_STATUS)))
+                                } else if (snap != null && !snap.exists() && !snap.metadata.isFromCache) {
+                                    // 2. 🚀 لا ترسل null (حذف الحساب) إلا إذا كان السيرفر هو من أكد الحذف وليس الكاش المحلي!
+                                    trySend(null)
+                                }
+                            }
+                        awaitClose {
+                            listener.remove()
                         }
-                        trySend(parseStatus(snap.getString(FIELD_STATUS)))
-                    } else if (snap != null && !snap.exists() && !snap.metadata.isFromCache) {
-                        // 2. 🚀 لا ترسل null (حذف الحساب) إلا إذا كان السيرفر هو من أكد الحذف وليس الكاش المحلي!
-                        trySend(null)
                     }
                 }
-                awaitClose {
-                    listener.remove()
-                }
             }
-        }
-    }
 
     private fun parseTier(raw: String?) =
     runCatching {
@@ -231,16 +232,12 @@ class ActivationRepositoryImpl(
             if (doc != null && doc.exists()) {
                 val startupStatus = restoreSession(doc)
                 if (startupStatus == StartupStatus.ACTIVE) {
-                    runCatching {
-                        registerCurrentSession(doc.id, onlyIfMissing = true)
-                    }
+                    enqueueCurrentSessionRegistration(doc.id)
                 }
                 startupStatus
             } else if (locallyActivated && localCode.isNotBlank()) {
                 // 🚀 هجرة صامتة للمستخدمين القدامى: تسجيل جلسة جديدة دون أي تدخل
-                runCatching {
-                    registerCurrentSession(localCode, onlyIfMissing = true)
-                }
+                enqueueCurrentSessionRegistration(localCode)
                 StartupStatus.ACTIVE
             } else if (locallyActivated) {
                 StartupStatus.ACTIVE
@@ -251,9 +248,7 @@ class ActivationRepositoryImpl(
             // 🚀 إذا فشل الاتصال (أوفلاين)، دعه يدخل إذا كان مسجلاً مسبقاً
             if (locallyActivated) {
                 if (localCode.isNotBlank()) {
-                    runCatching {
-                        registerCurrentSession(localCode, onlyIfMissing = true)
-                    }
+                    enqueueCurrentSessionRegistration(localCode)
                 }
                 StartupStatus.ACTIVE
             } else {
@@ -371,6 +366,15 @@ class ActivationRepositoryImpl(
                 }
             } else {
                 sessionRef.setValue(session.toFirebaseMap()).await()
+            }
+        }
+    }
+
+    private fun enqueueCurrentSessionRegistration(merchantCode: String) {
+        if (merchantCode.isBlank()) return
+        repositoryScope.launch {
+            runCatching {
+                registerCurrentSession(merchantCode, onlyIfMissing = true)
             }
         }
     }
