@@ -29,6 +29,7 @@ class MerchantWatcherViewModel(
     // In-app banner for expiry warning
     private val _expiryBanner = MutableStateFlow<Long?>(null)
     val expiryBanner: StateFlow<Long?> = _expiryBanner.asStateFlow()
+    private var hasSessionBeenConfirmed = false
 
     init {
         observeTierChanges()
@@ -58,6 +59,10 @@ class MerchantWatcherViewModel(
                 merchantCode.isNotBlank() && sessionId.isNotBlank()
             }
             .distinctUntilChanged()
+            .onEach {
+                hasSessionBeenConfirmed = false
+                kickoutHandled = false
+            }
             .flatMapLatest {
                 (merchantCode, sessionId) ->
                 firebaseSyncService
@@ -69,12 +74,13 @@ class MerchantWatcherViewModel(
             }
             .collect {
                 exists ->
-                if (!exists && !kickoutHandled) {
+                if (exists) {
+                    hasSessionBeenConfirmed = true
+                    kickoutHandled = false
+                } else if (hasSessionBeenConfirmed && !kickoutHandled) {
                     kickoutHandled = true
                     activationRepo.deactivate()
                     _event.emit(MerchantEvent.Deleted)
-                } else if (exists) {
-                    kickoutHandled = false
                 }
             }
         }
