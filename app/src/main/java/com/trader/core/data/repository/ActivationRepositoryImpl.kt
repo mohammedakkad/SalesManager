@@ -25,6 +25,7 @@ import com.trader.core.data.remote.ValidationResult
 import com.trader.core.domain.model.SyncStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -108,6 +109,7 @@ class ActivationRepositoryImpl(
     }
 
     // ✅ إصلاح خلل الإشعار الكاذب "تم حذف حسابك"
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeMerchantStatus(): Flow<MerchantStatus?> =
     observeMerchantCode().flatMapLatest {
         merchantCode ->

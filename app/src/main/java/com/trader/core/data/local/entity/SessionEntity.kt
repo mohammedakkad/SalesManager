@@ -1,10 +1,14 @@
 package com.trader.core.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.trader.core.domain.model.Session
 
-@Entity(tableName = "sessions")
+@Entity(tableName = "sessions",
+    indices = [
+        Index(value = ["lastActive"])
+    ])
 data class SessionEntity(
     @PrimaryKey val id: String,
     val deviceId: String,
