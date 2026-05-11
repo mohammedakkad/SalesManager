@@ -73,6 +73,7 @@ import com.trader.core.domain.model.DebtAging
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
+import com.trader.salesmanager.ui.theme.Emerald700
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
