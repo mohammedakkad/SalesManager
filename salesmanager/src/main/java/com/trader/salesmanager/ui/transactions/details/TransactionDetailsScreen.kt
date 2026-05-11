@@ -165,20 +165,24 @@ fun TransactionDetailsScreen(
                             Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
-                        IconButton(
-                            onClick = {
-                                onNavigateToReturn(transactionId)
-                            },
-                            modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(0.15f))
-                        ) {
-                            Icon(
-                                Icons.Rounded.AssignmentReturn,
-                                contentDescription = "مرتجع",
-                                tint = Color.White
-                            )
+                        // ✅ Return is only meaningful when the invoice has line-items.
+                        // Hide the button entirely for transactions captured as a lump sum.
+                        if (t.hasItems) {
+                            IconButton(
+                                onClick = {
+                                    onNavigateToReturn(transactionId)
+                                },
+                                modifier = Modifier
+                                .padding(horizontal = 4.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(0.15f))
+                            ) {
+                                Icon(
+                                    Icons.Rounded.AssignmentReturn,
+                                    contentDescription = "مرتجع",
+                                    tint = Color.White
+                                )
+                            }
                         }
                         val isExporting = exportState is ExportState.Loading
                         IconButton(
@@ -518,7 +522,8 @@ private fun InvoiceItemRow(item: InvoiceItem, returnSummary: ReturnSummary) {
 private fun TotalsRow(
     label: String,
     value: String,
-    valueColor: Color = MaterialTheme.colorScheme.onSurface,
+    // ✅ Stronger default contrast — textPrimary instead of subtle onSurface tone.
+    valueColor: Color = appColors.textPrimary,
     strikethrough: Boolean = false
 ) {
     Row(
@@ -526,13 +531,17 @@ private fun TotalsRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label,
-            style = MaterialTheme.typography.bodySmall,
-            color = appColors.textSubtle)
+        Text(
+            label,
+            style = MaterialTheme.typography.bodyMedium,
+            color = appColors.textSecondary,
+            fontWeight = FontWeight.Medium
+        )
         Text(
             value,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = valueColor,
+            fontWeight = FontWeight.SemiBold,
             textDecoration = if (strikethrough) TextDecoration.LineThrough else null
         )
     }
@@ -542,22 +551,34 @@ private fun TotalsRow(
 private fun DetailRow(icon: ImageVector, label: String, value: String, color: Color) {
     Card(
         shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(0.06f)),
+        // ✅ Slightly stronger tint for clearer separation in dark mode.
+        colors = CardDefaults.cardColors(containerColor = color.copy(0.09f)),
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(
-                Modifier.size(40.dp).clip(CircleShape).background(color.copy(0.15f)),
+                Modifier.size(40.dp).clip(CircleShape).background(color.copy(0.18f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(icon, null, tint = color, modifier = Modifier.size(20.dp))
             }
             Spacer(Modifier.width(14.dp))
             Column {
-                Text(label, style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(value, style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold)
+                // Label — clear hierarchy: secondary tone, uppercase letter-spacing.
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = appColors.textSecondary,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(Modifier.height(2.dp))
+                // Value — dominant: primary text color & heavier weight.
+                Text(
+                    value,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = appColors.textPrimary
+                )
             }
         }
     }

@@ -395,13 +395,45 @@ private fun ReturnLineCard(
                         HorizontalDivider(color = appColors.divider.copy(0.5f))
                         Spacer(Modifier.height(12.dp))
 
+                        // ✅ Distinct chips for "Original", "Returning now", and "Remaining"
+                        // so the user can read each quantity at a glance.
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            QuantityChip(
+                                modifier = Modifier.weight(1f),
+                                label = "الأصلية",
+                                value = line.invoiceItem.quantity.toInt().toString(),
+                                color = appColors.textSecondary
+                            )
+                            QuantityChip(
+                                modifier = Modifier.weight(1f),
+                                label = "المُرجَعة الآن",
+                                value = line.returnQty.toInt().toString(),
+                                color = Violet500,
+                                emphasised = true
+                            )
+                            QuantityChip(
+                                modifier = Modifier.weight(1f),
+                                label = "المتبقية",
+                                value = (line.maxReturnable - line.returnQty)
+                                    .toInt()
+                                    .coerceAtLeast(0)
+                                    .toString(),
+                                color = PaidGreen
+                            )
+                        }
+
+                        Spacer(Modifier.height(12.dp))
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                "الكمية المُرجَعة",
+                                "ضبط الكمية",
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = appColors.textSecondary
@@ -419,12 +451,12 @@ private fun ReturnLineCard(
                                 )
                                 Box(
                                     modifier = Modifier
-                                    .widthIn(min = 72.dp)
+                                    .widthIn(min = 84.dp)
                                     .height(36.dp)
                                     .clip(RoundedCornerShape(12.dp))
                                     .background(
                                         Brush.horizontalGradient(
-                                            listOf(Violet500.copy(0.08f), Cyan500.copy(0.06f))
+                                            listOf(Violet500.copy(0.12f), Cyan500.copy(0.08f))
                                         )
                                     ),
                                     contentAlignment = Alignment.Center
@@ -471,6 +503,45 @@ private fun ReturnLineCard(
                     }
                 }
             }
+        }
+    }
+}
+
+// ✅ Compact, color-coded chip used in the Return screen to make the three
+// relevant quantities (original / returned-now / remaining) visually distinct.
+@Composable
+private fun QuantityChip(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+    color: Color,
+    emphasised: Boolean = false
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(14.dp),
+        color = color.copy(alpha = if (emphasised) 0.16f else 0.08f),
+        border = if (emphasised)
+            androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.5f))
+        else null
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 10.dp, horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                label,
+                style = MaterialTheme.typography.labelSmall,
+                color = color,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                value,
+                style = MaterialTheme.typography.titleMedium,
+                color = color,
+                fontWeight = FontWeight.ExtraBold
+            )
         }
     }
 }

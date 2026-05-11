@@ -172,14 +172,22 @@ fun CustomersScreen(
             }
 
             // ── Content ──────────────────────────────────────────
+            // ✅ Three-way state: loading → empty → list (matches inventory screen pattern).
             AnimatedContent(
-                targetState = uiState.customers.isEmpty(),
+                targetState = uiState.isLoading to uiState.customers.isEmpty(),
                 transitionSpec = {
                     fadeIn() togetherWith fadeOut()
                 },
                 label = "content"
-            ) { empty ->
-                if (empty) {
+            ) { (loading, empty) ->
+                if (loading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = Emerald500)
+                    }
+                } else if (empty) {
                     EmptyState(
                         icon = Icons.Rounded.People,
                         title = "لا يوجد زبائن بعد",

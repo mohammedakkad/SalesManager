@@ -37,6 +37,19 @@ fun StockReportsScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedTab by remember { mutableIntStateOf(0) }
 
+    // ✅ Full-screen loader (Emerald500) while the first stock snapshot is being fetched.
+    if (state.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(appColors.screenBackground),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Emerald500)
+        }
+        return
+    }
+
     LazyColumn(
         Modifier.fillMaxSize().background(appColors.screenBackground)
     ) {

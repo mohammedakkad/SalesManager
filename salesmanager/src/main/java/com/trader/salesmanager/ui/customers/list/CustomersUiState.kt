@@ -10,7 +10,8 @@ data class DeleteConfirmState(
 data class CustomersUiState(
     val customers: List<Customer> = emptyList(),
     val searchQuery: String = "",
-    val isLoading: Boolean = false,
+    // ✅ Default to true so first composition renders the loader.
+    val isLoading: Boolean = true,
     val pendingSyncCount: Int = 0, // ✅ badge المزامنة
     val deleteConfirm: DeleteConfirmState? = null // ✅ dialog حذف ذكي
 )

@@ -13,13 +13,25 @@ import com.trader.core.domain.model.SyncStatus
 class CustomersViewModel(private val repo: CustomerRepository) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
-    private val _isLoading = MutableStateFlow(false)
+    // ✅ Start in loading state so the UI can show a CircularProgressIndicator
+    // until the first customer page is emitted from the repository.
+    private val _isLoading = MutableStateFlow(true)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _customers: Flow<List<Customer>> = _searchQuery
     .debounce(300)
     .flatMapLatest {
-        q -> if (q.isEmpty()) repo.getAllCustomers() else repo.searchCustomers(q)
+        q ->
+        // ✅ Wrap repository calls in runCatching to swallow transient errors
+        // and keep the UI responsive (project-wide convention).
+        runCatching {
+            if (q.isEmpty()) repo.getAllCustomers() else repo.searchCustomers(q)
+        }.getOrElse {
+            flowOf(emptyList<Customer>())
+        }
+    }
+    .onEach {
+        _isLoading.value = false
     }
 
     val uiState: StateFlow<CustomersUiState> = combine(_customers, _searchQuery, _isLoading) {
@@ -34,7 +46,11 @@ class CustomersViewModel(private val repo: CustomerRepository) : ViewModel() {
             isLoading = loading,
             pendingSyncCount = pendingCount
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CustomersUiState())
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5_000),
+        CustomersUiState(isLoading = true)
+    )
 
     fun updateSearch(query: String) {
         _searchQuery.value = query

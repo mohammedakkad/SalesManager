@@ -73,6 +73,7 @@ import com.trader.core.domain.model.DebtAging
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
+import com.trader.salesmanager.ui.theme.Emerald700
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
@@ -97,6 +98,7 @@ import com.trader.salesmanager.ui.theme.Cyan500
 fun ReportsScreen(
     onNavigateUp: () -> Unit,
     onViewDayTransactions: (Long) -> Unit = {},
+    onUpgrade: () -> Unit = {},
     viewModel: ReportsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -190,8 +192,8 @@ fun ReportsScreen(
                             }
                         }
                     } else {
-                        // 🔒 Free: show lock chip instead of button
-                        PremiumLockChip(feature = "تصدير", onUpgrade = { /* navigate to plans */ })
+                        // 🔒 Free: lock chip routes user to the Upgrade (Subscription) screen.
+                        PremiumLockChip(feature = "تصدير", onUpgrade = onUpgrade)
                     }
                 }
             )
@@ -209,7 +211,8 @@ fun ReportsScreen(
                 PeriodSwitcher(
                     selected = uiState.period,
                     onSelect = viewModel::setPeriod,
-                    flags = flags
+                    flags = flags,
+                    onUpgrade = onUpgrade
                 )
             }
 
@@ -217,11 +220,10 @@ fun ReportsScreen(
             item {
                 if (uiState.isAdvancedReportsEnabled) {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        SummaryCard(
-                            "إجمالي المبيعات",
-                            uiState.totalAmount,
-                            Emerald500,
-                            Modifier.fillMaxWidth()
+                        TotalSalesHeroCard(
+                            label = "إجمالي المبيعات",
+                            value = uiState.totalAmount,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             MetricCard(
@@ -253,11 +255,10 @@ fun ReportsScreen(
                         }
                     }
                 } else {
-                    SummaryCard(
-                        "إجمالي المبيعات",
-                        uiState.totalAmount,
-                        Emerald500,
-                        Modifier.fillMaxWidth()
+                    TotalSalesHeroCard(
+                        label = "إجمالي المبيعات",
+                        value = uiState.totalAmount,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
@@ -882,6 +883,110 @@ private fun PeriodSwitcher(
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+// ── Total Sales Hero Card — 2026 premium look ──────────────────
+// A prominent gradient card with an animated counter, decorative blob,
+// and trailing icon. Reuses the brand Emerald → Cyan gradient for
+// consistency with other elevated surfaces (Home, Inventory headers).
+@Composable
+private fun TotalSalesHeroCard(label: String, value: Double, modifier: Modifier) {
+    var target by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(value) {
+        target = value.toFloat()
+    }
+    val animated by animateFloatAsState(
+        target,
+        tween(1200, easing = FastOutSlowInEasing),
+        label = "totalSalesCount"
+    )
+
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(Emerald700, Emerald500, Cyan500)
+                    )
+                )
+        ) {
+            // Decorative soft blob — purely visual.
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 4.dp, end = 4.dp)
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.08f))
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 22.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.85f))
+                        )
+                        Text(
+                            label,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            String.format("%,.0f", animated),
+                            style = MaterialTheme.typography.displaySmall,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.White
+                        )
+                        Text(
+                            "₪",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 6.dp)
+                        )
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.18f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Rounded.Analytics,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
                 }
             }
         }
