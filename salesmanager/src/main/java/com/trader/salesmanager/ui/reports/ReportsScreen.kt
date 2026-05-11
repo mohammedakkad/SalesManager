@@ -59,6 +59,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -97,6 +98,7 @@ import com.trader.salesmanager.ui.theme.Cyan500
 fun ReportsScreen(
     onNavigateUp: () -> Unit,
     onViewDayTransactions: (Long) -> Unit = {},
+    onNavigateToSubscription: () -> Unit = {},
     viewModel: ReportsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -190,8 +192,8 @@ fun ReportsScreen(
                             }
                         }
                     } else {
-                        // 🔒 Free: show lock chip instead of button
-                        PremiumLockChip(feature = "تصدير", onUpgrade = { /* navigate to plans */ })
+                        // 🔒 Free: navigate to subscription screen
+                        PremiumLockChip(feature = "تصدير", onUpgrade = onNavigateToSubscription)
                     }
                 }
             )
@@ -209,7 +211,8 @@ fun ReportsScreen(
                 PeriodSwitcher(
                     selected = uiState.period,
                     onSelect = viewModel::setPeriod,
-                    flags = flags
+                    flags = flags,
+                    onUpgrade = onNavigateToSubscription
                 )
             }
 
@@ -275,7 +278,7 @@ fun ReportsScreen(
                 }
             } else if (!uiState.isAdvancedReportsEnabled) {
                 item {
-                    PremiumReportsLockedPreview()
+                    PremiumReportsLockedPreview(onUpgrade = onNavigateToSubscription)
                 }
             } else {
                 // ── تقويم الشهر ──────────────────────────────────────
@@ -956,7 +959,7 @@ private fun MetricCard(label: String, value: Double, color: Color, modifier: Mod
 }
 
 @Composable
-private fun PremiumReportsLockedPreview() {
+private fun PremiumReportsLockedPreview(onUpgrade: () -> Unit = {}) {
     Card(shape = RoundedCornerShape(22.dp), elevation = CardDefaults.cardElevation(2.dp)) {
         Box {
             Column(
@@ -1015,6 +1018,16 @@ private fun PremiumReportsLockedPreview() {
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
                     )
+                    Spacer(Modifier.height(14.dp))
+                    Button(
+                        onClick = onUpgrade,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = UnpaidAmber)
+                    ) {
+                        Icon(Icons.Rounded.Lock, null, modifier = Modifier.size(16.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("ترقية إلى Premium", fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
@@ -1115,52 +1128,69 @@ private fun ChartCard(title: String, content: @Composable () -> Unit) {
 
 @Composable
 private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
-    val progress = remember {
-        Animatable(0f)
-    }
+    val progress = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
-        progress.snapTo(0f); progress.animateTo(
-        1f,
-        tween(1500, easing = FastOutSlowInEasing)
-    )
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(1500, easing = FastOutSlowInEasing))
     }
     val anim by progress.asState()
 
     Canvas(modifier = modifier) {
         if (data.isEmpty()) return@Canvas
-        val maxVal = data.maxOf {
-            it.total
-        }.takeIf {
-            it > 0
-        } ?: 1.0
+
+        val maxVal = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
         val stepX = size.width / (data.size - 1).coerceAtLeast(1)
         val points = data.mapIndexed { i, e ->
-            Offset(
-                i * stepX,
-                size.height * (1f - (e.total / maxVal).toFloat())
-            )
+            Offset(i * stepX, size.height * (1f - (e.total / maxVal).toFloat()))
         }
-        val visible =
-            points.take((points.size * anim).toInt().coerceAtLeast(1).coerceAtMost(points.size))
-        val path = Path().apply {
-            visible.forEachIndexed { i, pt ->
-                if (i == 0) moveTo(pt.x, pt.y) else lineTo(
-                    pt.x,
-                    pt.y
-                )
-            }
-            lineTo(visible.last().x, size.height); lineTo(visible.first().x, size.height); close()
+        val visible = points
+            .take((points.size * anim).toInt().coerceAtLeast(1).coerceAtMost(points.size))
+
+        if (visible.size < 2) {
+            visible.firstOrNull()?.let { drawCircle(Emerald500, 5.dp.toPx(), it) }
+            return@Canvas
         }
-        drawPath(path, Brush.verticalGradient(listOf(Emerald500.copy(0.15f), Color.Transparent)))
+
+        // Build a smooth Bezier path through all visible points.
+        // Control points are derived by offsetting 40 % of the horizontal distance
+        // which gives a fluid S-curve feel without overshooting vertically.
         val linePath = Path().apply {
-            visible.forEachIndexed { i, pt ->
-                if (i == 0) moveTo(pt.x, pt.y) else lineTo(
-                    pt.x,
-                    pt.y
-                )
+            moveTo(visible.first().x, visible.first().y)
+            for (i in 0 until visible.size - 1) {
+                val p0 = visible[i]
+                val p1 = visible[i + 1]
+                val cp1x = p0.x + (p1.x - p0.x) * 0.4f
+                val cp2x = p0.x + (p1.x - p0.x) * 0.6f
+                cubicTo(cp1x, p0.y, cp2x, p1.y, p1.x, p1.y)
             }
         }
+
+        // Closed fill path uses the same Bezier line, then drops straight down.
+        val fillPath = Path().apply {
+            addPath(linePath)
+            lineTo(visible.last().x, size.height)
+            lineTo(visible.first().x, size.height)
+            close()
+        }
+
+        // Vertical gradient fill — rich Emerald to transparent for a "2026 premium" feel.
+        drawPath(
+            fillPath,
+            Brush.verticalGradient(
+                colorStops = arrayOf(
+                    0.0f to Emerald500.copy(alpha = 0.40f),
+                    0.6f to Emerald500.copy(alpha = 0.12f),
+                    1.0f to Color.Transparent
+                ),
+                startY = 0f,
+                endY = size.height
+            )
+        )
+
+        // Smooth Bezier stroke
         drawPath(linePath, Emerald500, style = Stroke(3.dp.toPx(), cap = StrokeCap.Round))
+
+        // Data-point dots
         visible.forEach { pt ->
             drawCircle(Color.White, 5.dp.toPx(), pt)
             drawCircle(Emerald500, 3.dp.toPx(), pt)
@@ -1170,40 +1200,77 @@ private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
 
 @Composable
 private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
-    val progress = remember {
-        Animatable(0f)
-    }
+    val progress = remember { Animatable(0f) }
     LaunchedEffect(Unit) {
-        progress.snapTo(0f); progress.animateTo(
-        1f,
-        tween(1200, easing = FastOutSlowInEasing)
-    )
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing))
     }
     val anim by progress.asState()
 
     Canvas(modifier = modifier) {
         if (data.isEmpty()) return@Canvas
-        val maxVal = data.maxOf {
-            it.total
-        }.takeIf {
-            it > 0
-        } ?: 1.0
+
+        val maxVal = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
         val groupW = size.width / data.size
         val barW = groupW * 0.35f
+        val r = 6.dp.toPx()
+
         data.forEachIndexed { i, entry ->
             val left = i * groupW + barW * 0.2f
-            val paidH = (entry.paid / maxVal * size.height * anim).toFloat()
-            val unpaidH = ((entry.total - entry.paid) / maxVal * size.height * anim).toFloat()
-            drawRoundRect(
-                PaidGreen, Offset(left, size.height - paidH),
-                Size(barW, paidH), androidx.compose.ui.geometry.CornerRadius(4.dp.toPx())
+            val paidH = (entry.paid / maxVal * size.height * anim).toFloat().coerceAtLeast(0f)
+            val unpaidH = ((entry.total - entry.paid) / maxVal * size.height * anim)
+                .toFloat().coerceAtLeast(0f)
+
+            // Paid bar — top-only rounded corners for a modern card-bar look
+            drawTopRoundedBar(
+                color = PaidGreen,
+                left = left,
+                barWidth = barW,
+                barHeight = paidH,
+                bottomY = size.height,
+                cornerRadius = r
             )
-            drawRoundRect(
-                DebtRed.copy(0.7f), Offset(left + barW + 2.dp.toPx(), size.height - unpaidH),
-                Size(barW, unpaidH), androidx.compose.ui.geometry.CornerRadius(4.dp.toPx())
+
+            // Unpaid bar
+            drawTopRoundedBar(
+                color = DebtRed.copy(alpha = 0.75f),
+                left = left + barW + 2.dp.toPx(),
+                barWidth = barW,
+                barHeight = unpaidH,
+                bottomY = size.height,
+                cornerRadius = r
             )
         }
     }
+}
+
+/**
+ * Draws a rectangle with rounded corners only on the top-left and top-right,
+ * giving bars the modern "card pillar" appearance without extra dependencies.
+ */
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawTopRoundedBar(
+    color: Color,
+    left: Float,
+    barWidth: Float,
+    barHeight: Float,
+    bottomY: Float,
+    cornerRadius: Float
+) {
+    if (barHeight <= 0f) return
+    val top = bottomY - barHeight
+    val right = left + barWidth
+    val r = cornerRadius.coerceAtMost(barWidth / 2f).coerceAtMost(barHeight / 2f)
+
+    val path = Path().apply {
+        moveTo(left, bottomY)
+        lineTo(left, top + r)
+        arcTo(Rect(left, top, left + r * 2f, top + r * 2f), 180f, 90f, false)
+        lineTo(right - r, top)
+        arcTo(Rect(right - r * 2f, top, right, top + r * 2f), 270f, 90f, false)
+        lineTo(right, bottomY)
+        close()
+    }
+    drawPath(path, color)
 }
 
 @Composable

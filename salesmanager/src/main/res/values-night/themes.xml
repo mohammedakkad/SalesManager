@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Dark theme window background is set to the same deep-charcoal color used in DarkColorScheme
+        (DarkBackground = 0xFF0F1923). This eliminates the white flash that appears during
+        screen transitions and activity start in Dark Mode, because the system window is already
+        the correct dark color before Compose draws its first frame.
+    -->
+    <style name="Theme.SalesManager" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#0F1923</item>
+        <item name="android:colorBackground">#0F1923</item>
+        <item name="android:statusBarColor">#0F1923</item>
+        <item name="android:navigationBarColor">#0F1923</item>
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+</resources>

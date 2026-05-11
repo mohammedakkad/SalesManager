@@ -165,20 +165,23 @@ fun TransactionDetailsScreen(
                             Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
-                        IconButton(
-                            onClick = {
-                                onNavigateToReturn(transactionId)
-                            },
-                            modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .clip(CircleShape)
-                            .background(Color.White.copy(0.15f))
-                        ) {
-                            Icon(
-                                Icons.Rounded.AssignmentReturn,
-                                contentDescription = "مرتجع",
-                                tint = Color.White
-                            )
+                        // Return button is only meaningful when the transaction has invoice items
+                        if (t.hasItems) {
+                            IconButton(
+                                onClick = {
+                                    onNavigateToReturn(transactionId)
+                                },
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(0.15f))
+                            ) {
+                                Icon(
+                                    Icons.Rounded.AssignmentReturn,
+                                    contentDescription = "مرتجع",
+                                    tint = Color.White
+                                )
+                            }
                         }
                         val isExporting = exportState is ExportState.Loading
                         IconButton(
@@ -554,10 +557,22 @@ private fun DetailRow(icon: ImageVector, label: String, value: String, color: Co
             }
             Spacer(Modifier.width(14.dp))
             Column {
-                Text(label, style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Text(value, style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold)
+                // Label — uses onSurfaceVariant for a clear secondary hierarchy in both themes
+                Text(
+                    label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(Modifier.height(2.dp))
+                // Value — uses the semantic appColors.textPrimary which correctly maps to
+                // DarkOnSurface (#E8EDF2) in dark mode for high contrast readability
+                Text(
+                    value,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = appColors.textPrimary
+                )
             }
         }
     }

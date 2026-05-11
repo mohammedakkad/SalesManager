@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -173,13 +174,15 @@ fun CustomersScreen(
 
             // ── Content ──────────────────────────────────────────
             AnimatedContent(
-                targetState = uiState.customers.isEmpty(),
-                transitionSpec = {
-                    fadeIn() togetherWith fadeOut()
-                },
+                targetState = Triple(uiState.isLoading, uiState.customers.isEmpty(), uiState.searchQuery),
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
                 label = "content"
-            ) { empty ->
-                if (empty) {
+            ) { (loading, empty, _) ->
+                if (loading) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = Emerald500)
+                    }
+                } else if (empty) {
                     EmptyState(
                         icon = Icons.Rounded.People,
                         title = "لا يوجد زبائن بعد",

@@ -33,6 +33,8 @@ import com.trader.salesmanager.ui.scanner.BarcodeScannerScreen
 import com.trader.salesmanager.ui.theme.*
 import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.export.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -51,11 +53,18 @@ fun InventoryListScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var showScanner by remember {
-        mutableStateOf(false)
-    }
-    var showNewProduct by remember {
-        mutableStateOf<String?>(null)
+    var showScanner by remember { mutableStateOf(false) }
+    var showNewProduct by remember { mutableStateOf<String?>(null) }
+
+    // Force a data refresh every time this screen enters RESUMED state so that
+    // any changes made in child screens (add/edit product) are immediately visible.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.currentStateFlow.collect { state ->
+            if (state == Lifecycle.State.RESUMED) {
+                viewModel.refreshOnResume()
+            }
+        }
     }
 
     val storeName by context.appDataStore.data

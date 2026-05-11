@@ -108,35 +108,96 @@ class ActivationRepositoryImpl(
         sessionDao.deleteAll()
     }
 
-    // ✅ إصلاح خلل الإشعار الكاذب "تم حذف حسابك"
+    /**
+     * Observes merchant status from Firestore in real-time.
+     *
+     * Key rules to prevent false-positive "Account Blocked" dialogs:
+     *  1. FREE users (isSelfRegistered = true) are looked up by HardwareID,
+     *     not by merchantCode alone, because their document may be keyed on deviceId.
+     *  2. A null / missing-document result is only emitted if the server
+     *     CONFIRMED the document existed at least once and it has now been removed
+     *     (i.e. we skip cache-only snapshots for deletion signals).
+     *  3. Network errors are silently ignored — the last known status is kept.
+     *  4. A status of BLOCKED (which maps to null in this repo) is only emitted
+     *     when the document explicitly carries status = DISABLED/EXPIRED, never
+     *     while still connecting.
+     */
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeMerchantStatus(): Flow<MerchantStatus?> =
         context.appDataStore.data
-            .map { it[MERCHANT_CODE] ?: "" }
+            .map { prefs ->
+                val code = prefs[MERCHANT_CODE] ?: ""
+                val isFree = prefs[IS_SELF_REGISTERED] ?: false
+                code to isFree
+            }
             .distinctUntilChanged()
-            .flatMapLatest { merchantCode ->
+            .flatMapLatest { (merchantCode, isFree) ->
                 if (merchantCode.isBlank()) {
                     flowOf(null)
                 } else {
                     callbackFlow {
-                        val listener = firestore.collection(COLLECTION_MERCHANTS).document(merchantCode)
-                            .addSnapshotListener { snap, error ->
-                                // 1. إذا كان هناك خطأ (مثل انقطاع النت)، لا تفعل شيئاً
-                                if (error != null) return@addSnapshotListener
+                        // For FREE users the document may be keyed on the device's ANDROID_ID,
+                        // so we resolve the actual document reference first.
+                        val docRef = if (isFree) {
+                            val deviceId = getHardwareId()
+                            // Prefer exact match by deviceId document; fall back to merchantCode.
+                            val byDevice = runCatching {
+                                firestore.collection(COLLECTION_MERCHANTS).document(deviceId).get().await()
+                            }.getOrNull()
+                            if (byDevice?.exists() == true) {
+                                firestore.collection(COLLECTION_MERCHANTS).document(deviceId)
+                            } else {
+                                firestore.collection(COLLECTION_MERCHANTS).document(merchantCode)
+                            }
+                        } else {
+                            firestore.collection(COLLECTION_MERCHANTS).document(merchantCode)
+                        }
 
-                                if (snap != null && snap.exists()) {
+                        // Track whether we have ever received a confirmed server-side existence
+                        // so we don't emit "deleted" on first-run cache misses or while offline.
+                        var documentConfirmedExistOnServer = false
+
+                        val listener = docRef.addSnapshotListener { snap, error ->
+                            // Network errors — keep last known state, do not emit anything.
+                            if (error != null) return@addSnapshotListener
+
+                            when {
+                                snap == null -> return@addSnapshotListener
+
+                                snap.exists() -> {
+                                    // Document is present — update tier and forward status.
+                                    if (!snap.metadata.isFromCache) {
+                                        documentConfirmedExistOnServer = true
+                                    }
                                     repositoryScope.launch {
                                         saveMerchantTier(parseTier(snap.getString(FIELD_TIER)))
                                     }
-                                    trySend(parseStatus(snap.getString(FIELD_STATUS)))
-                                } else if (snap != null && !snap.exists() && !snap.metadata.isFromCache) {
-                                    // 2. 🚀 لا ترسل null (حذف الحساب) إلا إذا كان السيرفر هو من أكد الحذف وليس الكاش المحلي!
-                                    trySend(null)
+                                    val rawStatus = snap.getString(FIELD_STATUS)
+                                    // Only propagate DISABLED / EXPIRED; treat ACTIVE (and anything
+                                    // else, including a missing field) as healthy.
+                                    val status = when (rawStatus?.uppercase()) {
+                                        STATUS_DISABLED, "BLOCKED" -> MerchantStatus.DISABLED
+                                        "EXPIRED" -> MerchantStatus.EXPIRED
+                                        else -> MerchantStatus.ACTIVE
+                                    }
+                                    trySend(status)
                                 }
+
+                                !snap.exists() && !snap.metadata.isFromCache -> {
+                                    // Server confirmed document does not exist.
+                                    // Only treat as "deleted/blocked" if we previously saw it exist
+                                    // on the server; otherwise this is just a new/unregistered user.
+                                    if (documentConfirmedExistOnServer) {
+                                        trySend(null)
+                                    }
+                                    // else: document never confirmed — stay silent (don't block user).
+                                }
+
+                                // snap exists only in cache, or isFromCache + not exists → ignore.
                             }
-                        awaitClose {
-                            listener.remove()
                         }
+
+                        awaitClose { listener.remove() }
                     }
                 }
             }

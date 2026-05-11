@@ -13,28 +13,29 @@ import com.trader.core.domain.model.SyncStatus
 class CustomersViewModel(private val repo: CustomerRepository) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
-    private val _isLoading = MutableStateFlow(false)
+
+    // Starts true; flipped to false on the first Room emission so the screen
+    // shows a spinner while the DB query runs instead of a premature empty-state.
+    private val _isLoading = MutableStateFlow(true)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _customers: Flow<List<Customer>> = _searchQuery
-    .debounce(300)
-    .flatMapLatest {
-        q -> if (q.isEmpty()) repo.getAllCustomers() else repo.searchCustomers(q)
-    }
+        .debounce(300)
+        .flatMapLatest { q ->
+            if (q.isEmpty()) repo.getAllCustomers() else repo.searchCustomers(q)
+        }
+        .onEach { _isLoading.value = false }
 
     val uiState: StateFlow<CustomersUiState> = combine(_customers, _searchQuery, _isLoading) {
         customers, query, loading ->
-        // ✅ badge المزامنة: عدد العملاء الذين لم يُرفعوا بعد
-        val pendingCount = customers.count {
-            it.syncStatus == SyncStatus.PENDING
-        }
+        val pendingCount = customers.count { it.syncStatus == SyncStatus.PENDING }
         CustomersUiState(
             customers = customers,
             searchQuery = query,
             isLoading = loading,
             pendingSyncCount = pendingCount
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CustomersUiState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CustomersUiState(isLoading = true))
 
     fun updateSearch(query: String) {
         _searchQuery.value = query
