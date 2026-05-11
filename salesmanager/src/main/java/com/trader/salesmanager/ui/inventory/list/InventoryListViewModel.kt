@@ -6,7 +6,6 @@ import com.trader.core.domain.model.ProductWithUnits
 import com.trader.core.domain.model.SyncStatus
 import com.trader.core.domain.repository.ProductRepository
 import com.trader.core.util.NetworkMonitor
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -59,45 +58,39 @@ class InventoryListViewModel(
     private val _query = MutableStateFlow("")
     private val _filter = MutableStateFlow(StockFilter.ALL)
 
-    // Incrementing this triggers flatMapLatest to restart the inner combine,
-    // guaranteeing Room re-queries and the UI sees the latest data after navigation.
-    private val _refreshVersion = MutableStateFlow(0)
+    val uiState: StateFlow<InventoryListUiState> = combine(
+        // Show all products with units — including PENDING ones.
+        // Filtering out empty-unit products here was masking a sync bug rather than fixing it;
+        // the correct fix belongs in the Repository layer.
+        productRepo.getAllProducts(),
+        _query,
+        _filter,
+        networkMonitor.isOnlineFlow
+    ) {
+        products, query, filter, isOnline ->
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val uiState: StateFlow<InventoryListUiState> =
-        // Outer flatMapLatest means each refreshOnResume() call restarts the inner combine
-        // entirely, forcing Room to re-query and guaranteeing fresh state after navigation.
-        _refreshVersion.flatMapLatest {
-            combine(
-                productRepo.getAllProducts(),
-                _query,
-                _filter,
-                networkMonitor.isOnlineFlow
-            ) { products, query, filter, isOnline ->
-
-                val pendingCount = products.count { p ->
-                    p.units.isNotEmpty() && p.units.all { it.syncStatus == SyncStatus.PENDING }
-                }
-
-                InventoryListUiState(
-                    products = products.filter { it.units.isNotEmpty() },
-                    query = query,
-                    filter = filter,
-                    isLoading = false,
-                    isOnline = isOnline,
-                    pendingSyncCount = pendingCount
-                )
+        val pendingCount = products.count {
+            p ->
+            p.units.isNotEmpty() && p.units.all {
+                it.syncStatus == SyncStatus.PENDING
             }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5_000),
-            InventoryListUiState()
-        )
+        }
 
-    /** Call when the screen enters RESUMED to guarantee fresh data is visible after navigation. */
-    fun refreshOnResume() {
-        _refreshVersion.value++
-    }
+        InventoryListUiState(
+            products = products.filter {
+                it.units.isNotEmpty()
+            },
+            query = query,
+            filter = filter,
+            isLoading = false,
+            isOnline = isOnline,
+            pendingSyncCount = pendingCount
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        InventoryListUiState()
+    )
 
     fun setQuery(q: String) {
         _query.value = q

@@ -18,11 +18,14 @@ import kotlinx.coroutines.launch
 
 sealed class StartupState {
     object Checking : StartupState()
-    object Proceed : StartupState()           // Premium — activation code
-    object ProceedFree : StartupState()       // Free — self-registered
+    object Proceed : StartupState()               // Premium — activation code
+    object ProceedFree : StartupState()           // Free — self-registered
     object NeedActivation : StartupState()
+    // Admin-disabled account — no upgrade path; show support contact.
     data class Blocked(val message: String, val canRetry: Boolean = false) : StartupState()
-    }
+    // Subscription lapsed — route user to upgrade/renew screen.
+    object Expired : StartupState()
+}
 
     class ActivationViewModel(
         private val repo: ActivationRepository
@@ -57,9 +60,15 @@ sealed class StartupState {
                     if (repo.isSelfRegistered()) StartupState.ProceedFree else StartupState.Proceed
                 }
                 StartupStatus.NOT_ACTIVATED -> StartupState.NeedActivation
-                StartupStatus.DISABLED -> StartupState.Blocked("الحساب معطل من قِبل الإدارة", canRetry = false)
-                StartupStatus.OFFLINE -> StartupState.NeedActivation // كخيار آمن إذا لم يكن مسجلاً مسبقاً
-                else -> StartupState.Blocked("انتهى الاشتراك", canRetry = false)
+                // Admin explicitly disabled this merchant — block with support info, no upgrade path.
+                StartupStatus.DISABLED -> StartupState.Blocked(
+                    "الحساب معطل من قِبل الإدارة",
+                    canRetry = false
+                )
+                // Subscription lapsed or code deleted — offer upgrade, not a hard block.
+                StartupStatus.EXPIRED, StartupStatus.DELETED -> StartupState.Expired
+                // No internet & never activated locally — treat as unauthenticated.
+                StartupStatus.OFFLINE -> StartupState.NeedActivation
             }
         }
 
