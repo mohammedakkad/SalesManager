@@ -127,10 +127,16 @@ class ReportsViewModel(
         viewModelScope.launch {
             FeatureFlags.flow.collect {
                 flags ->
+                // ✅ Always reflect the tier instantly — both up- and down-grades.
                 _uiState.update {
                     it.copy(
-                        isLoading = false,
-                        isAdvancedReportsEnabled = flags.isAdvancedReportsEnabled
+                        isAdvancedReportsEnabled = flags.isAdvancedReportsEnabled,
+                        // Wipe advanced metrics immediately when downgraded.
+                        netProfit = if (flags.isAdvancedReportsEnabled) it.netProfit else 0.0,
+                        inventoryCostValue = if (flags.isAdvancedReportsEnabled) it.inventoryCostValue else 0.0,
+                        inventorySaleValue = if (flags.isAdvancedReportsEnabled) it.inventorySaleValue else 0.0,
+                        debtAging = if (flags.isAdvancedReportsEnabled) it.debtAging else DebtAging(),
+                        salesProfitLast7Days = if (flags.isAdvancedReportsEnabled) it.salesProfitLast7Days else emptyList()
                     )
                 }
                 if (flags.isAdvancedReportsEnabled && !hasFetchedAdvancedAnalytics) {
@@ -143,7 +149,7 @@ class ReportsViewModel(
 
     private fun observeBaseReports() {
         viewModelScope.launch {
-            combine(
+            val baseFlow = combine(
                 txRepo.getAllTransactions(),
                 periodFinancials,
                 _calendarMonth,
@@ -158,18 +164,24 @@ class ReportsViewModel(
                     year = year,
                     selectedDay = selectedDay
                 )
+            }
+
+            // ✅ Always derive isAdvancedReportsEnabled from the latest tier — no stale cache.
+            combine(baseFlow, FeatureFlags.flow) {
+                baseState, flags ->
+                baseState to flags.isAdvancedReportsEnabled
             }.collect {
-                baseState ->
+                (baseState, isAdvanced) ->
                 _uiState.update {
                     current ->
                     baseState.copy(
-                        isLoading = current.isLoading,
-                        isAdvancedReportsEnabled = current.isAdvancedReportsEnabled,
-                        netProfit = if (current.isAdvancedReportsEnabled) current.netProfit else 0.0,
-                        inventoryCostValue = if (current.isAdvancedReportsEnabled) current.inventoryCostValue else 0.0,
-                        inventorySaleValue = if (current.isAdvancedReportsEnabled) current.inventorySaleValue else 0.0,
-                        debtAging = if (current.isAdvancedReportsEnabled) current.debtAging else DebtAging(),
-                        salesProfitLast7Days = if (current.isAdvancedReportsEnabled) current.salesProfitLast7Days else emptyList()
+                        isLoading = false,
+                        isAdvancedReportsEnabled = isAdvanced,
+                        netProfit = if (isAdvanced) current.netProfit else 0.0,
+                        inventoryCostValue = if (isAdvanced) current.inventoryCostValue else 0.0,
+                        inventorySaleValue = if (isAdvanced) current.inventorySaleValue else 0.0,
+                        debtAging = if (isAdvanced) current.debtAging else DebtAging(),
+                        salesProfitLast7Days = if (isAdvanced) current.salesProfitLast7Days else emptyList()
                     )
                 }
             }
