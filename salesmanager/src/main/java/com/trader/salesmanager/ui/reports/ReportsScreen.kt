@@ -74,6 +74,7 @@ import com.trader.core.domain.model.DebtAging
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
+import com.trader.salesmanager.ui.theme.Emerald700
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
@@ -98,7 +99,7 @@ import com.trader.salesmanager.ui.theme.Cyan500
 fun ReportsScreen(
     onNavigateUp: () -> Unit,
     onViewDayTransactions: (Long) -> Unit = {},
-    onNavigateToSubscription: () -> Unit = {},
+    onUpgrade: () -> Unit = {},
     viewModel: ReportsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -193,7 +194,7 @@ fun ReportsScreen(
                         }
                     } else {
                         // 🔒 Free: navigate to subscription screen
-                        PremiumLockChip(feature = "تصدير", onUpgrade = onNavigateToSubscription)
+                        PremiumLockChip(feature = "تصدير", onUpgrade = onUpgrade)
                     }
                 }
             )
@@ -212,7 +213,7 @@ fun ReportsScreen(
                     selected = uiState.period,
                     onSelect = viewModel::setPeriod,
                     flags = flags,
-                    onUpgrade = onNavigateToSubscription
+                    onUpgrade = onUpgrade
                 )
             }
 
@@ -220,11 +221,10 @@ fun ReportsScreen(
             item {
                 if (uiState.isAdvancedReportsEnabled) {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        SummaryCard(
-                            "إجمالي المبيعات",
-                            uiState.totalAmount,
-                            Emerald500,
-                            Modifier.fillMaxWidth()
+                        TotalSalesHeroCard(
+                            label = "إجمالي المبيعات",
+                            value = uiState.totalAmount,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                             MetricCard(
@@ -256,11 +256,10 @@ fun ReportsScreen(
                         }
                     }
                 } else {
-                    SummaryCard(
-                        "إجمالي المبيعات",
-                        uiState.totalAmount,
-                        Emerald500,
-                        Modifier.fillMaxWidth()
+                    TotalSalesHeroCard(
+                        label = "إجمالي المبيعات",
+                        value = uiState.totalAmount,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
@@ -278,7 +277,7 @@ fun ReportsScreen(
                 }
             } else if (!uiState.isAdvancedReportsEnabled) {
                 item {
-                    PremiumReportsLockedPreview(onUpgrade = onNavigateToSubscription)
+                    PremiumReportsLockedPreview(onUpgrade = onUpgrade)
                 }
             } else {
                 // ── تقويم الشهر ──────────────────────────────────────
@@ -891,6 +890,110 @@ private fun PeriodSwitcher(
     }
 }
 
+// ── Total Sales Hero Card — 2026 premium look ──────────────────
+// A prominent gradient card with an animated counter, decorative blob,
+// and trailing icon. Reuses the brand Emerald → Cyan gradient for
+// consistency with other elevated surfaces (Home, Inventory headers).
+@Composable
+private fun TotalSalesHeroCard(label: String, value: Double, modifier: Modifier) {
+    var target by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(value) {
+        target = value.toFloat()
+    }
+    val animated by animateFloatAsState(
+        target,
+        tween(1200, easing = FastOutSlowInEasing),
+        label = "totalSalesCount"
+    )
+
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.linearGradient(
+                        colors = listOf(Emerald700, Emerald500, Cyan500)
+                    )
+                )
+        ) {
+            // Decorative soft blob — purely visual.
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 4.dp, end = 4.dp)
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.08f))
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 22.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.85f))
+                        )
+                        Text(
+                            label,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    Spacer(Modifier.height(10.dp))
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            String.format("%,.0f", animated),
+                            style = MaterialTheme.typography.displaySmall,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color.White
+                        )
+                        Text(
+                            "₪",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(bottom = 6.dp)
+                        )
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(Color.White.copy(alpha = 0.18f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Rounded.Analytics,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun SummaryCard(label: String, value: Double, color: Color, modifier: Modifier) {
     var target by remember {
@@ -1221,9 +1324,12 @@ private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
             val unpaidH = ((entry.total - entry.paid) / maxVal * size.height * anim)
                 .toFloat().coerceAtLeast(0f)
 
-            // Paid bar — top-only rounded corners for a modern card-bar look
+            // Paid bar — gradient Emerald → Cyan for 2026 premium look
             drawTopRoundedBar(
-                color = PaidGreen,
+                brush = Brush.verticalGradient(
+                    colorStops = arrayOf(0f to Emerald500, 1f to PaidGreen.copy(0.7f)),
+                    startY = size.height - paidH, endY = size.height
+                ),
                 left = left,
                 barWidth = barW,
                 barHeight = paidH,
@@ -1231,9 +1337,12 @@ private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
                 cornerRadius = r
             )
 
-            // Unpaid bar
+            // Unpaid bar — gradient Amber → DebtRed
             drawTopRoundedBar(
-                color = DebtRed.copy(alpha = 0.75f),
+                brush = Brush.verticalGradient(
+                    colorStops = arrayOf(0f to DebtRed, 1f to DebtRed.copy(0.5f)),
+                    startY = size.height - unpaidH, endY = size.height
+                ),
                 left = left + barW + 2.dp.toPx(),
                 barWidth = barW,
                 barHeight = unpaidH,
@@ -1245,11 +1354,11 @@ private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
 }
 
 /**
- * Draws a rectangle with rounded corners only on the top-left and top-right,
- * giving bars the modern "card pillar" appearance without extra dependencies.
+ * Draws a gradient-filled rectangle with rounded top corners only —
+ * the modern "card pillar" bar appearance.
  */
 private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawTopRoundedBar(
-    color: Color,
+    brush: Brush,
     left: Float,
     barWidth: Float,
     barHeight: Float,
@@ -1270,22 +1379,25 @@ private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawTopRoundedBar(
         lineTo(right, bottomY)
         close()
     }
-    drawPath(path, color)
+    drawPath(path, brush)
 }
 
+// 2026-style dual Bezier line chart for sales vs profit.
+// Replaces the flat bar chart with smooth curves + gradient fills for a
+// premium feel that matches the TotalSalesHeroCard design language.
 @Composable
 private fun SalesProfitBarChart(data: List<SalesProfitDayEntry>, modifier: Modifier) {
-    val progress = remember {
-        Animatable(0f)
-    }
+    val progress = remember { Animatable(0f) }
     LaunchedEffect(data) {
         progress.snapTo(0f)
-        progress.animateTo(1f, tween(1200, easing = FastOutSlowInEasing))
+        progress.animateTo(1f, tween(1600, easing = FastOutSlowInEasing))
     }
     val anim by progress.asState()
 
-    val gridColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
-    val axisColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f)
+    val gridColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
+    val salesColor = Emerald500
+    val profitColor = Cyan500
+    val lossColor = DebtRed
 
     Column(Modifier.fillMaxWidth()) {
         Row(
@@ -1295,108 +1407,136 @@ private fun SalesProfitBarChart(data: List<SalesProfitDayEntry>, modifier: Modif
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ColorDotLabel("المبيعات", Emerald500)
-            ColorDotLabel("الربح", Cyan500)
+            ColorDotLabel("المبيعات", salesColor)
+            ColorDotLabel("الربح", profitColor)
         }
 
         Canvas(modifier = modifier) {
             if (data.isEmpty()) return@Canvas
 
-            val cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
             val h = size.height
             val w = size.width
+            val n = data.size
 
-            val maxUp = max(
-                data.maxOf { it.sales },
-                data.maxOf { max(0.0, it.profit) }
-            ).coerceAtLeast(1.0)
+            val maxSales = data.maxOf { it.sales }.coerceAtLeast(1.0)
+            val maxProfit = data.maxOf { maxOf(it.profit, 0.0) }.coerceAtLeast(1.0)
             val minProfit = data.minOf { it.profit }
-            val maxDown = if (minProfit < 0) -minProfit else 0.0
-            val totalMag = maxUp + maxDown
+            val maxDown = if (minProfit < 0.0) -minProfit else 0.0
+            val profitRange = maxProfit + maxDown
 
-            val yZero = when {
-                maxDown <= 1e-9 -> h
-                maxUp <= 1e-9 -> 0f
-                else -> (h * (maxUp / totalMag)).toFloat()
-            }
+            val yZero = if (maxDown > 0.0) (h * maxProfit / profitRange).toFloat() else h
 
-            val posSpan = yZero
-            val negSpan = h - yZero
-            val safeMaxDown = maxDown.coerceAtLeast(1e-9)
-
-            // Horizontal grid (reference lines), evenly spaced
+            // Grid lines
             repeat(4) { i ->
                 val y = h * (i + 1) / 5f
-                drawLine(
-                    color = gridColor,
-                    start = Offset(0f, y),
-                    end = Offset(w, y),
-                    strokeWidth = 1.dp.toPx()
-                )
+                drawLine(gridColor, Offset(0f, y), Offset(w, y), 1.dp.toPx())
             }
-
-            // Zero / baseline
+            // Baseline
             drawLine(
-                color = axisColor,
-                start = Offset(0f, yZero),
-                end = Offset(w, yZero),
+                gridColor.copy(alpha = 0.35f),
+                Offset(0f, yZero),
+                Offset(w, yZero),
                 strokeWidth = 1.dp.toPx()
             )
 
-            val groupWidth = w / data.size
-            val gap = 4.dp.toPx()
-            val pairPadding = groupWidth * 0.06f
+            fun xOf(i: Int) = if (n == 1) w / 2f else i * w / (n - 1).toFloat()
 
-            data.forEachIndexed { index, entry ->
-                val inner = groupWidth - 2f * pairPadding
-                val barW = max((inner - gap) / 2f, 2.dp.toPx())
-                val pairWidth = barW * 2f + gap
-                val groupLeft = index * groupWidth
-                val startX = groupLeft + (groupWidth - pairWidth) / 2f
-                val salesLeft = startX
-                val profitLeft = startX + barW + gap
+            // Build animated point lists
+            val salesPoints = data.mapIndexed { i, e ->
+                Offset(xOf(i), h - (e.sales / maxSales * h * anim).toFloat())
+            }
+            val profitPoints = data.mapIndexed { i, e ->
+                val y = if (e.profit >= 0)
+                    yZero - (e.profit / maxProfit * yZero * anim).toFloat()
+                else
+                    yZero + (-e.profit / profitRange.coerceAtLeast(1e-9) * (h - yZero) * anim).toFloat()
+                Offset(xOf(i), y)
+            }
 
-                val salesH = (entry.sales / maxUp * posSpan * anim).toFloat().coerceAtLeast(0f)
-                drawRoundRect(
-                    color = Cyan500,
-                    topLeft = Offset(salesLeft, yZero - salesH),
-                    size = Size(barW, salesH),
-                    cornerRadius = cornerRadius
-                )
-
-                if (entry.profit >= 0) {
-                    val profitH =
-                        (entry.profit / maxUp * posSpan * anim).toFloat().coerceAtLeast(0f)
-                    drawRoundRect(
-                        color = PaidGreen,
-                        topLeft = Offset(profitLeft, yZero - profitH),
-                        size = Size(barW, profitH),
-                        cornerRadius = cornerRadius
-                    )
-                } else {
-                    val profitH =
-                        (-entry.profit / safeMaxDown * negSpan * anim).toFloat().coerceAtLeast(0f)
-                    drawRoundRect(
-                        color = DebtRed,
-                        topLeft = Offset(profitLeft, yZero),
-                        size = Size(barW, profitH),
-                        cornerRadius = cornerRadius
-                    )
+            // Helper: build a Bezier path through a list of points
+            fun buildBezierPath(pts: List<Offset>): Path = Path().apply {
+                if (pts.isEmpty()) return@apply
+                moveTo(pts.first().x, pts.first().y)
+                for (k in 0 until pts.size - 1) {
+                    val p0 = pts[k]; val p1 = pts[k + 1]
+                    val cpX1 = p0.x + (p1.x - p0.x) * 0.4f
+                    val cpX2 = p0.x + (p1.x - p0.x) * 0.6f
+                    cubicTo(cpX1, p0.y, cpX2, p1.y, p1.x, p1.y)
                 }
+            }
+
+            fun buildFillPath(linePath: Path, pts: List<Offset>, baseline: Float): Path =
+                Path().apply {
+                    addPath(linePath)
+                    lineTo(pts.last().x, baseline)
+                    lineTo(pts.first().x, baseline)
+                    close()
+                }
+
+            // ── Sales curve (Emerald gradient fill) ──────────────────
+            val salesLine = buildBezierPath(salesPoints)
+            drawPath(
+                buildFillPath(salesLine, salesPoints, h),
+                Brush.verticalGradient(
+                    colorStops = arrayOf(
+                        0f to salesColor.copy(alpha = 0.38f),
+                        0.55f to salesColor.copy(alpha = 0.12f),
+                        1f to Color.Transparent
+                    ),
+                    startY = 0f, endY = h
+                )
+            )
+            drawPath(salesLine, salesColor, style = Stroke(2.5f.dp.toPx(), cap = StrokeCap.Round))
+            salesPoints.forEach { pt ->
+                drawCircle(Color.White, 4.5f.dp.toPx(), pt)
+                drawCircle(salesColor, 2.8f.dp.toPx(), pt)
+            }
+
+            // ── Profit curve (Cyan gradient fill above zero; Red below) ──
+            val profitLine = buildBezierPath(profitPoints)
+            val profitFill = buildFillPath(profitLine, profitPoints, yZero)
+            val hasPosProfit = profitPoints.any { it.y < yZero }
+            val hasNegProfit = profitPoints.any { it.y > yZero }
+
+            if (hasPosProfit) {
+                drawPath(
+                    profitFill,
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0f to profitColor.copy(alpha = 0.35f),
+                            0.6f to profitColor.copy(alpha = 0.08f),
+                            1f to Color.Transparent
+                        ),
+                        startY = 0f, endY = yZero
+                    )
+                )
+            }
+            if (hasNegProfit) {
+                drawPath(
+                    profitFill,
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0f to Color.Transparent,
+                            0.4f to lossColor.copy(alpha = 0.08f),
+                            1f to lossColor.copy(alpha = 0.28f)
+                        ),
+                        startY = yZero, endY = h
+                    )
+                )
+            }
+            drawPath(profitLine, profitColor, style = Stroke(2.5f.dp.toPx(), cap = StrokeCap.Round))
+            profitPoints.forEach { pt ->
+                drawCircle(Color.White, 4.5f.dp.toPx(), pt)
+                val dotColor = if (pt.y > yZero) lossColor else profitColor
+                drawCircle(dotColor, 2.8f.dp.toPx(), pt)
             }
         }
 
         Spacer(Modifier.height(8.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top
-        ) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
             data.forEach { entry ->
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.TopCenter
-                ) {
+                Box(Modifier.weight(1f), contentAlignment = Alignment.TopCenter) {
                     Text(
                         text = entry.label,
                         style = MaterialTheme.typography.labelSmall,
@@ -1536,14 +1676,16 @@ private fun RankList(items: List<CustomerRank>, color: Color) {
                             .fillMaxWidth()
                             .height(6.dp)
                             .clip(RoundedCornerShape(3.dp))
-                            .background(color.copy(0.15f))
+                            .background(color.copy(0.12f))
                     ) {
                         Box(
                             Modifier
                                 .fillMaxWidth(prog)
                                 .fillMaxHeight()
                                 .clip(RoundedCornerShape(3.dp))
-                                .background(color)
+                                .background(
+                                    Brush.horizontalGradient(listOf(color, color.copy(0.6f)))
+                                )
                         )
                     }
                 }

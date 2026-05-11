@@ -318,12 +318,19 @@ class ActivationRepositoryImpl(
         }
     }
 
+    // Premium users are identified by merchantCode only.
+    // Falling back to HardwareID for an already-activated merchant could match a different
+    // merchant who used the same device, producing false "Account Blocked" / tier downgrades.
+    // HardwareID lookup is reserved for first-time / unauthenticated devices that have no
+    // local merchantCode yet (e.g. silent FREE re-registration).
     private suspend fun findMerchantDocument(merchantCode: String, deviceId: String): DocumentSnapshot? {
         if (merchantCode.isNotBlank()) {
             val byCode = runCatching {
                 firestore.collection(COLLECTION_MERCHANTS).document(merchantCode).get().await()
             }.getOrNull()
-            if (byCode?.exists() == true) return byCode
+            return byCode?.takeIf {
+                it.exists()
+            }
         }
 
         val directDoc = runCatching {

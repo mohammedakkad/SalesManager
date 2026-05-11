@@ -22,7 +22,12 @@ class CustomersViewModel(private val repo: CustomerRepository) : ViewModel() {
     private val _customers: Flow<List<Customer>> = _searchQuery
         .debounce(300)
         .flatMapLatest { q ->
-            if (q.isEmpty()) repo.getAllCustomers() else repo.searchCustomers(q)
+            // Wrap in runCatching to swallow transient errors and keep the UI responsive.
+            runCatching {
+                if (q.isEmpty()) repo.getAllCustomers() else repo.searchCustomers(q)
+            }.getOrElse {
+                flowOf(emptyList<Customer>())
+            }
         }
         .onEach { _isLoading.value = false }
 
