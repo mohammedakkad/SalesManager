@@ -162,6 +162,10 @@ fun InventoryListScreen(
         return
     }
 
+    // ✅ Stock-Take, Inventory-Report, and Stock-Reports actions are meaningless
+    // when the catalogue is empty — hide them until the user adds the first product.
+    val hasStock = state.products.isNotEmpty()
+
     Scaffold(
         containerColor = appColors.screenBackground,
         floatingActionButton = {
@@ -169,26 +173,28 @@ fun InventoryListScreen(
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                SmallFloatingActionButton(
-                    onClick = {
-                        onInventorySession()
-                    },
-                    containerColor = Cyan500,
-                    contentColor = Color.White,
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(Icons.Rounded.Inventory2, null, modifier = Modifier.size(18.dp))
-                }
+                if (hasStock) {
+                    SmallFloatingActionButton(
+                        onClick = {
+                            onInventorySession()
+                        },
+                        containerColor = Cyan500,
+                        contentColor = Color.White,
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Rounded.Inventory2, null, modifier = Modifier.size(18.dp))
+                    }
 
-                SmallFloatingActionButton(
-                    onClick = {
-                        onStockReports()
-                    },
-                    containerColor = Violet500,
-                    contentColor = Color.White,
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Icon(Icons.Rounded.BarChart, null, modifier = Modifier.size(18.dp))
+                    SmallFloatingActionButton(
+                        onClick = {
+                            onStockReports()
+                        },
+                        containerColor = Violet500,
+                        contentColor = Color.White,
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Rounded.BarChart, null, modifier = Modifier.size(18.dp))
+                    }
                 }
 
                 FloatingActionButton(
@@ -227,35 +233,38 @@ fun InventoryListScreen(
                             modifier = Modifier.weight(1f)
                         )
 
-                        // ✅ أيقونة Excel أنيقة تتناسب مع الـ Header
+                        // ✅ Inventory Report (Excel export) is only useful when there is
+                        // stock to report on — hide the icon if the catalogue is empty.
                         val isExporting = exportState is ExportState.Loading
-                        IconButton(
-                            onClick = {
-                                if (!isExporting) {
-                                    exportVm.exportInventoryExcel(
-                                        products = state.products,
-                                        storeName = storeName,
-                                        cacheDir = context.cacheDir
+                        if (hasStock) {
+                            IconButton(
+                                onClick = {
+                                    if (!isExporting) {
+                                        exportVm.exportInventoryExcel(
+                                            products = state.products,
+                                            storeName = storeName,
+                                            cacheDir = context.cacheDir
+                                        )
+                                    }
+                                },
+                                modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color.White.copy(if (isExporting) 0.08f else 0.15f))
+                            ) {
+                                if (isExporting) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(18.dp),
+                                        color = Color.White,
+                                        strokeWidth = 2.dp
+                                    )
+                                } else {
+                                    Icon(
+                                        Icons.Rounded.TableChart,
+                                        contentDescription = "تصدير Excel",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(22.dp)
                                     )
                                 }
-                            },
-                            modifier = Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(Color.White.copy(if (isExporting) 0.08f else 0.15f))
-                        ) {
-                            if (isExporting) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(18.dp),
-                                    color = Color.White,
-                                    strokeWidth = 2.dp
-                                )
-                            } else {
-                                Icon(
-                                    Icons.Rounded.TableChart,
-                                    contentDescription = "تصدير Excel",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(22.dp)
-                                )
                             }
                         }
 
