@@ -143,3 +143,177 @@ fun BlockedScreen(message: String, canRetry: Boolean, onRetry: () -> Unit) {
         }
     }
 }
+
+// ── Expired Subscription Screen ───────────────────────────────────────────
+// Shown when StartupStatus.EXPIRED or DELETED — the merchant's subscription
+// lapsed but the account was never admin-blocked.  Offers a clear upgrade CTA
+// instead of a dead-end "blocked" message.
+@Composable
+fun ExpiredSubscriptionScreen(onRenew: () -> Unit, onRetry: () -> Unit) {
+    val infiniteTransition = rememberInfiniteTransition(label = "expGlow")
+    val glowAlpha by infiniteTransition.animateFloat(
+        0.5f, 1f,
+        infiniteRepeatable(tween(1400), RepeatMode.Reverse),
+        label = "expGlow"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.verticalGradient(listOf(Color(0xFF0F172A), Color(0xFF1A2035)))),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            // Animated gold badge
+            Box(
+                modifier = Modifier
+                    .size(96.dp)
+                    .clip(CircleShape)
+                    .background(
+                        Brush.radialGradient(
+                            listOf(
+                                Color(0xFFFFD700).copy(glowAlpha * 0.35f),
+                                Color.Transparent
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(68.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.linearGradient(
+                                listOf(Color(0xFFFFD700), Color(0xFFF59E0B))
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Rounded.WorkspacePremium, null,
+                        tint = Color.White,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+            }
+
+            Text(
+                "انتهى اشتراكك",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Text(
+                "جدّد اشتراكك للاستمرار في استخدام جميع المميزات المتميزة",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.White.copy(alpha = 0.65f),
+                textAlign = TextAlign.Center
+            )
+
+            // Features reminder
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White.copy(0.06f)),
+                elevation = CardDefaults.cardElevation(0.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    listOf(
+                        Icons.Rounded.Inventory     to "إدارة المخزون الكاملة",
+                        Icons.Rounded.QueryStats    to "تقارير المبيعات والأرباح",
+                        Icons.Rounded.FileDownload  to "تصدير Excel/PDF",
+                        Icons.Rounded.Undo          to "نظام المرتجعات",
+                        Icons.Rounded.CalendarMonth to "تقارير شهرية"
+                    ).forEach { (icon, text) ->
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFFFD700).copy(0.12f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    icon, null,
+                                    tint = Color(0xFFF59E0B),
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                            Text(
+                                text,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(0.8f),
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Renew CTA
+            Button(
+                onClick = onRenew,
+                modifier = Modifier.fillMaxWidth().height(54.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(Color(0xFFFFD700), Color(0xFFF59E0B))
+                            ),
+                            RoundedCornerShape(16.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Rounded.Stars, null,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            "تجديد الاشتراك",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+
+            OutlinedButton(
+                onClick = onRetry,
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color.White.copy(0.7f)
+                )
+            ) {
+                Icon(
+                    Icons.Rounded.Refresh, null,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(Modifier.width(6.dp))
+                Text("إعادة التحقق")
+            }
+        }
+    }
+}

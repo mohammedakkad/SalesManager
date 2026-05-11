@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,6 +52,13 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
+
+    // First-time sync loader: show a branded full-screen overlay while Room is
+    // delivering its first emission (isLoading starts true, flips false on first data).
+    if (uiState.isLoading) {
+        FirstTimeSyncLoader()
+        return
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -436,5 +444,90 @@ private fun formatTxDate(millis: Long): String {
         diff < 3_600_000L -> "${diff / 60_000} د"
         diff < 86_400_000L -> "${diff / 3_600_000} س"
         else -> SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(millis))
+    }
+}
+
+// ── First-Time Sync Loader ────────────────────────────────────────────────
+// Displayed on the very first frame before Room emits any data.
+// A branded splash ensures the user sees the app identity, not a blank screen.
+@Composable
+private fun FirstTimeSyncLoader() {
+    val infiniteTransition = rememberInfiniteTransition(label = "syncPulse")
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.5f, targetValue = 1f,
+        animationSpec = infiniteRepeatable(tween(900), RepeatMode.Reverse),
+        label = "syncAlpha"
+    )
+    val dotScale by infiniteTransition.animateFloat(
+        initialValue = 0.85f, targetValue = 1.15f,
+        animationSpec = infiniteRepeatable(tween(700), RepeatMode.Reverse),
+        label = "dotScale"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(listOf(Emerald900, Dark900))
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            // Pulsing brand icon
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape)
+                    .background(
+                        Brush.radialGradient(
+                            listOf(
+                                Emerald500.copy(alpha = pulseAlpha * 0.5f),
+                                Color.Transparent
+                            )
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(58.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.linearGradient(listOf(Emerald500, Cyan500))
+                        )
+                        .graphicsLayer { scaleX = dotScale; scaleY = dotScale },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Rounded.Sync,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+
+            Text(
+                "جاري مزامنة البيانات...",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.White.copy(alpha = 0.9f),
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                "يرجى الانتظار لحظة",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(alpha = 0.55f)
+            )
+
+            CircularProgressIndicator(
+                modifier = Modifier.size(32.dp),
+                color = Emerald500,
+                strokeWidth = 2.5.dp,
+                trackColor = Color.White.copy(alpha = 0.15f)
+            )
+        }
     }
 }

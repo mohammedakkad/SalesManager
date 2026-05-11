@@ -141,6 +141,20 @@ fun AppNavigation() {
             return
         }
 
+        // Subscription lapsed — show the upgrade screen directly instead of a generic block.
+        is StartupState.Expired -> {
+            ExpiredSubscriptionScreen(
+                onRenew = {
+                    // Re-enter the activation flow so the user can enter a new code.
+                    activationVm.deactivate()
+                },
+                onRetry = {
+                    activationVm.checkStartup()
+                }
+            )
+            return
+        }
+
         else -> {
             /* ACTIVE or NeedActivation — continue to NavHost */
         }
@@ -423,7 +437,7 @@ fun AppNavigation() {
                 onViewDayTransactions = { dateMillis ->
                     navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
                 },
-                onNavigateToSubscription = {
+                onUpgrade = {
                     navController.navigate(Screen.Subscription.route)
                 }
             )
@@ -489,23 +503,31 @@ fun AppNavigation() {
         }
         // ── v2 — المخزن ──────────────────────────────────────────
         composable(Screen.Inventory.route) {
-            InventoryListScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onProductClick = { id ->
-                    navController.navigate(Screen.ProductDetail.createRoute(id))
-                },
-                onAddProduct = { barcode ->
-                    navController.navigate(Screen.AddProduct.createRoute(barcode))
-                },
-                onInventorySession = {
-                    navController.navigate(Screen.InventorySession.route)
-                },
-                onStockReports = {
-                    navController.navigate(Screen.StockReports.route)
+            PremiumGate(
+                feature = "إدارة المخزون",
+                icon = Icons.Rounded.Inventory,
+                onUpgrade = {
+                    navController.navigate(Screen.Subscription.route)
                 }
-            )
+            ) {
+                InventoryListScreen(
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    },
+                    onProductClick = { id ->
+                        navController.navigate(Screen.ProductDetail.createRoute(id))
+                    },
+                    onAddProduct = { barcode ->
+                        navController.navigate(Screen.AddProduct.createRoute(barcode))
+                    },
+                    onInventorySession = {
+                        navController.navigate(Screen.InventorySession.route)
+                    },
+                    onStockReports = {
+                        navController.navigate(Screen.StockReports.route)
+                    }
+                )
+            }
         }
         composable(
             Screen.AddProduct.route,
@@ -616,16 +638,23 @@ fun AppNavigation() {
             })
         ) { back ->
             val txId = back.arguments!!.getLong("transactionId")
-            ReturnProcessScreen(
-                transactionId = txId,
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                onReturnSuccess = {
-                    // ✅ يرجع لشاشة التفاصيل مباشرة
-                    navController.popBackStack()
+            PremiumGate(
+                feature = "المرتجعات",
+                icon = Icons.Rounded.Undo,
+                onUpgrade = {
+                    navController.navigate(Screen.Subscription.route)
                 }
-            )
+            ) {
+                ReturnProcessScreen(
+                    transactionId = txId,
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    },
+                    onReturnSuccess = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         composable(Screen.Subscription.route) {
