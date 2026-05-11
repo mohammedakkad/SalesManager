@@ -99,11 +99,33 @@ fun SettingsScreen(
         )
     }
 
-    // تشغيل التحميل في الخلفية إذا وُجد تحديث
+    // ✅ Feedback for the Update/Refresh action so the user always knows the result
+    // of tapping the button (no more silent "nothing happened" experience).
     LaunchedEffect(updateState) {
-        if (updateState is UpdateUiState.UpdateAvailable) {
-            val info = (updateState as UpdateUiState.UpdateAvailable).info
-            BackgroundUpdateWorker.schedule(context, info.downloadUrl, info.versionName)
+        when (val s = updateState) {
+            is UpdateUiState.UpdateAvailable -> {
+                BackgroundUpdateWorker.schedule(context, s.info.downloadUrl, s.info.versionName)
+                Toast.makeText(
+                    context,
+                    "🔔 يتوفر تحديث: v${s.info.versionName}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            is UpdateUiState.UpToDate -> {
+                Toast.makeText(
+                    context,
+                    "✅ أنت تستخدم أحدث إصدار",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            is UpdateUiState.DownloadError -> {
+                Toast.makeText(
+                    context,
+                    "تعذر التحقق من التحديث: ${s.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else -> Unit
         }
     }
 
@@ -371,15 +393,27 @@ private fun UpdateSettingItem(
 ) {
     val hasUpdate = updateState is UpdateUiState.UpdateAvailable
     val isReady = updateState is UpdateUiState.ReadyToInstall
+    val isUpToDate = updateState is UpdateUiState.UpToDate
+
+    // ✅ Disable the row while checking so a fast double-tap doesn't fire the action twice.
+    val clickHandler: () -> Unit = when {
+        isChecking -> { -> Unit }
+        isReady -> onInstall
+        else -> onCheck
+    }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = if (isReady) onInstall else onCheck),
+            .clickable(enabled = !isChecking, onClick = clickHandler),
         shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(1.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (hasUpdate) UnpaidAmber.copy(0.06f) else MaterialTheme.colorScheme.surface
+            containerColor = when {
+                hasUpdate -> UnpaidAmber.copy(0.06f)
+                isUpToDate -> Emerald500.copy(0.06f)
+                else -> MaterialTheme.colorScheme.surface
+            }
         )
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -387,22 +421,34 @@ private fun UpdateSettingItem(
                 Modifier
                     .size(44.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background((if (hasUpdate) UnpaidAmber else Slate600).copy(0.12f)),
+                    .background(
+                        when {
+                            hasUpdate -> UnpaidAmber.copy(0.12f)
+                            isUpToDate -> Emerald500.copy(0.12f)
+                            else -> Slate600.copy(0.12f)
+                        }
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 if (isChecking)
                     CircularProgressIndicator(
                         Modifier.size(22.dp),
-                        color = Slate600,
+                        color = Emerald500,
                         strokeWidth = 2.dp
                     )
                 else
                     Icon(
-                        if (isReady) Icons.Rounded.InstallMobile
-                        else if (hasUpdate) Icons.Rounded.SystemUpdate
-                        else Icons.Rounded.CheckCircle,
+                        when {
+                            isReady -> Icons.Rounded.InstallMobile
+                            hasUpdate -> Icons.Rounded.SystemUpdate
+                            else -> Icons.Rounded.Refresh
+                        },
                         null,
-                        tint = if (hasUpdate || isReady) UnpaidAmber else Slate600
+                        tint = when {
+                            hasUpdate || isReady -> UnpaidAmber
+                            isUpToDate -> Emerald500
+                            else -> Slate600
+                        }
                     )
             }
             Spacer(Modifier.width(14.dp))
@@ -415,12 +461,16 @@ private fun UpdateSettingItem(
                     when {
                         isReady -> "✅ جاهز للتثبيت — اضغط للتثبيت"
                         hasUpdate -> "🔔 تحديث متاح: v${latestVersion}  (حالي: v$currentVersion)"
-                        isChecking -> "جاري التحقق..."
-                        latestVersion != null -> latestVersion
-                        else -> "v$currentVersion  •  اضغط للتحقق"
+                        isChecking -> "جاري التحقق من التحديثات..."
+                        isUpToDate -> "✅ أنت تستخدم أحدث إصدار (v$currentVersion)"
+                        else -> "v$currentVersion  •  اضغط للتحقق من وجود تحديث"
                     },
                     style = MaterialTheme.typography.bodySmall,
-                    color = if (hasUpdate) UnpaidAmber else MaterialTheme.colorScheme.onSurfaceVariant
+                    color = when {
+                        hasUpdate -> UnpaidAmber
+                        isUpToDate -> Emerald500
+                        else -> MaterialTheme.colorScheme.onSurfaceVariant
+                    }
                 )
             }
             Icon(
