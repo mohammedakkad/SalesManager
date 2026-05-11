@@ -422,6 +422,10 @@ fun AppNavigation() {
                 },
                 onViewDayTransactions = { dateMillis ->
                     navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
+                },
+                // ✅ Free users tapping locked features land on the upgrade flow.
+                onUpgrade = {
+                    navController.navigate(Screen.Subscription.route)
                 }
             )
         }
