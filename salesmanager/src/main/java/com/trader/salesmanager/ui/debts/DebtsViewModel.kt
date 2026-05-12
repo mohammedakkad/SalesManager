@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.repository.CustomerRepository
 import com.trader.core.domain.repository.TransactionRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 data class CustomerDebt(val customer: Customer, val debt: Double)

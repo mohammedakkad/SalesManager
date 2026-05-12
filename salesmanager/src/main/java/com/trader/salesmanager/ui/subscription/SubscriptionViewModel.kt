@@ -14,7 +14,12 @@ import com.trader.core.domain.model.SubscriptionState
 import com.trader.core.domain.model.SubscriptionStatus
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.util.ImageCompressor
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SubscriptionViewModel(

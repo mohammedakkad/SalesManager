@@ -2,11 +2,17 @@ package com.trader.salesmanager.ui.inventory.addedit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.core.domain.model.*
+import com.trader.core.domain.model.Product
+import com.trader.core.domain.model.ProductUnit
+import com.trader.core.domain.model.UnitType
+import com.trader.core.domain.model.WeightUnit
 import com.trader.core.domain.repository.ProductRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 

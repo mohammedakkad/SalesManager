@@ -2,13 +2,19 @@ package com.trader.salesmanager.ui.returns
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.core.domain.model.*
+import com.trader.core.domain.model.InvoiceItem
+import com.trader.core.domain.model.ReturnInvoice
+import com.trader.core.domain.model.ReturnItem
+import com.trader.core.domain.model.ReturnType
+import com.trader.core.domain.model.ReturnUiState
 import com.trader.core.domain.repository.InvoiceItemRepository
 import com.trader.core.domain.repository.ProductRepository
 import com.trader.core.domain.repository.ReturnRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 // ── حالة كل صنف في شاشة الإرجاع ────────────────────────────────
 data class ReturnLineState(

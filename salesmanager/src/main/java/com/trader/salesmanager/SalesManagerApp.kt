@@ -3,20 +3,20 @@ package com.trader.salesmanager
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
-import com.trader.core.util.ExpiryNotificationHelper
-import com.trader.salesmanager.di.salesManagerModule
-import com.trader.salesmanager.worker.UnpaidDebtWorker
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
-import com.trader.core.worker.StatusCheckWorker
 import com.trader.core.data.remote.RemoteConfigManager
 import com.trader.core.domain.repository.ActivationRepository
+import com.trader.core.util.ExpiryNotificationHelper
+import com.trader.core.worker.StatusCheckWorker
+import com.trader.salesmanager.di.salesManagerModule
+import com.trader.salesmanager.worker.UnpaidDebtWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import org.koin.core.context.startKoin
 
 class SalesManagerApp : Application(), KoinComponent {
     override fun onCreate() {

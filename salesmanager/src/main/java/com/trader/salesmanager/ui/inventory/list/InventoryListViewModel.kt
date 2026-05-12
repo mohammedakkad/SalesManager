@@ -7,7 +7,12 @@ import com.trader.core.domain.model.SyncStatus
 import com.trader.core.domain.repository.ProductRepository
 import com.trader.core.util.NetworkMonitor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 data class InventoryListUiState(

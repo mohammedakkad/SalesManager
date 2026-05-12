@@ -2,10 +2,20 @@ package com.trader.salesmanager.ui.inventory.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.core.domain.model.*
+import com.trader.core.domain.model.MovementType
+import com.trader.core.domain.model.ProductUnit
+import com.trader.core.domain.model.ProductWithUnits
+import com.trader.core.domain.model.StockMovement
 import com.trader.core.domain.repository.ProductRepository
 import com.trader.core.domain.repository.StockRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class ManualAdjustState(

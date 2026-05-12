@@ -8,9 +8,15 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.salesmanager.MainActivity
+import com.trader.salesmanager.worker.UnpaidDebtWorker.Companion.HOURS_THRESHOLD
 import java.util.concurrent.TimeUnit
 
 /**

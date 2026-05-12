@@ -1,11 +1,18 @@
 package com.trader.salesmanager.ui.inventory.invoice
 
-import java.util.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.core.domain.model.*
+import com.trader.core.domain.model.InvoiceItem
+import com.trader.core.domain.model.ProductUnit
+import com.trader.core.domain.model.ProductWithUnits
+import com.trader.core.domain.model.UnitType
 import com.trader.core.domain.repository.ProductRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 

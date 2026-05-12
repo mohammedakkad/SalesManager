@@ -3,13 +3,17 @@ package com.trader.salesmanager.ui.transactions.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.InvoiceItem
+import com.trader.core.domain.model.ReturnSummary
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.InvoiceItemRepository
-import com.trader.core.domain.repository.StockRepository
-import com.trader.core.domain.model.ReturnSummary
 import com.trader.core.domain.repository.ReturnRepository
+import com.trader.core.domain.repository.StockRepository
 import com.trader.core.domain.repository.TransactionRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class TransactionDetailsUiState(

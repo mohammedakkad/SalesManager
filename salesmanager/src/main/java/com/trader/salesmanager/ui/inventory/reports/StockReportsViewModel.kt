@@ -2,12 +2,17 @@ package com.trader.salesmanager.ui.inventory.reports
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.core.domain.model.*
+import com.trader.core.domain.model.PaymentType
+import com.trader.core.domain.model.ProductWithUnits
+import com.trader.core.domain.model.UnitType
 import com.trader.core.domain.repository.ProductRepository
-import com.trader.core.domain.repository.StockRepository
 import com.trader.core.domain.repository.TransactionRepository
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import java.util.Calendar
 
 data class StockReportItem(
