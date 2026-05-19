@@ -80,4 +80,18 @@ interface TransactionDao {
     /** عند حذف عميل → تُنقل عملياته للزبون الزائر (id=-1) بدل حذفها */
     @Query("UPDATE transactions SET customerId = -1 WHERE customerId = :customerId")
     suspend fun reassignToVisitor(customerId: Long)
+
+    /**
+     * ✅ Fix 3 (Self-Healing): يُصحح قيمة hasItems لجميع العمليات بناءً على وجود
+     * أصناف فعلية في invoice_items. يُستدعى بعد كل sync لضمان تطابق البيانات
+     * حتى مع البيانات القديمة في Firebase التي لم تحتوِ hasItems.
+     */
+    @Query("""
+        UPDATE transactions
+        SET hasItems = CASE
+            WHEN id IN (SELECT DISTINCT transactionId FROM invoice_items) THEN 1
+            ELSE 0
+        END
+    """)
+    suspend fun recalculateHasItems()
 }

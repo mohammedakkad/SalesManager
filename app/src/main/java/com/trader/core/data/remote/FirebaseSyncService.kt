@@ -233,7 +233,8 @@ class FirebaseSyncService {
                     paymentMethodId = m["paymentMethodId"].asLong(),
                     note = m["note"] as? String ?: "",
                     date = m["date"].asLong() ?: System.currentTimeMillis(),
-                    paidAt = m["paidAt"].asLong()
+                    paidAt = m["paidAt"].asLong(),
+                    hasItems = m["hasItems"] as? Boolean ?: false  // ✅ Fix 1b
                 )
             }
         } catch (e: Exception) {
@@ -369,11 +370,16 @@ class FirebaseSyncService {
                             id = m["id"].asLong() ?: child.key?.toLongOrNull() ?: return@mapNotNull null,
                             customerId = m["customerId"].asLong() ?: return@mapNotNull null,
                             amount = m["amount"].asDouble() ?: return@mapNotNull null,
+                            originalAmount = m["originalAmount"].asDouble() ?: m["amount"].asDouble() ?: 0.0,
+                            returnStatus = runCatching {
+                                TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE")
+                            }.getOrDefault(TransactionReturnStatus.NONE),
                             isPaid = m["isPaid"] as? Boolean ?: false,
                             paymentMethodId = m["paymentMethodId"].asLong(),
                             note = m["note"] as? String ?: "",
                             date = m["date"].asLong() ?: System.currentTimeMillis(),
-                            paidAt = m["paidAt"].asLong()
+                            paidAt = m["paidAt"].asLong(),
+                            hasItems = m["hasItems"] as? Boolean ?: false  // ✅ Fix 1c
                         )
                     }.getOrNull()
                 })
@@ -547,7 +553,8 @@ class FirebaseSyncService {
                 "id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
                 "originalAmount" to t.originalAmount, "returnStatus" to t.returnStatus.name,
                 "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
-                "note" to t.note, "date" to t.date, "paidAt" to t.paidAt
+                "note" to t.note, "date" to t.date, "paidAt" to t.paidAt,
+                "hasItems" to t.hasItems   // ✅ Fix 1a
             )
         ).await()
     }

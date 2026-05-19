@@ -217,8 +217,10 @@ fun TransactionDetailsScreen(
                             Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
-                        // Return button is only meaningful when the transaction has invoice items
-                        if (t.hasItems) {
+                        // ✅ Fix 4: دفاعي — يعتمد على hasItems أو وجود أصناف فعلية في الـ state
+                        // يحمي الـ UI في حال كانت قيمة hasItems في DB خاطئة لأي سبب
+                        val hasReturnableItems = t.hasItems || uiState.invoiceItems.isNotEmpty()
+                        if (hasReturnableItems) {
                             IconButton(
                                 onClick = {
                                     onNavigateToReturn(transactionId)

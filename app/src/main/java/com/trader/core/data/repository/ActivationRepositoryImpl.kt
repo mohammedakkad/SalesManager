@@ -229,9 +229,18 @@ class ActivationRepositoryImpl(
                 paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(it))
             }
         }
-        data.transactions.forEach {
+        // ✅ Fix 2: بناء Set من IDs العمليات التي لها invoice_items فعلية في Firebase
+        // يضمن صحة hasItems حتى للبيانات القديمة التي لم تُخزَّن hasItems من قبل
+        val transactionIdsWithItems = data.invoiceItems
+            .map { it.transactionId }
+            .toSet()
+
+        data.transactions.forEach { transaction ->
             runCatching {
-                transactionDao.insertTransaction(TransactionEntity.fromDomain(it))
+                val correctedTransaction = transaction.copy(
+                    hasItems = transaction.id in transactionIdsWithItems
+                )
+                transactionDao.insertTransaction(TransactionEntity.fromDomain(correctedTransaction))
             }
         }
 
@@ -269,6 +278,9 @@ class ActivationRepositoryImpl(
                 )
             }
         }
+
+        // ✅ Fix 2 (Self-Healing): تصحيح أي بيانات قديمة في DB قيمة hasItems فيها خاطئة
+        runCatching { transactionDao.recalculateHasItems() }
     }
 
     private suspend fun fetchProductsAndUnits(code: String) = runCatching {
