@@ -43,12 +43,6 @@ class SalesManagerApp : Application(), KoinComponent {
         StatusCheckWorker.schedule(this)
 
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            // ✅ Self-Healing: تصحيح كل الوحدات العالقة بـ PENDING من عمليات سابقة
-            // يعمل مرة عند كل فتح للتطبيق — سريع جداً (UPDATE واحد على كل الجدول)
-            runCatching {
-                val productDao: ProductDao by inject()
-                productDao.markAllUnitsSynced()
-            }
 
             // ✅ SyncCoordinator: يراقب الشبكة ويزامن البيانات المعلقة تلقائياً
             runCatching {
