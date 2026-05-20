@@ -54,26 +54,30 @@ class StockRepositoryImpl(
     ) = applyMovement(productId, unitId, quantity, type, null, productName, unitLabel, note)
 
     override suspend fun syncPendingMovements() {
-        movementDao.getPending().forEach {
-            entity ->
+        movementDao.getPending().forEach { entity ->
             try {
-                remote.uploadMovement(merchantId, entity.toDomain()); movementDao.markSynced(entity.id)
+                remote.uploadMovement(merchantId, entity.toDomain())
+                movementDao.markSynced(entity.id)
             } catch (_: Exception) {}
         }
-        productDao.getPendingUnits().forEach {
-            unit ->
+        productDao.getPendingUnits().forEach { unit ->
             try {
-                remote.updateRemoteQuantity(merchantId, unit.id, unit.quantityInStock); productDao.markUnitSynced(unit.id)
+                // ✅ جلب productId للمسار الصحيح في Firestore
+                val pid = productDao.getProductIdForUnit(unit.id)
+                if (pid != null) {
+                    remote.updateRemoteQuantity(merchantId, unit.id, unit.quantityInStock, pid)
+                    productDao.markUnitSynced(unit.id)
+                }
             } catch (_: Exception) {}
         }
     }
 
     suspend fun detectConflicts(): List<StockConflict> {
         val conflicts = mutableListOf<StockConflict>()
-        productDao.getPendingUnits().forEach {
-            unitEntity ->
+        productDao.getPendingUnits().forEach { unitEntity ->
             try {
-                val remoteQty = remote.getRemoteQuantity(merchantId, unitEntity.id) ?: return@forEach
+                val pid = productDao.getProductIdForUnit(unitEntity.id) ?: return@forEach
+                val remoteQty = remote.getRemoteQuantity(merchantId, unitEntity.id, pid) ?: return@forEach
                 val localQty = unitEntity.quantityInStock
                 if (kotlin.math.abs(remoteQty - localQty) > 0.001) {
                     conflicts.add(StockConflict(unitEntity.id, "", unitEntity.unitLabel, localQty, remoteQty))
@@ -85,7 +89,8 @@ class StockRepositoryImpl(
 
     suspend fun resolveConflictWithServer(unitId: String) {
         try {
-            remote.getRemoteQuantity(merchantId, unitId)?.let {
+            val pid = productDao.getProductIdForUnit(unitId) ?: return
+            remote.getRemoteQuantity(merchantId, unitId, pid)?.let {
                 productDao.updateQuantity(unitId, it)
             }
         } catch (_: Exception) {}
@@ -93,8 +98,9 @@ class StockRepositoryImpl(
 
     suspend fun resolveConflictWithLocal(unitId: String) {
         try {
+            val pid = productDao.getProductIdForUnit(unitId) ?: return
             productDao.getQuantity(unitId)?.let {
-                remote.updateRemoteQuantity(merchantId, unitId, it)
+                remote.updateRemoteQuantity(merchantId, unitId, it, pid)
             }
         } catch (_: Exception) {}
     }
@@ -121,7 +127,7 @@ class StockRepositoryImpl(
         )
         movementDao.insert(movement.toEntity())
 
-        // ✅ Fix 2: كل عملية sync مستقلة — فشل أحدهما لا يمنع الآخر من markSynced
+        // ✅ Fix: كل عملية sync مستقلة + productId صحيح للمسار الصحيح في Firestore
         syncScope.launch {
             var movementSynced = false
             var quantitySynced = false
@@ -133,9 +139,13 @@ class StockRepositoryImpl(
             } catch (_: Exception) {}
 
             try {
-                remote.updateRemoteQuantity(merchantId, unitId, newQty)
-                productDao.markUnitSynced(unitId)
-                quantitySynced = true
+                // ✅ جلب productId لأن الوحدات مخزنة في subcollection داخل المنتج
+                val pid = productDao.getProductIdForUnit(unitId)
+                if (pid != null) {
+                    remote.updateRemoteQuantity(merchantId, unitId, newQty, pid)
+                    productDao.markUnitSynced(unitId)
+                    quantitySynced = true
+                }
             } catch (_: Exception) {}
 
             if (!movementSynced || !quantitySynced) {

@@ -161,14 +161,16 @@ class ProductFirestoreService {
     }
 
     // ── كميات المخزون ─────────────────────────────────────────────
+    // ✅ المسار الصحيح: units داخل subcollection المنتج
+    // يحتاج productId لأن الوحدات مخزنة في products/{productId}/units/{unitId}
 
-    suspend fun getRemoteQuantity(merchantId: String, unitId: String): Double? =
-    merchantRef(merchantId).collection("product_units").document(unitId)
-    .get().await().getDouble("quantityInStock")
+    suspend fun getRemoteQuantity(merchantId: String, unitId: String, productId: String): Double? =
+        unitsRef(merchantId, productId).document(unitId)
+            .get().await().getDouble("quantityInStock")
 
-    suspend fun updateRemoteQuantity(merchantId: String, unitId: String, qty: Double) {
-        merchantRef(merchantId).collection("product_units").document(unitId)
-        .update("quantityInStock", qty, "updatedAt", System.currentTimeMillis()).await()
+    suspend fun updateRemoteQuantity(merchantId: String, unitId: String, qty: Double, productId: String) {
+        unitsRef(merchantId, productId).document(unitId)
+            .update("quantityInStock", qty, "updatedAt", System.currentTimeMillis()).await()
     }
 
     // ── toMap ─────────────────────────────────────────────────────
