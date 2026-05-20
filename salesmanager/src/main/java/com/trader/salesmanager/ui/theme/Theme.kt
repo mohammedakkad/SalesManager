@@ -8,13 +8,16 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.trader.core.data.local.appDataStore
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 // ══════════════════════════════════════════════════════════════════
 //  DataStore key
@@ -148,12 +151,23 @@ fun SalesManagerTheme(
 ) {
     val scope = rememberCoroutineScope()
 
-    // قراءة الإعداد من DataStore
+    // ✅ Fix 1: قراءة القيمة الأولى بشكل متزامن لتجنب الوميض في أول Frame
+    // محاط بـ remember(context) → يعمل مرة واحدة فقط طوال عمر الـ Activity
+    // DataStore تحتفظ بـ cache في الذاكرة → first() تكتمل فوراً بدون I/O حقيقي
+    val initialDark = remember(context) {
+        runBlocking {
+            context.appDataStore.data
+                .map { it[DARK_MODE_KEY] == true }
+                .first()
+        }
+    }
+
+    // بعد أول Frame، نتابع التغييرات بشكل reactive
     val isDark by context.appDataStore.data
     .map {
         it[DARK_MODE_KEY] == true
     }
-    .collectAsState(initial = false)
+    .collectAsState(initial = initialDark)  // ✅ initial صحيح الآن
 
     val colorScheme = if (isDark) DarkColorScheme else LightColorScheme
     val tokens = if (isDark) DarkTokens else LightTokens

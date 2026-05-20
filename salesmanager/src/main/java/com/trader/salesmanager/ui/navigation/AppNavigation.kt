@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Inventory
@@ -12,7 +13,10 @@ import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -167,6 +171,12 @@ fun AppNavigation() {
     }
 
 
+    // ✅ Fix 3: Surface تضمن خلفية صحيحة خلف أنيميشن الانتقال بين الشاشات
+    // تمنع الشفافية التي تُظهر الـ Window background الخام أثناء enter/exit transitions
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
     NavHost(
         navController = navController,
         startDestination = start,
@@ -657,4 +667,5 @@ fun AppNavigation() {
             )
         }
     }
+    } // Surface
 }

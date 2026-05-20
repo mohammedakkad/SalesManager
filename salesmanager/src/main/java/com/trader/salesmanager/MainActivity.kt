@@ -8,8 +8,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.salesmanager.service.NotificationService
@@ -52,22 +56,30 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SalesManagerTheme(context = this@MainActivity) {
-                val updateState by updateViewModel.state.collectAsStateWithLifecycle()
 
-                // عند وجود تحديث — نبدأ التحميل في الخلفية تلقائياً (بدون Dialog إجباري)
-                LaunchedEffect(updateState) {
-                    if (updateState is UpdateUiState.UpdateAvailable) {
-                        val info = (updateState as UpdateUiState.UpdateAvailable).info
-                        BackgroundUpdateWorker.schedule(
-                            this@MainActivity,
-                            info.downloadUrl,
-                            info.versionName
-                        )
+                // ✅ Fix 2: Surface جذرية تضمن خلفية صحيحة في كل الأوقات
+                // تحمي من الشفافية التي تُظهر الـ Window background الخام
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    val updateState by updateViewModel.state.collectAsStateWithLifecycle()
+
+                    // عند وجود تحديث — نبدأ التحميل في الخلفية تلقائياً (بدون Dialog إجباري)
+                    LaunchedEffect(updateState) {
+                        if (updateState is UpdateUiState.UpdateAvailable) {
+                            val info = (updateState as UpdateUiState.UpdateAvailable).info
+                            BackgroundUpdateWorker.schedule(
+                                this@MainActivity,
+                                info.downloadUrl,
+                                info.versionName
+                            )
+                        }
                     }
-                }
 
-                // التطبيق الرئيسي — يعمل بشكل طبيعي دون Dialog إجباري
-                AppNavigation()
+                    // التطبيق الرئيسي — يعمل بشكل طبيعي دون Dialog إجباري
+                    AppNavigation()
+                }
             }
         }
     }
