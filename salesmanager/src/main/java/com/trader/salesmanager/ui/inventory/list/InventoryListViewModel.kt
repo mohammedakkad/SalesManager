@@ -81,7 +81,7 @@ class InventoryListViewModel(
             ) { products, query, filter, isOnline ->
 
                 val pendingCount = products.count { p ->
-                    p.units.isNotEmpty() && p.units.all { it.syncStatus == SyncStatus.PENDING }
+                    p.units.isNotEmpty() && p.units.any { it.syncStatus == SyncStatus.PENDING }
                 }
 
                 InventoryListUiState(

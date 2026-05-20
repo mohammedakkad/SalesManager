@@ -3,6 +3,7 @@ package com.trader.salesmanager
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
+import com.trader.core.data.local.dao.ProductDao
 import com.trader.core.data.remote.RemoteConfigManager
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.sync.SyncCoordinator
@@ -39,17 +40,23 @@ class SalesManagerApp : Application(), KoinComponent {
         }
         // Schedule unpaid debt reminders — every 8 hours
         UnpaidDebtWorker.schedule(this)
-        
         StatusCheckWorker.schedule(this)
 
-        // ✅ Fix 5: تشغيل SyncCoordinator — يراقب الشبكة ويُزامن البيانات المعلقة تلقائياً
-        // يُشغَّل مرة واحدة فقط طوال عمر التطبيق (single() في Koin)
-        val syncCoordinator: SyncCoordinator by inject()
-        syncCoordinator.start()
-
-        // ── Freemium: initialise Remote Config after Koin is ready ──
-        // Uses SupervisorJob so a crash here doesn't kill the app
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            // ✅ Self-Healing: تصحيح كل الوحدات العالقة بـ PENDING من عمليات سابقة
+            // يعمل مرة عند كل فتح للتطبيق — سريع جداً (UPDATE واحد على كل الجدول)
+            runCatching {
+                val productDao: ProductDao by inject()
+                productDao.markAllUnitsSynced()
+            }
+
+            // ✅ SyncCoordinator: يراقب الشبكة ويزامن البيانات المعلقة تلقائياً
+            runCatching {
+                val syncCoordinator: SyncCoordinator by inject()
+                syncCoordinator.start()
+            }
+
+            // ── Freemium: initialise Remote Config after Koin is ready ──
             runCatching {
                 val activationRepo: ActivationRepository by inject()
                 val tier = activationRepo.getMerchantTier()

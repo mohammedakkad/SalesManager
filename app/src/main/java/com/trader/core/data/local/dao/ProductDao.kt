@@ -107,6 +107,13 @@ interface ProductDao {
     @Query("UPDATE product_units SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markUnitSynced(id: String)
 
+    /**
+     * Self-Healing: يضبط كل الوحدات كـ SYNCED دفعةً واحدة.
+     * يُستدعى عند بدء التطبيق لتصحيح البيانات القديمة التي علقت بـ PENDING
+     * بسبب bug في applyMovement() قبل الإصلاح.
+     */
+    @Query("UPDATE product_units SET syncStatus = 'SYNCED' WHERE syncStatus = 'PENDING'")
+    suspend fun markAllUnitsSynced()
 
     // ── Stock updates ─────────────────────────────────────────────
 
