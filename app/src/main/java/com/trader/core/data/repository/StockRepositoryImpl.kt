@@ -121,14 +121,29 @@ class StockRepositoryImpl(
         )
         movementDao.insert(movement.toEntity())
 
-        // ✅ Sync في الخلفية — لا يوقف العملية أبداً
+        // ✅ Fix 2: كل عملية sync مستقلة — فشل أحدهما لا يمنع الآخر من markSynced
         syncScope.launch {
+            var movementSynced = false
+            var quantitySynced = false
+
             try {
                 remote.uploadMovement(merchantId, movement)
-                remote.updateRemoteQuantity(merchantId, unitId, newQty)
                 movementDao.markSynced(movement.id)
-                productDao.markUnitSynced(unitId)
+                movementSynced = true
             } catch (_: Exception) {}
+
+            try {
+                remote.updateRemoteQuantity(merchantId, unitId, newQty)
+                productDao.markUnitSynced(unitId)
+                quantitySynced = true
+            } catch (_: Exception) {}
+
+            if (!movementSynced || !quantitySynced) {
+                android.util.Log.w(
+                    "StockSync",
+                    "Partial sync failure: movement=$movementSynced, quantity=$quantitySynced for unit=$unitId"
+                )
+            }
         }
     }
 }

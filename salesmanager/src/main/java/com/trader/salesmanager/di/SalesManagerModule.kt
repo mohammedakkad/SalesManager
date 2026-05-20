@@ -36,6 +36,7 @@ import com.trader.core.domain.repository.ReturnRepository
 import com.trader.core.domain.repository.StockRepository
 import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.NetworkMonitor
+import com.trader.core.sync.SyncCoordinator
 import com.trader.salesmanager.ui.activation.ActivationViewModel
 import com.trader.salesmanager.ui.activation.MerchantWatcherViewModel
 import com.trader.salesmanager.ui.chat.ChatViewModel
@@ -212,6 +213,15 @@ val salesManagerModule = module {
     }
     single {
         EmployeeSessionManager(get())
+    }
+
+    // ✅ Fix 4: SyncCoordinator — يراقب الشبكة ويُشغِّل المزامنة تلقائياً عند استعادة الاتصال
+    single {
+        SyncCoordinator(
+            networkMonitor = get(),
+            stockRepository = get(),
+            invoiceItemRepository = get()
+        )
     }
 
     // ── ViewModels ───────────────────────────────────────────────

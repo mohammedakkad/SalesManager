@@ -5,6 +5,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
 import com.trader.core.data.remote.RemoteConfigManager
 import com.trader.core.domain.repository.ActivationRepository
+import com.trader.core.sync.SyncCoordinator
 import com.trader.core.util.ExpiryNotificationHelper
 import com.trader.core.worker.StatusCheckWorker
 import com.trader.salesmanager.di.salesManagerModule
@@ -40,6 +41,11 @@ class SalesManagerApp : Application(), KoinComponent {
         UnpaidDebtWorker.schedule(this)
         
         StatusCheckWorker.schedule(this)
+
+        // ✅ Fix 5: تشغيل SyncCoordinator — يراقب الشبكة ويُزامن البيانات المعلقة تلقائياً
+        // يُشغَّل مرة واحدة فقط طوال عمر التطبيق (single() في Koin)
+        val syncCoordinator: SyncCoordinator by inject()
+        syncCoordinator.start()
 
         // ── Freemium: initialise Remote Config after Koin is ready ──
         // Uses SupervisorJob so a crash here doesn't kill the app
