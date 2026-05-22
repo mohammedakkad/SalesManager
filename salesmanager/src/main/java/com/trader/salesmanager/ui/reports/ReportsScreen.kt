@@ -4,8 +4,10 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,9 +31,16 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Analytics
+import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.EventBusy
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.OpenInNew
+import androidx.compose.material.icons.rounded.Payments
+import androidx.compose.material.icons.rounded.PieChart
+import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -68,6 +77,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -259,10 +269,13 @@ fun ReportsScreen(
                     }
                 } else {
                     SummaryCard(
-                        "إجمالي المبيعات",
-                        uiState.totalAmount,
-                        Emerald500,
-                        Modifier.fillMaxWidth()
+                        label = "إجمالي المبيعات",
+                        value = uiState.totalAmount,
+                        color = Emerald500,
+                        modifier = Modifier.fillMaxWidth(),
+                        paidAmount = uiState.paidAmount,
+                        unpaidAmount = uiState.unpaidAmount,
+                        txCount = uiState.txCount
                     )
                 }
             }
@@ -279,6 +292,39 @@ fun ReportsScreen(
                     }
                 }
             } else if (!uiState.isAdvancedReportsEnabled) {
+
+                // ── Section المجاني ───────────────────────────────
+
+                // 1️⃣ توزيع الحالة — مدفوع مقابل معلق
+                item {
+                    FreeStatusBreakdownCard(
+                        paid = uiState.paidAmount,
+                        unpaid = uiState.unpaidAmount,
+                        total = uiState.totalAmount
+                    )
+                }
+
+                // 2️⃣ أفضل 3 زبائن شراءً
+                if (uiState.topSpenders.isNotEmpty()) {
+                    item {
+                        FreeTopCustomersCard(
+                            customers = uiState.topSpenders.take(3),
+                            onUpgrade = onNavigateToSubscription
+                        )
+                    }
+                }
+
+                // 3️⃣ توزيع طرق الدفع
+                if (uiState.paymentShares.isNotEmpty()) {
+                    item {
+                        FreePaymentBreakdownCard(
+                            shares = uiState.paymentShares,
+                            onUpgrade = onNavigateToSubscription
+                        )
+                    }
+                }
+
+                // 4️⃣ Premium Lock — في الأسفل فقط
                 item {
                     PremiumReportsLockedPreview(onUpgrade = onNavigateToSubscription)
                 }
@@ -894,36 +940,160 @@ private fun PeriodSwitcher(
 }
 
 @Composable
-private fun SummaryCard(label: String, value: Double, color: Color, modifier: Modifier) {
-    var target by remember {
-        mutableFloatStateOf(0f)
-    }
-    LaunchedEffect(value) {
-        target = value.toFloat()
-    }
+private fun SummaryCard(
+    label: String,
+    value: Double,
+    color: Color,
+    modifier: Modifier,
+    paidAmount: Double = 0.0,
+    unpaidAmount: Double = 0.0,
+    txCount: Int = 0
+) {
+    var target by remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(value) { target = value.toFloat() }
     val animated by animateFloatAsState(
-        target,
-        tween(1200, easing = FastOutSlowInEasing),
-        label = "count"
+        target, tween(1200, easing = FastOutSlowInEasing), label = "total"
     )
+
     Card(
-        modifier = modifier, shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = color.copy(0.1f))
+        modifier = modifier,
+        shape = RoundedCornerShape(24.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.linearGradient(
+                        colorStops = arrayOf(
+                            0.0f to color.copy(alpha = 0.18f),
+                            0.6f to color.copy(alpha = 0.10f),
+                            1.0f to color.copy(alpha = 0.05f)
+                        )
+                    ),
+                    shape = RoundedCornerShape(24.dp)
+                )
+                .border(1.dp, color.copy(alpha = 0.20f), RoundedCornerShape(24.dp))
+                .padding(20.dp)
         ) {
-            Text(label, style = MaterialTheme.typography.labelSmall, color = color)
-            Spacer(Modifier.height(4.dp))
+            Column {
+                // ── رأس البطاقة ──────────────────────────────────
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(color.copy(alpha = 0.20f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Rounded.TrendingUp,
+                                contentDescription = null,
+                                tint = color,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    if (txCount > 0) {
+                        Surface(
+                            shape = RoundedCornerShape(20.dp),
+                            color = color.copy(alpha = 0.15f)
+                        ) {
+                            Text(
+                                text = "$txCount عملية",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = color,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(12.dp))
+
+                // ── الرقم الرئيسي ─────────────────────────────────
+                Text(
+                    text = "₪ ${String.format("%,.0f", animated)}",
+                    style = MaterialTheme.typography.displaySmall,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = color
+                )
+
+                // ── مدفوع / معلق ──────────────────────────────────
+                if (paidAmount > 0 || unpaidAmount > 0) {
+                    Spacer(Modifier.height(16.dp))
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f))
+                    Spacer(Modifier.height(14.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        MiniAmountPill(
+                            label = "مدفوع",
+                            amount = paidAmount,
+                            color = PaidGreen,
+                            icon = Icons.Rounded.CheckCircle,
+                            modifier = Modifier.weight(1f)
+                        )
+                        MiniAmountPill(
+                            label = "معلق",
+                            amount = unpaidAmount,
+                            color = UnpaidAmber,
+                            icon = Icons.Rounded.Schedule,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MiniAmountPill(
+    label: String,
+    amount: Double,
+    color: Color,
+    icon: ImageVector,
+    modifier: Modifier
+) {
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(color.copy(alpha = 0.10f))
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(14.dp))
+        Column {
+            Text(label, style = MaterialTheme.typography.labelSmall, color = color.copy(alpha = 0.8f))
             Text(
-                String.format("%.0f", animated),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.ExtraBold, color = color
+                "₪ ${String.format("%,.0f", amount)}",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = color
             )
         }
     }
 }
+
 
 @Composable
 private fun MetricCard(label: String, value: Double, color: Color, modifier: Modifier) {
@@ -962,12 +1132,16 @@ private fun MetricCard(label: String, value: Double, color: Color, modifier: Mod
 
 @Composable
 private fun PremiumReportsLockedPreview(onUpgrade: () -> Unit = {}) {
-    Card(shape = RoundedCornerShape(22.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+    Card(
+        shape = RoundedCornerShape(22.dp),
+        elevation = CardDefaults.cardElevation(0.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, UnpaidAmber.copy(0.25f))
+    ) {
         Box {
+            // خلفية ضبابية — preview مقطوع
             Column(
-                modifier = Modifier
-                    .blur(5.dp)
-                    .padding(16.dp),
+                modifier = Modifier.blur(6.dp).padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -976,65 +1150,309 @@ private fun PremiumReportsLockedPreview(onUpgrade: () -> Unit = {}) {
                 }
                 SalesProfitBarChart(
                     data = listOf(
-                        SalesProfitDayEntry("1", 850.0, 230.0),
-                        SalesProfitDayEntry("2", 1200.0, 420.0),
-                        SalesProfitDayEntry("3", 640.0, 180.0),
-                        SalesProfitDayEntry("4", 1580.0, 610.0),
-                        SalesProfitDayEntry("5", 960.0, 300.0),
-                        SalesProfitDayEntry("6", 1420.0, 520.0),
-                        SalesProfitDayEntry("7", 1100.0, 390.0)
+                        SalesProfitDayEntry("١", 850.0, 230.0),
+                        SalesProfitDayEntry("٢", 1200.0, 420.0),
+                        SalesProfitDayEntry("٣", 640.0, 180.0),
+                        SalesProfitDayEntry("٤", 1580.0, 610.0),
+                        SalesProfitDayEntry("٥", 960.0, 300.0),
+                        SalesProfitDayEntry("٦", 1420.0, 520.0),
+                        SalesProfitDayEntry("٧", 1100.0, 390.0)
                     ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp)
+                    modifier = Modifier.fillMaxWidth().height(140.dp)
                 )
             }
-            Surface(
+
+            // طبقة gradient للضبابية
+            Box(
                 modifier = Modifier
                     .matchParentSize()
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.72f)),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.82f)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.surface.copy(0.4f),
+                                MaterialTheme.colorScheme.surface.copy(0.92f)
+                            )
+                        )
+                    )
+            )
+
+            // طبقة القفل
+            Column(
+                modifier = Modifier
+                    .matchParentSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier.padding(22.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(UnpaidAmber.copy(0.15f)),
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         Icons.Rounded.Lock,
                         contentDescription = null,
                         tint = UnpaidAmber,
-                        modifier = Modifier.size(34.dp)
+                        modifier = Modifier.size(28.dp)
                     )
-                    Spacer(Modifier.height(10.dp))
+                }
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    "افتح التحليلات المتقدمة",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(8.dp))
+                listOf(
+                    "📊 صافي الربح الحقيقي",
+                    "📦 تقييم المخزون",
+                    "⏳ تحليل أعمار الديون",
+                    "📈 مقارنة المبيعات والربح"
+                ).forEach { feature ->
                     Text(
-                        "التقارير الذكية متاحة في الخطة المميزة",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    Text(
-                        "فعّل التحليلات المتقدمة لعرض صافي الربح، قيمة المخزون، أعمار الديون، ومقارنة المبيعات بالربح.",
+                        feature,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
+                        modifier = Modifier.padding(vertical = 2.dp)
                     )
-                    Spacer(Modifier.height(14.dp))
-                    Button(
-                        onClick = onUpgrade,
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = UnpaidAmber)
-                    ) {
-                        Icon(Icons.Rounded.Lock, null, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text("ترقية إلى Premium", fontWeight = FontWeight.Bold)
-                    }
+                }
+                Spacer(Modifier.height(16.dp))
+                Button(
+                    onClick = onUpgrade,
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = UnpaidAmber),
+                    modifier = Modifier.fillMaxWidth().height(48.dp)
+                ) {
+                    Icon(Icons.Rounded.AutoAwesome, null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("ترقية إلى Premium", fontWeight = FontWeight.ExtraBold)
                 }
             }
         }
     }
 }
+
+// ── Composables المجانية الجديدة ──────────────────────────────
+
+@Composable
+private fun FreeStatusBreakdownCard(paid: Double, unpaid: Double, total: Double) {
+    val safeTotal = total.coerceAtLeast(1.0)
+    val paidRatio = (paid / safeTotal).toFloat().coerceIn(0f, 1f)
+
+    val animatedRatio = remember { Animatable(0f) }
+    LaunchedEffect(paidRatio) {
+        animatedRatio.snapTo(0f)
+        animatedRatio.animateTo(paidRatio, tween(1000, easing = FastOutSlowInEasing))
+    }
+    val anim by animatedRatio.asState()
+
+    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(Icons.Rounded.PieChart, null, tint = Cyan500, modifier = Modifier.size(18.dp))
+                Text("حالة المبيعات", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(14.dp))
+
+            // Progress Bar مركّبة
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .background(DebtRed.copy(alpha = 0.25f))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(anim)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Brush.horizontalGradient(listOf(PaidGreen.copy(0.8f), PaidGreen)))
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                StatusLegendItem("مدفوع", paid, (paidRatio * 100).toInt(), PaidGreen, Modifier.weight(1f))
+                StatusLegendItem("معلق", unpaid, ((1f - paidRatio) * 100).toInt(), DebtRed, Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatusLegendItem(label: String, amount: Double, percent: Int, color: Color, modifier: Modifier) {
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(color.copy(0.08f))
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(Modifier.size(10.dp).clip(CircleShape).background(color))
+        Column {
+            Text(label, style = MaterialTheme.typography.labelSmall, color = color)
+            Text(
+                "₪ ${String.format("%,.0f", amount)}",
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text("$percent%", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+@Composable
+private fun FreeTopCustomersCard(customers: List<CustomerRank>, onUpgrade: () -> Unit) {
+    val maxVal = customers.maxOfOrNull { it.amount }?.coerceAtLeast(1.0) ?: 1.0
+
+    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(Icons.Rounded.EmojiEvents, null, tint = UnpaidAmber, modifier = Modifier.size(18.dp))
+                    Text("أفضل 3 زبائن", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                }
+                Surface(onClick = onUpgrade, shape = RoundedCornerShape(20.dp), color = UnpaidAmber.copy(0.12f)) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(Icons.Rounded.Lock, null, tint = UnpaidAmber, modifier = Modifier.size(10.dp))
+                        Text("أعلى 5", style = MaterialTheme.typography.labelSmall, color = UnpaidAmber)
+                    }
+                }
+            }
+            Spacer(Modifier.height(14.dp))
+            customers.forEachIndexed { index, customer ->
+                val medal = when (index) { 0 -> "🥇"; 1 -> "🥈"; else -> "🥉" }
+                val barAnim = remember { Animatable(0f) }
+                LaunchedEffect(customer.amount) {
+                    barAnim.snapTo(0f)
+                    barAnim.animateTo((customer.amount / maxVal).toFloat(), tween(800, index * 120, FastOutSlowInEasing))
+                }
+                val prog by barAnim.asState()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(medal, style = MaterialTheme.typography.bodyMedium)
+                    Column(Modifier.weight(1f)) {
+                        Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
+                            Text(
+                                customer.name.ifEmpty { "—" },
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text(
+                                "₪ ${String.format("%,.0f", customer.amount)}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Emerald500,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(Modifier.height(4.dp))
+                        Box(
+                            Modifier.fillMaxWidth().height(6.dp)
+                                .clip(RoundedCornerShape(3.dp))
+                                .background(Emerald500.copy(0.12f))
+                        ) {
+                            Box(
+                                Modifier.fillMaxWidth(prog).fillMaxHeight()
+                                    .clip(RoundedCornerShape(3.dp))
+                                    .background(Brush.horizontalGradient(listOf(Emerald500.copy(0.7f), Emerald500)))
+                            )
+                        }
+                    }
+                }
+                if (index < customers.size - 1) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        color = MaterialTheme.colorScheme.outline.copy(0.08f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FreePaymentBreakdownCard(shares: List<PaymentShare>, onUpgrade: () -> Unit) {
+    val donutColors = listOf(Emerald500, Cyan500, Violet500, UnpaidAmber, DebtRed)
+    val total = shares.sumOf { it.amount }.coerceAtLeast(1.0)
+
+    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Icon(Icons.Rounded.Payments, null, tint = Violet500, modifier = Modifier.size(18.dp))
+                Text("طرق الدفع", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(14.dp))
+            shares.take(4).forEachIndexed { index, share ->
+                val ratio = (share.amount / total).toFloat().coerceIn(0f, 1f)
+                val color = donutColors[index % donutColors.size]
+                val barAnim = remember { Animatable(0f) }
+                LaunchedEffect(ratio) {
+                    barAnim.snapTo(0f)
+                    barAnim.animateTo(ratio, tween(900, index * 100, FastOutSlowInEasing))
+                }
+                val prog by barAnim.asState()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Box(Modifier.size(10.dp).clip(CircleShape).background(color))
+                    Text(
+                        share.name,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.width(80.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Box(
+                        Modifier.weight(1f).height(8.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(color.copy(0.12f))
+                    ) {
+                        Box(
+                            Modifier.fillMaxWidth(prog).fillMaxHeight()
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(color)
+                        )
+                    }
+                    Text(
+                        "${(ratio * 100).toInt()}%",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = color,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.width(28.dp),
+                        textAlign = TextAlign.End
+                    )
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun DebtAgingCard(debtAging: DebtAging) {
