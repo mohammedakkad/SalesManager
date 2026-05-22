@@ -13,6 +13,7 @@ import com.trader.core.data.local.dao.*
 import com.trader.core.data.local.entity.*
 import com.trader.core.data.remote.ProductFirestoreService
 import com.trader.core.data.remote.FirebaseSyncService
+import com.trader.core.device.DeviceFingerprintProvider
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.model.MerchantTier
 import com.trader.core.domain.model.Session
@@ -40,7 +41,8 @@ class ActivationRepositoryImpl(
     private val productFirestoreService: ProductFirestoreService,
     private val returnDao: ReturnDao,
     private val invoiceItemDao: InvoiceItemDao,
-    private val sessionDao: SessionDao
+    private val sessionDao: SessionDao,
+    private val fingerprintProvider: DeviceFingerprintProvider  // ✅ بصمة الجهاز المُركَّبة
 ) : ActivationRepository {
 
     private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -393,10 +395,9 @@ class ActivationRepositoryImpl(
         }
     }
 
-    @SuppressLint("HardwareIds")
-    private fun getHardwareId(): String = Settings.Secure.getString(
-        context.contentResolver, Settings.Secure.ANDROID_ID
-    ) ?: "unknown_device"
+    // ✅ بصمة مُركَّبة من Build constants + ANDROID_ID + UUID محلي
+    // مستقرة عبر: Clear Data، تغيير User Profile، بعض إعادة ضبط المصنع
+    private fun getHardwareId(): String = fingerprintProvider.getFingerprint()
 
     private suspend fun restoreSession(doc: DocumentSnapshot): StartupStatus {
         val status = doc.getString(FIELD_STATUS) ?: STATUS_ACTIVE
@@ -456,11 +457,13 @@ class ActivationRepositoryImpl(
         val now = System.currentTimeMillis()
         val sessionId = getOrCreateSessionId()
         val cached = sessionDao.getById(sessionId)
+        val deviceInfo = fingerprintProvider.getDeviceInfo()
 
         val session = Session(
             id = sessionId,
-            deviceId = getHardwareId(),
-            deviceName = Build.MODEL ?: "Unknown Device",
+            deviceId = deviceInfo.fingerprint,       // ✅ البصمة المُركَّبة
+            deviceName = deviceInfo.displayName,     // ✅ "Samsung Galaxy A54 (Android 14)"
+            deviceModel = deviceInfo.model,          // ✅ للـ admin panel
             loginDate = cached?.loginDate ?: now,
             lastActive = now
         )
@@ -500,10 +503,11 @@ class ActivationRepositoryImpl(
     }
 
     private fun Session.toFirebaseMap(): Map<String, Any> = mapOf(
-        FIELD_ID to id,
-        FIELD_DEVICE_ID to deviceId,
+        FIELD_ID          to id,
+        FIELD_DEVICE_ID   to deviceId,
         FIELD_DEVICE_NAME to deviceName,
-        FIELD_LOGIN_DATE to loginDate,
+        "deviceModel"     to deviceModel,   // ✅ للـ admin panel
+        FIELD_LOGIN_DATE  to loginDate,
         FIELD_LAST_ACTIVE to lastActive
     )
 

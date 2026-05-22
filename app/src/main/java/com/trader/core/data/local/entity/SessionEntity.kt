@@ -13,6 +13,7 @@ data class SessionEntity(
     @PrimaryKey val id: String,
     val deviceId: String,
     val deviceName: String,
+    val deviceModel: String = "",  // ✅ جديد — Migration 15→16 يضيفه
     val loginDate: Long,
     val lastActive: Long
 ) {
@@ -20,6 +21,7 @@ data class SessionEntity(
         id = id,
         deviceId = deviceId,
         deviceName = deviceName,
+        deviceModel = deviceModel,
         loginDate = loginDate,
         lastActive = lastActive
     )
@@ -29,6 +31,7 @@ fun Session.toEntity() = SessionEntity(
     id = id,
     deviceId = deviceId,
     deviceName = deviceName,
+    deviceModel = deviceModel,
     loginDate = loginDate,
     lastActive = lastActive
 )

@@ -25,7 +25,7 @@ import com.trader.core.domain.model.PaymentType
         SessionEntity::class,
         EmployeeEntity::class
     ],
-    version = 15,
+    version = 16,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -385,6 +385,16 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_15_16 = object : Migration(15, 16) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // إضافة عمود deviceModel لجدول sessions
+                // DEFAULT '' لضمان التوافق مع السجلات القديمة
+                db.execSQL(
+                    "ALTER TABLE sessions ADD COLUMN deviceModel TEXT NOT NULL DEFAULT ''"
+                )
+            }
+        }
+
         // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
         Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
@@ -402,7 +412,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_11_12,
             MIGRATION_12_13,
             MIGRATION_13_14,
-            MIGRATION_14_15
+            MIGRATION_14_15,
+            MIGRATION_15_16  // ✅ deviceModel في sessions
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {

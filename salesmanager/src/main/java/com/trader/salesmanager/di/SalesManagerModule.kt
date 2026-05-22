@@ -1,6 +1,5 @@
 package com.trader.salesmanager.di
 
-import android.provider.Settings
 import com.trader.core.data.local.appDataStore
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.manager.EmployeeSessionManager
@@ -9,6 +8,7 @@ import com.trader.core.data.remote.ChatService
 import com.trader.core.data.remote.CloudinaryUploader
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.data.remote.ProductFirestoreService
+import com.trader.core.device.DeviceFingerprintProvider
 import com.trader.core.data.repository.ActivationRepositoryImpl
 import com.trader.core.data.repository.ChatRepositoryImpl
 import com.trader.core.data.repository.CustomerRepositoryImpl
@@ -124,8 +124,10 @@ val salesManagerModule = module {
         NetworkMonitor(androidContext())
     }
 
+    // ✅ بصمة الجهاز المُركَّبة — single() لضمان نسخة واحدة وcache واحدة
+    single { DeviceFingerprintProvider(androidContext()) }
+
     // ── merchantId helper ─────────────────────────────────────────
-    // merchant_code = activationCode = merchantId المستخدم في Firestore
     single<String>(org.koin.core.qualifier.named("merchantId")) {
         runBlocking {
             androidContext().appDataStore.data
@@ -136,16 +138,17 @@ val salesManagerModule = module {
                 .first()
         }
     }
+    // ✅ currentDeviceId الآن يستخدم DeviceFingerprintProvider بدل ANDROID_ID المباشر
     single<String>(org.koin.core.qualifier.named("currentDeviceId")) {
-        Settings.Secure.getString(
-            androidContext().contentResolver,
-            Settings.Secure.ANDROID_ID
-        ) ?: "unknown_device"
+        get<DeviceFingerprintProvider>().getFingerprint()
     }
 
     // ── Repositories ─────────────────────────────────────────────
     single<ActivationRepository> {
-        ActivationRepositoryImpl(androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        ActivationRepositoryImpl(
+            androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get(),
+            get()  // ✅ DeviceFingerprintProvider
+        )
     }
     single<CustomerRepository> {
         CustomerRepositoryImpl(get(), get(), get(), get())

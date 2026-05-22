@@ -122,6 +122,14 @@ private fun SessionCard(
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(2.dp))
+                    if (session.deviceModel.isNotBlank()) {
+                        Text(
+                            text = session.deviceModel,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                    }
                     Text(
                         text = "آخر نشاط: ${formatLastActive(session.lastActive)}",
                         style = MaterialTheme.typography.bodySmall,
