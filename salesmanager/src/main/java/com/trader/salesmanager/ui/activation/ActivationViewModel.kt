@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.trader.core.data.remote.ValidationResult
 import com.trader.core.domain.model.FeatureFlags
 import com.trader.core.domain.model.MerchantStatus
-import com.trader.core.domain.model.MerchantTier
 import com.trader.core.domain.model.StartupStatus
 import com.trader.core.domain.repository.ActivationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,148 +17,118 @@ import kotlinx.coroutines.launch
 
 sealed class StartupState {
     object Checking : StartupState()
-    object Proceed : StartupState()           // Premium — activation code
-    object ProceedFree : StartupState()       // Free — self-registered
+    object Proceed : StartupState()
+    object ProceedFree : StartupState()
     object NeedActivation : StartupState()
     data class Blocked(val message: String, val canRetry: Boolean = false) : StartupState()
-    }
+}
 
-    class ActivationViewModel(
-        private val repo: ActivationRepository
-    ) : ViewModel() {
+class ActivationViewModel(
+    private val repo: ActivationRepository
+) : ViewModel() {
 
-        private val _uiState = MutableStateFlow(ActivationUiState())
-        val uiState: StateFlow<ActivationUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ActivationUiState())
+    val uiState: StateFlow<ActivationUiState> = _uiState.asStateFlow()
 
-        private val _startupState = MutableStateFlow<StartupState>(StartupState.Checking)
-        val startupState: StateFlow<StartupState> = _startupState.asStateFlow()
+    private val _startupState = MutableStateFlow<StartupState>(StartupState.Checking)
+    val startupState: StateFlow<StartupState> = _startupState.asStateFlow()
 
-        val merchantStatus: StateFlow<MerchantStatus?> = repo.observeMerchantStatus()
+    val merchantStatus: StateFlow<MerchantStatus?> = repo.observeMerchantStatus()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
-        init {
-            checkStartup()
-        }
+    init {
+        checkStartup()
+    }
 
-        fun checkStartup() {
-            _startupState.value = StartupState.Checking
-            viewModelScope.launch {
-                val result = repo.verifyStatusOnStartup()
-                handleStartupResult(result)
+    fun checkStartup() {
+        _startupState.value = StartupState.Checking
+        viewModelScope.launch {
+            val result = repo.verifyStatusOnStartup()
+            handleStartupResult(result)
+        }
+    }
+
+    private suspend fun handleStartupResult(result: StartupStatus) {
+        _startupState.value = when (result) {
+            StartupStatus.ACTIVE -> {
+                val tier = repo.getMerchantTier()
+                FeatureFlags.applyTier(tier)
+                StartupState.Proceed
             }
+            StartupStatus.NOT_ACTIVATED -> StartupState.NeedActivation
+            StartupStatus.DISABLED -> StartupState.Blocked(
+                "الحساب معطل من قِبل الإدارة",
+                canRetry = false
+            )
+            StartupStatus.OFFLINE -> StartupState.NeedActivation
+            else -> StartupState.Blocked("انتهى الاشتراك", canRetry = false)
         }
+    }
 
-        private suspend fun handleStartupResult(result: com.trader.core.domain.model.StartupStatus) {
-            _startupState.value = when (result) {
-                StartupStatus.ACTIVE -> {
-                    val tier = repo.getMerchantTier()
-                    FeatureFlags.applyTier(tier)
-                    if (repo.isSelfRegistered()) StartupState.ProceedFree else StartupState.Proceed
-                }
-                StartupStatus.NOT_ACTIVATED -> StartupState.NeedActivation
-                StartupStatus.DISABLED -> StartupState.Blocked("الحساب معطل من قِبل الإدارة", canRetry = false)
-                StartupStatus.OFFLINE -> StartupState.NeedActivation // كخيار آمن إذا لم يكن مسجلاً مسبقاً
-                else -> StartupState.Blocked("انتهى الاشتراك", canRetry = false)
+    fun updateCode(code: String) = _uiState.update {
+        it.copy(code = code, error = null)
+    }
+
+    fun activate() {
+        val code = _uiState.value.code.trim()
+        if (code.isEmpty()) return
+
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true, error = null, showNoInternetSnackbar = false)
             }
-        }
-
-        fun updateCode(code: String) = _uiState.update {
-            it.copy(code = code, error = null)
-        }
-
-        fun activate() {
-            val code = _uiState.value.code.trim()
-            if (code.isEmpty()) {
-                _uiState.update {
-                    it.copy(error = "أدخل كود التفعيل")
-                }; return
-            }
-            viewModelScope.launch {
-                _uiState.update {
-                    it.copy(loadingType = LoadingType.ACTIVATING_CODE, error = null)
-                }
-                when (repo.validateCodeDetailed(code)) {
-                    ValidationResult.Active -> {
-                        repo.saveActivationStatus(activated = true, code = code)
-                        _uiState.update {
-                            it.copy(loadingType = LoadingType.NONE, isSuccess = true)
-                        }
-                    }
-
-                    ValidationResult.Disabled -> {
-                        _uiState.update {
-                            it.copy(
-                                loadingType = LoadingType.NONE,
-                                error = "هذا الحساب معطّل من قِبل الإدارة"
-                            )
-                        }
-                    }
-
-                    ValidationResult.Expired -> {
-                        _uiState.update {
-                            it.copy(
-                                loadingType = LoadingType.NONE,
-                                error = "انتهت مدة اشتراك هذا الكود"
-                            )
-                        }
-                    }
-
-                    ValidationResult.NotFound -> {
-                        _uiState.update {
-                            it.copy(
-                                loadingType = LoadingType.NONE,
-                                error = "كود التفعيل غير موجود"
-                            )
-                        }
-                    }
-
-                    ValidationResult.NetworkError -> {
-                        _uiState.update {
-                            it.copy(
-                                loadingType = LoadingType.NONE,
-                                error = "تعذّر الاتصال، تحقق من الإنترنت"
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-
-        fun onNoInternetSnackbarShown() = _uiState.update {
-            it.copy(showNoInternetSnackbar = false)
-        }
-
-        fun registerFree() {
-            viewModelScope.launch {
-                _uiState.update {
-                    it.copy(loadingType = LoadingType.REGISTERING_FREE, error = null)
-                }
-
-                runCatching {
-                    repo.registerFree()
-                }.onSuccess {
-                    FeatureFlags.applyTier(MerchantTier.FREE)
+            when (repo.validateCodeDetailed(code)) {
+                ValidationResult.Active -> {
+                    repo.saveActivationStatus(activated = true, code = code)
                     _uiState.update {
-                        it.copy(loadingType = LoadingType.NONE)
+                        it.copy(isLoading = false, isSuccess = true)
                     }
-                    _startupState.value = StartupState.ProceedFree
-                }.onFailure {
-                    exception ->
+                }
+
+                ValidationResult.Disabled -> {
                     _uiState.update {
                         it.copy(
-                            loadingType = LoadingType.NONE,
-                            error = exception.message ?: "تعذر التسجيل، تحقق من اتصال الإنترنت"
+                            isLoading = false,
+                            error = "هذا الحساب معطّل. تواصل مع الإدارة."
                         )
                     }
                 }
-            }
-        }
 
-        fun deactivate() {
-            viewModelScope.launch {
-                repo.deactivate()
-                _startupState.value = StartupState.NeedActivation
+                ValidationResult.Expired -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "انتهت مدة الاشتراك. تواصل مع الإدارة للتجديد."
+                        )
+                    }
+                }
+
+                ValidationResult.NotFound -> {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "كود التفعيل غير صحيح."
+                        )
+                    }
+                }
+
+                ValidationResult.NetworkError -> {
+                    _uiState.update {
+                        it.copy(isLoading = false, showNoInternetSnackbar = true)
+                    }
+                }
             }
         }
     }
+
+    fun onSnackbarShown() = _uiState.update {
+        it.copy(error = null, showNoInternetSnackbar = false)
+    }
+
+    fun deactivate() {
+        viewModelScope.launch {
+            repo.deactivate()
+            _startupState.value = StartupState.NeedActivation
+        }
+    }
+}
