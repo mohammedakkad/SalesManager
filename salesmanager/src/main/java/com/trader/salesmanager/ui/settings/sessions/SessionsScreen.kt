@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.Session
-import com.trader.salesmanager.ui.theme.Emerald500
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -86,7 +85,6 @@ fun SessionsScreen(
                 items(items = activeSessions, key = { it.id }) { session ->
                     SessionCard(
                         session = session,
-                        isCurrentDevice = session.deviceId == viewModel.currentDeviceId,
                         onRevokeSession = { viewModel.revokeSession(session.id) }
                     )
                 }
@@ -98,75 +96,61 @@ fun SessionsScreen(
 @Composable
 private fun SessionCard(
     session: Session,
-    isCurrentDevice: Boolean,
     onRevokeSession: () -> Unit
 ) {
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("ar"))
+    val loginDate = dateFormat.format(Date(session.loginDate))
+    val lastActive = dateFormat.format(Date(session.lastActive))
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Rounded.Smartphone,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.size(10.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = session.deviceName,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    if (session.deviceModel.isNotBlank()) {
-                        Text(
-                            text = session.deviceModel,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                    }
-                    Text(
-                        text = "آخر نشاط: ${formatLastActive(session.lastActive)}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
+            Icon(
+                imageVector = Icons.Rounded.Smartphone,
+                contentDescription = null,
+                modifier = Modifier.size(40.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
 
-            if (isCurrentDevice) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 12.dp)
+            ) {
                 Text(
-                    text = "• هذا الجهاز",
-                    color = Emerald500,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = session.deviceName.ifBlank { "جهاز غير معروف" },
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-            } else {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onRevokeSession) {
-                        Icon(
-                            imageVector = Icons.Rounded.Logout,
-                            contentDescription = "Revoke session",
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    Text(
-                        text = "تسجيل خروج",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "تسجيل الدخول: $loginDate",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "آخر نشاط: $lastActive",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            IconButton(onClick = onRevokeSession) {
+                Icon(
+                    imageVector = Icons.Rounded.Logout,
+                    contentDescription = "إنهاء الجلسة",
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }
-}
-
-private fun formatLastActive(timestamp: Long): String {
-    val formatter = SimpleDateFormat("dd MMM yyyy - hh:mm a", Locale("ar"))
-    return formatter.format(Date(timestamp))
 }

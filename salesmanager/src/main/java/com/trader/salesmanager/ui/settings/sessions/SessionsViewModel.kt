@@ -14,8 +14,7 @@ import kotlinx.coroutines.tasks.await
 
 class SessionsViewModel(
     private val sessionDao: SessionDao,
-    private val merchantCode: String,
-    val currentDeviceId: String
+    private val merchantCode: String
 ) : ViewModel() {
 
     private val sessionsReference = FirebaseDatabase.getInstance()

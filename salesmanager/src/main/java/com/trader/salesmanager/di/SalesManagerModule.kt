@@ -1,6 +1,5 @@
 package com.trader.salesmanager.di
 
-import com.trader.core.data.local.appDataStore
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.manager.EmployeeSessionManager
 import com.trader.core.data.manager.SubscriptionManager
@@ -8,7 +7,6 @@ import com.trader.core.data.remote.ChatService
 import com.trader.core.data.remote.CloudinaryUploader
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.data.remote.ProductFirestoreService
-import com.trader.core.device.DeviceFingerprintProvider
 import com.trader.core.data.repository.ActivationRepositoryImpl
 import com.trader.core.data.repository.ChatRepositoryImpl
 import com.trader.core.data.repository.CustomerRepositoryImpl
@@ -64,8 +62,6 @@ import com.trader.salesmanager.ui.transactions.details.TransactionDetailsViewMod
 import com.trader.salesmanager.ui.transactions.list.TransactionsViewModel
 import com.trader.salesmanager.update.AppUpdateViewModel
 import com.trader.salesmanager.util.export.ExportViewModel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -124,32 +120,20 @@ val salesManagerModule = module {
         NetworkMonitor(androidContext())
     }
 
-    // ✅ بصمة الجهاز المُركَّبة — single() لضمان نسخة واحدة وcache واحدة
-    single { DeviceFingerprintProvider(androidContext()) }
+    // ── Repositories ─────────────────────────────────────────────
+    single<ActivationRepository> {
+        ActivationRepositoryImpl(
+            androidContext(), get(), get(), get(), get(), get(), get(), get(), get()
+        )
+    }
 
     // ── merchantId helper ─────────────────────────────────────────
     single<String>(org.koin.core.qualifier.named("merchantId")) {
         runBlocking {
-            androidContext().appDataStore.data
-                .map { prefs ->
-                    prefs[androidx.datastore.preferences.core.stringPreferencesKey("merchant_code")]
-                        ?: ""
-                }
-                .first()
+            get<ActivationRepository>().getMerchantCode()
         }
     }
-    // ✅ currentDeviceId الآن يستخدم DeviceFingerprintProvider بدل ANDROID_ID المباشر
-    single<String>(org.koin.core.qualifier.named("currentDeviceId")) {
-        get<DeviceFingerprintProvider>().getFingerprint()
-    }
 
-    // ── Repositories ─────────────────────────────────────────────
-    single<ActivationRepository> {
-        ActivationRepositoryImpl(
-            androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get(),
-            get()  // ✅ DeviceFingerprintProvider
-        )
-    }
     single<CustomerRepository> {
         CustomerRepositoryImpl(get(), get(), get(), get())
     }
@@ -218,7 +202,6 @@ val salesManagerModule = module {
         EmployeeSessionManager(get())
     }
 
-    // ✅ Fix 4: SyncCoordinator — يراقب الشبكة ويُشغِّل المزامنة تلقائياً عند استعادة الاتصال
     single {
         SyncCoordinator(
             networkMonitor = get(),
@@ -235,7 +218,7 @@ val salesManagerModule = module {
         ExportViewModel()
     }
     viewModel {
-        MerchantWatcherViewModel(get(), get(), get())
+        MerchantWatcherViewModel(get(), get())
     }
     viewModel {
         HomeViewModel(get(), get(), get())
@@ -286,11 +269,9 @@ val salesManagerModule = module {
     viewModel {
         SessionsViewModel(
             sessionDao = get(),
-            merchantCode = get(qualifier = org.koin.core.qualifier.named("merchantId")),
-            currentDeviceId = get(qualifier = org.koin.core.qualifier.named("currentDeviceId"))
+            merchantCode = get(qualifier = org.koin.core.qualifier.named("merchantId"))
         )
     }
-    // ── Employees / RBAC (Phase 4.3) ─────────────────────────────
     viewModel {
         PinLockViewModel(
             sessionManager = get(),
@@ -300,7 +281,6 @@ val salesManagerModule = module {
     viewModel {
         EmployeeManagementViewModel(repository = get())
     }
-    // ── Inventory ─────────────────────────────────────────────────
     viewModel {
         InventoryListViewModel(get(), get())
     }
@@ -350,5 +330,4 @@ val salesManagerModule = module {
             .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
             .build()
     }
-
 }

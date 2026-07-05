@@ -23,15 +23,10 @@ interface ActivationRepository {
     suspend fun registerFree()
     suspend fun deactivate()
 
-
-
     suspend fun isActivated(): Boolean
     /** True if account was created via registerFree() */
     suspend fun isSelfRegistered(): Boolean
 
     /** Emits the merchant code whenever it changes (empty string = not activated) */
     fun observeMerchantCode(): Flow<String>
-
-    /** Emits the persisted session id for this device (empty = not initialized yet). */
-    fun observeCurrentSessionId(): Flow<String>
 }
