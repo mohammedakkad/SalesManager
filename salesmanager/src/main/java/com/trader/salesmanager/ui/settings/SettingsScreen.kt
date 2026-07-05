@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ChevronRight
@@ -72,7 +71,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
 import com.trader.salesmanager.ui.theme.Cyan500
-import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
 import com.trader.salesmanager.ui.theme.Slate400
 import com.trader.salesmanager.ui.theme.Slate600
@@ -99,7 +97,6 @@ fun SettingsScreen(
     onNavigateToChat: () -> Unit = {},
     onNavigateToSessions: () -> Unit = {},
     onNavigateToEmployeeManagement: () -> Unit = {},
-    onLogout: () -> Unit = {},
     updateViewModel: AppUpdateViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -238,15 +235,6 @@ fun SettingsScreen(
                     subtitle = "إضافة وحذف الموظفين وتعيين الصلاحيات",
                     color = Violet500,
                     onClick = onNavigateToEmployeeManagement
-                )
-
-                // ── تسجيل الخروج ───────────────────────────────────
-                SettingItem(
-                    icon = Icons.AutoMirrored.Rounded.Logout,
-                    title = "تسجيل الخروج",
-                    subtitle = "إنهاء الجلسة الحالية والعودة لشاشة القفل",
-                    color = DebtRed,
-                    onClick = onLogout
                 )
 
                 // ── التحديثات ──────────────────────────────────────

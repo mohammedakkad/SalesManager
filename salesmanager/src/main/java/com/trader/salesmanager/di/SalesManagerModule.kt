@@ -43,7 +43,6 @@ import com.trader.salesmanager.ui.customers.details.CustomerDetailsViewModel
 import com.trader.salesmanager.ui.customers.list.CustomersViewModel
 import com.trader.salesmanager.ui.debts.DebtsViewModel
 import com.trader.salesmanager.ui.employees.EmployeeManagementViewModel
-import com.trader.salesmanager.ui.employees.PinLockViewModel
 import com.trader.salesmanager.ui.home.HomeViewModel
 import com.trader.salesmanager.ui.inventory.addedit.AddEditProductViewModel
 import com.trader.salesmanager.ui.inventory.detail.ProductDetailViewModel
@@ -270,12 +269,6 @@ val salesManagerModule = module {
         SessionsViewModel(
             sessionDao = get(),
             merchantCode = get(qualifier = org.koin.core.qualifier.named("merchantId"))
-        )
-    }
-    viewModel {
-        PinLockViewModel(
-            sessionManager = get(),
-            employeeRepository = get()
         )
     }
     viewModel {

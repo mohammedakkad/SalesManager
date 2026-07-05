@@ -31,7 +31,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.trader.core.data.manager.EmployeeSessionManager
 import com.trader.salesmanager.ui.activation.ActivationScreen
 import com.trader.salesmanager.ui.activation.ActivationViewModel
 import com.trader.salesmanager.ui.activation.MerchantEvent
@@ -44,7 +43,6 @@ import com.trader.salesmanager.ui.customers.details.CustomerDetailsScreen
 import com.trader.salesmanager.ui.customers.list.CustomersScreen
 import com.trader.salesmanager.ui.debts.DebtsScreen
 import com.trader.salesmanager.ui.employees.EmployeeManagementScreen
-import com.trader.salesmanager.ui.employees.PinLockScreen
 import com.trader.salesmanager.ui.home.HomeScreen
 import com.trader.salesmanager.ui.inventory.addedit.AddEditProductScreen
 import com.trader.salesmanager.ui.inventory.detail.ProductDetailScreen
@@ -65,7 +63,6 @@ import com.trader.salesmanager.ui.transactions.list.TransactionsScreen
 import org.json.JSONArray
 import org.json.JSONObject
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
 
 // تسلسل خطوط الفاتورة لنقلها عبر SavedStateHandle
 // ✅ يحفظ displayQty + displayWeightUnit حتى يتم إعادة بناء InvoiceLineItem بشكل صحيح
@@ -159,14 +156,9 @@ fun AppNavigation() {
         }
     }
 
-    // ── Phase 4.3: gate Home behind PinLock when there is no active employee ──
-    val sessionManager: EmployeeSessionManager = koinInject()
-    val activeEmployee by sessionManager.currentActiveEmployee.collectAsStateWithLifecycle()
-
     val start = when {
         startupState != StartupState.Proceed && startupState !is StartupState.ProceedFree ->
             Screen.Activation.route
-        activeEmployee == null -> Screen.PinLock.route
         else -> Screen.Home.route
     }
 
@@ -468,12 +460,6 @@ fun AppNavigation() {
                 },
                 onNavigateToEmployeeManagement = {
                     navController.navigate(Screen.EmployeeManagement.route)
-                },
-                onLogout = {
-                    sessionManager.logout()
-                    navController.navigate(Screen.PinLock.route) {
-                        popUpTo(0) { inclusive = true }
-                    }
                 }
             )
         }
@@ -652,15 +638,6 @@ fun AppNavigation() {
         }
 
         // ── Phase 4.3 — RBAC / Employees ─────────────────────────
-        composable(Screen.PinLock.route) {
-            PinLockScreen(
-                onUnlocked = { _, _ ->
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.PinLock.route) { inclusive = true }
-                    }
-                }
-            )
-        }
         composable(Screen.EmployeeManagement.route) {
             EmployeeManagementScreen(
                 onNavigateUp = { navController.navigateUp() }
