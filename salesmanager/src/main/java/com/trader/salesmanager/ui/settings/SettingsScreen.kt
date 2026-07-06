@@ -95,8 +95,6 @@ fun SettingsScreen(
     onNavigateUp: () -> Unit,
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToChat: () -> Unit = {},
-    onNavigateToSessions: () -> Unit = {},
-    onNavigateToEmployeeManagement: () -> Unit = {},
     updateViewModel: AppUpdateViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -219,22 +217,6 @@ fun SettingsScreen(
                     subtitle = "تواصل مع الإدارة مباشرة",
                     color = Violet500,
                     onClick = onNavigateToChat
-                )
-                SettingItem(
-                    icon = Icons.Rounded.Devices,
-                    title = "الأجهزة النشطة",
-                    subtitle = "إدارة جلسات تسجيل الدخول للأجهزة",
-                    color = MaterialTheme.colorScheme.primary,
-                    onClick = onNavigateToSessions
-                )
-
-                // ── إدارة الموظفين (Phase 4.3 — RBAC) ──────────────
-                SettingItem(
-                    icon = Icons.Rounded.AdminPanelSettings,
-                    title = "إدارة الموظفين",
-                    subtitle = "إضافة وحذف الموظفين وتعيين الصلاحيات",
-                    color = Violet500,
-                    onClick = onNavigateToEmployeeManagement
                 )
 
                 // ── التحديثات ──────────────────────────────────────

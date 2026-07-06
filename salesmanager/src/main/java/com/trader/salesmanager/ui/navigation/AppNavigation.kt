@@ -454,12 +454,6 @@ fun AppNavigation() {
                 },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chat.route)
-                },
-                onNavigateToSessions = {
-                    navController.navigate(Screen.Sessions.route)
-                },
-                onNavigateToEmployeeManagement = {
-                    navController.navigate(Screen.EmployeeManagement.route)
                 }
             )
         }
