@@ -3,7 +3,6 @@ package com.trader.salesmanager.ui.activation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trader.core.data.remote.ValidationResult
-import com.trader.core.domain.model.FeatureFlags
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.model.StartupStatus
 import com.trader.core.domain.repository.ActivationRepository
@@ -50,11 +49,7 @@ class ActivationViewModel(
 
     private suspend fun handleStartupResult(result: StartupStatus) {
         _startupState.value = when (result) {
-            StartupStatus.ACTIVE -> {
-                val tier = repo.getMerchantTier()
-                FeatureFlags.applyTier(tier)
-                StartupState.Proceed
-            }
+            StartupStatus.ACTIVE -> StartupState.Proceed
             StartupStatus.NOT_ACTIVATED -> StartupState.NeedActivation
             StartupStatus.DISABLED -> StartupState.Blocked(
                 "الحساب معطل من قِبل الإدارة",

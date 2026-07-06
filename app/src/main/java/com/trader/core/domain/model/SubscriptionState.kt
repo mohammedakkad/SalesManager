@@ -7,21 +7,8 @@ data class SubscriptionState(
     val isInGracePeriod: Boolean = false,
     val gracePeriodEndsAt: Long = 0L
 ) {
-
     val isPending: Boolean
         get() = tier == MerchantTier.PENDING
-
-    val canCreatePremiumContent: Boolean
-        get() = tier == MerchantTier.PREMIUM && !isExpired
-
-    val canViewPremiumContent: Boolean
-        get() = tier == MerchantTier.PREMIUM
-
-    val effectiveTier: MerchantTier
-        get() = when {
-            tier == MerchantTier.PREMIUM && isExpired && !isInGracePeriod -> MerchantTier.FREE
-            else -> tier
-        }
 
     val gracePeriodRemainingDays: Int
         get() {

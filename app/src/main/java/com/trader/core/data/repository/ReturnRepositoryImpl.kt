@@ -217,16 +217,6 @@ class ReturnRepositoryImpl(
         }
     }
 
-    override suspend fun isPartialReturnEnabled(): Boolean = runCatching {
-        withTimeout(3_000) {
-            val snap = FirebaseDatabase.getInstance().reference
-            .child("activation_codes").child(merchantId)
-            .child("features").child("is_partial_return_enabled")
-            .get().await()
-            snap.getValue(Boolean::class.java) ?: false
-        }
-    }.getOrDefault(false)
-
     // ── حساب returnStatus الجديد بعد الإرجاع ─────────────────────
     private suspend fun computeReturnStatus(
         transactionId: Long,

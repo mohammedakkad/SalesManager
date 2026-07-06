@@ -36,7 +36,4 @@ interface ReturnRepository {
      * يحسب: returnStatus + totalRefunded + returnedByUnit
      */
     suspend fun getReturnSummary(transactionId: Long, invoiceItems: List<InvoiceItem>): ReturnSummary
-
-    /** هل الإرجاع الجزئي مفعّل لهذا التاجر؟ */
-    suspend fun isPartialReturnEnabled(): Boolean
 }

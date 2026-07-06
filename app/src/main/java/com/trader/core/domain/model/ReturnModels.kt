@@ -86,6 +86,4 @@ sealed class ReturnUiState {
     data class Success(val returnInvoice: ReturnInvoice) : ReturnUiState()
     /** فشل — مع رسالة واضحة للتاجر */
     data class Error(val message: String) : ReturnUiState()
-    /** الإرجاع الجزئي مقفل (خطة مجانية) — Feature Flag */
-    object PartialReturnLocked : ReturnUiState()
 }

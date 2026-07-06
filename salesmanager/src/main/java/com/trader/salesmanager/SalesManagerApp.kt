@@ -4,7 +4,6 @@ import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
 import com.trader.core.data.local.dao.ProductDao
-import com.trader.core.data.remote.RemoteConfigManager
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.sync.SyncCoordinator
 import com.trader.core.util.ExpiryNotificationHelper
@@ -50,12 +49,6 @@ class SalesManagerApp : Application(), KoinComponent {
                 syncCoordinator.start()
             }
 
-            // ── Freemium: initialise Remote Config after Koin is ready ──
-            runCatching {
-                val activationRepo: ActivationRepository by inject()
-                val tier = activationRepo.getMerchantTier()
-                RemoteConfigManager.initialize(tier)
-            }
         }
     }
 }

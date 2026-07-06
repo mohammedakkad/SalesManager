@@ -4,7 +4,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,14 +30,9 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Analytics
-import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.EmojiEvents
 import androidx.compose.material.icons.rounded.EventBusy
-import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.OpenInNew
-import androidx.compose.material.icons.rounded.Payments
-import androidx.compose.material.icons.rounded.PieChart
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Button
@@ -66,7 +60,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -86,9 +79,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
 import com.trader.core.domain.model.DebtAging
-import com.trader.core.domain.model.FeatureFlags
 import com.trader.core.domain.model.Transaction
-import com.trader.salesmanager.ui.components.PremiumLockChip
 import com.trader.salesmanager.ui.theme.Cyan500
 import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
@@ -110,11 +101,9 @@ import kotlin.math.min
 fun ReportsScreen(
     onNavigateUp: () -> Unit,
     onViewDayTransactions: (Long) -> Unit = {},
-    onNavigateToSubscription: () -> Unit = {},
     viewModel: ReportsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val flags by FeatureFlags.flow.collectAsStateWithLifecycle(initialValue = FeatureFlags.current)
     val context = LocalContext.current
     val storeName by context.appDataStore.data
         .map {
@@ -172,40 +161,34 @@ fun ReportsScreen(
                 },
                 actions = {
                     val isExporting = exportState is ExportState.Loading
-                    // ── Export — Premium only ──────────────────────────
-                    if (flags.reportExport) {
-                        IconButton(
-                            onClick = {
-                                if (!isExporting) {
-                                    exportVm.exportSalesReportExcel(
-                                        transactions = uiState.filteredTransactions,
-                                        periodLabel = uiState.period.name,
-                                        storeName = storeName,
-                                        dailySales = uiState.dailySales,
-                                        topSpenders = uiState.topSpenders,
-                                        paymentShares = uiState.paymentShares,
-                                        cacheDir = context.cacheDir
-                                    )
-                                }
-                            }
-                        ) {
-                            if (isExporting) {
-                                CircularProgressIndicator(
-                                    Modifier.size(18.dp),
-                                    strokeWidth = 2.dp,
-                                    color = Emerald500
-                                )
-                            } else {
-                                Icon(
-                                    Icons.Rounded.Analytics,
-                                    contentDescription = "تصدير Excel",
-                                    tint = Emerald500
+                    IconButton(
+                        onClick = {
+                            if (!isExporting) {
+                                exportVm.exportSalesReportExcel(
+                                    transactions = uiState.filteredTransactions,
+                                    periodLabel = uiState.period.name,
+                                    storeName = storeName,
+                                    dailySales = uiState.dailySales,
+                                    topSpenders = uiState.topSpenders,
+                                    paymentShares = uiState.paymentShares,
+                                    cacheDir = context.cacheDir
                                 )
                             }
                         }
-                    } else {
-                        // 🔒 Free: navigate to subscription screen
-                        PremiumLockChip(feature = "تصدير", onUpgrade = onNavigateToSubscription)
+                    ) {
+                        if (isExporting) {
+                            CircularProgressIndicator(
+                                Modifier.size(18.dp),
+                                strokeWidth = 2.dp,
+                                color = Emerald500
+                            )
+                        } else {
+                            Icon(
+                                Icons.Rounded.Analytics,
+                                contentDescription = "تصدير Excel",
+                                tint = Emerald500
+                            )
+                        }
                     }
                 }
             )
@@ -222,61 +205,46 @@ fun ReportsScreen(
             item {
                 PeriodSwitcher(
                     selected = uiState.period,
-                    onSelect = viewModel::setPeriod,
-                    flags = flags,
-                    onUpgrade = onNavigateToSubscription
+                    onSelect = viewModel::setPeriod
                 )
             }
 
-            // ── Summary Cards ────────────────────────────────────
             item {
-                if (uiState.isAdvancedReportsEnabled) {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        SummaryCard(
-                            "إجمالي المبيعات",
-                            uiState.totalAmount,
-                            Emerald500,
-                            Modifier.fillMaxWidth()
-                        )
-                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            MetricCard(
-                                "صافي الربح",
-                                uiState.netProfit,
-                                PaidGreen,
-                                Modifier.weight(1f)
-                            )
-                            MetricCard(
-                                "قيمة المخزون",
-                                uiState.inventorySaleValue,
-                                Violet500,
-                                Modifier.weight(1f)
-                            )
-                        }
-                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            MetricCard(
-                                "تكلفة المخزون",
-                                uiState.inventoryCostValue,
-                                UnpaidAmber,
-                                Modifier.weight(1f)
-                            )
-                            MetricCard(
-                                "ديون متأخرة",
-                                uiState.debtAging.totalAmount,
-                                DebtRed,
-                                Modifier.weight(1f)
-                            )
-                        }
-                    }
-                } else {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     SummaryCard(
-                        label = "إجمالي المبيعات",
-                        value = uiState.totalAmount,
-                        color = Emerald500,
-                        modifier = Modifier.fillMaxWidth(),
-                        paidAmount = uiState.paidAmount,
-                        unpaidAmount = uiState.unpaidAmount,
-                        txCount = uiState.txCount
+                        "إجمالي المبيعات",
+                        uiState.totalAmount,
+                        Emerald500,
+                        Modifier.fillMaxWidth()
                     )
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        MetricCard(
+                            "صافي الربح",
+                            uiState.netProfit,
+                            PaidGreen,
+                            Modifier.weight(1f)
+                        )
+                        MetricCard(
+                            "قيمة المخزون",
+                            uiState.inventorySaleValue,
+                            Violet500,
+                            Modifier.weight(1f)
+                        )
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        MetricCard(
+                            "تكلفة المخزون",
+                            uiState.inventoryCostValue,
+                            UnpaidAmber,
+                            Modifier.weight(1f)
+                        )
+                        MetricCard(
+                            "ديون متأخرة",
+                            uiState.debtAging.totalAmount,
+                            DebtRed,
+                            Modifier.weight(1f)
+                        )
+                    }
                 }
             }
 
@@ -291,45 +259,7 @@ fun ReportsScreen(
                         CircularProgressIndicator(color = Emerald500)
                     }
                 }
-            } else if (!uiState.isAdvancedReportsEnabled) {
-
-                // ── Section المجاني ───────────────────────────────
-
-                // 1️⃣ توزيع الحالة — مدفوع مقابل معلق
-                item {
-                    FreeStatusBreakdownCard(
-                        paid = uiState.paidAmount,
-                        unpaid = uiState.unpaidAmount,
-                        total = uiState.totalAmount
-                    )
-                }
-
-                // 2️⃣ أفضل 3 زبائن شراءً
-                if (uiState.topSpenders.isNotEmpty()) {
-                    item {
-                        FreeTopCustomersCard(
-                            customers = uiState.topSpenders.take(3),
-                            onUpgrade = onNavigateToSubscription
-                        )
-                    }
-                }
-
-                // 3️⃣ توزيع طرق الدفع
-                if (uiState.paymentShares.isNotEmpty()) {
-                    item {
-                        FreePaymentBreakdownCard(
-                            shares = uiState.paymentShares,
-                            onUpgrade = onNavigateToSubscription
-                        )
-                    }
-                }
-
-                // 4️⃣ Premium Lock — في الأسفل فقط
-                item {
-                    PremiumReportsLockedPreview(onUpgrade = onNavigateToSubscription)
-                }
             } else {
-                // ── تقويم الشهر ──────────────────────────────────────
                 item {
                     CalendarCard(
                         month = uiState.calendarMonth,
@@ -342,7 +272,6 @@ fun ReportsScreen(
                     )
                 }
 
-                // ── عمليات اليوم المحدد ──────────────────────────────
                 if (uiState.selectedDay != null) {
                     item {
                         SelectedDayDetail(
@@ -356,12 +285,10 @@ fun ReportsScreen(
                     }
                 }
 
-                // ── تحليل اليوم (صباح / ظهر / مساء) ─────────────────
                 item {
                     TodayAnalysisCard(analysis = uiState.todayAnalysis)
                 }
 
-                // ── Line Chart ───────────────────────────────────────
                 if (uiState.salesProfitLast7Days.isNotEmpty()) {
                     item {
                         ChartCard("المبيعات مقابل الربح - آخر 7 أيام") {
@@ -391,7 +318,6 @@ fun ReportsScreen(
                     }
                 }
 
-                // ── Bar Chart ────────────────────────────────────────
                 if (uiState.dailySales.isNotEmpty()) {
                     item {
                         ChartCard("مدفوع مقابل غير مدفوع") {
@@ -404,7 +330,6 @@ fun ReportsScreen(
                     }
                 }
 
-                // ── Donut Chart ──────────────────────────────────────
                 if (uiState.paymentShares.isNotEmpty()) {
                     item {
                         ChartCard("توزيع طرق الدفع") {
@@ -439,7 +364,6 @@ fun ReportsScreen(
                     }
                 }
 
-                // ── Top Spenders / Debtors ───────────────────────────
                 if (uiState.topSpenders.isNotEmpty()) {
                     item {
                         ChartCard("أعلى 5 زبائن شراءً") {
@@ -871,9 +795,7 @@ private fun TimeSlotRow(label: String, value: Double, ratio: Float, color: Color
 @Composable
 private fun PeriodSwitcher(
     selected: ReportPeriod,
-    onSelect: (ReportPeriod) -> Unit,
-    flags: FeatureFlags.FlagSet,
-    onUpgrade: () -> Unit = {}
+    onSelect: (ReportPeriod) -> Unit
 ) {
     val allLabels = mapOf(
         ReportPeriod.TODAY to "اليوم",
@@ -888,7 +810,6 @@ private fun PeriodSwitcher(
     ) {
         allLabels.forEach { (period, label) ->
             val isSelected = period == selected
-            val isMonthLocked = period == ReportPeriod.MONTH && !flags.monthReport
 
             Box(
                 modifier = Modifier
@@ -896,43 +817,19 @@ private fun PeriodSwitcher(
                     .padding(4.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(
-                        when {
-                            isMonthLocked -> Color.Transparent
-                            isSelected -> Emerald500
-                            else -> Color.Transparent
-                        }
+                        if (isSelected) Emerald500 else Color.Transparent
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 TextButton(
-                    onClick = { if (isMonthLocked) onUpgrade() else onSelect(period) },
+                    onClick = { onSelect(period) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            label,
-                            color = when {
-                                isMonthLocked -> MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                    0.4f
-                                )
-
-                                isSelected -> Color.White
-                                else -> MaterialTheme.colorScheme.onSurfaceVariant
-                            },
-                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                        )
-                        // 🔒 قفل صغير أمام "الشهر" للمستخدم المجاني
-                        if (isMonthLocked) {
-                            Icon(
-                                Icons.Rounded.Lock, null,
-                                modifier = Modifier.size(11.dp),
-                                tint = Color(0xFFFFA500)
-                            )
-                        }
-                    }
+                    Text(
+                        label,
+                        color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                    )
                 }
             }
         }
@@ -1126,329 +1023,6 @@ private fun MetricCard(label: String, value: Double, color: Color, modifier: Mod
                 fontWeight = FontWeight.ExtraBold,
                 color = color
             )
-        }
-    }
-}
-
-@Composable
-private fun PremiumReportsLockedPreview(onUpgrade: () -> Unit = {}) {
-    Card(
-        shape = RoundedCornerShape(22.dp),
-        elevation = CardDefaults.cardElevation(0.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, UnpaidAmber.copy(0.25f))
-    ) {
-        Box {
-            // خلفية ضبابية — preview مقطوع
-            Column(
-                modifier = Modifier.blur(6.dp).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    MetricCard("صافي الربح", 1280.0, PaidGreen, Modifier.weight(1f))
-                    MetricCard("قيمة المخزون", 18450.0, Violet500, Modifier.weight(1f))
-                }
-                SalesProfitBarChart(
-                    data = listOf(
-                        SalesProfitDayEntry("١", 850.0, 230.0),
-                        SalesProfitDayEntry("٢", 1200.0, 420.0),
-                        SalesProfitDayEntry("٣", 640.0, 180.0),
-                        SalesProfitDayEntry("٤", 1580.0, 610.0),
-                        SalesProfitDayEntry("٥", 960.0, 300.0),
-                        SalesProfitDayEntry("٦", 1420.0, 520.0),
-                        SalesProfitDayEntry("٧", 1100.0, 390.0)
-                    ),
-                    modifier = Modifier.fillMaxWidth().height(140.dp)
-                )
-            }
-
-            // طبقة gradient للضبابية
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.surface.copy(0.4f),
-                                MaterialTheme.colorScheme.surface.copy(0.92f)
-                            )
-                        )
-                    )
-            )
-
-            // طبقة القفل
-            Column(
-                modifier = Modifier
-                    .matchParentSize()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(UnpaidAmber.copy(0.15f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Rounded.Lock,
-                        contentDescription = null,
-                        tint = UnpaidAmber,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    "افتح التحليلات المتقدمة",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(Modifier.height(8.dp))
-                listOf(
-                    "📊 صافي الربح الحقيقي",
-                    "📦 تقييم المخزون",
-                    "⏳ تحليل أعمار الديون",
-                    "📈 مقارنة المبيعات والربح"
-                ).forEach { feature ->
-                    Text(
-                        feature,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = 2.dp)
-                    )
-                }
-                Spacer(Modifier.height(16.dp))
-                Button(
-                    onClick = onUpgrade,
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = UnpaidAmber),
-                    modifier = Modifier.fillMaxWidth().height(48.dp)
-                ) {
-                    Icon(Icons.Rounded.AutoAwesome, null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text("ترقية إلى Premium", fontWeight = FontWeight.ExtraBold)
-                }
-            }
-        }
-    }
-}
-
-// ── Composables المجانية الجديدة ──────────────────────────────
-
-@Composable
-private fun FreeStatusBreakdownCard(paid: Double, unpaid: Double, total: Double) {
-    val safeTotal = total.coerceAtLeast(1.0)
-    val paidRatio = (paid / safeTotal).toFloat().coerceIn(0f, 1f)
-
-    val animatedRatio = remember { Animatable(0f) }
-    LaunchedEffect(paidRatio) {
-        animatedRatio.snapTo(0f)
-        animatedRatio.animateTo(paidRatio, tween(1000, easing = FastOutSlowInEasing))
-    }
-    val anim by animatedRatio.asState()
-
-    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(Icons.Rounded.PieChart, null, tint = Cyan500, modifier = Modifier.size(18.dp))
-                Text("حالة المبيعات", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-            }
-            Spacer(Modifier.height(14.dp))
-
-            // Progress Bar مركّبة
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(12.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(DebtRed.copy(alpha = 0.25f))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(anim)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Brush.horizontalGradient(listOf(PaidGreen.copy(0.8f), PaidGreen)))
-                )
-            }
-            Spacer(Modifier.height(12.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                StatusLegendItem("مدفوع", paid, (paidRatio * 100).toInt(), PaidGreen, Modifier.weight(1f))
-                StatusLegendItem("معلق", unpaid, ((1f - paidRatio) * 100).toInt(), DebtRed, Modifier.weight(1f))
-            }
-        }
-    }
-}
-
-@Composable
-private fun StatusLegendItem(label: String, amount: Double, percent: Int, color: Color, modifier: Modifier) {
-    Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(color.copy(0.08f))
-            .padding(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(Modifier.size(10.dp).clip(CircleShape).background(color))
-        Column {
-            Text(label, style = MaterialTheme.typography.labelSmall, color = color)
-            Text(
-                "₪ ${String.format("%,.0f", amount)}",
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text("$percent%", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-    }
-}
-
-@Composable
-private fun FreeTopCustomersCard(customers: List<CustomerRank>, onUpgrade: () -> Unit) {
-    val maxVal = customers.maxOfOrNull { it.amount }?.coerceAtLeast(1.0) ?: 1.0
-
-    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Icon(Icons.Rounded.EmojiEvents, null, tint = UnpaidAmber, modifier = Modifier.size(18.dp))
-                    Text("أفضل 3 زبائن", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                }
-                Surface(onClick = onUpgrade, shape = RoundedCornerShape(20.dp), color = UnpaidAmber.copy(0.12f)) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(Icons.Rounded.Lock, null, tint = UnpaidAmber, modifier = Modifier.size(10.dp))
-                        Text("أعلى 5", style = MaterialTheme.typography.labelSmall, color = UnpaidAmber)
-                    }
-                }
-            }
-            Spacer(Modifier.height(14.dp))
-            customers.forEachIndexed { index, customer ->
-                val medal = when (index) { 0 -> "🥇"; 1 -> "🥈"; else -> "🥉" }
-                val barAnim = remember { Animatable(0f) }
-                LaunchedEffect(customer.amount) {
-                    barAnim.snapTo(0f)
-                    barAnim.animateTo((customer.amount / maxVal).toFloat(), tween(800, index * 120, FastOutSlowInEasing))
-                }
-                val prog by barAnim.asState()
-
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(medal, style = MaterialTheme.typography.bodyMedium)
-                    Column(Modifier.weight(1f)) {
-                        Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-                            Text(
-                                customer.name.ifEmpty { "—" },
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.Medium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Text(
-                                "₪ ${String.format("%,.0f", customer.amount)}",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Emerald500,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                        Spacer(Modifier.height(4.dp))
-                        Box(
-                            Modifier.fillMaxWidth().height(6.dp)
-                                .clip(RoundedCornerShape(3.dp))
-                                .background(Emerald500.copy(0.12f))
-                        ) {
-                            Box(
-                                Modifier.fillMaxWidth(prog).fillMaxHeight()
-                                    .clip(RoundedCornerShape(3.dp))
-                                    .background(Brush.horizontalGradient(listOf(Emerald500.copy(0.7f), Emerald500)))
-                            )
-                        }
-                    }
-                }
-                if (index < customers.size - 1) {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 2.dp),
-                        color = MaterialTheme.colorScheme.outline.copy(0.08f)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun FreePaymentBreakdownCard(shares: List<PaymentShare>, onUpgrade: () -> Unit) {
-    val donutColors = listOf(Emerald500, Cyan500, Violet500, UnpaidAmber, DebtRed)
-    val total = shares.sumOf { it.amount }.coerceAtLeast(1.0)
-
-    Card(shape = RoundedCornerShape(20.dp), elevation = CardDefaults.cardElevation(2.dp)) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(Icons.Rounded.Payments, null, tint = Violet500, modifier = Modifier.size(18.dp))
-                Text("طرق الدفع", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-            }
-            Spacer(Modifier.height(14.dp))
-            shares.take(4).forEachIndexed { index, share ->
-                val ratio = (share.amount / total).toFloat().coerceIn(0f, 1f)
-                val color = donutColors[index % donutColors.size]
-                val barAnim = remember { Animatable(0f) }
-                LaunchedEffect(ratio) {
-                    barAnim.snapTo(0f)
-                    barAnim.animateTo(ratio, tween(900, index * 100, FastOutSlowInEasing))
-                }
-                val prog by barAnim.asState()
-
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Box(Modifier.size(10.dp).clip(CircleShape).background(color))
-                    Text(
-                        share.name,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.width(80.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Box(
-                        Modifier.weight(1f).height(8.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(color.copy(0.12f))
-                    ) {
-                        Box(
-                            Modifier.fillMaxWidth(prog).fillMaxHeight()
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(color)
-                        )
-                    }
-                    Text(
-                        "${(ratio * 100).toInt()}%",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = color,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.width(28.dp),
-                        textAlign = TextAlign.End
-                    )
-                }
-            }
         }
     }
 }

@@ -38,7 +38,6 @@ data class ReturnScreenState(
     val lines: List<ReturnLineState> = emptyList(),
     val note: String = "",
     val isLoading: Boolean = true,
-    val isPartialEnabled: Boolean = false,
     val processingState: ReturnUiState = ReturnUiState.Idle,
     val showConfirmSheet: Boolean = false
 ) {
@@ -79,7 +78,6 @@ class ReturnViewModel(
                 it.copy(isLoading = true)
             }
 
-            val isPartialEnabled = returnRepo.isPartialReturnEnabled()
             val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
 
             val lines = items.map {
@@ -110,7 +108,6 @@ class ReturnViewModel(
             _state.update {
                 it.copy(
                     lines = lines,
-                    isPartialEnabled = isPartialEnabled,
                     isLoading = false
                 )
             }
@@ -119,20 +116,6 @@ class ReturnViewModel(
 
     // ── Toggle اختيار صنف ────────────────────────────────────────
     fun toggleLine(index: Int) {
-        val current = _state.value.lines[index]
-
-        // Test Case 3: منع الجزئي على الخطة المجانية
-        val isBecomingPartial = !current.isSelected &&
-        _state.value.lines.any {
-            it.isSelected
-        }
-        if (isBecomingPartial && !_state.value.isPartialEnabled) {
-            _state.update {
-                it.copy(processingState = ReturnUiState.PartialReturnLocked)
-            }
-            return
-        }
-
         _state.update {
             s ->
             s.copy(lines = s.lines.mapIndexed {

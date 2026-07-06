@@ -12,7 +12,6 @@ import com.trader.core.data.local.entity.*
 import com.trader.core.data.remote.ProductFirestoreService
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.MerchantStatus
-import com.trader.core.domain.model.MerchantTier
 import com.trader.core.domain.repository.ActivationRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -34,12 +33,6 @@ class ActivationRepositoryImpl(
 ) : ActivationRepository {
 
     private val realtimeDb = FirebaseDatabase.getInstance().reference
-
-    override fun observeMerchantTier(): Flow<MerchantTier> =
-        context.appDataStore.data
-            .map { it[KEY_TIER] ?: MerchantTier.FREE.name }
-            .map { parseTier(it) }
-            .distinctUntilChanged()
 
     override suspend fun validateCode(code: String) = firebaseService.validateCode(code)
 
@@ -115,11 +108,6 @@ class ActivationRepositoryImpl(
                     }
                 }
             }
-
-    private fun parseTier(raw: String?) =
-        runCatching {
-            MerchantTier.valueOf(raw!!)
-        }.getOrDefault(MerchantTier.FREE)
 
     private suspend fun fetchAndStoreAllData(code: String) {
         val data = try {
@@ -209,19 +197,7 @@ class ActivationRepositoryImpl(
         }
     }
 
-    override suspend fun getMerchantTier(): MerchantTier = parseTier(
-        context.appDataStore.data.map {
-            it[KEY_TIER]
-        }.first()
-    )
-
     override suspend fun isSelfRegistered(): Boolean = false
-
-    override suspend fun saveMerchantTier(tier: MerchantTier) {
-        context.appDataStore.edit {
-            it[KEY_TIER] = tier.name
-        }
-    }
 
     override suspend fun registerFree() {
         throw UnsupportedOperationException("Activation requires a code from the administrator")
@@ -236,6 +212,5 @@ class ActivationRepositoryImpl(
 
         private val MERCHANT_CODE = stringPreferencesKey("merchant_code")
         private val IS_ACTIVATED = booleanPreferencesKey("is_activated")
-        private val KEY_TIER = stringPreferencesKey("merchant_tier")
     }
 }

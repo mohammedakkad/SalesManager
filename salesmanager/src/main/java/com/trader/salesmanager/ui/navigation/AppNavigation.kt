@@ -7,8 +7,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.BarChart
-import androidx.compose.material.icons.rounded.Inventory
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -37,7 +35,6 @@ import com.trader.salesmanager.ui.activation.MerchantEvent
 import com.trader.salesmanager.ui.activation.MerchantWatcherViewModel
 import com.trader.salesmanager.ui.activation.StartupState
 import com.trader.salesmanager.ui.chat.ChatScreen
-import com.trader.salesmanager.ui.components.PremiumGate
 import com.trader.salesmanager.ui.customers.addedit.AddEditCustomerScreen
 import com.trader.salesmanager.ui.customers.details.CustomerDetailsScreen
 import com.trader.salesmanager.ui.customers.list.CustomersScreen
@@ -56,7 +53,6 @@ import com.trader.salesmanager.ui.reports.ReportsScreen
 import com.trader.salesmanager.ui.returns.ReturnProcessScreen
 import com.trader.salesmanager.ui.settings.SettingsScreen
 import com.trader.salesmanager.ui.settings.sessions.SessionsScreen
-import com.trader.salesmanager.ui.subscription.SubscriptionScreen
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionScreen
 import com.trader.salesmanager.ui.transactions.details.TransactionDetailsScreen
 import com.trader.salesmanager.ui.transactions.list.TransactionsScreen
@@ -433,9 +429,6 @@ fun AppNavigation() {
                 },
                 onViewDayTransactions = { dateMillis ->
                     navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
-                },
-                onNavigateToSubscription = {
-                    navController.navigate(Screen.Subscription.route)
                 }
             )
         }
@@ -553,32 +546,16 @@ fun AppNavigation() {
             )
         }
         composable(Screen.InventorySession.route) {
-            PremiumGate(
-                feature = "جرد المخزون",
-                icon = Icons.Rounded.Inventory,
-                onUpgrade = {
-                    navController.navigate(Screen.Subscription.route)
+            com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
+                onNavigateUp = {
+                    navController.navigateUp()
                 }
-            ) {
-                com.trader.salesmanager.ui.inventory.session.InventorySessionScreen(
-                    onNavigateUp = {
-                        navController.navigateUp()
-                    }
-                )
-            }
+            )
         }
         composable(Screen.StockReports.route) {
-            PremiumGate(
-                feature = "تقارير المخزون",
-                icon = Icons.Rounded.BarChart,
-                onUpgrade = {
-                    navController.navigate(Screen.Subscription.route)
-                }
-            ) {
-                StockReportsScreen(onNavigateUp = {
-                    navController.navigateUp()
-                })
-            } // PremiumGate
+            StockReportsScreen(onNavigateUp = {
+                navController.navigateUp()
+            })
         }
         composable(
             Screen.InvoiceItems.route,
@@ -625,10 +602,6 @@ fun AppNavigation() {
                     navController.popBackStack()
                 }
             )
-        }
-
-        composable(Screen.Subscription.route) {
-            SubscriptionScreen(onNavigateUp = { navController.navigateUp() })
         }
 
         // ── Phase 4.3 — RBAC / Employees ─────────────────────────

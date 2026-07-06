@@ -3,7 +3,6 @@ package com.trader.salesmanager.ui.activation
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.trader.core.domain.model.FeatureFlags
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.repository.ActivationRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,16 +36,7 @@ class MerchantWatcherViewModel(
     val expiryBanner: StateFlow<Long?> = _expiryBanner.asStateFlow()
 
     init {
-        observeTierChanges()
         observeActivationStatus()
-    }
-
-    private fun observeTierChanges() {
-        viewModelScope.launch {
-            activationRepo.observeMerchantTier().collect { tier ->
-                FeatureFlags.applyTier(tier)
-            }
-        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)

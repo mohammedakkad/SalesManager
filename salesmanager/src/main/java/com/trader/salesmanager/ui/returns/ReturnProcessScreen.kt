@@ -42,13 +42,11 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Inventory2
-import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Notes
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.TrendingDown
 import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -103,15 +101,6 @@ fun ReturnProcessScreen(
         if (state.processingState is com.trader.core.domain.model.ReturnUiState.Success) {
             onReturnSuccess()
         }
-    }
-
-    if (state.processingState is com.trader.core.domain.model.ReturnUiState.PartialReturnLocked) {
-        PartialReturnLockedDialog(
-            onDismiss = viewModel::dismissConfirmSheet,
-            onUpgrade = {
-                /* TODO: navigate to subscription */
-            }
-        )
     }
 
     Scaffold(containerColor = appColors.screenBackground) {
@@ -194,7 +183,6 @@ fun ReturnProcessScreen(
                     index, line ->
                     ReturnLineCard(
                         line = line,
-                        isPartialEnabled = state.isPartialEnabled,
                         onToggle = {
                             viewModel.toggleLine(index)
                         },
@@ -278,7 +266,6 @@ fun ReturnProcessScreen(
 @Composable
 private fun ReturnLineCard(
     line: ReturnLineState,
-    isPartialEnabled: Boolean,
     onToggle: () -> Unit,
     onQtyChange: (Double) -> Unit
 ) {
@@ -692,44 +679,6 @@ private fun ConfirmReturnBottomSheet(
             }
         }
     }
-}
-
-@Composable
-private fun PartialReturnLockedDialog(onDismiss: () -> Unit, onUpgrade: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        containerColor = appColors.cardBackground,
-        icon = {
-            Icon(
-                Icons.Rounded.Lock,
-                null,
-                tint = Violet500,
-                modifier = Modifier.size(36.dp)
-            )
-        },
-        title = {
-            Text("ميزة مدفوعة", fontWeight = FontWeight.Bold)
-        },
-        text = {
-            Text(
-                "الإرجاع الجزئي (اختيار أصناف محددة) متاح في الخطة المتقدمة والبريميوم.\nالخطة المجانية تدعم الإرجاع الكامل فقط.",
-                textAlign = TextAlign.Center
-            )
-        },
-        confirmButton = {
-            Button(
-                onClick = onUpgrade,
-                colors = ButtonDefaults.buttonColors(containerColor = Violet500)
-            ) {
-                Text("ترقية الاشتراك")
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onClick = onDismiss) {
-                Text("إلغاء")
-            }
-        }
-    )
 }
 
 @Composable

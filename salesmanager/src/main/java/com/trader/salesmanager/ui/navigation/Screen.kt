@@ -3,7 +3,6 @@ package com.trader.salesmanager.ui.navigation
 sealed class Screen(val route: String) {
     object Activation : Screen("activation")
     object Home : Screen("home")
-    object Subscription : Screen("subscription")
     object CustomersList : Screen("customers_list")
     object AddCustomer : Screen("add_customer")
     object EditCustomer : Screen("edit_customer/{customerId}") {
