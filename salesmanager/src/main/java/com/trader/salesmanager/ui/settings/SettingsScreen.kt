@@ -27,6 +27,7 @@ import androidx.compose.material.icons.rounded.InstallMobile
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.Payment
+import androidx.compose.material.icons.rounded.Savings
 import androidx.compose.material.icons.rounded.Store
 import androidx.compose.material.icons.rounded.SupportAgent
 import androidx.compose.material.icons.rounded.SystemUpdate
@@ -92,6 +93,7 @@ val MERCHANT_CODE_KEY = stringPreferencesKey("merchant_code")
 fun SettingsScreen(
     onNavigateUp: () -> Unit,
     onNavigateToPaymentMethods: () -> Unit,
+    onNavigateToCashBoxes: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
     updateViewModel: AppUpdateViewModel = koinViewModel()
 ) {
@@ -187,6 +189,14 @@ fun SettingsScreen(
                     subtitle = "إدارة طرق دفع التاجر",
                     color = Cyan500,
                     onClick = onNavigateToPaymentMethods
+                )
+
+                SettingItem(
+                    icon = Icons.Rounded.Savings,
+                    title = "الصناديق",
+                    subtitle = "رصيد كل طريقة دفع لحظياً",
+                    color = Emerald500,
+                    onClick = onNavigateToCashBoxes
                 )
 
                 SettingItem(

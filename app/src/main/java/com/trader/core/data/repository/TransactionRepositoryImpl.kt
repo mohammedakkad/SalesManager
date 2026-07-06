@@ -5,6 +5,7 @@ import com.trader.core.data.local.entity.TransactionEntity
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.ActivationRepository
+import com.trader.core.domain.repository.CashBoxRepository
 import com.trader.core.domain.repository.InvoiceItemRepository
 import com.trader.core.domain.repository.StockRepository
 import com.trader.core.domain.repository.TransactionRepository
@@ -21,7 +22,8 @@ class TransactionRepositoryImpl(
     private val sync: FirebaseSyncService,
     private val activationRepo: ActivationRepository,
     private val invoiceItemRepo: InvoiceItemRepository,
-    private val stockRepo: StockRepository
+    private val stockRepo: StockRepository,
+    private val cashBoxRepo: CashBoxRepository
 ) : TransactionRepository {
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -136,6 +138,11 @@ class TransactionRepositoryImpl(
         // ✅ يُحفظ كـ PENDING أولاً
         val entity = TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.PENDING))
         val id = transactionDao.insertTransaction(entity)
+        // ✅ الصناديق: عملية جديدة مدفوعة تُضاف لرصيد صندوق طريقة الدفع
+        cashBoxRepo.applyTransactionEffect(
+            oldPaymentMethodId = null, oldAmount = 0.0, oldWasPaid = false,
+            newPaymentMethodId = t.paymentMethodId, newAmount = t.amount, newWasPaid = t.isPaid
+        )
         syncScope.launch {
             try {
                 sync.pushTransaction(code(), t.copy(id = id))
@@ -146,9 +153,19 @@ class TransactionRepositoryImpl(
     }
 
     override suspend fun updateTransaction(t: Transaction) {
+        // ✅ الصناديق: نقرأ الحالة القديمة قبل الكتابة لعكس أثرها ثم تطبيق الجديد
+        val old = transactionDao.getTransactionById(t.id)
         // ✅ PENDING حتى يتأكد الرفع
         transactionDao.updateTransaction(
             TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.PENDING))
+        )
+        cashBoxRepo.applyTransactionEffect(
+            oldPaymentMethodId = old?.paymentMethodId,
+            oldAmount = old?.amount ?: 0.0,
+            oldWasPaid = old?.isPaid ?: false,
+            newPaymentMethodId = t.paymentMethodId,
+            newAmount = t.amount,
+            newWasPaid = t.isPaid
         )
         syncScope.launch {
             try {
@@ -178,6 +195,11 @@ class TransactionRepositoryImpl(
             invoiceItemRepo.deleteItemsForTransaction(t.id)
         }
         transactionDao.deleteTransaction(TransactionEntity.fromDomain(t))
+        // ✅ الصناديق: حذف عملية مدفوعة يخصم مبلغها من صندوقها
+        cashBoxRepo.applyTransactionEffect(
+            oldPaymentMethodId = t.paymentMethodId, oldAmount = t.amount, oldWasPaid = t.isPaid,
+            newPaymentMethodId = null, newAmount = 0.0, newWasPaid = false
+        )
         syncScope.launch {
             try {
                 sync.deleteTransaction(code(), t.id)

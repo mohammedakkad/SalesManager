@@ -34,6 +34,7 @@ import com.trader.salesmanager.ui.activation.ActivationViewModel
 import com.trader.salesmanager.ui.activation.MerchantEvent
 import com.trader.salesmanager.ui.activation.MerchantWatcherViewModel
 import com.trader.salesmanager.ui.activation.StartupState
+import com.trader.salesmanager.ui.boxes.BoxesScreen
 import com.trader.salesmanager.ui.chat.ChatScreen
 import com.trader.salesmanager.ui.customers.addedit.AddEditCustomerScreen
 import com.trader.salesmanager.ui.customers.details.CustomerDetailsScreen
@@ -449,6 +450,11 @@ fun AppNavigation(
                 navController.navigateUp()
             })
         }
+        composable(Screen.CashBoxes.route) {
+            BoxesScreen(onNavigateUp = {
+                navController.navigateUp()
+            })
+        }
         composable(Screen.Settings.route) {
             SettingsScreen(
                 onNavigateUp = {
@@ -456,6 +462,9 @@ fun AppNavigation(
                 },
                 onNavigateToPaymentMethods = {
                     navController.navigate(Screen.PaymentMethods.route)
+                },
+                onNavigateToCashBoxes = {
+                    navController.navigate(Screen.CashBoxes.route)
                 },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chat.route)

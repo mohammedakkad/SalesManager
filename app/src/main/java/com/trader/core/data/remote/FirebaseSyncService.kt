@@ -23,6 +23,8 @@ import com.trader.core.domain.model.ReturnType
 import com.trader.core.domain.model.TransactionReturnStatus
 import com.trader.core.domain.model.Employee
 import com.trader.core.domain.model.EmployeeRole
+import com.trader.core.domain.model.CashBox
+import com.trader.core.domain.model.SyncStatus
 import java.util.UUID
 
 class FirebaseSyncService {
@@ -275,7 +277,75 @@ class FirebaseSyncService {
             emptyList()
         }
 
-        return MerchantData(customers, transactions, paymentMethods, returns, invoiceItems)
+        val cashBoxes = try {
+            root.child("cash_boxes").get().await().children.mapNotNull { snap ->
+                snap.toCashBox(merchantCode)
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+
+        return MerchantData(customers, transactions, paymentMethods, returns, invoiceItems, cashBoxes)
+    }
+
+    private fun DataSnapshot.toCashBox(merchantCode: String): CashBox? {
+        val m = value as? Map<*, *> ?: return null
+        val paymentMethodId = m["paymentMethodId"].asLong() ?: key?.toLongOrNull() ?: return null
+        return CashBox(
+            id = m["id"] as? String ?: key ?: return null,
+            paymentMethodId = paymentMethodId,
+            paymentMethodName = m["paymentMethodName"] as? String ?: "",
+            currentBalance = m["currentBalance"].asDouble() ?: 0.0,
+            initialBalance = m["initialBalance"].asDouble() ?: 0.0,
+            initialBalanceSetAt = m["initialBalanceSetAt"].asLong(),
+            merchantId = merchantCode,
+            updatedAt = m["updatedAt"].asLong() ?: System.currentTimeMillis(),
+            syncStatus = SyncStatus.SYNCED
+        )
+    }
+
+    fun observeCashBoxes(merchantCode: String): Flow<List<CashBox>> = callbackFlow {
+        val ref = db.reference.child("merchants").child(merchantCode).child("cash_boxes")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snap: DataSnapshot) {
+                trySend(snap.children.mapNotNull { child ->
+                    runCatching { child.toCashBox(merchantCode) }.getOrNull()
+                })
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        ref.addValueEventListener(listener)
+        awaitClose {
+            ref.removeEventListener(listener)
+        }
+    }
+
+    /** قراءة صندوق واحد — تُستخدم قبل الإنشاء التلقائي حتى لا نمسح رصيداً موجوداً عن بُعد */
+    suspend fun fetchCashBox(merchantCode: String, boxId: String): CashBox? {
+        val snap = db.reference.child("merchants").child(merchantCode).child("cash_boxes")
+            .child(boxId).get().await()
+        return snap.toCashBox(merchantCode)
+    }
+
+    suspend fun pushCashBox(merchantCode: String, box: CashBox) {
+        db.reference.child("merchants").child(merchantCode).child("cash_boxes")
+            .child(box.id)
+            .setValue(
+                mapOf(
+                    "id" to box.id,
+                    "paymentMethodId" to box.paymentMethodId,
+                    "paymentMethodName" to box.paymentMethodName,
+                    "currentBalance" to box.currentBalance,
+                    "initialBalance" to box.initialBalance,
+                    "initialBalanceSetAt" to box.initialBalanceSetAt,
+                    "updatedAt" to box.updatedAt
+                )
+            ).await()
+    }
+
+    suspend fun deleteCashBox(merchantCode: String, boxId: String) {
+        db.reference.child("merchants").child(merchantCode).child("cash_boxes")
+            .child(boxId).removeValue().await()
     }
 
     fun observeCustomers(merchantCode: String): Flow<List<Customer>> = callbackFlow {
@@ -637,7 +707,8 @@ data class MerchantData(
     val transactions: List<AppTransaction>,
     val paymentMethods: List<PaymentMethod>,
     val returns: List<Pair<ReturnInvoice, List<ReturnItem>>> = emptyList(),
-    val invoiceItems: List<InvoiceItem> = emptyList()
+    val invoiceItems: List<InvoiceItem> = emptyList(),
+    val cashBoxes: List<CashBox> = emptyList()
 )
 
 sealed class ValidationResult {

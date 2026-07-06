@@ -23,9 +23,10 @@ import com.trader.core.domain.model.PaymentType
         ReturnInvoiceEntity::class,
         ReturnItemEntity::class,
         SessionEntity::class,
-        EmployeeEntity::class
+        EmployeeEntity::class,
+        CashBoxEntity::class
     ],
-    version = 16,
+    version = 17,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -40,6 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun returnDao(): ReturnDao
     abstract fun sessionDao(): SessionDao
     abstract fun employeeDao(): EmployeeDao
+    abstract fun cashBoxDao(): CashBoxDao
 
     companion object {
         const val DB_NAME = "sales_manager.db"
@@ -395,6 +397,28 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_16_17 = object : Migration(16, 17) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // جدول الصناديق — صندوق رصيد لكل طريقة دفع (ربط 1:1)
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS cash_boxes (
+                        id                  TEXT NOT NULL PRIMARY KEY,
+                        paymentMethodId     INTEGER NOT NULL,
+                        paymentMethodName   TEXT NOT NULL,
+                        currentBalance      REAL NOT NULL DEFAULT 0,
+                        initialBalance      REAL NOT NULL DEFAULT 0,
+                        initialBalanceSetAt INTEGER,
+                        merchantId          TEXT NOT NULL DEFAULT '',
+                        updatedAt           INTEGER NOT NULL,
+                        syncStatus          TEXT NOT NULL DEFAULT 'PENDING'
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_cash_boxes_paymentMethodId ON cash_boxes(paymentMethodId)")
+            }
+        }
+
         // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
         Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
@@ -413,7 +437,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_12_13,
             MIGRATION_13_14,
             MIGRATION_14_15,
-            MIGRATION_15_16  // ✅ deviceModel في sessions
+            MIGRATION_15_16, // ✅ deviceModel في sessions
+            MIGRATION_16_17  // ✅ جدول الصناديق cash_boxes
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {

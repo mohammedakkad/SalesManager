@@ -29,7 +29,8 @@ class ActivationRepositoryImpl(
     private val productDao: ProductDao,
     private val productFirestoreService: ProductFirestoreService,
     private val returnDao: ReturnDao,
-    private val invoiceItemDao: InvoiceItemDao
+    private val invoiceItemDao: InvoiceItemDao,
+    private val cashBoxDao: CashBoxDao
 ) : ActivationRepository {
 
     private val realtimeDb = FirebaseDatabase.getInstance().reference
@@ -167,6 +168,17 @@ class ActivationRepositoryImpl(
                 returnDao.insertReturnWithItems(
                     invoice.copy(syncStatus = SyncStatus.SYNCED).toEntity(),
                     items.map { it.toEntity() }
+                )
+            }
+        }
+
+        // ✅ الصناديق — تُجلب مرة واحدة عند التفعيل (نفس نمط باقي البيانات)
+        data.cashBoxes.forEach { box ->
+            runCatching {
+                cashBoxDao.upsert(
+                    CashBoxEntity.fromDomain(
+                        box.copy(merchantId = code, syncStatus = SyncStatus.SYNCED)
+                    )
                 )
             }
         }

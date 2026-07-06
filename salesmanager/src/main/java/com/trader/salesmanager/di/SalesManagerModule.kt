@@ -7,6 +7,7 @@ import com.trader.core.data.remote.CloudinaryUploader
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.data.remote.ProductFirestoreService
 import com.trader.core.data.repository.ActivationRepositoryImpl
+import com.trader.core.data.repository.CashBoxRepositoryImpl
 import com.trader.core.data.repository.ChatRepositoryImpl
 import com.trader.core.data.repository.CustomerRepositoryImpl
 import com.trader.core.data.repository.EmployeeRepositoryImpl
@@ -20,6 +21,7 @@ import com.trader.core.data.repository.ReturnRepositoryImpl
 import com.trader.core.data.repository.StockRepositoryImpl
 import com.trader.core.data.repository.TransactionRepositoryImpl
 import com.trader.core.domain.repository.ActivationRepository
+import com.trader.core.domain.repository.CashBoxRepository
 import com.trader.core.domain.repository.ChatRepository
 import com.trader.core.domain.repository.CustomerRepository
 import com.trader.core.domain.repository.EmployeeRepository
@@ -35,6 +37,7 @@ import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.NetworkMonitor
 import com.trader.core.sync.SyncCoordinator
 import com.trader.salesmanager.ui.activation.ActivationViewModel
+import com.trader.salesmanager.ui.boxes.BoxesViewModel
 import com.trader.salesmanager.ui.activation.MerchantWatcherViewModel
 import com.trader.salesmanager.ui.chat.ChatViewModel
 import com.trader.salesmanager.ui.customers.addedit.AddEditCustomerViewModel
@@ -102,6 +105,9 @@ val salesManagerModule = module {
     single {
         get<AppDatabase>().employeeDao()
     }
+    single {
+        get<AppDatabase>().cashBoxDao()
+    }
 
     // ── Remote ───────────────────────────────────────────────────
     single {
@@ -120,7 +126,7 @@ val salesManagerModule = module {
     // ── Repositories ─────────────────────────────────────────────
     single<ActivationRepository> {
         ActivationRepositoryImpl(
-            androidContext(), get(), get(), get(), get(), get(), get(), get(), get()
+            androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get()
         )
     }
 
@@ -135,10 +141,13 @@ val salesManagerModule = module {
         CustomerRepositoryImpl(get(), get(), get(), get())
     }
     single<TransactionRepository> {
-        TransactionRepositoryImpl(get(), get(), get(), get(), get(), get(), get())
+        TransactionRepositoryImpl(get(), get(), get(), get(), get(), get(), get(), get())
     }
     single<PaymentMethodRepository> {
-        PaymentMethodRepositoryImpl(get(), get(), get())
+        PaymentMethodRepositoryImpl(get(), get(), get(), get())
+    }
+    single<CashBoxRepository> {
+        CashBoxRepositoryImpl(get(), get(), get(), get())
     }
     single<ChatRepository> {
         ChatRepositoryImpl(get())
@@ -203,7 +212,8 @@ val salesManagerModule = module {
         SyncCoordinator(
             networkMonitor = get(),
             stockRepository = get(),
-            invoiceItemRepository = get()
+            invoiceItemRepository = get(),
+            cashBoxRepository = get()
         )
     }
 
@@ -253,6 +263,9 @@ val salesManagerModule = module {
     }
     viewModel {
         PaymentMethodsViewModel(get())
+    }
+    viewModel {
+        BoxesViewModel(get(), get())
     }
     viewModel {
         DebtsViewModel(get(), get())
