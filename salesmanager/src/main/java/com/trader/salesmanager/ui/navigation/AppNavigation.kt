@@ -323,7 +323,7 @@ fun AppNavigation() {
             }
 
             val invoiceViewModel: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
-                org.koin.androidx.compose.koinViewModel()
+                koinViewModel()
 
             val linesJson by back.savedStateHandle
                 .getStateFlow<String?>("invoice_lines_json", null)
@@ -362,7 +362,7 @@ fun AppNavigation() {
             })
         ) { back ->
             val invoiceViewModel: com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel =
-                org.koin.androidx.compose.koinViewModel()
+                koinViewModel()
 
             val linesJson by back.savedStateHandle
                 .getStateFlow<String?>("invoice_lines_json", null)
