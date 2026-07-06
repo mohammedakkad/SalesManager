@@ -415,7 +415,7 @@ object ExportManager {
     // مشاركة الملفات
     // ══════════════════════════════════════════════════════════
     fun shareFile(context: Context, file: File, mimeType: String) {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = mimeType
             putExtra(Intent.EXTRA_STREAM, uri)
@@ -425,7 +425,7 @@ object ExportManager {
     }
 
     fun shareToWhatsApp(context: Context, file: File, mimeType: String) {
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = mimeType
             `package` = "com.whatsapp"

@@ -1,121 +1,160 @@
 package com.trader.salesmanager.update
 
+import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.trader.salesmanager.BuildConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 
-sealed class UpdateUiState {
-    object Idle                                          : UpdateUiState()
-    object Checking                                      : UpdateUiState()
-    data class UpdateAvailable(val info: AppUpdateInfo)  : UpdateUiState()
-    data class Downloading(val percent: Int)             : UpdateUiState()
-    object ReadyToInstall                                : UpdateUiState()
-    object BackgroundDownloading                         : UpdateUiState()
-    object NeedInstallPermission                         : UpdateUiState()
-    data class DownloadError(val message: String)        : UpdateUiState()
-    object UpToDate                                      : UpdateUiState()
-}
+data class AppUpdateUiState(
+    val isChecking: Boolean = false,
+    val updateAvailable: Boolean = false,
+    val updateInfo: AppUpdateInfo? = null,
+    val downloadProgress: Int? = null,
+    val isReadyToInstall: Boolean = false,
+    val error: String? = null
+)
 
-class AppUpdateViewModel : ViewModel() {
+class AppUpdateViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _state = MutableStateFlow<UpdateUiState>(UpdateUiState.Idle)
-    val state: StateFlow<UpdateUiState> = _state.asStateFlow()
+    private val _uiState = MutableStateFlow(AppUpdateUiState())
+    val uiState: StateFlow<AppUpdateUiState> = _uiState.asStateFlow()
 
-    private var currentInfo: AppUpdateInfo? = null
-    private var downloadedFile: java.io.File? = null
-    private var isDownloadInProgress = false
+    private var downloadedFile: File? = null
 
-    fun checkForUpdate(currentVersionCode: Int) {
-        if (_state.value is UpdateUiState.Checking) return
-        _state.value = UpdateUiState.Checking
+    fun checkForUpdate() {
+        if (_uiState.value.isChecking) return
+
+        _uiState.update {
+            it.copy(
+                isChecking = true,
+                error = null,
+                updateAvailable = false,
+                updateInfo = null,
+                downloadProgress = null,
+                isReadyToInstall = false
+            )
+        }
+
         viewModelScope.launch {
             val info = AppUpdateChecker.check()
-            if (info == null || !info.isUpdateAvailable) {
-                _state.value = UpdateUiState.UpToDate
+            if (info == null) {
+                _uiState.update {
+                    it.copy(
+                        isChecking = false,
+                        error = "تعذر التحقق من التحديثات"
+                    )
+                }
                 return@launch
             }
-            if (info.latestVersion > currentVersionCode) {
-                currentInfo = info
-                // ← لا نُظهر Dialog إجبارياً — فقط نُعلم بوجود تحديث
-                _state.value = UpdateUiState.UpdateAvailable(info)
+
+            if (info.latestVersion > BuildConfig.VERSION_CODE) {
+                _uiState.update {
+                    it.copy(
+                        isChecking = false,
+                        updateAvailable = true,
+                        updateInfo = info,
+                        error = null
+                    )
+                }
             } else {
-                _state.value = UpdateUiState.UpToDate
-            }
-        }
-    }
-
-    /**
-     * التحميل في الخلفية عبر WorkManager — يظهر في شريط الإشعارات
-     * ويبقى التطبيق قابلاً للاستخدام بشكل طبيعي.
-     */
-    fun startBackgroundDownload(context: Context) {
-        val info = currentInfo ?: return
-        if (info.downloadUrl.isEmpty()) return
-        BackgroundUpdateWorker.schedule(context, info.downloadUrl, info.versionName)
-        _state.value = UpdateUiState.BackgroundDownloading
-    }
-
-    /**
-     * تحميل مباشر (عندما يضغط المستخدم "تحميل الآن" من الإعدادات)
-     */
-    fun startDirectDownload(context: Context) {
-        if (isDownloadInProgress) return
-        val info = currentInfo ?: return
-        if (!AppUpdateDownloader.canInstallUnknownSources(context)) {
-            _state.value = UpdateUiState.NeedInstallPermission
-            return
-        }
-        isDownloadInProgress = true
-        _state.value = UpdateUiState.Downloading(0)
-        viewModelScope.launch {
-            AppUpdateDownloader.downloadApk(context, info.downloadUrl).collect { ds ->
-                when (ds) {
-                    is DownloadState.Progress -> _state.value = UpdateUiState.Downloading(ds.percent)
-                    is DownloadState.Success  -> {
-                        downloadedFile = ds.file
-                        isDownloadInProgress = false
-                        _state.value = UpdateUiState.ReadyToInstall
-                    }
-                    is DownloadState.Error -> {
-                        isDownloadInProgress = false
-                        _state.value = UpdateUiState.DownloadError(ds.message)
-                    }
+                _uiState.update {
+                    it.copy(
+                        isChecking = false,
+                        updateAvailable = false,
+                        updateInfo = null,
+                        error = null
+                    )
                 }
             }
         }
     }
 
-    // للتوافق مع الكود القديم
-    fun startDownload(context: Context) = startBackgroundDownload(context)
+    fun startDownload() {
+        val info = _uiState.value.updateInfo ?: return
+        if (_uiState.value.downloadProgress != null) return
 
-    fun install(context: Context) {
-        val file = downloadedFile
+        _uiState.update {
+            it.copy(downloadProgress = 0, error = null, isReadyToInstall = false)
+        }
+
+        viewModelScope.launch {
+            val file = AppUpdateDownloader.downloadApk(
+                context = getApplication(),
+                url = info.downloadUrl,
+                onProgress = { percent ->
+                    _uiState.update { state -> state.copy(downloadProgress = percent) }
+                }
+            )
+
+            if (file != null) {
+                downloadedFile = file
+                saveApkPath(getApplication(), file.absolutePath)
+                _uiState.update {
+                    it.copy(downloadProgress = null, isReadyToInstall = true, error = null)
+                }
+            } else {
+                _uiState.update {
+                    it.copy(
+                        downloadProgress = null,
+                        error = "فشل تحميل التحديث"
+                    )
+                }
+            }
+        }
+    }
+
+    fun installUpdate() {
+        val context = getApplication<Application>()
+        val file = downloadedFile ?: loadSavedApkFile(context)
         if (file != null) {
             AppUpdateDownloader.installApk(context, file)
-            return
         }
-        // التحقق من APK المحفوظ من WorkManager
-        val path = context.getSharedPreferences("update_prefs", Context.MODE_PRIVATE)
-            .getString("apk_path", null)
+    }
+
+    fun openInstallSettings() {
+        AppUpdateDownloader.openInstallPermissionSettings(getApplication())
+    }
+
+    fun markReadyToInstallFromBackground() {
+        val path = getApplication<Application>()
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_APK_PATH, null)
         if (path != null) {
-            AppUpdateDownloader.installApk(context, java.io.File(path))
+            downloadedFile = File(path)
+            _uiState.update {
+                it.copy(
+                    downloadProgress = null,
+                    isReadyToInstall = true,
+                    error = null
+                )
+            }
         }
     }
 
-    fun retryDownload(context: Context) {
-        isDownloadInProgress = false
-        startDirectDownload(context)
+    private fun saveApkPath(context: Context, path: String) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putString(KEY_APK_PATH, path)
+            .apply()
     }
 
-    fun openInstallPermission(context: Context) {
-        AppUpdateDownloader.openInstallPermissionSettings(context)
+    private fun loadSavedApkFile(context: Context): File? {
+        val path = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_APK_PATH, null)
+            ?: return null
+        val file = File(path)
+        return file.takeIf { it.exists() }
     }
 
-    fun dismiss() {
-        _state.value = UpdateUiState.Idle
+    companion object {
+        const val PREFS_NAME = "update_prefs"
+        const val KEY_APK_PATH = "apk_path"
     }
 }

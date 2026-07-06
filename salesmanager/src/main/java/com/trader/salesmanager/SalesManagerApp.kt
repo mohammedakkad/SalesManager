@@ -9,6 +9,7 @@ import com.trader.core.sync.SyncCoordinator
 import com.trader.core.util.ExpiryNotificationHelper
 import com.trader.core.worker.StatusCheckWorker
 import com.trader.salesmanager.di.salesManagerModule
+import com.trader.salesmanager.update.BackgroundUpdateWorker
 import com.trader.salesmanager.worker.UnpaidDebtWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,33 +23,26 @@ import org.koin.core.context.startKoin
 class SalesManagerApp : Application(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
-        // Refresh FCM token on app start
         com.google.firebase.messaging.FirebaseMessaging.getInstance().token
             .addOnSuccessListener { token ->
-                // Token will be saved via onNewToken or here
                 android.util.Log.d("FCM", "Token: $token")
             }
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-        // Offline writes queued on disk → auto-sync on reconnect
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-        // Create notification channel (required for Android 8+)
         ExpiryNotificationHelper.createChannel(this)
         startKoin {
             androidContext(this@SalesManagerApp)
             modules(salesManagerModule)
         }
-        // Schedule unpaid debt reminders — every 8 hours
         UnpaidDebtWorker.schedule(this)
         StatusCheckWorker.schedule(this)
+        BackgroundUpdateWorker.schedulePeriodic(this)
 
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-
-            // ✅ SyncCoordinator: يراقب الشبكة ويزامن البيانات المعلقة تلقائياً
             runCatching {
                 val syncCoordinator: SyncCoordinator by inject()
                 syncCoordinator.start()
             }
-
         }
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -46,7 +47,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -78,9 +78,9 @@ import com.trader.salesmanager.ui.theme.Violet400
 import com.trader.salesmanager.ui.theme.Violet500
 import com.trader.salesmanager.ui.theme.isDarkTheme
 import com.trader.salesmanager.ui.theme.toggleTheme
+import com.trader.salesmanager.update.AppUpdateDownloader
+import com.trader.salesmanager.update.AppUpdateUiState
 import com.trader.salesmanager.update.AppUpdateViewModel
-import com.trader.salesmanager.update.BackgroundUpdateWorker
-import com.trader.salesmanager.update.UpdateUiState
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -99,7 +99,6 @@ fun SettingsScreen(
     val clipboardManager = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
 
-    // اسم المحل من DataStore
     val storeName by context.appDataStore.data
         .map { it[STORE_NAME_KEY] ?: "" }
         .collectAsState(initial = "")
@@ -109,7 +108,6 @@ fun SettingsScreen(
 
     var showStoreNameDialog by remember { mutableStateOf(false) }
 
-    // إصدار التطبيق الحالي
     val currentVersion = remember {
         try {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0.0"
@@ -118,16 +116,9 @@ fun SettingsScreen(
         }
     }
 
-    // حالة التحديث
-    val updateState by updateViewModel.state.collectAsStateWithLifecycle()
-    val isChecking = updateState is UpdateUiState.Checking
-    val latestVersion = when (val s = updateState) {
-        is UpdateUiState.UpdateAvailable -> s.info.versionName
-        is UpdateUiState.BackgroundDownloading -> "يتم التحميل..."
-        else -> null
-    }
+    val updateState by updateViewModel.uiState.collectAsStateWithLifecycle()
+    val canInstall = AppUpdateDownloader.canInstallUnknownApps(context)
 
-    // Dialog تغيير اسم المحل
     if (showStoreNameDialog) {
         StoreNameDialog(
             currentName = storeName,
@@ -139,14 +130,6 @@ fun SettingsScreen(
             },
             onDismiss = { showStoreNameDialog = false }
         )
-    }
-
-    // تشغيل التحميل في الخلفية إذا وُجد تحديث
-    LaunchedEffect(updateState) {
-        if (updateState is UpdateUiState.UpdateAvailable) {
-            val info = (updateState as UpdateUiState.UpdateAvailable).info
-            BackgroundUpdateWorker.schedule(context, info.downloadUrl, info.versionName)
-        }
     }
 
     Scaffold { padding ->
@@ -170,7 +153,8 @@ fun SettingsScreen(
                     Text(
                         "الإعدادات",
                         style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold, color = Color.White
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                 }
             }
@@ -179,7 +163,6 @@ fun SettingsScreen(
                 Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // ── اسم المحل ──────────────────────────────────────
                 SettingItem(
                     icon = Icons.Rounded.Store,
                     title = "اسم المحل",
@@ -196,10 +179,8 @@ fun SettingsScreen(
                     }
                 )
 
-                // ── الوضع الليلي ───────────────────────────────────
                 DarkModeSettingItem()
 
-                // ── طرق الدفع ──────────────────────────────────────
                 SettingItem(
                     icon = Icons.Rounded.Payment,
                     title = "طرق الدفع",
@@ -208,7 +189,6 @@ fun SettingsScreen(
                     onClick = onNavigateToPaymentMethods
                 )
 
-                // ── الدعم الفني ────────────────────────────────────
                 SettingItem(
                     icon = Icons.Rounded.SupportAgent,
                     title = "الدعم الفني",
@@ -217,24 +197,14 @@ fun SettingsScreen(
                     onClick = onNavigateToChat
                 )
 
-                // ── التحديثات ──────────────────────────────────────
                 UpdateSettingItem(
                     currentVersion = currentVersion,
-                    latestVersion = latestVersion,
-                    isChecking = isChecking,
                     updateState = updateState,
-                    onCheck = {
-                        val versionCode = try {
-                            context.packageManager.getPackageInfo(
-                                context.packageName,
-                                0
-                            ).longVersionCode.toInt()
-                        } catch (_: Exception) {
-                            0
-                        }
-                        updateViewModel.checkForUpdate(versionCode)
-                    },
-                    onInstall = { updateViewModel.install(context) }
+                    canInstallUnknownApps = canInstall,
+                    onCheck = { updateViewModel.checkForUpdate() },
+                    onDownload = { updateViewModel.startDownload() },
+                    onInstall = { updateViewModel.installUpdate() },
+                    onOpenInstallSettings = { updateViewModel.openInstallSettings() }
                 )
             }
         }
@@ -380,78 +350,164 @@ private fun DarkModeSettingItem() {
 @Composable
 private fun UpdateSettingItem(
     currentVersion: String,
-    latestVersion: String?,
-    isChecking: Boolean,
-    updateState: UpdateUiState,
+    updateState: AppUpdateUiState,
+    canInstallUnknownApps: Boolean,
     onCheck: () -> Unit,
-    onInstall: () -> Unit
+    onDownload: () -> Unit,
+    onInstall: () -> Unit,
+    onOpenInstallSettings: () -> Unit
 ) {
-    val hasUpdate = updateState is UpdateUiState.UpdateAvailable
-    val isReady = updateState is UpdateUiState.ReadyToInstall
+    val isChecking = updateState.isChecking
+    val isDownloading = updateState.downloadProgress != null
+    val isReadyToInstall = updateState.isReadyToInstall
+    val hasUpdate = updateState.updateAvailable
+    val versionName = updateState.updateInfo?.versionName
+    val downloadProgress = updateState.downloadProgress
+    val needsInstallPermission = (hasUpdate || isReadyToInstall) && !canInstallUnknownApps
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = if (isReady) onInstall else onCheck),
+            .clickable(enabled = !isChecking && !isDownloading) {
+                when {
+                    isReadyToInstall -> onInstall()
+                    needsInstallPermission -> onOpenInstallSettings()
+                    else -> onCheck()
+                }
+            },
         shape = RoundedCornerShape(14.dp),
         elevation = CardDefaults.cardElevation(1.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (hasUpdate) UnpaidAmber.copy(0.06f) else MaterialTheme.colorScheme.surface
+            containerColor = when {
+                hasUpdate || isReadyToInstall -> UnpaidAmber.copy(0.06f)
+                else -> MaterialTheme.colorScheme.surface
+            }
         )
     ) {
-        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background((if (hasUpdate) UnpaidAmber else Slate600).copy(0.12f)),
-                contentAlignment = Alignment.Center
-            ) {
-                if (isChecking)
-                    CircularProgressIndicator(
-                        Modifier.size(22.dp),
-                        color = Slate600,
-                        strokeWidth = 2.dp
-                    )
-                else
-                    Icon(
-                        if (isReady) Icons.Rounded.InstallMobile
-                        else if (hasUpdate) Icons.Rounded.SystemUpdate
-                        else Icons.Rounded.CheckCircle,
-                        null,
-                        tint = if (hasUpdate || isReady) UnpaidAmber else Slate600
-                    )
-            }
-            Spacer(Modifier.width(14.dp))
-            Column(Modifier.weight(1f)) {
-                Text(
-                    "الإصدار والتحديث",
-                    style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold
-                )
-                Text(
+        Column(Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            (if (hasUpdate || isReadyToInstall) UnpaidAmber else Slate600).copy(0.12f)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
                     when {
-                        isReady -> "✅ جاهز للتثبيت — اضغط للتثبيت"
-                        hasUpdate -> "🔔 تحديث متاح: v${latestVersion}  (حالي: v$currentVersion)"
-                        isChecking -> "جاري التحقق..."
-                        latestVersion != null -> latestVersion
-                        else -> "v$currentVersion  •  اضغط للتحقق"
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = if (hasUpdate) UnpaidAmber else MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                        isChecking -> CircularProgressIndicator(
+                            Modifier.size(22.dp),
+                            color = Slate600,
+                            strokeWidth = 2.dp
+                        )
+                        isReadyToInstall -> Icon(
+                            Icons.Rounded.InstallMobile,
+                            null,
+                            tint = UnpaidAmber
+                        )
+                        hasUpdate -> Icon(
+                            Icons.Rounded.SystemUpdate,
+                            null,
+                            tint = UnpaidAmber
+                        )
+                        else -> Icon(
+                            Icons.Rounded.CheckCircle,
+                            null,
+                            tint = Slate600
+                        )
+                    }
+                }
+                Spacer(Modifier.width(14.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        "تحديث التطبيق",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        when {
+                            isChecking -> "جاري التحقق..."
+                            needsInstallPermission -> "يلزم منح إذن التثبيت"
+                            isReadyToInstall -> "اكتمل التحميل — اضغط للتثبيت"
+                            isDownloading -> "جاري التحميل... ${downloadProgress ?: 0}%"
+                            hasUpdate && versionName != null ->
+                                "يوجد تحديث — الإصدار $versionName"
+                            updateState.error != null -> updateState.error
+                            else -> "الإصدار الحالي v$currentVersion — اضغط للتحقق"
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = when {
+                            hasUpdate || isReadyToInstall -> UnpaidAmber
+                            updateState.error != null -> MaterialTheme.colorScheme.error
+                            else -> MaterialTheme.colorScheme.onSurfaceVariant
+                        }
+                    )
+                }
+                if (!isChecking && !isDownloading) {
+                    Icon(
+                        Icons.Rounded.ChevronRight,
+                        null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
-            Icon(
-                Icons.Rounded.ChevronRight, null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+
+            when {
+                isDownloading && downloadProgress != null -> {
+                    Spacer(Modifier.size(12.dp))
+                    LinearProgressIndicator(
+                        progress = { downloadProgress / 100f },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        "$downloadProgress%",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 6.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                needsInstallPermission -> {
+                    Spacer(Modifier.size(12.dp))
+                    OutlinedButton(
+                        onClick = onOpenInstallSettings,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("فتح إعدادات التثبيت")
+                    }
+                }
+                hasUpdate && !isReadyToInstall && !isDownloading && canInstallUnknownApps -> {
+                    Spacer(Modifier.size(12.dp))
+                    Button(
+                        onClick = onDownload,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = UnpaidAmber)
+                    ) {
+                        Text("تحميل التحديث")
+                    }
+                }
+                isReadyToInstall && canInstallUnknownApps -> {
+                    Spacer(Modifier.size(12.dp))
+                    Button(
+                        onClick = onInstall,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = UnpaidAmber)
+                    ) {
+                        Text("تثبيت التحديث")
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
 private fun SettingItem(
-    icon: ImageVector, title: String, subtitle: String,
-    color: Color, onClick: () -> Unit
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    color: Color,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -476,7 +532,8 @@ private fun SettingItem(
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
-                    subtitle, style = MaterialTheme.typography.bodySmall,
+                    subtitle,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

@@ -80,7 +80,10 @@ private fun serializeLines(lines: List<InvoiceLineItem>): String {
 }
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    pendingNavigation: String? = null,
+    onNavigationHandled: () -> Unit = {}
+) {
     val navController = rememberNavController()
     val activationVm: ActivationViewModel = koinViewModel()
     val watcherVm: MerchantWatcherViewModel = koinViewModel()
@@ -156,6 +159,15 @@ fun AppNavigation() {
         startupState != StartupState.Proceed && startupState !is StartupState.ProceedFree ->
             Screen.Activation.route
         else -> Screen.Home.route
+    }
+
+    LaunchedEffect(pendingNavigation, startupState) {
+        if (pendingNavigation == com.trader.salesmanager.MainActivity.NAV_SETTINGS &&
+            (startupState == StartupState.Proceed || startupState is StartupState.ProceedFree)
+        ) {
+            navController.navigate(Screen.Settings.route)
+            onNavigationHandled()
+        }
     }
 
 

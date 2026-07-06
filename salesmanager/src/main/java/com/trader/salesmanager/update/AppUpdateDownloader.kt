@@ -6,70 +6,78 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-sealed class DownloadState {
-    data class Progress(val percent: Int) : DownloadState()
-    data class Success(val file: File)    : DownloadState()
-    data class Error(val message: String) : DownloadState()
-}
-
 object AppUpdateDownloader {
 
-    fun downloadApk(context: Context, url: String): Flow<DownloadState> = flow {
+    private const val APK_FILE_NAME = "salesmanager-update.apk"
+
+    suspend fun downloadApk(
+        context: Context,
+        url: String,
+        onProgress: (Int) -> Unit
+    ): File? = withContext(Dispatchers.IO) {
         try {
-            val apkFile = File(context.getExternalFilesDir(null), "update.apk")
+            val updateDir = File(context.cacheDir, "update").apply { mkdirs() }
+            val apkFile = File(updateDir, APK_FILE_NAME)
             if (apkFile.exists()) apkFile.delete()
 
             val connection = URL(url).openConnection() as HttpURLConnection
+            connection.connectTimeout = 15_000
+            connection.readTimeout = 15_000
             connection.connect()
 
             val totalBytes = connection.contentLength
-            val input  = connection.inputStream.buffered()
+            val input = connection.inputStream.buffered()
             val output = apkFile.outputStream().buffered()
 
             var downloaded = 0L
             val buffer = ByteArray(8192)
-            var lastEmittedPercent = -1
 
             while (true) {
                 val bytes = input.read(buffer)
                 if (bytes == -1) break
                 output.write(buffer, 0, bytes)
                 downloaded += bytes
-                if (totalBytes > 0) {
-                    val percent = ((downloaded * 100) / totalBytes).toInt()
-                    if (percent != lastEmittedPercent) {
-                        emit(DownloadState.Progress(percent))
-                        lastEmittedPercent = percent
-                    }
+                val percent = if (totalBytes > 0) {
+                    ((downloaded * 100) / totalBytes).toInt().coerceIn(0, 100)
+                } else {
+                    0
                 }
+                onProgress(percent)
             }
+
             output.flush()
             output.close()
             input.close()
+            connection.disconnect()
 
-            emit(DownloadState.Success(apkFile))
-        } catch (e: Exception) {
-            emit(DownloadState.Error(e.message ?: "خطأ في التحميل"))
+            onProgress(100)
+            apkFile
+        } catch (_: Exception) {
+            null
         }
-    }.flowOn(Dispatchers.IO)
+    }
 
-    fun installApk(context: Context, apkFile: File) {
+    fun installApk(context: Context, file: File) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !canInstallUnknownApps(context)) {
+            openInstallPermissionSettings(context)
+            return
+        }
+
         val uri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             FileProvider.getUriForFile(
                 context,
-                "${context.packageName}.fileprovider",
-                apkFile
+                "${context.packageName}.provider",
+                file
             )
         } else {
-            Uri.fromFile(apkFile)
+            Uri.fromFile(file)
         }
+
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, "application/vnd.android.package-archive")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -77,10 +85,12 @@ object AppUpdateDownloader {
         context.startActivity(intent)
     }
 
-    fun canInstallUnknownSources(context: Context): Boolean {
+    fun canInstallUnknownApps(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.packageManager.canRequestPackageInstalls()
-        } else true
+        } else {
+            true
+        }
     }
 
     fun openInstallPermissionSettings(context: Context) {

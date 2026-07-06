@@ -261,7 +261,7 @@ val salesManagerModule = module {
         ChatViewModel(get(), get(), get())
     }
     viewModel {
-        AppUpdateViewModel()
+        AppUpdateViewModel(get())
     }
     viewModel {
         SessionsViewModel(
