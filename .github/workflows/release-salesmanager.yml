@@ -88,6 +88,13 @@ jobs:
           DEST="salesmanager/build/outputs/apk/${BUILD_TYPE}/${APK_PREFIX}-v${VERSION_NAME}.apk"
           mv "$SRC" "$DEST"
           echo "APK_PATH=$DEST" >> $GITHUB_ENV
+          if [[ "$BUILD_TYPE" == "release" ]]; then
+            RELEASE_ASSET="salesmanager/build/outputs/apk/${BUILD_TYPE}/salesmanager-release.apk"
+            cp "$DEST" "$RELEASE_ASSET"
+            echo "RELEASE_ASSET_PATH=$RELEASE_ASSET" >> $GITHUB_ENV
+          else
+            echo "RELEASE_ASSET_PATH=$DEST" >> $GITHUB_ENV
+          fi
 
       - uses: actions/upload-artifact@v4
         with:
@@ -104,6 +111,6 @@ jobs:
           prerelease: ${{ env.BUILD_TYPE == 'staging' }}
           body: |
             ${{ env.BUILD_TYPE == 'staging' && '> نسخة اختبار — ليست للاستخدام النهائي' || '- إصلاح عرض التاريخ في تفاصيل العملية' }}
-          files: ${{ env.APK_PATH }}
+          files: ${{ env.RELEASE_ASSET_PATH }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
