@@ -12,11 +12,17 @@ interface CashBoxMovementDao {
     @Query("SELECT * FROM cash_box_movements ORDER BY createdAt DESC")
     fun getAll(): Flow<List<CashBoxMovementEntity>>
 
+    @Query("SELECT * FROM cash_box_movements ORDER BY createdAt DESC")
+    suspend fun getAllOnce(): List<CashBoxMovementEntity>
+
     @Query("SELECT * FROM cash_box_movements WHERE cashBoxId = :cashBoxId ORDER BY createdAt DESC")
     fun getByCashBoxId(cashBoxId: String): Flow<List<CashBoxMovementEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movement: CashBoxMovementEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(movements: List<CashBoxMovementEntity>)
 
     @Query("SELECT * FROM cash_box_movements WHERE id = :id")
     suspend fun getById(id: String): CashBoxMovementEntity?

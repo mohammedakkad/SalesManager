@@ -23,10 +23,16 @@ data class DailySalesProfitProjection(
 interface InvoiceItemDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(items: List<InvoiceItemEntity>)
+    suspend fun insertInvoiceItem(item: InvoiceItemEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertInvoiceItem(item: InvoiceItemEntity)
+    suspend fun insertAll(items: List<InvoiceItemEntity>)
+
+    @Query("SELECT * FROM invoice_items ORDER BY transactionId ASC")
+    suspend fun getAllOnce(): List<InvoiceItemEntity>
+
+    @Query("DELETE FROM invoice_items")
+    suspend fun deleteAll()
 
     @Query("SELECT * FROM invoice_items WHERE transactionId = :transactionId ORDER BY rowid ASC")
     fun getForTransaction(transactionId: Long): Flow<List<InvoiceItemEntity>>
@@ -182,6 +188,9 @@ interface InventoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSession(session: InventorySessionEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllSessions(sessions: List<InventorySessionEntity>)
+
     @Update
     suspend fun updateSession(session: InventorySessionEntity)
 
@@ -190,6 +199,18 @@ interface InventoryDao {
 
     @Query("SELECT * FROM inventory_sessions ORDER BY startedAt DESC")
     fun getAllSessions(): Flow<List<InventorySessionEntity>>
+
+    @Query("SELECT * FROM inventory_sessions ORDER BY startedAt DESC")
+    suspend fun getAllSessionsOnce(): List<InventorySessionEntity>
+
+    @Query("SELECT * FROM inventory_session_items")
+    suspend fun getAllSessionItemsOnce(): List<InventorySessionItemEntity>
+
+    @Query("DELETE FROM inventory_session_items")
+    suspend fun deleteAllSessionItems()
+
+    @Query("DELETE FROM inventory_sessions")
+    suspend fun deleteAllSessions()
 
     // Session items
     @Insert(onConflict = OnConflictStrategy.REPLACE)

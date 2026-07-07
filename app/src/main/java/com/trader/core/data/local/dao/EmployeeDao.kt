@@ -10,8 +10,17 @@ interface EmployeeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(employee: EmployeeEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(employees: List<EmployeeEntity>)
+
     @Query("SELECT * FROM employees WHERE merchantId = :merchantId ORDER BY createdAt ASC")
     fun getAllByMerchant(merchantId: String): Flow<List<EmployeeEntity>>
+
+    @Query("SELECT * FROM employees WHERE merchantId = :merchantId ORDER BY createdAt ASC")
+    suspend fun getAllOnce(merchantId: String): List<EmployeeEntity>
+
+    @Query("DELETE FROM employees WHERE merchantId = :merchantId")
+    suspend fun deleteAllByMerchant(merchantId: String)
 
     @Query("SELECT * FROM employees WHERE id = :id LIMIT 1")
     suspend fun getById(id: String): EmployeeEntity?

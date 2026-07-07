@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.ContentCopy
@@ -64,11 +65,12 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
+import com.trader.salesmanager.R
 import com.trader.salesmanager.ui.theme.Cyan500
 import com.trader.salesmanager.ui.theme.Emerald500
 import com.trader.salesmanager.ui.theme.Slate400
@@ -95,6 +97,7 @@ fun SettingsScreen(
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToCashBoxes: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
+    onNavigateToBackup: () -> Unit = {},
     updateViewModel: AppUpdateViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -197,6 +200,14 @@ fun SettingsScreen(
                     subtitle = "رصيد كل طريقة دفع لحظياً",
                     color = Emerald500,
                     onClick = onNavigateToCashBoxes
+                )
+
+                SettingItem(
+                    icon = Icons.Rounded.Backup,
+                    title = stringResource(R.string.settings_backup_title),
+                    subtitle = stringResource(R.string.settings_backup_subtitle),
+                    color = Cyan500,
+                    onClick = onNavigateToBackup
                 )
 
                 SettingItem(

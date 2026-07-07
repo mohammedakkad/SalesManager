@@ -53,6 +53,7 @@ import com.trader.salesmanager.ui.reports.DayTransactionsScreen
 import com.trader.salesmanager.ui.reports.ReportsScreen
 import com.trader.salesmanager.ui.returns.ReturnProcessScreen
 import com.trader.salesmanager.ui.settings.SettingsScreen
+import com.trader.salesmanager.ui.settings.backup.BackupScreen
 import com.trader.salesmanager.ui.settings.sessions.SessionsScreen
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionScreen
 import com.trader.salesmanager.ui.transactions.details.TransactionDetailsScreen
@@ -468,8 +469,14 @@ fun AppNavigation(
                 },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chat.route)
+                },
+                onNavigateToBackup = {
+                    navController.navigate(Screen.Backup.route)
                 }
             )
+        }
+        composable(Screen.Backup.route) {
+            BackupScreen(onNavigateUp = { navController.navigateUp() })
         }
         composable(Screen.Sessions.route) {
             SessionsScreen(

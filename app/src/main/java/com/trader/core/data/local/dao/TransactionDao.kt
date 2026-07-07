@@ -19,6 +19,9 @@ data class DebtAgingProjection(
 interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getAllTransactions(): Flow<List<TransactionEntity>>
+
+    @Query("SELECT * FROM transactions ORDER BY date DESC")
+    suspend fun getAllOnce(): List<TransactionEntity>
     @Query("SELECT * FROM transactions WHERE customerId = :customerId ORDER BY date DESC")
     fun getTransactionsByCustomer(customerId: Long): Flow<List<TransactionEntity>>
     @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
@@ -36,6 +39,9 @@ interface TransactionDao {
     fun observeTransactionById(id: Long): Flow<TransactionEntity?>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: TransactionEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(transactions: List<TransactionEntity>)
     @Update suspend fun updateTransaction(transaction: TransactionEntity)
     @Delete suspend fun deleteTransaction(transaction: TransactionEntity)
     @Query("SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE date BETWEEN :startDate AND :endDate")

@@ -38,4 +38,36 @@
     <string name="boxes_time_now">الآن</string>
     <string name="boxes_time_minutes">قبل %1$d د</string>
     <string name="boxes_time_hours">قبل %1$d س</string>
+
+    <string name="backup_title">النسخ الاحتياطي</string>
+    <string name="backup_subtitle">احفظ بياناتك بأمان — يعمل بدون إنترنت</string>
+    <string name="backup_last_label">آخر نسخة احتياطية</string>
+    <string name="backup_never">لم تُنشأ بعد</string>
+    <string name="backup_time_now">الآن</string>
+    <string name="backup_time_minutes">منذ %1$d دقيقة</string>
+    <string name="backup_time_hours">منذ %1$d ساعة</string>
+    <string name="backup_time_days">منذ %1$d أيام</string>
+    <string name="backup_reassurance">بياناتك محفوظة على جهازك. يمكنك نسخها ومشاركتها في أي وقت.</string>
+    <string name="backup_export_title">تصدير نسخة احتياطية</string>
+    <string name="backup_export_subtitle">حفظ كل بياناتك في ملف مضغوط ومشاركته</string>
+    <string name="backup_import_title">استيراد نسخة احتياطية</string>
+    <string name="backup_import_subtitle">استعادة بياناتك من ملف نسخة سابقة</string>
+    <string name="backup_tip_title">نصيحة</string>
+    <string name="backup_tip_body">احفظ نسخة احتياطية بانتظام — خاصة قبل تغيير الجهاز أو إعادة التثبيت.</string>
+    <string name="backup_confirm_title">تأكيد الاستيراد</string>
+    <string name="backup_confirm_body">سيتم استبدال جميع البيانات الحالية على هذا الجهاز بالنسخة الاحتياطية. هل تريد المتابعة؟</string>
+    <string name="backup_confirm_yes">نعم، استبدال البيانات</string>
+    <string name="backup_confirm_no">إلغاء</string>
+    <string name="backup_export_success">تم إنشاء النسخة الاحتياطية — اختر طريقة المشاركة</string>
+    <string name="backup_import_success">تم استيراد النسخة الاحتياطية بنجاح</string>
+    <string name="backup_error_export_failed">تعذّر إنشاء النسخة الاحتياطية. حاول مرة أخرى.</string>
+    <string name="backup_error_import_failed">تعذّر استيراد النسخة. تحقق من الملف وحاول مجدداً.</string>
+    <string name="backup_error_corrupted">الملف تالف أو غير صالح.</string>
+    <string name="backup_error_empty">النسخة الاحتياطية فارغة ولا تحتوي بيانات.</string>
+    <string name="backup_error_incompatible_schema">إصدار النسخة (%1$d) غير متوافق. الإصدار المطلوب: %2$d</string>
+    <string name="backup_error_read_failed">تعذّر قراءة الملف المحدد.</string>
+    <string name="backup_error_permission_denied">تم رفض الإذن — لا يمكن الوصول للملف.</string>
+    <string name="backup_error_file_cancelled">لم يتم اختيار ملف.</string>
+    <string name="settings_backup_title">النسخ الاحتياطي</string>
+    <string name="settings_backup_subtitle">تصدير واستيراد بيانات المحل</string>
 </resources>

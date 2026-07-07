@@ -13,6 +13,9 @@ interface ReturnDao {
     suspend fun insertReturnInvoice(entity: ReturnInvoiceEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllInvoices(invoices: List<ReturnInvoiceEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertReturnItems(items: List<ReturnItemEntity>)
 
     /**
@@ -42,6 +45,15 @@ interface ReturnDao {
 
     @Query("SELECT * FROM return_invoices WHERE merchantId = :merchantId ORDER BY createdAt DESC")
     fun getAllReturns(merchantId: String): Flow<List<ReturnInvoiceEntity>>
+
+    @Query("SELECT * FROM return_invoices ORDER BY createdAt ASC")
+    suspend fun getAllInvoicesOnce(): List<ReturnInvoiceEntity>
+
+    @Query("SELECT * FROM return_items")
+    suspend fun getAllItemsOnce(): List<ReturnItemEntity>
+
+    @Query("DELETE FROM return_invoices")
+    suspend fun deleteAllInvoices()
 
     @Query("SELECT * FROM return_items WHERE returnInvoiceId = :returnInvoiceId")
     suspend fun getReturnItems(returnInvoiceId: String): List<ReturnItemEntity>
