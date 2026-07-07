@@ -63,6 +63,7 @@
     <string name="backup_error_export_failed">تعذّر إنشاء النسخة الاحتياطية. حاول مرة أخرى.</string>
     <string name="backup_error_import_failed">تعذّر استيراد النسخة. تحقق من الملف وحاول مجدداً.</string>
     <string name="backup_error_corrupted">الملف تالف أو غير صالح.</string>
+    <string name="backup_error_invalid_file">الملف المحدد ليس نسخة احتياطية صالحة. اختر ملف zip صادر من هذا التطبيق.</string>
     <string name="backup_error_empty">النسخة الاحتياطية فارغة ولا تحتوي بيانات.</string>
     <string name="backup_error_incompatible_schema">إصدار النسخة (%1$d) غير متوافق. الإصدار المطلوب: %2$d</string>
     <string name="backup_error_read_failed">تعذّر قراءة الملف المحدد.</string>

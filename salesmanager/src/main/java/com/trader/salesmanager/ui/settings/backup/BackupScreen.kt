@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.settings.backup
 
+import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -93,7 +94,28 @@ fun BackupScreen(
     val importLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
-        viewModel.onImportFileSelected(uri)
+        if (uri == null) {
+            viewModel.onImportFileCancelled()
+            return@rememberLauncherForActivityResult
+        }
+        try {
+            context.contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        } catch (_: SecurityException) {
+        }
+        val bytes = try {
+            context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+        } catch (_: SecurityException) {
+            viewModel.onImportPermissionDenied()
+            return@rememberLauncherForActivityResult
+        } catch (e: Exception) {
+            android.util.Log.e(BACKUP_LOG_TAG, "Failed to read picked URI: ${e.message}", e)
+            viewModel.onImportBytes(null)
+            return@rememberLauncherForActivityResult
+        }
+        viewModel.onImportBytes(bytes)
     }
 
     LaunchedEffect(uiState.error) {

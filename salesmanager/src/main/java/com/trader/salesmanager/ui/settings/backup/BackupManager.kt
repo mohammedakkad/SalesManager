@@ -1,8 +1,11 @@
 package com.trader.salesmanager.ui.settings.backup
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import com.trader.core.data.local.db.AppDatabase
 import androidx.room.withTransaction
 import com.trader.core.data.local.entity.CustomerEntity
@@ -11,13 +14,15 @@ import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+
+internal const val BACKUP_LOG_TAG = "BackupRestore"
 
 class BackupManager(
     private val context: Context,
@@ -25,6 +30,7 @@ class BackupManager(
     private val merchantId: String
 ) {
     private val gson = Gson()
+    private val payloadType = object : TypeToken<BackupPayload>() {}.type
 
     suspend fun exportToZip(): File = withContext(Dispatchers.IO) {
         val payload = collectPayload()
@@ -39,24 +45,30 @@ class BackupManager(
         zipFile
     }
 
-    suspend fun parseBackup(input: InputStream): BackupPayload = withContext(Dispatchers.IO) {
-        val bytes = input.use { it.readBytes() }
-        val json = extractJson(bytes) ?: throw BackupException.Corrupted
-        try {
-            gson.fromJson(json, BackupPayload::class.java)
-                ?: throw BackupException.Corrupted
-        } catch (_: JsonSyntaxException) {
+    suspend fun parseBackupFromBytes(bytes: ByteArray): BackupPayload = withContext(Dispatchers.IO) {
+        if (bytes.isEmpty()) throw BackupException.ReadFailed
+        val json = try {
+            extractJson(bytes)
+        } catch (e: ZipException) {
+            Log.e(BACKUP_LOG_TAG, "Zip extraction failed", e)
             throw BackupException.Corrupted
         }
+        if (json == null) {
+            if (looksLikeZip(bytes)) throw BackupException.Corrupted
+            throw BackupException.InvalidFile
+        }
+        parseJson(json)
     }
 
     fun validatePayload(payload: BackupPayload) {
         if (!payload.isCompatible()) {
             throw BackupException.IncompatibleSchema(payload.schemaVersion)
         }
-        if (payload.customers.isEmpty() && payload.transactions.isEmpty() &&
-            payload.products.isEmpty() && payload.paymentMethods.isEmpty()
-        ) {
+        val hasData = payload.customers.orEmpty().isNotEmpty() ||
+            payload.transactions.orEmpty().isNotEmpty() ||
+            payload.products.orEmpty().isNotEmpty() ||
+            payload.paymentMethods.orEmpty().isNotEmpty()
+        if (!hasData) {
             throw BackupException.EmptyBackup
         }
     }
@@ -89,7 +101,7 @@ class BackupManager(
             employeeDao.deleteAllByMerchant(merchantId)
             paymentMethodDao.deleteAll()
 
-            if (payload.customers.isNotEmpty()) {
+            if (payload.customers.orEmpty().isNotEmpty()) {
                 customerDao.insertAll(payload.customers)
             } else {
                 customerDao.insertAll(
@@ -104,23 +116,62 @@ class BackupManager(
                     )
                 )
             }
-            if (payload.paymentMethods.isNotEmpty()) paymentMethodDao.insertAll(payload.paymentMethods)
-            if (payload.products.isNotEmpty()) productDao.insertProducts(payload.products)
-            if (payload.productUnits.isNotEmpty()) productDao.insertUnits(payload.productUnits)
-            if (payload.transactions.isNotEmpty()) transactionDao.insertAll(payload.transactions)
-            if (payload.invoiceItems.isNotEmpty()) invoiceItemDao.insertAll(payload.invoiceItems)
-            if (payload.stockMovements.isNotEmpty()) stockMovementDao.insertAll(payload.stockMovements)
-            if (payload.inventorySessions.isNotEmpty()) inventoryDao.insertAllSessions(payload.inventorySessions)
-            if (payload.inventorySessionItems.isNotEmpty()) {
-                inventoryDao.insertSessionItems(payload.inventorySessionItems)
+            payload.paymentMethods.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                paymentMethodDao.insertAll(it)
             }
-            if (payload.returnInvoices.isNotEmpty()) returnDao.insertAllInvoices(payload.returnInvoices)
-            if (payload.returnItems.isNotEmpty()) returnDao.insertReturnItems(payload.returnItems)
-            if (payload.employees.isNotEmpty()) employeeDao.insertAll(payload.employees)
-            if (payload.cashBoxes.isNotEmpty()) cashBoxDao.upsertAll(payload.cashBoxes)
-            if (payload.cashBoxMovements.isNotEmpty()) cashBoxMovementDao.insertAll(payload.cashBoxMovements)
+            payload.products.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                productDao.insertProducts(it)
+            }
+            payload.productUnits.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                productDao.insertUnits(it)
+            }
+            payload.transactions.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                transactionDao.insertAll(it)
+            }
+            payload.invoiceItems.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                invoiceItemDao.insertAll(it)
+            }
+            payload.stockMovements.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                stockMovementDao.insertAll(it)
+            }
+            payload.inventorySessions.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                inventoryDao.insertAllSessions(it)
+            }
+            payload.inventorySessionItems.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                inventoryDao.insertSessionItems(it)
+            }
+            payload.returnInvoices.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                returnDao.insertAllInvoices(it)
+            }
+            payload.returnItems.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                returnDao.insertReturnItems(it)
+            }
+            payload.employees.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                employeeDao.insertAll(it)
+            }
+            payload.cashBoxes.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                cashBoxDao.upsertAll(it)
+            }
+            payload.cashBoxMovements.orEmpty().takeIf { it.isNotEmpty() }?.let {
+                cashBoxMovementDao.insertAll(it)
+            }
 
             transactionDao.recalculateHasItems()
+        }
+    }
+
+    private fun parseJson(json: String): BackupPayload {
+        return try {
+            gson.fromJson<BackupPayload>(json, payloadType) ?: throw BackupException.Corrupted
+        } catch (e: JsonSyntaxException) {
+            Log.e(BACKUP_LOG_TAG, "JSON syntax error during backup parse", e)
+            throw BackupException.Corrupted
+        } catch (e: JsonIOException) {
+            Log.e(BACKUP_LOG_TAG, "JSON IO error during backup parse", e)
+            throw BackupException.Corrupted
+        } catch (e: IllegalStateException) {
+            Log.e(BACKUP_LOG_TAG, "JSON structure mismatch during backup parse", e)
+            throw BackupException.Corrupted
         }
     }
 
@@ -146,22 +197,37 @@ class BackupManager(
         )
     }
 
+    private fun looksLikeZip(bytes: ByteArray): Boolean =
+        bytes.size >= 2 && bytes[0] == 0x50.toByte() && bytes[1] == 0x4B.toByte()
+
+    private fun looksLikeJson(bytes: ByteArray): Boolean {
+        val trimmed = bytes.dropWhile { it.toInt().toChar().isWhitespace() }
+        return trimmed.firstOrNull() == '{'.code.toByte()
+    }
+
     private fun extractJson(bytes: ByteArray): String? {
         if (bytes.isEmpty()) return null
-        return if (bytes.size >= 2 && bytes[0] == 0x50.toByte() && bytes[1] == 0x4B.toByte()) {
+        if (looksLikeZip(bytes)) {
             ZipInputStream(BufferedInputStream(bytes.inputStream())).use { zip ->
                 var entry = zip.nextEntry
+                var fallback: String? = null
                 while (entry != null) {
                     if (!entry.isDirectory && entry.name.endsWith(".json")) {
-                        return zip.readBytes().toString(Charsets.UTF_8)
+                        val content = zip.readBytes().toString(Charsets.UTF_8)
+                        if (entry.name == BACKUP_JSON_ENTRY || entry.name.endsWith("/$BACKUP_JSON_ENTRY")) {
+                            return content
+                        }
+                        if (fallback == null) fallback = content
                     }
                     entry = zip.nextEntry
                 }
-                null
+                return fallback
             }
-        } else {
-            bytes.toString(Charsets.UTF_8)
         }
+        if (looksLikeJson(bytes)) {
+            return bytes.toString(Charsets.UTF_8)
+        }
+        return null
     }
 }
 
@@ -169,6 +235,7 @@ sealed class BackupException : Exception() {
     data class IncompatibleSchema(val found: Int) : BackupException()
     data object Corrupted : BackupException()
     data object EmptyBackup : BackupException()
+    data object InvalidFile : BackupException()
     data object StorageFailed : BackupException()
     data object ReadFailed : BackupException()
 }

@@ -1,7 +1,7 @@
 package com.trader.salesmanager.ui.settings.backup
 
 import android.content.Context
-import android.net.Uri
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.lifecycle.ViewModel
@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 val LAST_BACKUP_AT_KEY = longPreferencesKey("last_backup_at")
@@ -66,7 +65,8 @@ class BackupViewModel(
                         successMessage = context.getString(R.string.backup_export_success)
                     )
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(BACKUP_LOG_TAG, "Export failed: ${e.javaClass.simpleName}: ${e.message}", e)
                 _uiState.update {
                     it.copy(
                         isExporting = false,
@@ -77,21 +77,17 @@ class BackupViewModel(
         }
     }
 
-    fun onImportFileSelected(uri: Uri?) {
-        if (uri == null) {
+    fun onImportBytes(bytes: ByteArray?) {
+        if (bytes == null) {
             _uiState.update {
-                it.copy(error = context.getString(R.string.backup_error_file_cancelled))
+                it.copy(error = context.getString(R.string.backup_error_read_failed))
             }
             return
         }
         viewModelScope.launch {
             _uiState.update { it.copy(error = null, successMessage = null) }
             try {
-                val payload = withContext(Dispatchers.IO) {
-                    context.contentResolver.openInputStream(uri)?.use { stream ->
-                        backupManager.parseBackup(stream)
-                    } ?: throw BackupException.ReadFailed
-                }
+                val payload = backupManager.parseBackupFromBytes(bytes)
                 backupManager.validatePayload(payload)
                 _uiState.update {
                     it.copy(
@@ -100,6 +96,10 @@ class BackupViewModel(
                     )
                 }
             } catch (e: BackupException.IncompatibleSchema) {
+                Log.e(
+                    BACKUP_LOG_TAG,
+                    "Import rejected: incompatible schema ${e.found}, expected $BACKUP_SCHEMA_VERSION"
+                )
                 _uiState.update {
                     it.copy(
                         error = context.getString(
@@ -109,27 +109,49 @@ class BackupViewModel(
                         )
                     )
                 }
+            } catch (_: BackupException.InvalidFile) {
+                Log.e(BACKUP_LOG_TAG, "Import rejected: picked file is not a valid backup archive")
+                _uiState.update {
+                    it.copy(error = context.getString(R.string.backup_error_invalid_file))
+                }
             } catch (_: BackupException.Corrupted) {
+                Log.e(BACKUP_LOG_TAG, "Import rejected: backup file is corrupted or unreadable")
                 _uiState.update {
                     it.copy(error = context.getString(R.string.backup_error_corrupted))
                 }
             } catch (_: BackupException.EmptyBackup) {
+                Log.e(BACKUP_LOG_TAG, "Import rejected: backup payload contains no merchant data")
                 _uiState.update {
                     it.copy(error = context.getString(R.string.backup_error_empty))
                 }
             } catch (_: BackupException.ReadFailed) {
+                Log.e(BACKUP_LOG_TAG, "Import rejected: could not read picked file bytes")
                 _uiState.update {
                     it.copy(error = context.getString(R.string.backup_error_read_failed))
                 }
-            } catch (_: SecurityException) {
-                _uiState.update {
-                    it.copy(error = context.getString(R.string.backup_error_permission_denied))
-                }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(
+                    BACKUP_LOG_TAG,
+                    "Import parse failed: ${e.javaClass.simpleName}: ${e.message}",
+                    e
+                )
                 _uiState.update {
                     it.copy(error = context.getString(R.string.backup_error_import_failed))
                 }
             }
+        }
+    }
+
+    fun onImportFileCancelled() {
+        _uiState.update {
+            it.copy(error = context.getString(R.string.backup_error_file_cancelled))
+        }
+    }
+
+    fun onImportPermissionDenied() {
+        Log.e(BACKUP_LOG_TAG, "Import rejected: URI read permission denied")
+        _uiState.update {
+            it.copy(error = context.getString(R.string.backup_error_permission_denied))
         }
     }
 
@@ -161,6 +183,10 @@ class BackupViewModel(
                     )
                 }
             } catch (e: BackupException.IncompatibleSchema) {
+                Log.e(
+                    BACKUP_LOG_TAG,
+                    "Restore rejected: incompatible schema ${e.found}, expected $BACKUP_SCHEMA_VERSION"
+                )
                 _uiState.update {
                     it.copy(
                         isImporting = false,
@@ -172,7 +198,12 @@ class BackupViewModel(
                         )
                     )
                 }
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e(
+                    BACKUP_LOG_TAG,
+                    "Restore failed: ${e.javaClass.simpleName}: ${e.message}",
+                    e
+                )
                 _uiState.update {
                     it.copy(
                         isImporting = false,
