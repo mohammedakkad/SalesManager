@@ -5,7 +5,6 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
-import com.google.gson.reflect.TypeToken
 import com.trader.core.data.local.db.AppDatabase
 import androidx.room.withTransaction
 import com.trader.core.data.local.entity.CustomerEntity
@@ -30,7 +29,6 @@ class BackupManager(
     private val merchantId: String
 ) {
     private val gson = Gson()
-    private val payloadType = object : TypeToken<BackupPayload>() {}.type
 
     suspend fun exportToZip(): File = withContext(Dispatchers.IO) {
         val payload = collectPayload()
@@ -162,7 +160,7 @@ class BackupManager(
 
     private fun parseJson(json: String): BackupPayload {
         return try {
-            gson.fromJson<BackupPayload>(json, payloadType) ?: throw BackupException.Corrupted
+            gson.fromJson(json, BackupPayload::class.java) ?: throw BackupException.Corrupted
         } catch (e: JsonSyntaxException) {
             Log.e(BACKUP_LOG_TAG, "JSON syntax error during backup parse", e)
             throw BackupException.Corrupted
