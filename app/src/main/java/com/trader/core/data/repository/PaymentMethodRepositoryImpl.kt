@@ -1,6 +1,7 @@
 package com.trader.core.data.repository
 
 import com.trader.core.data.local.dao.CashBoxDao
+import com.trader.core.data.local.dao.CashBoxMovementDao
 import com.trader.core.data.local.dao.PaymentMethodDao
 import com.trader.core.data.local.entity.PaymentMethodEntity
 import com.trader.core.data.remote.FirebaseSyncService
@@ -14,7 +15,8 @@ class PaymentMethodRepositoryImpl(
     private val dao: PaymentMethodDao,
     private val sync: FirebaseSyncService,
     private val activationRepo: ActivationRepository,
-    private val cashBoxDao: CashBoxDao
+    private val cashBoxDao: CashBoxDao,
+    private val cashBoxMovementDao: CashBoxMovementDao
 ) : PaymentMethodRepository {
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -50,13 +52,15 @@ class PaymentMethodRepositoryImpl(
     }
 
     override suspend fun deletePaymentMethod(m: PaymentMethod) {
+        val boxId = m.id.toString()
         dao.deletePaymentMethod(PaymentMethodEntity.fromDomain(m))
-        // ✅ حذف تتالٍ: صندوق طريقة الدفع يُحذف معها — محلياً وعن بُعد
-        cashBoxDao.deleteById(m.id.toString())
+        cashBoxMovementDao.deleteByCashBoxId(boxId)
+        cashBoxDao.deleteById(boxId)
         sync.deletePaymentMethod(code(), m.id)
         syncScope.launch {
             try {
-                sync.deleteCashBox(code(), m.id.toString())
+                sync.deleteCashBoxMovements(code(), boxId)
+                sync.deleteCashBox(code(), boxId)
             } catch (_: Exception) {}
         }
     }

@@ -24,9 +24,10 @@ import com.trader.core.domain.model.PaymentType
         ReturnItemEntity::class,
         SessionEntity::class,
         EmployeeEntity::class,
-        CashBoxEntity::class
+        CashBoxEntity::class,
+        CashBoxMovementEntity::class
     ],
-    version = 17,
+    version = 18,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -42,6 +43,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun sessionDao(): SessionDao
     abstract fun employeeDao(): EmployeeDao
     abstract fun cashBoxDao(): CashBoxDao
+    abstract fun cashBoxMovementDao(): CashBoxMovementDao
 
     companion object {
         const val DB_NAME = "sales_manager.db"
@@ -419,6 +421,31 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_17_18 = object : Migration(17, 18) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS cash_box_movements (
+                        id                    TEXT NOT NULL PRIMARY KEY,
+                        cashBoxId             TEXT NOT NULL,
+                        paymentMethodName     TEXT NOT NULL,
+                        type                  TEXT NOT NULL,
+                        amountDelta           REAL NOT NULL,
+                        balanceAfter          REAL NOT NULL,
+                        note                  TEXT NOT NULL DEFAULT '',
+                        relatedTransactionId  INTEGER,
+                        createdAt             INTEGER NOT NULL,
+                        merchantId            TEXT NOT NULL DEFAULT '',
+                        syncStatus            TEXT NOT NULL DEFAULT 'PENDING'
+                    )
+                    """.trimIndent()
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_cash_box_movements_cashBoxId ON cash_box_movements(cashBoxId)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_cash_box_movements_createdAt ON cash_box_movements(createdAt)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_cash_box_movements_syncStatus ON cash_box_movements(syncStatus)")
+            }
+        }
+
         // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
         Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
@@ -438,7 +465,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_13_14,
             MIGRATION_14_15,
             MIGRATION_15_16, // ✅ deviceModel في sessions
-            MIGRATION_16_17  // ✅ جدول الصناديق cash_boxes
+            MIGRATION_16_17,
+            MIGRATION_17_18
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
@@ -484,10 +512,34 @@ suspend fun AppDatabase.upsertProductWithUnitsAndClean(
     units: List<ProductUnitEntity>
 ) {
     withTransaction {
-        productDao().insertProduct(product) // ✅ المنتج أولاً
-        productDao().insertUnits(units) // ✅ الوحدات ثانياً
+        productDao().insertProduct(product)
+        productDao().insertUnits(units)
         productDao().deleteRemovedUnits(product.id, units.map {
             it.id
         })
+    }
+}
+
+suspend fun AppDatabase.recordCashBoxBalanceChange(
+    boxId: String,
+    delta: Double,
+    absoluteBalance: Double?,
+    updatedAt: Long,
+    movement: CashBoxMovementEntity,
+    markAsInitial: Boolean = false
+) {
+    withTransaction {
+        when {
+            markAsInitial && absoluteBalance != null ->
+                cashBoxDao().setInitialBalanceFields(boxId, absoluteBalance, updatedAt, updatedAt)
+            absoluteBalance != null ->
+                cashBoxDao().updateBalance(boxId, absoluteBalance, updatedAt)
+            delta != 0.0 ->
+                cashBoxDao().applyDelta(boxId, delta, updatedAt)
+        }
+        val box = cashBoxDao().getById(boxId) ?: return@withTransaction
+        cashBoxMovementDao().insert(
+            movement.copy(balanceAfter = box.currentBalance)
+        )
     }
 }

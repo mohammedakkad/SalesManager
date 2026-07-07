@@ -1,3 +1,41 @@
 <resources>
     <string name="app_name">Sales Manager</string>
+
+    <string name="boxes_title">الصناديق</string>
+    <string name="boxes_subtitle">رصيد كل طريقة دفع لحظياً</string>
+    <string name="boxes_total_balance">الرصيد الإجمالي</string>
+    <string name="boxes_initialized_count">%1$d من %2$d صناديق مهيّأة</string>
+    <string name="boxes_empty_title">لا توجد صناديق بعد</string>
+    <string name="boxes_empty_subtitle">أضف طريقة دفع أولاً — سيُنشأ صندوقها تلقائياً</string>
+    <string name="boxes_section_title">صناديق طرق الدفع</string>
+    <string name="boxes_movements_title">حركات الصناديق</string>
+    <string name="boxes_movements_empty_title">لا توجد حركات بعد</string>
+    <string name="boxes_movements_empty_subtitle">ستظهر هنا كل تعديلات الأرصدة والعمليات المرتبطة</string>
+    <string name="boxes_box_movements_title">حركات هذا الصندوق</string>
+    <string name="boxes_last_update">آخر تحديث %1$s</string>
+    <string name="boxes_awaiting_initial">بانتظار تحديد الرصيد</string>
+    <string name="boxes_set_initial">حدد الرصيد الابتدائي</string>
+    <string name="boxes_adjust_balance">تعديل الرصيد</string>
+    <string name="boxes_initial_dialog_title">تحديد الرصيد الابتدائي</string>
+    <string name="boxes_initial_dialog_body">الرصيد الحالي في «%1$s» الآن — يُحدَّد مرة واحدة فقط</string>
+    <string name="boxes_adjust_dialog_title">تعديل الرصيد</string>
+    <string name="boxes_adjust_dialog_body">أدخل الرصيد الجديد لـ «%1$s». سيُسجَّل كتعديل يدوي منفصل عن العمليات.</string>
+    <string name="boxes_amount_label">المبلغ</string>
+    <string name="boxes_amount_placeholder">0.00</string>
+    <string name="boxes_note_label">ملاحظة (اختياري)</string>
+    <string name="boxes_reason_label">سبب التعديل</string>
+    <string name="boxes_save">حفظ</string>
+    <string name="boxes_cancel">إلغاء</string>
+    <string name="boxes_error_invalid_amount">أدخل مبلغاً صحيحاً</string>
+    <string name="boxes_error_generic">حدث خطأ: %1$s</string>
+    <string name="boxes_reason_correction">تصحيح</string>
+    <string name="boxes_reason_count">جرد</string>
+    <string name="boxes_reason_transfer">تحويل</string>
+    <string name="boxes_reason_other">أخرى</string>
+    <string name="boxes_movement_initial">رصيد ابتدائي</string>
+    <string name="boxes_movement_transaction">عملية مبيعات</string>
+    <string name="boxes_movement_adjustment">تعديل يدوي</string>
+    <string name="boxes_time_now">الآن</string>
+    <string name="boxes_time_minutes">قبل %1$d د</string>
+    <string name="boxes_time_hours">قبل %1$d س</string>
 </resources>

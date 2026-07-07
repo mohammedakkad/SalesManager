@@ -140,6 +140,7 @@ class TransactionRepositoryImpl(
         val id = transactionDao.insertTransaction(entity)
         // ✅ الصناديق: عملية جديدة مدفوعة تُضاف لرصيد صندوق طريقة الدفع
         cashBoxRepo.applyTransactionEffect(
+            relatedTransactionId = id,
             oldPaymentMethodId = null, oldAmount = 0.0, oldWasPaid = false,
             newPaymentMethodId = t.paymentMethodId, newAmount = t.amount, newWasPaid = t.isPaid
         )
@@ -160,6 +161,7 @@ class TransactionRepositoryImpl(
             TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.PENDING))
         )
         cashBoxRepo.applyTransactionEffect(
+            relatedTransactionId = t.id,
             oldPaymentMethodId = old?.paymentMethodId,
             oldAmount = old?.amount ?: 0.0,
             oldWasPaid = old?.isPaid ?: false,
@@ -197,6 +199,7 @@ class TransactionRepositoryImpl(
         transactionDao.deleteTransaction(TransactionEntity.fromDomain(t))
         // ✅ الصناديق: حذف عملية مدفوعة يخصم مبلغها من صندوقها
         cashBoxRepo.applyTransactionEffect(
+            relatedTransactionId = t.id,
             oldPaymentMethodId = t.paymentMethodId, oldAmount = t.amount, oldWasPaid = t.isPaid,
             newPaymentMethodId = null, newAmount = 0.0, newWasPaid = false
         )

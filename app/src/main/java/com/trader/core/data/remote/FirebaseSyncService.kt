@@ -24,6 +24,8 @@ import com.trader.core.domain.model.TransactionReturnStatus
 import com.trader.core.domain.model.Employee
 import com.trader.core.domain.model.EmployeeRole
 import com.trader.core.domain.model.CashBox
+import com.trader.core.domain.model.CashBoxMovement
+import com.trader.core.domain.model.CashBoxMovementType
 import com.trader.core.domain.model.SyncStatus
 import java.util.UUID
 
@@ -285,7 +287,34 @@ class FirebaseSyncService {
             emptyList()
         }
 
-        return MerchantData(customers, transactions, paymentMethods, returns, invoiceItems, cashBoxes)
+        val cashBoxMovements = try {
+            root.child("cash_box_movements").get().await().children.mapNotNull { snap ->
+                snap.toCashBoxMovement(merchantCode)
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+
+        return MerchantData(customers, transactions, paymentMethods, returns, invoiceItems, cashBoxes, cashBoxMovements)
+    }
+
+    private fun DataSnapshot.toCashBoxMovement(merchantCode: String): CashBoxMovement? {
+        val m = value as? Map<*, *> ?: return null
+        return CashBoxMovement(
+            id = m["id"] as? String ?: key ?: return null,
+            cashBoxId = m["cashBoxId"] as? String ?: return null,
+            paymentMethodName = m["paymentMethodName"] as? String ?: "",
+            type = runCatching {
+                CashBoxMovementType.valueOf(m["type"] as? String ?: "")
+            }.getOrDefault(CashBoxMovementType.MANUAL_ADJUSTMENT),
+            amountDelta = m["amountDelta"].asDouble() ?: 0.0,
+            balanceAfter = m["balanceAfter"].asDouble() ?: 0.0,
+            note = m["note"] as? String ?: "",
+            relatedTransactionId = m["relatedTransactionId"].asLong(),
+            createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis(),
+            merchantId = merchantCode,
+            syncStatus = SyncStatus.SYNCED
+        )
     }
 
     private fun DataSnapshot.toCashBox(merchantCode: String): CashBox? {
@@ -346,6 +375,46 @@ class FirebaseSyncService {
     suspend fun deleteCashBox(merchantCode: String, boxId: String) {
         db.reference.child("merchants").child(merchantCode).child("cash_boxes")
             .child(boxId).removeValue().await()
+    }
+
+    fun observeCashBoxMovements(merchantCode: String): Flow<List<CashBoxMovement>> = callbackFlow {
+        val ref = db.reference.child("merchants").child(merchantCode).child("cash_box_movements")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snap: DataSnapshot) {
+                trySend(snap.children.mapNotNull { child ->
+                    runCatching { child.toCashBoxMovement(merchantCode) }.getOrNull()
+                })
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        ref.addValueEventListener(listener)
+        awaitClose {
+            ref.removeEventListener(listener)
+        }
+    }
+
+    suspend fun pushCashBoxMovement(merchantCode: String, movement: CashBoxMovement) {
+        db.reference.child("merchants").child(merchantCode).child("cash_box_movements")
+            .child(movement.id)
+            .setValue(
+                mapOf(
+                    "id" to movement.id,
+                    "cashBoxId" to movement.cashBoxId,
+                    "paymentMethodName" to movement.paymentMethodName,
+                    "type" to movement.type.name,
+                    "amountDelta" to movement.amountDelta,
+                    "balanceAfter" to movement.balanceAfter,
+                    "note" to movement.note,
+                    "relatedTransactionId" to movement.relatedTransactionId,
+                    "createdAt" to movement.createdAt
+                )
+            ).await()
+    }
+
+    suspend fun deleteCashBoxMovements(merchantCode: String, cashBoxId: String) {
+        val ref = db.reference.child("merchants").child(merchantCode).child("cash_box_movements")
+        val snap = ref.orderByChild("cashBoxId").equalTo(cashBoxId).get().await()
+        snap.children.forEach { it.ref.removeValue().await() }
     }
 
     fun observeCustomers(merchantCode: String): Flow<List<Customer>> = callbackFlow {
@@ -708,7 +777,8 @@ data class MerchantData(
     val paymentMethods: List<PaymentMethod>,
     val returns: List<Pair<ReturnInvoice, List<ReturnItem>>> = emptyList(),
     val invoiceItems: List<InvoiceItem> = emptyList(),
-    val cashBoxes: List<CashBox> = emptyList()
+    val cashBoxes: List<CashBox> = emptyList(),
+    val cashBoxMovements: List<CashBoxMovement> = emptyList()
 )
 
 sealed class ValidationResult {

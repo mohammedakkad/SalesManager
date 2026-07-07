@@ -30,7 +30,8 @@ class ActivationRepositoryImpl(
     private val productFirestoreService: ProductFirestoreService,
     private val returnDao: ReturnDao,
     private val invoiceItemDao: InvoiceItemDao,
-    private val cashBoxDao: CashBoxDao
+    private val cashBoxDao: CashBoxDao,
+    private val cashBoxMovementDao: CashBoxMovementDao
 ) : ActivationRepository {
 
     private val realtimeDb = FirebaseDatabase.getInstance().reference
@@ -178,6 +179,16 @@ class ActivationRepositoryImpl(
                 cashBoxDao.upsert(
                     CashBoxEntity.fromDomain(
                         box.copy(merchantId = code, syncStatus = SyncStatus.SYNCED)
+                    )
+                )
+            }
+        }
+
+        data.cashBoxMovements.forEach { movement ->
+            runCatching {
+                cashBoxMovementDao.insert(
+                    CashBoxMovementEntity.fromDomain(
+                        movement.copy(merchantId = code, syncStatus = SyncStatus.SYNCED)
                     )
                 )
             }

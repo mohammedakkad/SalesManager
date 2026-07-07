@@ -1,11 +1,15 @@
 package com.trader.salesmanager.ui.boxes
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.trader.core.domain.model.AdjustmentReason
 import com.trader.core.domain.model.CashBox
+import com.trader.core.domain.model.CashBoxMovement
 import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.repository.CashBoxRepository
 import com.trader.core.domain.repository.PaymentMethodRepository
+import com.trader.salesmanager.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,19 +19,23 @@ import kotlinx.coroutines.launch
 
 data class BoxesUiState(
     val boxes: List<CashBox> = emptyList(),
-    /** paymentMethodId → نوع الطريقة، لاختيار الأيقونة واللون */
+    val movements: List<CashBoxMovement> = emptyList(),
     val paymentTypes: Map<Long, PaymentType> = emptyMap(),
+    val expandedBoxId: String? = null,
     val isLoading: Boolean = true,
     val error: String? = null
 ) {
-    /** مجموع أرصدة الصناديق المهيّأة فقط */
     val totalBalance: Double get() = boxes.filter { it.isInitialized }.sumOf { it.currentBalance }
     val initializedCount: Int get() = boxes.count { it.isInitialized }
+
+    fun movementsForBox(boxId: String): List<CashBoxMovement> =
+        movements.filter { it.cashBoxId == boxId }
 }
 
 class BoxesViewModel(
     private val cashBoxRepo: CashBoxRepository,
-    paymentMethodRepo: PaymentMethodRepository
+    paymentMethodRepo: PaymentMethodRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BoxesUiState())
@@ -37,18 +45,31 @@ class BoxesViewModel(
         viewModelScope.launch {
             combine(
                 cashBoxRepo.getAllBoxes(),
-                paymentMethodRepo.getAllPaymentMethods()
-            ) { boxes, methods ->
-                Pair(boxes, methods.associate { it.id to it.type })
-            }.collect { (boxes, types) ->
+                paymentMethodRepo.getAllPaymentMethods(),
+                cashBoxRepo.getAllMovements()
+            ) { boxes, methods, movements ->
+                Triple(boxes, methods.associate { it.id to it.type }, movements)
+            }.collect { (boxes, types, movements) ->
                 _uiState.update {
-                    it.copy(boxes = boxes, paymentTypes = types, isLoading = false)
+                    it.copy(
+                        boxes = boxes,
+                        paymentTypes = types,
+                        movements = movements,
+                        isLoading = false
+                    )
                 }
             }
         }
-        // إعادة رفع أي صندوق معلق عند فتح الشاشة
         viewModelScope.launch {
             runCatching { cashBoxRepo.syncPendingBoxes() }
+        }
+    }
+
+    fun toggleBoxExpanded(boxId: String) {
+        _uiState.update { state ->
+            state.copy(
+                expandedBoxId = if (state.expandedBoxId == boxId) null else boxId
+            )
         }
     }
 
@@ -56,26 +77,62 @@ class BoxesViewModel(
         val amount = amountText.toLatinDigits().toDoubleOrNull()
         if (amount == null || amount < 0) {
             _uiState.update {
-                it.copy(error = "أدخل مبلغاً صحيحاً")
+                it.copy(error = context.getString(R.string.boxes_error_invalid_amount))
             }
             return
         }
         viewModelScope.launch {
             try {
                 cashBoxRepo.setInitialBalance(boxId, amount)
-                _uiState.update {
-                    it.copy(error = null)
-                }
+                _uiState.update { it.copy(error = null) }
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(error = "حدث خطأ: ${e.message}")
+                    it.copy(error = context.getString(R.string.boxes_error_generic, e.message ?: ""))
                 }
             }
         }
     }
 
-    fun clearError() = _uiState.update {
-        it.copy(error = null)
+    fun adjustBalance(
+        boxId: String,
+        amountText: String,
+        note: String?,
+        reason: AdjustmentReason
+    ) {
+        val amount = amountText.toLatinDigits().toDoubleOrNull()
+        if (amount == null || amount < 0) {
+            _uiState.update {
+                it.copy(error = context.getString(R.string.boxes_error_invalid_amount))
+            }
+            return
+        }
+        val reasonLabel = reasonLabel(reason)
+        val fullNote = buildString {
+            append(reasonLabel)
+            if (!note.isNullOrBlank()) {
+                append(": ")
+                append(note.trim())
+            }
+        }
+        viewModelScope.launch {
+            try {
+                cashBoxRepo.adjustBalance(boxId, amount, fullNote, reason)
+                _uiState.update { it.copy(error = null) }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(error = context.getString(R.string.boxes_error_generic, e.message ?: ""))
+                }
+            }
+        }
+    }
+
+    fun clearError() = _uiState.update { it.copy(error = null) }
+
+    private fun reasonLabel(reason: AdjustmentReason): String = when (reason) {
+        AdjustmentReason.CORRECTION -> context.getString(R.string.boxes_reason_correction)
+        AdjustmentReason.COUNT -> context.getString(R.string.boxes_reason_count)
+        AdjustmentReason.TRANSFER -> context.getString(R.string.boxes_reason_transfer)
+        AdjustmentReason.OTHER -> context.getString(R.string.boxes_reason_other)
     }
 }
 

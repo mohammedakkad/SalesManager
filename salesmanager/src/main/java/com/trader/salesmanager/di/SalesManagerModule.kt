@@ -108,6 +108,9 @@ val salesManagerModule = module {
     single {
         get<AppDatabase>().cashBoxDao()
     }
+    single {
+        get<AppDatabase>().cashBoxMovementDao()
+    }
 
     // ── Remote ───────────────────────────────────────────────────
     single {
@@ -126,7 +129,7 @@ val salesManagerModule = module {
     // ── Repositories ─────────────────────────────────────────────
     single<ActivationRepository> {
         ActivationRepositoryImpl(
-            androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get()
+            androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()
         )
     }
 
@@ -144,10 +147,10 @@ val salesManagerModule = module {
         TransactionRepositoryImpl(get(), get(), get(), get(), get(), get(), get(), get())
     }
     single<PaymentMethodRepository> {
-        PaymentMethodRepositoryImpl(get(), get(), get(), get())
+        PaymentMethodRepositoryImpl(get(), get(), get(), get(), get())
     }
     single<CashBoxRepository> {
-        CashBoxRepositoryImpl(get(), get(), get(), get())
+        CashBoxRepositoryImpl(get(), get(), get(), get(), get(), get())
     }
     single<ChatRepository> {
         ChatRepositoryImpl(get())
@@ -265,7 +268,7 @@ val salesManagerModule = module {
         PaymentMethodsViewModel(get())
     }
     viewModel {
-        BoxesViewModel(get(), get())
+        BoxesViewModel(get(), get(), androidContext())
     }
     viewModel {
         DebtsViewModel(get(), get())

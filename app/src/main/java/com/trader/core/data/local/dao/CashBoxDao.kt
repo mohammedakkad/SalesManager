@@ -27,7 +27,16 @@ interface CashBoxDao {
     @Query("UPDATE cash_boxes SET currentBalance = :newBalance, updatedAt = :updatedAt, syncStatus = 'PENDING' WHERE id = :id")
     suspend fun updateBalance(id: String, newBalance: Double, updatedAt: Long)
 
-    /** تعديل تراكمي ذرّي — يمنع فقدان تحديثات متزامنة على نفس الصندوق */
+    @Query(
+        """
+        UPDATE cash_boxes
+        SET currentBalance = :balance, initialBalance = :balance, initialBalanceSetAt = :setAt,
+            updatedAt = :updatedAt, syncStatus = 'PENDING'
+        WHERE id = :id
+        """
+    )
+    suspend fun setInitialBalanceFields(id: String, balance: Double, setAt: Long, updatedAt: Long)
+
     @Query("UPDATE cash_boxes SET currentBalance = currentBalance + :delta, updatedAt = :updatedAt, syncStatus = 'PENDING' WHERE id = :id")
     suspend fun applyDelta(id: String, delta: Double, updatedAt: Long)
 
