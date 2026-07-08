@@ -86,4 +86,24 @@
     <string name="settings_backup_title">النسخ الاحتياطي</string>
     <string name="settings_backup_subtitle">تصدير واستيراد مشفّر لبيانات المحل</string>
     <string name="settings_backup_last">آخر نسخة: %1$s</string>
+
+    <!-- Sync Status Indicator -->
+    <string name="sync_status_synced_desc">البيانات محفوظة في السحابة</string>
+    <string name="sync_status_pending_desc">جاري المزامنة</string>
+    <string name="sync_status_failed_desc">فشل في المزامنة — اضغط للتفاصيل</string>
+
+    <string name="sync_status_synced_label">متزامن</string>
+    <string name="sync_status_pending_label">معلق</string>
+    <string name="sync_status_failed_label">فشل</string>
+
+    <string name="sync_sheet_title_synced">كل البيانات محفوظة</string>
+    <string name="sync_sheet_subtitle_synced">جميع البيانات متزامنة مع السحابة بنجاح</string>
+    <string name="sync_sheet_title_pending">جاري المزامنة</string>
+    <string name="sync_sheet_subtitle_pending">%1$d عنصر في انتظار المزامنة</string>
+    <string name="sync_sheet_title_failed">خطأ في المزامنة</string>
+    <string name="sync_sheet_subtitle_failed">%1$d عنصر لم يتم مزامنته — تحقق من الاتصال</string>
+
+    <string name="sync_sheet_retry_button">إعادة المزامنة الآن</string>
+    <string name="sync_sheet_empty_title">لا يوجد شيء معلق</string>
+    <string name="sync_sheet_empty_subtitle">جميع بياناتك متزامنة بالكامل</string>
 </resources>

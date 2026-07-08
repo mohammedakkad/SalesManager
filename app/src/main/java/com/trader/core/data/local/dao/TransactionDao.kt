@@ -83,6 +83,15 @@ interface TransactionDao {
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun deleteById(id: Long)
 
+    @Query("SELECT COUNT(*) FROM transactions WHERE syncStatus != 'SYNCED'")
+    fun observeUnsyncedCount(): Flow<Int>
+
+    @Query("SELECT * FROM transactions WHERE syncStatus != 'SYNCED' ORDER BY date DESC")
+    fun observeUnsynced(): Flow<List<TransactionEntity>>
+
+    @Query("UPDATE transactions SET syncStatus = 'FAILED' WHERE id = :id")
+    suspend fun markFailed(id: Long)
+
     /** عند حذف عميل → تُنقل عملياته للزبون الزائر (id=-1) بدل حذفها */
     @Query("UPDATE transactions SET customerId = -1 WHERE customerId = :customerId")
     suspend fun reassignToVisitor(customerId: Long)

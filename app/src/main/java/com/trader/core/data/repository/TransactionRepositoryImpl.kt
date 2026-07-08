@@ -135,28 +135,23 @@ class TransactionRepositoryImpl(
     }
 
     override suspend fun insertTransaction(t: Transaction): Long {
-        // ✅ يُحفظ كـ PENDING أولاً
         val entity = TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.PENDING))
         val id = transactionDao.insertTransaction(entity)
-        // ✅ الصناديق: عملية جديدة مدفوعة تُضاف لرصيد صندوق طريقة الدفع
         cashBoxRepo.applyTransactionEffect(
             relatedTransactionId = id,
             oldPaymentMethodId = null, oldAmount = 0.0, oldWasPaid = false,
             newPaymentMethodId = t.paymentMethodId, newAmount = t.amount, newWasPaid = t.isPaid
         )
         syncScope.launch {
-            try {
-                sync.pushTransaction(code(), t.copy(id = id))
-                transactionDao.markSynced(id) // ✅ يصبح SYNCED بعد الرفع
-            } catch (_: Exception) {}
+            runCatching { sync.pushTransaction(code(), t.copy(id = id)) }
+                .onSuccess { transactionDao.markSynced(id) }
+                .onFailure { transactionDao.markFailed(id) }
         }
         return id
     }
 
     override suspend fun updateTransaction(t: Transaction) {
-        // ✅ الصناديق: نقرأ الحالة القديمة قبل الكتابة لعكس أثرها ثم تطبيق الجديد
         val old = transactionDao.getTransactionById(t.id)
-        // ✅ PENDING حتى يتأكد الرفع
         transactionDao.updateTransaction(
             TransactionEntity.fromDomain(t.copy(syncStatus = SyncStatus.PENDING))
         )
@@ -170,13 +165,25 @@ class TransactionRepositoryImpl(
             newWasPaid = t.isPaid
         )
         syncScope.launch {
-            try {
+            runCatching {
                 sync.pushTransaction(code(), t)
-                // ✅ مشكلة 4: تأخير بسيط حتى تظهر أيقونة "جاري المزامنة" للتاجر
                 delay(600)
-                transactionDao.markSynced(t.id)
-            } catch (_: Exception) {}
+            }
+                .onSuccess { transactionDao.markSynced(t.id) }
+                .onFailure { transactionDao.markFailed(t.id) }
         }
+    }
+
+    override suspend fun syncPendingTransactions() {
+        val merchantCode = code()
+        if (merchantCode.isEmpty()) return
+        transactionDao.getAllOnce()
+            .filter { it.syncStatus == SyncStatus.PENDING.name }
+            .forEach { entity ->
+                runCatching { sync.pushTransaction(merchantCode, entity.enrich()) }
+                    .onSuccess { transactionDao.markSynced(entity.id) }
+                    .onFailure { transactionDao.markFailed(entity.id) }
+            }
     }
 
     override suspend fun deleteTransaction(t: Transaction) {

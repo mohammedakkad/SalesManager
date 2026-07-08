@@ -45,17 +45,16 @@ class InvoiceItemRepositoryImpl(
     }
 
     override suspend fun saveItems(items: List<InvoiceItem>) {
-        dao.insertAll(items.map {
-            it.toEntity()
-        })
+        dao.insertAll(items.map { it.toEntity() })
         syncScope.launch {
-            try {
-                remote.uploadInvoiceItems(merchantId, items) // Firestore
-                sync.pushInvoiceItems(merchantId, items)     // ✅ Realtime Database
-                // ✅ Fix 1: تعيين SYNCED بعد نجاح كلا الـ push
+            var firestoreOk = false
+            var realtimeOk = false
+            runCatching { remote.uploadInvoiceItems(merchantId, items) }
+                .onSuccess { firestoreOk = true }
+            runCatching { sync.pushInvoiceItems(merchantId, items) }
+                .onSuccess { realtimeOk = true }
+            if (firestoreOk && realtimeOk) {
                 items.forEach { dao.markSynced(it.id) }
-            } catch (_: Exception) {
-                // البقاء PENDING مقصود — سيُعالج بواسطة SyncCoordinator عند استعادة الشبكة
             }
         }
     }
@@ -91,23 +90,18 @@ class InvoiceItemRepositoryImpl(
 
         val items = pending.map { it.toDomain() }
 
-        // ✅ Fix 1b: كل مصدر مستقل — فشل أحدهما لا يمنع الآخر
         var firestoreSynced = false
         var realtimeSynced = false
 
-        try {
-            remote.uploadInvoiceItems(merchantId, items)
-            firestoreSynced = true
-        } catch (_: Exception) {}
+        runCatching { remote.uploadInvoiceItems(merchantId, items) }
+            .onSuccess { firestoreSynced = true }
+        runCatching { sync.pushInvoiceItems(merchantId, items) }
+            .onSuccess { realtimeSynced = true }
 
-        try {
-            sync.pushInvoiceItems(merchantId, items)
-            realtimeSynced = true
-        } catch (_: Exception) {}
-
-        // markSynced فقط إذا نجح كلاهما لضمان اتساق البيانات
         if (firestoreSynced && realtimeSynced) {
             pending.forEach { dao.markSynced(it.id) }
+        } else {
+            pending.forEach { dao.markFailed(it.id) }
         }
     }
 }

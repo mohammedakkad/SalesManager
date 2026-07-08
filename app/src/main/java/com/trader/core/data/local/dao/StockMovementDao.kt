@@ -38,4 +38,13 @@ interface StockMovementDao {
 
     @Query("UPDATE stock_movements SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markSynced(id: String)
+
+    @Query("SELECT COUNT(*) FROM stock_movements WHERE syncStatus != 'SYNCED'")
+    fun observeUnsyncedCount(): Flow<Int>
+
+    @Query("SELECT * FROM stock_movements WHERE syncStatus != 'SYNCED' ORDER BY createdAt DESC")
+    fun observeUnsynced(): Flow<List<StockMovementEntity>>
+
+    @Query("UPDATE stock_movements SET syncStatus = 'FAILED' WHERE id = :id")
+    suspend fun markFailed(id: String)
 }

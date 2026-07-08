@@ -37,6 +37,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -49,7 +50,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,6 +83,7 @@ import java.util.Locale
 private val HEADER_CONTENT_HEIGHT = 140.dp
 private val OVERLAP = 40.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onNavigateToCustomers: () -> Unit,
@@ -90,10 +95,23 @@ fun HomeScreen(
     onNavigateToInventory: () -> Unit = {},
     onAddTransaction: () -> Unit,
     onTransactionClick: (Long) -> Unit,
-    viewModel: HomeViewModel = koinViewModel()
+    viewModel: HomeViewModel = koinViewModel(),
+    syncViewModel: SyncStatusViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val syncState by syncViewModel.syncState.collectAsStateWithLifecycle()
+    val unsyncedItems by syncViewModel.unsyncedItems.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
+    var showSyncSheet by rememberSaveable { mutableStateOf(false) }
+
+    if (showSyncSheet) {
+        SyncStatusBottomSheet(
+            syncState = syncState,
+            unsyncedItems = unsyncedItems,
+            onDismiss = { showSyncSheet = false },
+            onRetrySync = { syncViewModel.retrySync() }
+        )
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -157,6 +175,10 @@ fun HomeScreen(
                             )
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            SyncStatusIconButton(
+                                syncState = syncState,
+                                onClick = { showSyncSheet = true }
+                            )
                             // ── زر الشات مع Badge ────────────────
                             Box {
                                 IconButton(
@@ -173,7 +195,6 @@ fun HomeScreen(
                                         uiState.unreadChatCount > 9 -> "${uiState.unreadChatCount}"
                                         else -> "${uiState.unreadChatCount}"
                                     }
-                                    // ✅ العرض يتمدد للأرقام المزدوجة والثلاثية
                                     val badgeWidth = when {
                                         uiState.unreadChatCount > 99 -> 26.dp
                                         uiState.unreadChatCount > 9 -> 22.dp
@@ -194,7 +215,6 @@ fun HomeScreen(
                                             color = Color.White,
                                             fontSize = 9.sp,
                                             fontWeight = FontWeight.ExtraBold,
-                                            // ✅ إصلاح الانزياح للأسفل
                                             lineHeight = 9.sp,
                                             maxLines = 1
                                         )

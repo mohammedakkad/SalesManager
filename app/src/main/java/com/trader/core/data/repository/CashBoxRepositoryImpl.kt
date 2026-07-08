@@ -189,25 +189,23 @@ class CashBoxRepositoryImpl(
 
     private fun pushBoxAsync(boxId: String) {
         syncScope.launch {
-            try {
-                val merchantCode = code()
-                if (merchantCode.isEmpty()) return@launch
-                val entity = dao.getById(boxId) ?: return@launch
-                sync.pushCashBox(merchantCode, entity.toDomain())
-                dao.markSynced(boxId)
-            } catch (_: Exception) {}
+            val merchantCode = code()
+            if (merchantCode.isEmpty()) return@launch
+            val entity = dao.getById(boxId) ?: return@launch
+            runCatching { sync.pushCashBox(merchantCode, entity.toDomain()) }
+                .onSuccess { dao.markSynced(boxId) }
+                .onFailure { dao.markFailed(boxId) }
         }
     }
 
     private fun pushMovementAsync(movementId: String) {
         syncScope.launch {
-            try {
-                val merchantCode = code()
-                if (merchantCode.isEmpty()) return@launch
-                val entity = movementDao.getById(movementId) ?: return@launch
-                sync.pushCashBoxMovement(merchantCode, entity.toDomain())
-                movementDao.markSynced(movementId)
-            } catch (_: Exception) {}
+            val merchantCode = code()
+            if (merchantCode.isEmpty()) return@launch
+            val entity = movementDao.getById(movementId) ?: return@launch
+            runCatching { sync.pushCashBoxMovement(merchantCode, entity.toDomain()) }
+                .onSuccess { movementDao.markSynced(movementId) }
+                .onFailure { movementDao.markFailed(movementId) }
         }
     }
 
@@ -294,16 +292,14 @@ class CashBoxRepositoryImpl(
         val merchantCode = code()
         if (merchantCode.isEmpty()) return
         dao.getPending().forEach { entity ->
-            try {
-                sync.pushCashBox(merchantCode, entity.toDomain())
-                dao.markSynced(entity.id)
-            } catch (_: Exception) {}
+            runCatching { sync.pushCashBox(merchantCode, entity.toDomain()) }
+                .onSuccess { dao.markSynced(entity.id) }
+                .onFailure { dao.markFailed(entity.id) }
         }
         movementDao.getPending().forEach { entity ->
-            try {
-                sync.pushCashBoxMovement(merchantCode, entity.toDomain())
-                movementDao.markSynced(entity.id)
-            } catch (_: Exception) {}
+            runCatching { sync.pushCashBoxMovement(merchantCode, entity.toDomain()) }
+                .onSuccess { movementDao.markSynced(entity.id) }
+                .onFailure { movementDao.markFailed(entity.id) }
         }
     }
 }

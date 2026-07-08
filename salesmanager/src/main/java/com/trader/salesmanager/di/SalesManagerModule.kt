@@ -36,7 +36,9 @@ import com.trader.core.domain.repository.StockRepository
 import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.NetworkMonitor
 import com.trader.core.sync.SyncCoordinator
+import com.trader.core.sync.SyncStatusObserver
 import com.trader.salesmanager.ui.activation.ActivationViewModel
+import com.trader.salesmanager.ui.home.SyncStatusViewModel
 import com.trader.salesmanager.ui.boxes.BoxesViewModel
 import com.trader.salesmanager.ui.activation.MerchantWatcherViewModel
 import com.trader.salesmanager.ui.chat.ChatViewModel
@@ -218,7 +220,18 @@ val salesManagerModule = module {
             networkMonitor = get(),
             stockRepository = get(),
             invoiceItemRepository = get(),
-            cashBoxRepository = get()
+            cashBoxRepository = get(),
+            transactionRepository = get()
+        )
+    }
+
+    single {
+        SyncStatusObserver(
+            transactionDao = get(),
+            cashBoxDao = get(),
+            cashBoxMovementDao = get(),
+            stockMovementDao = get(),
+            invoiceItemDao = get()
         )
     }
 
@@ -234,6 +247,9 @@ val salesManagerModule = module {
     }
     viewModel {
         HomeViewModel(get(), get(), get())
+    }
+    viewModel {
+        SyncStatusViewModel(get(), get())
     }
     viewModel {
         CustomersViewModel(get())

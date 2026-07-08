@@ -50,6 +50,12 @@ interface InvoiceItemDao {
     @Query("UPDATE invoice_items SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markSynced(id: String)
 
+    @Query("SELECT COUNT(*) FROM invoice_items WHERE syncStatus != 'SYNCED'")
+    fun observeUnsyncedCount(): Flow<Int>
+
+    @Query("UPDATE invoice_items SET syncStatus = 'FAILED' WHERE id = :id")
+    suspend fun markFailed(id: String)
+
     @Query(
         """
         WITH invoice_totals AS (

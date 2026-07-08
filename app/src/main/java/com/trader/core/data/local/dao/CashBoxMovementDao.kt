@@ -38,4 +38,13 @@ interface CashBoxMovementDao {
 
     @Query("DELETE FROM cash_box_movements")
     suspend fun deleteAll()
+
+    @Query("SELECT COUNT(*) FROM cash_box_movements WHERE syncStatus != 'SYNCED'")
+    fun observeUnsyncedCount(): Flow<Int>
+
+    @Query("SELECT * FROM cash_box_movements WHERE syncStatus != 'SYNCED' ORDER BY createdAt DESC")
+    fun observeUnsynced(): Flow<List<CashBoxMovementEntity>>
+
+    @Query("UPDATE cash_box_movements SET syncStatus = 'FAILED' WHERE id = :id")
+    suspend fun markFailed(id: String)
 }

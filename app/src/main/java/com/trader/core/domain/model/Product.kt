@@ -84,5 +84,5 @@ enum class WeightUnit(val label: String, val kgFactor: Double) {
     GRAM("غرام", 0.001) // 1 غرام = 0.001 كيلو
 }
 enum class SyncStatus {
-    PENDING, SYNCED, CONFLICT
+    PENDING, SYNCED, FAILED, CONFLICT
 }
