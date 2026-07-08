@@ -32,9 +32,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Shield
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Restore
-import androidx.compose.material.icons.rounded.Shield
+import androidx.compose.material.icons.rounded.Key
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -47,12 +49,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +67,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -72,6 +78,7 @@ import com.trader.salesmanager.ui.theme.Emerald100
 import com.trader.salesmanager.ui.theme.Emerald500
 import com.trader.salesmanager.ui.theme.Emerald700
 import com.trader.salesmanager.ui.theme.InfoBlue
+import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
@@ -136,6 +143,20 @@ fun BackupScreen(
         if (uiState.shareFilePath != null) {
             viewModel.shareExportedFile()
         }
+    }
+
+    if (uiState.showExportPasswordDialog) {
+        ExportPasswordDialog(
+            onConfirm = viewModel::confirmExportPassword,
+            onDismiss = viewModel::dismissExportPasswordDialog
+        )
+    }
+
+    if (uiState.showImportPasswordDialog) {
+        ImportPasswordDialog(
+            onConfirm = viewModel::confirmImportPassword,
+            onDismiss = viewModel::dismissImportPasswordDialog
+        )
     }
 
     if (uiState.showImportConfirmDialog) {
@@ -237,7 +258,7 @@ fun BackupScreen(
                     trailingIcon = Icons.Rounded.Share,
                     isLoading = uiState.isExporting,
                     enabled = !uiState.isImporting,
-                    onClick = viewModel::exportBackup
+                    onClick = viewModel::requestExport
                 )
 
                 BackupActionCard(
@@ -249,7 +270,16 @@ fun BackupScreen(
                     trailingIcon = Icons.Rounded.Restore,
                     isLoading = uiState.isImporting,
                     enabled = !uiState.isExporting,
-                    onClick = { importLauncher.launch(arrayOf("application/zip", "application/json", "*/*")) }
+                    onClick = {
+                        importLauncher.launch(
+                            arrayOf(
+                                "application/octet-stream",
+                                "application/zip",
+                                "application/json",
+                                "*/*"
+                            )
+                        )
+                    }
                 )
 
                 InfoTipCard()
@@ -425,6 +455,128 @@ private fun InfoTipCard() {
             }
         }
     }
+}
+
+@Composable
+private fun ExportPasswordDialog(
+    onConfirm: (String, String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var password by remember { mutableStateOf("") }
+    var confirm by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Rounded.Lock, null, tint = Emerald500) },
+        title = {
+            Text(stringResource(R.string.backup_export_password_title), fontWeight = FontWeight.Bold)
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    stringResource(R.string.backup_export_password_body),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = UnpaidAmber.copy(0.12f)),
+                    elevation = CardDefaults.cardElevation(0.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Icon(Icons.Rounded.Warning, null, tint = UnpaidAmber, modifier = Modifier.size(20.dp))
+                        Text(
+                            stringResource(R.string.backup_password_lost_warning),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(stringResource(R.string.backup_password_label)) },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = confirm,
+                    onValueChange = { confirm = it },
+                    label = { Text(stringResource(R.string.backup_password_confirm_label)) },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(password, confirm) },
+                enabled = password.isNotBlank() && confirm.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
+            ) {
+                Text(stringResource(R.string.backup_export_confirm))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) {
+                Text(stringResource(R.string.backup_cancel))
+            }
+        },
+        shape = RoundedCornerShape(20.dp)
+    )
+}
+
+@Composable
+private fun ImportPasswordDialog(
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var password by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = { Icon(Icons.Rounded.Key, null, tint = InfoBlue) },
+        title = {
+            Text(stringResource(R.string.backup_import_password_title), fontWeight = FontWeight.Bold)
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    stringResource(R.string.backup_import_password_body),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(stringResource(R.string.backup_password_label)) },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(password) },
+                enabled = password.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(containerColor = InfoBlue)
+            ) {
+                Text(stringResource(R.string.backup_import_unlock))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) {
+                Text(stringResource(R.string.backup_cancel))
+            }
+        },
+        shape = RoundedCornerShape(20.dp)
+    )
 }
 
 @Composable

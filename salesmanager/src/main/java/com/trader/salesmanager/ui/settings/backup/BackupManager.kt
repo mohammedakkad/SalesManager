@@ -30,38 +30,50 @@ class BackupManager(
 ) {
     private val gson = Gson()
 
-    suspend fun exportToZip(): File = withContext(Dispatchers.IO) {
-        val payload = collectPayload()
-        val json = gson.toJson(payload)
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val zipFile = File(context.cacheDir, "sales_backup_$timestamp.zip")
-        ZipOutputStream(FileOutputStream(zipFile)).use { zip ->
-            zip.putNextEntry(ZipEntry(BACKUP_JSON_ENTRY))
-            zip.write(json.toByteArray(Charsets.UTF_8))
-            zip.closeEntry()
+    suspend fun exportEncryptedBackup(password: CharArray): File = withContext(Dispatchers.IO) {
+        try {
+            val payload = collectPayload()
+            val zipBytes = compressJsonToZip(gson.toJson(payload))
+            val encrypted = BackupCrypto.encryptZip(
+                zipBytes = zipBytes,
+                password = password,
+                schemaVersion = payload.schemaVersion,
+                exportedAt = payload.exportedAt
+            )
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+            val file = File(context.cacheDir, "sales_backup_$timestamp.$BACKUP_FILE_EXTENSION")
+            FileOutputStream(file).use { it.write(encrypted) }
+            file
+        } catch (e: Exception) {
+            Log.e(BACKUP_LOG_TAG, "Encrypted export failed: ${e.javaClass.simpleName}", e)
+            throw BackupException.StorageFailed
         }
-        zipFile
     }
 
-    suspend fun parseBackupFromBytes(bytes: ByteArray): BackupPayload = withContext(Dispatchers.IO) {
-        if (bytes.isEmpty()) throw BackupException.ReadFailed
-        val json = try {
-            extractJson(bytes)
-        } catch (e: ZipException) {
-            Log.e(BACKUP_LOG_TAG, "Zip extraction failed", e)
-            throw BackupException.Corrupted
+    suspend fun parseBackupFromBytes(bytes: ByteArray, password: CharArray? = null): BackupPayload =
+        withContext(Dispatchers.IO) {
+            if (bytes.isEmpty()) throw BackupException.ReadFailed
+            val zipBytes = when {
+                BackupCrypto.isEncryptedBackup(bytes) -> {
+                    if (password == null) throw BackupException.PasswordRequired
+                    BackupCrypto.decryptToZip(bytes, password)
+                }
+                looksLikeZip(bytes) -> bytes
+                else -> throw BackupException.InvalidFile
+            }
+            val json = try {
+                extractJsonFromZip(zipBytes)
+            } catch (e: ZipException) {
+                Log.e(BACKUP_LOG_TAG, "Zip extraction failed", e)
+                throw BackupException.Corrupted
+            } ?: throw BackupException.Corrupted
+            val rawPayload = parseJson(json)
+            BackupMigrator.migrateToCurrent(rawPayload)
         }
-        if (json == null) {
-            if (looksLikeZip(bytes)) throw BackupException.Corrupted
-            throw BackupException.InvalidFile
-        }
-        parseJson(json)
-    }
+
+    fun requiresPassword(bytes: ByteArray): Boolean = BackupCrypto.isEncryptedBackup(bytes)
 
     fun validatePayload(payload: BackupPayload) {
-        if (!payload.isCompatible()) {
-            throw BackupException.IncompatibleSchema(payload.schemaVersion)
-        }
         val hasData = payload.customers.orEmpty().isNotEmpty() ||
             payload.transactions.orEmpty().isNotEmpty() ||
             payload.products.orEmpty().isNotEmpty() ||
@@ -176,7 +188,7 @@ class BackupManager(
     private suspend fun collectPayload(): BackupPayload {
         val productRelations = database.productDao().getAllWithUnitsOnce()
         return BackupPayload(
-            schemaVersion = BACKUP_SCHEMA_VERSION,
+            schemaVersion = BACKUP_FORMAT_VERSION,
             exportedAt = System.currentTimeMillis(),
             customers = database.customerDao().getAllOnce(),
             transactions = database.transactionDao().getAllOnce(),
@@ -195,43 +207,44 @@ class BackupManager(
         )
     }
 
+    private fun compressJsonToZip(json: String): ByteArray {
+        val output = java.io.ByteArrayOutputStream()
+        ZipOutputStream(output).use { zip ->
+            zip.putNextEntry(ZipEntry(BACKUP_JSON_ENTRY))
+            zip.write(json.toByteArray(Charsets.UTF_8))
+            zip.closeEntry()
+        }
+        return output.toByteArray()
+    }
+
     private fun looksLikeZip(bytes: ByteArray): Boolean =
         bytes.size >= 2 && bytes[0] == 0x50.toByte() && bytes[1] == 0x4B.toByte()
 
-    private fun looksLikeJson(bytes: ByteArray): Boolean {
-        val trimmed = bytes.dropWhile { it.toInt().toChar().isWhitespace() }
-        return trimmed.firstOrNull() == '{'.code.toByte()
-    }
-
-    private fun extractJson(bytes: ByteArray): String? {
-        if (bytes.isEmpty()) return null
-        if (looksLikeZip(bytes)) {
-            ZipInputStream(BufferedInputStream(bytes.inputStream())).use { zip ->
-                var entry = zip.nextEntry
-                var fallback: String? = null
-                while (entry != null) {
-                    if (!entry.isDirectory && entry.name.endsWith(".json")) {
-                        val content = zip.readBytes().toString(Charsets.UTF_8)
-                        if (entry.name == BACKUP_JSON_ENTRY || entry.name.endsWith("/$BACKUP_JSON_ENTRY")) {
-                            return content
-                        }
-                        if (fallback == null) fallback = content
+    private fun extractJsonFromZip(bytes: ByteArray): String? {
+        ZipInputStream(BufferedInputStream(bytes.inputStream())).use { zip ->
+            var entry = zip.nextEntry
+            var fallback: String? = null
+            while (entry != null) {
+                if (!entry.isDirectory && entry.name.endsWith(".json")) {
+                    val content = zip.readBytes().toString(Charsets.UTF_8)
+                    if (entry.name == BACKUP_JSON_ENTRY || entry.name.endsWith("/$BACKUP_JSON_ENTRY")) {
+                        return content
                     }
-                    entry = zip.nextEntry
+                    if (fallback == null) fallback = content
                 }
-                return fallback
+                entry = zip.nextEntry
             }
+            return fallback
         }
-        if (looksLikeJson(bytes)) {
-            return bytes.toString(Charsets.UTF_8)
-        }
-        return null
     }
 }
 
 sealed class BackupException : Exception() {
-    data class IncompatibleSchema(val found: Int) : BackupException()
+    data class NewerBackupVersion(val found: Int) : BackupException()
+    data class UnsupportedBackupVersion(val found: Int) : BackupException()
     data object Corrupted : BackupException()
+    data object WrongPasswordOrCorrupted : BackupException()
+    data object PasswordRequired : BackupException()
     data object EmptyBackup : BackupException()
     data object InvalidFile : BackupException()
     data object StorageFailed : BackupException()

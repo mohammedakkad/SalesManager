@@ -1,4 +1,6 @@
 -keepattributes Signature
 -keepattributes *Annotation*
 -keep class com.trader.salesmanager.ui.settings.backup.BackupPayload { *; }
+-keep class com.trader.salesmanager.ui.settings.backup.BackupCrypto { *; }
+-keep class com.trader.salesmanager.ui.settings.backup.BackupMigrator { *; }
 -keep class com.trader.core.data.local.entity.** { *; }

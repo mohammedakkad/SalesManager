@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.trader.core.data.local.appDataStore
 import com.trader.salesmanager.R
 import com.trader.salesmanager.util.export.ExportManager
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,8 +23,11 @@ data class BackupUiState(
     val lastBackupAt: Long? = null,
     val isExporting: Boolean = false,
     val isImporting: Boolean = false,
+    val showExportPasswordDialog: Boolean = false,
+    val showImportPasswordDialog: Boolean = false,
     val showImportConfirmDialog: Boolean = false,
     val pendingImport: BackupPayload? = null,
+    val pendingEncryptedImportBytes: ByteArray? = null,
     val shareFilePath: String? = null,
     val successMessage: String? = null,
     val error: String? = null
@@ -49,12 +51,36 @@ class BackupViewModel(
         }
     }
 
-    fun exportBackup() {
+    fun requestExport() {
         if (_uiState.value.isExporting) return
+        _uiState.update { it.copy(showExportPasswordDialog = true, error = null) }
+    }
+
+    fun dismissExportPasswordDialog() {
+        _uiState.update { it.copy(showExportPasswordDialog = false) }
+    }
+
+    fun confirmExportPassword(password: String, confirmPassword: String) {
+        if (password.isBlank()) {
+            _uiState.update { it.copy(error = context.getString(R.string.backup_error_password_empty)) }
+            return
+        }
+        if (password != confirmPassword) {
+            _uiState.update { it.copy(error = context.getString(R.string.backup_error_password_mismatch)) }
+            return
+        }
+        val passwordChars = password.toCharArray()
         viewModelScope.launch {
-            _uiState.update { it.copy(isExporting = true, error = null, successMessage = null) }
+            _uiState.update {
+                it.copy(
+                    showExportPasswordDialog = false,
+                    isExporting = true,
+                    error = null,
+                    successMessage = null
+                )
+            }
             try {
-                val file = backupManager.exportToZip()
+                val file = backupManager.exportEncryptedBackup(passwordChars)
                 val now = System.currentTimeMillis()
                 context.appDataStore.edit { prefs -> prefs[LAST_BACKUP_AT_KEY] = now }
                 _uiState.update {
@@ -65,14 +91,24 @@ class BackupViewModel(
                         successMessage = context.getString(R.string.backup_export_success)
                     )
                 }
-            } catch (e: Exception) {
-                Log.e(BACKUP_LOG_TAG, "Export failed: ${e.javaClass.simpleName}: ${e.message}", e)
+            } catch (_: BackupException.StorageFailed) {
+                Log.e(BACKUP_LOG_TAG, "Encrypted export storage failed")
                 _uiState.update {
                     it.copy(
                         isExporting = false,
                         error = context.getString(R.string.backup_error_export_failed)
                     )
                 }
+            } catch (e: Exception) {
+                Log.e(BACKUP_LOG_TAG, "Export failed: ${e.javaClass.simpleName}", e)
+                _uiState.update {
+                    it.copy(
+                        isExporting = false,
+                        error = context.getString(R.string.backup_error_export_failed)
+                    )
+                }
+            } finally {
+                passwordChars.fill('\u0000')
             }
         }
     }
@@ -84,10 +120,48 @@ class BackupViewModel(
             }
             return
         }
+        if (backupManager.requiresPassword(bytes)) {
+            _uiState.update {
+                it.copy(
+                    pendingEncryptedImportBytes = bytes,
+                    showImportPasswordDialog = true,
+                    error = null
+                )
+            }
+            return
+        }
+        parseAndPrepareImport(bytes, null)
+    }
+
+    fun dismissImportPasswordDialog() {
+        _uiState.update {
+            it.copy(
+                showImportPasswordDialog = false,
+                pendingEncryptedImportBytes = null
+            )
+        }
+    }
+
+    fun confirmImportPassword(password: String) {
+        val bytes = _uiState.value.pendingEncryptedImportBytes
+        if (bytes == null) {
+            dismissImportPasswordDialog()
+            return
+        }
+        if (password.isBlank()) {
+            _uiState.update { it.copy(error = context.getString(R.string.backup_error_password_empty)) }
+            return
+        }
+        val passwordChars = password.toCharArray()
+        _uiState.update { it.copy(showImportPasswordDialog = false, pendingEncryptedImportBytes = null) }
+        parseAndPrepareImport(bytes, passwordChars)
+    }
+
+    private fun parseAndPrepareImport(bytes: ByteArray, password: CharArray?) {
         viewModelScope.launch {
             _uiState.update { it.copy(error = null, successMessage = null) }
             try {
-                val payload = backupManager.parseBackupFromBytes(bytes)
+                val payload = backupManager.parseBackupFromBytes(bytes, password)
                 backupManager.validatePayload(payload)
                 _uiState.update {
                     it.copy(
@@ -95,19 +169,25 @@ class BackupViewModel(
                         showImportConfirmDialog = true
                     )
                 }
-            } catch (e: BackupException.IncompatibleSchema) {
-                Log.e(
-                    BACKUP_LOG_TAG,
-                    "Import rejected: incompatible schema ${e.found}, expected $BACKUP_SCHEMA_VERSION"
-                )
+            } catch (e: BackupException.NewerBackupVersion) {
+                Log.e(BACKUP_LOG_TAG, "Import blocked: backup version ${e.found} is newer than app")
+                _uiState.update {
+                    it.copy(error = context.getString(R.string.backup_error_newer_version))
+                }
+            } catch (e: BackupException.UnsupportedBackupVersion) {
+                Log.e(BACKUP_LOG_TAG, "Import blocked: unsupported backup version ${e.found}")
                 _uiState.update {
                     it.copy(
                         error = context.getString(
-                            R.string.backup_error_incompatible_schema,
-                            e.found,
-                            BACKUP_SCHEMA_VERSION
+                            R.string.backup_error_unsupported_version,
+                            e.found
                         )
                     )
+                }
+            } catch (_: BackupException.WrongPasswordOrCorrupted) {
+                Log.e(BACKUP_LOG_TAG, "Import rejected: wrong password or corrupted encrypted backup")
+                _uiState.update {
+                    it.copy(error = context.getString(R.string.backup_error_wrong_password))
                 }
             } catch (_: BackupException.InvalidFile) {
                 Log.e(BACKUP_LOG_TAG, "Import rejected: picked file is not a valid backup archive")
@@ -130,14 +210,12 @@ class BackupViewModel(
                     it.copy(error = context.getString(R.string.backup_error_read_failed))
                 }
             } catch (e: Exception) {
-                Log.e(
-                    BACKUP_LOG_TAG,
-                    "Import parse failed: ${e.javaClass.simpleName}: ${e.message}",
-                    e
-                )
+                Log.e(BACKUP_LOG_TAG, "Import parse failed: ${e.javaClass.simpleName}", e)
                 _uiState.update {
                     it.copy(error = context.getString(R.string.backup_error_import_failed))
                 }
+            } finally {
+                password?.fill('\u0000')
             }
         }
     }
@@ -182,28 +260,17 @@ class BackupViewModel(
                         successMessage = context.getString(R.string.backup_import_success)
                     )
                 }
-            } catch (e: BackupException.IncompatibleSchema) {
-                Log.e(
-                    BACKUP_LOG_TAG,
-                    "Restore rejected: incompatible schema ${e.found}, expected $BACKUP_SCHEMA_VERSION"
-                )
+            } catch (e: BackupException.NewerBackupVersion) {
+                Log.e(BACKUP_LOG_TAG, "Restore blocked: backup version ${e.found} is newer than app")
                 _uiState.update {
                     it.copy(
                         isImporting = false,
                         pendingImport = null,
-                        error = context.getString(
-                            R.string.backup_error_incompatible_schema,
-                            e.found,
-                            BACKUP_SCHEMA_VERSION
-                        )
+                        error = context.getString(R.string.backup_error_newer_version)
                     )
                 }
             } catch (e: Exception) {
-                Log.e(
-                    BACKUP_LOG_TAG,
-                    "Restore failed: ${e.javaClass.simpleName}: ${e.message}",
-                    e
-                )
+                Log.e(BACKUP_LOG_TAG, "Restore failed: ${e.javaClass.simpleName}", e)
                 _uiState.update {
                     it.copy(
                         isImporting = false,
@@ -227,7 +294,7 @@ class BackupViewModel(
             }
             return
         }
-        ExportManager.shareFile(context, file, "application/zip")
+        ExportManager.shareFile(context, file, "application/octet-stream")
         _uiState.update { it.copy(shareFilePath = null) }
     }
 
