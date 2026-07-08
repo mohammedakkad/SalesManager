@@ -33,6 +33,7 @@ sealed class Screen(val route: String) {
     object Sessions : Screen("sessions")
     object Debts : Screen("debts")
     object Settings : Screen("settings")
+    object Backup : Screen("backup")
     object Chat : Screen("chat")
     object DayTransactions : Screen("day_transactions/{dateMillis}") {
         fun createRoute(dateMillis: Long) = "day_transactions/$dateMillis"

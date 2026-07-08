@@ -10,6 +10,15 @@ interface StockMovementDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movement: StockMovementEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(movements: List<StockMovementEntity>)
+
+    @Query("SELECT * FROM stock_movements ORDER BY createdAt ASC")
+    suspend fun getAllOnce(): List<StockMovementEntity>
+
+    @Query("DELETE FROM stock_movements")
+    suspend fun deleteAll()
+
     @Query("""
         SELECT * FROM stock_movements 
         WHERE productId = :productId AND unitId = :unitId 

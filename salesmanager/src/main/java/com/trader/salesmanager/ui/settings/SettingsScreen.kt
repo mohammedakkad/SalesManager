@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Backup
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.ContentCopy
@@ -64,11 +65,15 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
+import com.trader.salesmanager.R
+import com.trader.salesmanager.ui.settings.backup.LAST_BACKUP_AT_KEY
+import com.trader.salesmanager.ui.settings.backup.formatLastBackupRelative
 import com.trader.salesmanager.ui.theme.Cyan500
 import com.trader.salesmanager.ui.theme.Emerald500
 import com.trader.salesmanager.ui.theme.Slate400
@@ -95,6 +100,7 @@ fun SettingsScreen(
     onNavigateToPaymentMethods: () -> Unit,
     onNavigateToCashBoxes: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
+    onNavigateToBackup: () -> Unit = {},
     updateViewModel: AppUpdateViewModel = koinViewModel()
 ) {
     val context = LocalContext.current
@@ -107,6 +113,13 @@ fun SettingsScreen(
     val merchantCode by context.appDataStore.data
         .map { it[MERCHANT_CODE_KEY] ?: "" }
         .collectAsState(initial = "")
+    val lastBackupAt by context.appDataStore.data
+        .map { it[LAST_BACKUP_AT_KEY] }
+        .collectAsState(initial = null)
+    val backupSubtitle = stringResource(
+        R.string.settings_backup_last,
+        formatLastBackupRelative(lastBackupAt)
+    )
 
     var showStoreNameDialog by remember { mutableStateOf(false) }
 
@@ -197,6 +210,14 @@ fun SettingsScreen(
                     subtitle = "رصيد كل طريقة دفع لحظياً",
                     color = Emerald500,
                     onClick = onNavigateToCashBoxes
+                )
+
+                SettingItem(
+                    icon = Icons.Rounded.Backup,
+                    title = stringResource(R.string.settings_backup_title),
+                    subtitle = backupSubtitle,
+                    color = Cyan500,
+                    onClick = onNavigateToBackup
                 )
 
                 SettingItem(

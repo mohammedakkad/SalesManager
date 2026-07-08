@@ -9,6 +9,9 @@ interface CustomerDao {
     @Query("SELECT * FROM customers ORDER BY createdAt DESC")
     fun getAllCustomers(): Flow<List<CustomerEntity>>
 
+    @Query("SELECT * FROM customers ORDER BY createdAt DESC")
+    suspend fun getAllOnce(): List<CustomerEntity>
+
     @Query("SELECT * FROM customers WHERE name LIKE '%' || :query || '%'")
     fun searchCustomers(query: String): Flow<List<CustomerEntity>>
 
@@ -27,6 +30,9 @@ interface CustomerDao {
     // IGNORE: don't replace existing customers - REPLACE causes CASCADE delete of their transactions!
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCustomer(customer: CustomerEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(customers: List<CustomerEntity>)
 
     // Use this for explicit updates (name/phone changes)
     @Update

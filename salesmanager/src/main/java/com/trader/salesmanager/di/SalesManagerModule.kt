@@ -56,6 +56,8 @@ import com.trader.salesmanager.ui.payments.PaymentMethodsViewModel
 import com.trader.salesmanager.ui.reports.DayTransactionsViewModel
 import com.trader.salesmanager.ui.reports.ReportsViewModel
 import com.trader.salesmanager.ui.returns.ReturnViewModel
+import com.trader.salesmanager.ui.settings.backup.BackupManager
+import com.trader.salesmanager.ui.settings.backup.BackupViewModel
 import com.trader.salesmanager.ui.settings.sessions.SessionsViewModel
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel
 import com.trader.salesmanager.ui.transactions.details.TransactionDetailsViewModel
@@ -269,6 +271,16 @@ val salesManagerModule = module {
     }
     viewModel {
         BoxesViewModel(get(), get(), androidContext())
+    }
+    single {
+        BackupManager(
+            context = androidContext(),
+            database = get(),
+            merchantId = get(qualifier = org.koin.core.qualifier.named("merchantId"))
+        )
+    }
+    viewModel {
+        BackupViewModel(get(), androidContext())
     }
     viewModel {
         DebtsViewModel(get(), get())

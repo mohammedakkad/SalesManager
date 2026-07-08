@@ -24,6 +24,9 @@ interface CashBoxDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(box: CashBoxEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAll(boxes: List<CashBoxEntity>)
+
     @Query("UPDATE cash_boxes SET currentBalance = :newBalance, updatedAt = :updatedAt, syncStatus = 'PENDING' WHERE id = :id")
     suspend fun updateBalance(id: String, newBalance: Double, updatedAt: Long)
 
