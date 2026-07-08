@@ -81,10 +81,6 @@ import com.trader.salesmanager.ui.theme.InfoBlue
 import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
 import org.koin.androidx.compose.koinViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 private val HEADER_CONTENT_HEIGHT = 120.dp
 private val OVERLAP = 40.dp
@@ -328,7 +324,7 @@ private fun LastBackupStatusCard(
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    formatLastBackup(lastBackupAt),
+                    formatLastBackupRelative(lastBackupAt),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = if (lastBackupAt != null) Emerald500 else MaterialTheme.colorScheme.onSurfaceVariant
@@ -619,24 +615,3 @@ private fun ImportConfirmDialog(
     )
 }
 
-@Composable
-private fun formatLastBackup(timestamp: Long?): String {
-    if (timestamp == null) return stringResource(R.string.backup_never)
-    val diff = System.currentTimeMillis() - timestamp
-    return when {
-        diff < TimeUnit.MINUTES.toMillis(1) -> stringResource(R.string.backup_time_now)
-        diff < TimeUnit.HOURS.toMillis(1) -> {
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(diff).toInt()
-            stringResource(R.string.backup_time_minutes, minutes)
-        }
-        diff < TimeUnit.DAYS.toMillis(1) -> {
-            val hours = TimeUnit.MILLISECONDS.toHours(diff).toInt()
-            stringResource(R.string.backup_time_hours, hours)
-        }
-        diff < TimeUnit.DAYS.toMillis(7) -> {
-            val days = TimeUnit.MILLISECONDS.toDays(diff).toInt()
-            stringResource(R.string.backup_time_days, days)
-        }
-        else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(timestamp))
-    }
-}

@@ -72,6 +72,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
 import com.trader.salesmanager.R
+import com.trader.salesmanager.ui.settings.backup.LAST_BACKUP_AT_KEY
+import com.trader.salesmanager.ui.settings.backup.formatLastBackupRelative
 import com.trader.salesmanager.ui.theme.Cyan500
 import com.trader.salesmanager.ui.theme.Emerald500
 import com.trader.salesmanager.ui.theme.Slate400
@@ -111,6 +113,13 @@ fun SettingsScreen(
     val merchantCode by context.appDataStore.data
         .map { it[MERCHANT_CODE_KEY] ?: "" }
         .collectAsState(initial = "")
+    val lastBackupAt by context.appDataStore.data
+        .map { it[LAST_BACKUP_AT_KEY] }
+        .collectAsState(initial = null)
+    val backupSubtitle = stringResource(
+        R.string.settings_backup_last,
+        formatLastBackupRelative(lastBackupAt)
+    )
 
     var showStoreNameDialog by remember { mutableStateOf(false) }
 
@@ -206,7 +215,7 @@ fun SettingsScreen(
                 SettingItem(
                     icon = Icons.Rounded.Backup,
                     title = stringResource(R.string.settings_backup_title),
-                    subtitle = stringResource(R.string.settings_backup_subtitle),
+                    subtitle = backupSubtitle,
                     color = Cyan500,
                     onClick = onNavigateToBackup
                 )

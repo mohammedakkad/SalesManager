@@ -85,4 +85,5 @@
     <string name="backup_error_file_cancelled">لم يتم اختيار ملف.</string>
     <string name="settings_backup_title">النسخ الاحتياطي</string>
     <string name="settings_backup_subtitle">تصدير واستيراد مشفّر لبيانات المحل</string>
+    <string name="settings_backup_last">آخر نسخة: %1$s</string>
 </resources>
