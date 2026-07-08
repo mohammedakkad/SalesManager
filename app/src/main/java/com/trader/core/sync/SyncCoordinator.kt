@@ -4,6 +4,7 @@ import android.util.Log
 import com.trader.core.domain.repository.CashBoxRepository
 import com.trader.core.domain.repository.InvoiceItemRepository
 import com.trader.core.domain.repository.StockRepository
+import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.NetworkMonitor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,8 @@ class SyncCoordinator(
     private val networkMonitor: NetworkMonitor,
     private val stockRepository: StockRepository,
     private val invoiceItemRepository: InvoiceItemRepository,
-    private val cashBoxRepository: CashBoxRepository
+    private val cashBoxRepository: CashBoxRepository,
+    private val transactionRepository: TransactionRepository
 ) {
     // SupervisorJob: فشل coroutine واحدة لا يُلغي الأخريات
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -64,6 +66,10 @@ class SyncCoordinator(
         scope.launch {
             runCatching { cashBoxRepository.syncPendingBoxes() }
                 .onFailure { Log.e("SyncCoordinator", "syncPendingBoxes failed", it) }
+        }
+        scope.launch {
+            runCatching { transactionRepository.syncPendingTransactions() }
+                .onFailure { Log.e("SyncCoordinator", "syncPendingTransactions failed", it) }
         }
     }
 }

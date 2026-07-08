@@ -55,20 +55,18 @@ class StockRepositoryImpl(
 
     override suspend fun syncPendingMovements() {
         movementDao.getPending().forEach { entity ->
-            try {
-                remote.uploadMovement(merchantId, entity.toDomain())
-                movementDao.markSynced(entity.id)
-            } catch (_: Exception) {}
+            runCatching { remote.uploadMovement(merchantId, entity.toDomain()) }
+                .onSuccess { movementDao.markSynced(entity.id) }
+                .onFailure { movementDao.markFailed(entity.id) }
         }
         productDao.getPendingUnits().forEach { unit ->
-            try {
-                // ✅ جلب productId للمسار الصحيح في Firestore
+            runCatching {
                 val pid = productDao.getProductIdForUnit(unit.id)
                 if (pid != null) {
                     remote.updateRemoteQuantity(merchantId, unit.id, unit.quantityInStock, pid)
                     productDao.markUnitSynced(unit.id)
                 }
-            } catch (_: Exception) {}
+            }.onFailure { android.util.Log.e("StockSync", "syncPendingMovements unit failed", it) }
         }
     }
 
@@ -127,33 +125,18 @@ class StockRepositoryImpl(
         )
         movementDao.insert(movement.toEntity())
 
-        // ✅ Fix: كل عملية sync مستقلة + productId صحيح للمسار الصحيح في Firestore
         syncScope.launch {
-            var movementSynced = false
-            var quantitySynced = false
+            runCatching { remote.uploadMovement(merchantId, movement) }
+                .onSuccess { movementDao.markSynced(movement.id) }
+                .onFailure { movementDao.markFailed(movement.id) }
 
-            try {
-                remote.uploadMovement(merchantId, movement)
-                movementDao.markSynced(movement.id)
-                movementSynced = true
-            } catch (_: Exception) {}
-
-            try {
-                // ✅ جلب productId لأن الوحدات مخزنة في subcollection داخل المنتج
+            runCatching {
                 val pid = productDao.getProductIdForUnit(unitId)
                 if (pid != null) {
                     remote.updateRemoteQuantity(merchantId, unitId, newQty, pid)
                     productDao.markUnitSynced(unitId)
-                    quantitySynced = true
                 }
-            } catch (_: Exception) {}
-
-            if (!movementSynced || !quantitySynced) {
-                android.util.Log.w(
-                    "StockSync",
-                    "Partial sync failure: movement=$movementSynced, quantity=$quantitySynced for unit=$unitId"
-                )
-            }
+            }.onFailure { android.util.Log.e("StockSync", "quantity sync failed for unit=$unitId", it) }
         }
     }
 }
