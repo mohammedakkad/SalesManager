@@ -264,7 +264,7 @@ val salesManagerModule = module {
         TransactionsViewModel(get())
     }
     viewModel { params ->
-        TransactionDetailsViewModel(params.get(), get(), get(), get(), get())
+        TransactionDetailsViewModel(params.get(), get(), get(), get())
     }
     viewModel {
         AddEditTransactionViewModel(
