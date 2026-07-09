@@ -190,7 +190,9 @@ class FirebaseSyncService {
                     note = m["note"] as? String ?: "",
                     date = m["date"].asLong() ?: System.currentTimeMillis(),
                     paidAt = m["paidAt"].asLong(),
-                    hasItems = m["hasItems"] as? Boolean ?: false
+                    hasItems = m["hasItems"] as? Boolean ?: false,
+                    dueDate = m["dueDate"].asLong(),
+                    reminderEnabled = m["reminderEnabled"] as? Boolean ?: true
                 )
             }
         } catch (e: Exception) {
@@ -461,7 +463,9 @@ class FirebaseSyncService {
                             note = m["note"] as? String ?: "",
                             date = m["date"].asLong() ?: System.currentTimeMillis(),
                             paidAt = m["paidAt"].asLong(),
-                            hasItems = m["hasItems"] as? Boolean ?: false
+                            hasItems = m["hasItems"] as? Boolean ?: false,
+                            dueDate = m["dueDate"].asLong(),
+                            reminderEnabled = m["reminderEnabled"] as? Boolean ?: true
                         )
                     }.getOrNull()
                 })
@@ -631,7 +635,9 @@ class FirebaseSyncService {
                     "originalAmount" to t.originalAmount, "returnStatus" to t.returnStatus.name,
                     "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
                     "note" to t.note, "date" to t.date, "paidAt" to t.paidAt,
-                    "hasItems" to t.hasItems
+                    "hasItems" to t.hasItems,
+                    "dueDate" to t.dueDate,
+                    "reminderEnabled" to t.reminderEnabled
                 )
             ).await()
     }

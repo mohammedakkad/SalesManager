@@ -26,6 +26,8 @@ data class TransactionEntity(
     val paidAt: Long? = null,
     val paymentType: String = PaymentType.DEBT.name,
     val hasItems: Boolean = false,
+    val dueDate: Long? = null,
+    val reminderEnabled: Boolean = true,
     val syncStatus: String = SyncStatus.SYNCED.name
 ) {
     fun toDomain(customerName: String = "", paymentMethodName: String = "") = Transaction(
@@ -36,6 +38,7 @@ data class TransactionEntity(
             PaymentType.valueOf(paymentType)
         }.getOrDefault(PaymentType.DEBT),
         note = note, date = date, paidAt = paidAt, hasItems = hasItems,
+        dueDate = dueDate, reminderEnabled = reminderEnabled,
         syncStatus = runCatching {
             SyncStatus.valueOf(syncStatus)
         }.getOrDefault(SyncStatus.SYNCED)
@@ -46,7 +49,8 @@ data class TransactionEntity(
             isPaid = t.isPaid, paymentMethodId = t.paymentMethodId,
             note = t.note, date = t.date, paidAt = t.paidAt,
             paymentType = t.paymentType.name, hasItems = t.hasItems,
-            syncStatus = t.syncStatus.name // ✅ أضف
+            dueDate = t.dueDate, reminderEnabled = t.reminderEnabled,
+            syncStatus = t.syncStatus.name
         )
     }
 }

@@ -5,6 +5,7 @@ import com.trader.core.data.local.entity.TransactionEntity
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.ActivationRepository
+import com.trader.core.util.DateUtils
 import com.trader.core.domain.repository.CashBoxRepository
 import com.trader.core.domain.repository.InvoiceItemRepository
 import com.trader.core.domain.repository.StockRepository
@@ -124,6 +125,11 @@ class TransactionRepositoryImpl(
         it.map {
             e -> e.enrich()
         }
+    }
+
+    override fun getDebtsDueTodayOrOverdue() =
+    transactionDao.getDebtsDueTodayOrOverdue(DateUtils.todayEnd()).map {
+        it.map { e -> e.enrich() }
     }
 
     override suspend fun getTransactionById(id: Long) = transactionDao.getTransactionById(id)?.enrich()

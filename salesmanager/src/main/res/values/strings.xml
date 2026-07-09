@@ -106,4 +106,26 @@
     <string name="sync_sheet_retry_button">إعادة المزامنة الآن</string>
     <string name="sync_sheet_empty_title">لا يوجد شيء معلق</string>
     <string name="sync_sheet_empty_subtitle">جميع بياناتك متزامنة بالكامل</string>
+
+    <string name="debts_remind_all">تذكير الكل</string>
+    <string name="debts_due_today_count">%1$d ديون مستحقة اليوم</string>
+    <string name="remind_all_title">تذكير الديون المستحقة</string>
+    <string name="remind_all_subtitle">%1$d زبون لديه ديون مستحقة اليوم أو متأخرة</string>
+    <string name="remind_all_empty_title">لا توجد ديون مستحقة</string>
+    <string name="remind_all_empty_subtitle">جميع الديون المجدولة غير مستحقة بعد</string>
+    <string name="remind_all_send_whatsapp">إرسال عبر واتساب</string>
+    <string name="remind_all_sent">تم الإرسال ✓</string>
+    <string name="remind_all_due_date">تاريخ الاستحقاق: %1$s</string>
+    <string name="remind_all_amount">المبلغ: %1$s ₪</string>
+    <string name="whatsapp_not_installed">واتساب غير مثبت على الجهاز</string>
+    <string name="whatsapp_invalid_phone_hint">تأكد من إدخال رقم الهاتف مع رمز الدولة في بيانات الزبون — التطبيق لا يضيف رمز الدولة تلقائياً.</string>
+    <string name="whatsapp_default_store_name">متجرنا</string>
+    <string name="whatsapp_debt_reminder_message">مرحباً %1$s، نود تذكيركم بأن لديكم دين مستحق بقيمة %2$s ₪ منذ تاريخ %3$s. نرجو التكرم بالسداد في أقرب وقت ممكن. شكراً لتعاملكم مع %4$s 🙏</string>
+    <string name="transaction_due_date_label">تاريخ الاستحقاق (اختياري)</string>
+    <string name="transaction_due_date_none">بدون تاريخ استحقاق</string>
+    <string name="transaction_reminder_enabled">تفعيل التذكير</string>
+    <string name="transaction_pick_due_date">تحديد تاريخ الاستحقاق</string>
+    <string name="transaction_clear_due_date">إزالة التاريخ</string>
+    <string name="debt_reminder_notification_title">تذكير الديون</string>
+    <string name="debt_reminder_notification_body">لديك %1$d ديون مستحقة اليوم — اضغط للتذكير</string>
 </resources>

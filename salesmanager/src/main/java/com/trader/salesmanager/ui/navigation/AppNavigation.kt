@@ -40,6 +40,7 @@ import com.trader.salesmanager.ui.customers.addedit.AddEditCustomerScreen
 import com.trader.salesmanager.ui.customers.details.CustomerDetailsScreen
 import com.trader.salesmanager.ui.customers.list.CustomersScreen
 import com.trader.salesmanager.ui.debts.DebtsScreen
+import com.trader.salesmanager.ui.debts.RemindAllScreen
 import com.trader.salesmanager.ui.employees.EmployeeManagementScreen
 import com.trader.salesmanager.ui.home.HomeScreen
 import com.trader.salesmanager.ui.inventory.addedit.AddEditProductScreen
@@ -164,11 +165,16 @@ fun AppNavigation(
     }
 
     LaunchedEffect(pendingNavigation, startupState) {
-        if (pendingNavigation == com.trader.salesmanager.MainActivity.NAV_SETTINGS &&
-            (startupState == StartupState.Proceed || startupState is StartupState.ProceedFree)
-        ) {
-            navController.navigate(Screen.Settings.route)
-            onNavigationHandled()
+        if (startupState != StartupState.Proceed && startupState !is StartupState.ProceedFree) return@LaunchedEffect
+        when (pendingNavigation) {
+            com.trader.salesmanager.MainActivity.NAV_SETTINGS -> {
+                navController.navigate(Screen.Settings.route)
+                onNavigationHandled()
+            }
+            com.trader.salesmanager.MainActivity.NAV_REMIND_ALL -> {
+                navController.navigate(Screen.RemindAll.route)
+                onNavigationHandled()
+            }
         }
     }
 
@@ -433,7 +439,15 @@ fun AppNavigation(
                 },
                 onCustomerClick = {
                     navController.navigate(Screen.CustomerDetails.createRoute(it))
+                },
+                onRemindAll = {
+                    navController.navigate(Screen.RemindAll.route)
                 }
+            )
+        }
+        composable(Screen.RemindAll.route) {
+            RemindAllScreen(
+                onNavigateUp = { navController.navigateUp() }
             )
         }
         composable(Screen.Reports.route) {

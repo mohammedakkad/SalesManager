@@ -27,7 +27,7 @@ import com.trader.core.domain.model.PaymentType
         CashBoxEntity::class,
         CashBoxMovementEntity::class
     ],
-    version = 18,
+    version = 19,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -421,6 +421,13 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_18_19 = object : Migration(18, 19) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE transactions ADD COLUMN dueDate INTEGER")
+                db.execSQL("ALTER TABLE transactions ADD COLUMN reminderEnabled INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+
         val MIGRATION_17_18 = object : Migration(17, 18) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
@@ -466,7 +473,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_14_15,
             MIGRATION_15_16, // ✅ deviceModel في sessions
             MIGRATION_16_17,
-            MIGRATION_17_18
+            MIGRATION_17_18,
+            MIGRATION_18_19
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {

@@ -7,6 +7,7 @@ interface TransactionRepository {
     fun getAllTransactions(): Flow<List<Transaction>>
     fun getTransactionsByCustomer(customerId: Long): Flow<List<Transaction>>
     fun getUnpaidTransactions(): Flow<List<Transaction>>
+    fun getDebtsDueTodayOrOverdue(): Flow<List<Transaction>>
     suspend fun getTransactionById(id: Long): Transaction?
     fun observeTransactionById(id: Long): Flow<Transaction?>   // ← مشكلة 5
     suspend fun insertTransaction(transaction: Transaction): Long
