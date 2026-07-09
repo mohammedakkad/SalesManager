@@ -81,7 +81,8 @@ class TransactionRepositoryImpl(
                     localIds.forEach {
                         localId ->
                         if (localId !in remoteIds) {
-                            transactionDao.deleteById(localId)
+                            val entity = transactionDao.getTransactionById(localId) ?: return@forEach
+                            deleteTransactionLocally(entity.enrich(), syncRemote = false)
                         }
                     }
                 }
@@ -187,11 +188,13 @@ class TransactionRepositoryImpl(
     }
 
     override suspend fun deleteTransaction(t: Transaction) {
-        // ✅ إرجاع المخزون إذا كانت العملية تحتوي أصناف
-        if (t.hasItems) {
-            val items = invoiceItemRepo.getItemsForTransactionOnce(t.id)
-            items.forEach {
-                item ->
+        deleteTransactionLocally(t, syncRemote = true)
+    }
+
+    private suspend fun deleteTransactionLocally(t: Transaction, syncRemote: Boolean) {
+        val items = invoiceItemRepo.getItemsForTransactionOnce(t.id)
+        if (items.isNotEmpty()) {
+            items.forEach { item ->
                 stockRepo.returnStock(
                     productId = item.productId,
                     unitId = item.unitId,
@@ -201,19 +204,20 @@ class TransactionRepositoryImpl(
                     unitLabel = item.unitLabel
                 )
             }
-            invoiceItemRepo.deleteItemsForTransaction(t.id)
         }
+        invoiceItemRepo.deleteItemsForTransaction(t.id)
         transactionDao.deleteTransaction(TransactionEntity.fromDomain(t))
-        // ✅ الصناديق: حذف عملية مدفوعة يخصم مبلغها من صندوقها
         cashBoxRepo.applyTransactionEffect(
             relatedTransactionId = t.id,
             oldPaymentMethodId = t.paymentMethodId, oldAmount = t.amount, oldWasPaid = t.isPaid,
             newPaymentMethodId = null, newAmount = 0.0, newWasPaid = false
         )
-        syncScope.launch {
-            try {
-                sync.deleteTransaction(code(), t.id)
-            } catch (_: Exception) {}
+        if (syncRemote) {
+            syncScope.launch {
+                try {
+                    sync.deleteTransaction(code(), t.id)
+                } catch (_: Exception) {}
+            }
         }
     }
 
