@@ -1,7 +1,7 @@
 package com.trader.salesmanager.util
 
 import android.content.Context
-import com.trader.core.util.DateUtils
+import com.trader.core.util.DateUtils.toDateString
 import com.trader.salesmanager.R
 import java.util.Locale
 
