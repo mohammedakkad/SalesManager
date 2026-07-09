@@ -14,7 +14,8 @@ data class Transaction(
     val date: Long = System.currentTimeMillis(),
     val paidAt: Long? = null,
     val hasItems: Boolean = false,
-    // ✅ حالة الإرجاع — NONE = لا شيء أُرجع
+    val dueDate: Long? = null,
+    val reminderEnabled: Boolean = true,
     val returnStatus: TransactionReturnStatus = TransactionReturnStatus.NONE,
     val syncStatus: SyncStatus = SyncStatus.SYNCED
 ) {

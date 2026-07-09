@@ -44,7 +44,9 @@ data class AddEditTransactionUiState(
     val userEditedLines: Boolean = false,
     val baseAmount: Double = 0.0,
     // ✅ مشكلة 3: نحفظ ID طريقة الدفع هنا حتى يتم ربطها بعد تحميل القائمة
-    val pendingPaymentMethodId: Long? = null
+    val pendingPaymentMethodId: Long? = null,
+    val dueDate: Long? = null,
+    val reminderEnabled: Boolean = true
 )
 
 class AddEditTransactionViewModel(
@@ -127,8 +129,9 @@ class AddEditTransactionViewModel(
                     isEditMode = true,
                     // ✅ مشكلة 3: نحفظ ID طريقة الدفع لتُطبَّق عند/بعد تحميل القائمة
                     pendingPaymentMethodId = if (matchingMethod == null) t.paymentMethodId else null,
-                    selectedPaymentMethod = matchingMethod ?: state.selectedPaymentMethod
-
+                    selectedPaymentMethod = matchingMethod ?: state.selectedPaymentMethod,
+                    dueDate = t.dueDate,
+                    reminderEnabled = t.reminderEnabled
                 )
             }
 
@@ -246,7 +249,7 @@ class AddEditTransactionViewModel(
     }
 
     fun updateIsPaid(v: Boolean) = _uiState.update {
-        it.copy(isPaid = v)
+        if (v) it.copy(isPaid = true, dueDate = null) else it.copy(isPaid = false)
     }
 
     fun updatePaymentType(t: PaymentType) = _uiState.update {
@@ -259,6 +262,14 @@ class AddEditTransactionViewModel(
 
     fun updateNote(n: String) = _uiState.update {
         it.copy(note = n)
+    }
+
+    fun updateDueDate(dateMillis: Long?) = _uiState.update {
+        it.copy(dueDate = dateMillis, reminderEnabled = if (dateMillis != null) it.reminderEnabled else true)
+    }
+
+    fun updateReminderEnabled(enabled: Boolean) = _uiState.update {
+        it.copy(reminderEnabled = enabled)
     }
 
     fun save() {
@@ -291,13 +302,15 @@ class AddEditTransactionViewModel(
                 val transaction = Transaction(
                     id = editingId ?: 0,
                     customerId = customer.id,
-                    amount = amount, // ✅ المبلغ الصحيح دائماً
+                    amount = amount,
                     isPaid = state.isPaid,
                     paymentType = state.paymentType,
                     paymentMethodId = state.selectedPaymentMethod?.id,
                     note = state.note,
                     paidAt = if (state.isPaid) System.currentTimeMillis() else null,
-                    hasItems = state.pendingLines.isNotEmpty()
+                    hasItems = state.pendingLines.isNotEmpty(),
+                    dueDate = if (state.isPaid) null else state.dueDate,
+                    reminderEnabled = state.reminderEnabled
                 )
 
                 if (editingId == null) {

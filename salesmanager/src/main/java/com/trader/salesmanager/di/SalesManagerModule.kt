@@ -46,6 +46,7 @@ import com.trader.salesmanager.ui.customers.addedit.AddEditCustomerViewModel
 import com.trader.salesmanager.ui.customers.details.CustomerDetailsViewModel
 import com.trader.salesmanager.ui.customers.list.CustomersViewModel
 import com.trader.salesmanager.ui.debts.DebtsViewModel
+import com.trader.salesmanager.ui.debts.RemindAllViewModel
 import com.trader.salesmanager.ui.employees.EmployeeManagementViewModel
 import com.trader.salesmanager.ui.home.HomeViewModel
 import com.trader.salesmanager.ui.inventory.addedit.AddEditProductViewModel
@@ -300,6 +301,9 @@ val salesManagerModule = module {
     }
     viewModel {
         DebtsViewModel(get(), get())
+    }
+    viewModel {
+        RemindAllViewModel(get(), get(), androidContext())
     }
     viewModel {
         ChatViewModel(get(), get(), get())

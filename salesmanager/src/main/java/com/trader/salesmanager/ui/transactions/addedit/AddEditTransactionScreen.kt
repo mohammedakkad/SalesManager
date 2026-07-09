@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AttachMoney
+import androidx.compose.material.icons.rounded.Event
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.Notes
@@ -42,7 +43,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,8 +63,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.DateUtils.toDateString
 import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.repository.PaymentMethodRepository
+import com.trader.salesmanager.R
 import com.trader.salesmanager.ui.theme.Cyan500
 import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
@@ -95,6 +104,7 @@ fun AddEditTransactionScreen(
     var paymentExpanded by remember {
         mutableStateOf(false)
     }
+    var showDatePicker by remember { mutableStateOf(false) }
 
     Column(
         Modifier.fillMaxSize().background(appColors.screenBackground)
@@ -254,6 +264,72 @@ fun AddEditTransactionScreen(
                     },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = DebtRed.copy(0.15f), selectedLabelColor = DebtRed))
+            }
+
+            AnimatedVisibility(!uiState.isPaid) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        stringResource(R.string.transaction_due_date_label),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = appColors.textSecondary,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    OutlinedButton(
+                        onClick = { showDatePicker = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Rounded.Event, null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            uiState.dueDate?.toDateString()
+                                ?: stringResource(R.string.transaction_due_date_none)
+                        )
+                    }
+                    if (uiState.dueDate != null) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                stringResource(R.string.transaction_reminder_enabled),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Switch(
+                                checked = uiState.reminderEnabled,
+                                onCheckedChange = viewModel::updateReminderEnabled
+                            )
+                        }
+                        TextButton(onClick = { viewModel.updateDueDate(null) }) {
+                            Text(stringResource(R.string.transaction_clear_due_date))
+                        }
+                    }
+                }
+            }
+
+            if (showDatePicker) {
+                val datePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = uiState.dueDate ?: System.currentTimeMillis()
+                )
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.updateDueDate(datePickerState.selectedDateMillis)
+                            showDatePicker = false
+                        }) {
+                            Text("تأكيد")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePicker = false }) {
+                            Text("إلغاء")
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
             }
 
             // ── طريقة الدفع ──────────────────────────────────────────

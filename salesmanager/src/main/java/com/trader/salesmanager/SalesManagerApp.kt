@@ -10,6 +10,7 @@ import com.trader.core.util.ExpiryNotificationHelper
 import com.trader.core.worker.StatusCheckWorker
 import com.trader.salesmanager.di.salesManagerModule
 import com.trader.salesmanager.update.BackgroundUpdateWorker
+import com.trader.salesmanager.worker.DebtReminderCheckWorker
 import com.trader.salesmanager.worker.UnpaidDebtWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +36,7 @@ class SalesManagerApp : Application(), KoinComponent {
             modules(salesManagerModule)
         }
         UnpaidDebtWorker.schedule(this)
+        DebtReminderCheckWorker.schedule(this)
         StatusCheckWorker.schedule(this)
         BackgroundUpdateWorker.schedulePeriodic(this)
 

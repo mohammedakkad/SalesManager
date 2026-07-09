@@ -26,10 +26,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +47,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
+import androidx.compose.material.icons.rounded.CheckCircle
+import com.trader.salesmanager.R
 import com.trader.salesmanager.ui.components.EmptyState
 import com.trader.salesmanager.ui.theme.DebtRed
 import org.koin.androidx.compose.koinViewModel
@@ -54,6 +58,7 @@ import org.koin.androidx.compose.koinViewModel
 fun DebtsScreen(
     onNavigateUp: () -> Unit,
     onCustomerClick: (Long) -> Unit,
+    onRemindAll: () -> Unit = {},
     viewModel: DebtsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -70,20 +75,43 @@ fun DebtsScreen(
                     .background(Brush.horizontalGradient(listOf(DebtRed, Color(0xFFFF6B6B))))
                     .padding(top = 48.dp, bottom = 20.dp, start = 16.dp, end = 16.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                "الديون", style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.Bold, color = Color.White
+                            )
+                            Text(
+                                "${uiState.debts.size} زبون عليه دين", color = Color.White.copy(0.7f),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
-                    Spacer(Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            "الديون", style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold, color = Color.White
-                        )
-                        Text(
-                            "${uiState.debts.size} زبون عليه دين", color = Color.White.copy(0.7f),
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                    if (uiState.hasDueReminders) {
+                        FilledTonalButton(
+                            onClick = onRemindAll,
+                            colors = androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
+                                containerColor = Color.White.copy(0.2f),
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Icon(
+                                Icons.Rounded.NotificationsActive,
+                                null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(6.dp))
+                            Text(stringResource(R.string.debts_remind_all))
+                        }
                     }
                 }
             }

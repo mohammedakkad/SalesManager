@@ -29,6 +29,30 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE isPaid = 0 ORDER BY date ASC")
     fun getUnpaidTransactions(): Flow<List<TransactionEntity>>
 
+    @Query(
+        """
+        SELECT * FROM transactions
+        WHERE isPaid = 0
+        AND reminderEnabled = 1
+        AND dueDate IS NOT NULL
+        AND dueDate <= :endOfToday
+        ORDER BY dueDate ASC
+        """
+    )
+    fun getDebtsDueTodayOrOverdue(endOfToday: Long): Flow<List<TransactionEntity>>
+
+    @Query(
+        """
+        SELECT * FROM transactions
+        WHERE isPaid = 0
+        AND reminderEnabled = 1
+        AND dueDate IS NOT NULL
+        AND dueDate <= :endOfToday
+        ORDER BY dueDate ASC
+        """
+    )
+    suspend fun getDebtsDueTodayOrOverdueOnce(endOfToday: Long): List<TransactionEntity>
+
     /** Returns unpaid transactions older than [olderThanMillis] timestamp — for debt reminder */
     @Query("SELECT * FROM transactions WHERE isPaid = 0 AND date <= :olderThanMillis ORDER BY date ASC")
     suspend fun getUnpaidOlderThan(olderThanMillis: Long): List<TransactionEntity>
