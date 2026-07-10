@@ -110,12 +110,20 @@ interface TransactionDao {
 
     @Query(
         """
-        WITH RECURSIVE days(dayIndex, dayStartMillis) AS (
-            SELECT 0, :startDate
+        WITH days(dayIndex, dayStartMillis, dayEndMillis) AS (
+            SELECT 0, :day0, :day1
             UNION ALL
-            SELECT dayIndex + 1, dayStartMillis + 86400000
-            FROM days
-            WHERE dayIndex < 6
+            SELECT 1, :day1, :day2
+            UNION ALL
+            SELECT 2, :day2, :day3
+            UNION ALL
+            SELECT 3, :day3, :day4
+            UNION ALL
+            SELECT 4, :day4, :day5
+            UNION ALL
+            SELECT 5, :day5, :day6
+            UNION ALL
+            SELECT 6, :day6, :day7
         )
         SELECT
             days.dayStartMillis AS dayStartMillis,
@@ -123,15 +131,20 @@ interface TransactionDao {
         FROM days
         LEFT JOIN transactions t
             ON t.date >= days.dayStartMillis
-            AND t.date < days.dayStartMillis + 86400000
-            AND t.date <= :endDate
+            AND t.date < days.dayEndMillis
         GROUP BY days.dayIndex, days.dayStartMillis
         ORDER BY days.dayIndex ASC
         """
     )
     fun observeLastSevenDaysSales(
-        startDate: Long,
-        endDate: Long
+        day0: Long,
+        day1: Long,
+        day2: Long,
+        day3: Long,
+        day4: Long,
+        day5: Long,
+        day6: Long,
+        day7: Long
     ): Flow<List<DailySalesProjection>>
 
     @Query(

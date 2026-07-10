@@ -56,11 +56,18 @@ class DashboardAnalyticsRepositoryImpl(
             }
         }
 
-    override fun observeLastSevenDaysSales(
-        startDate: Long,
-        endDate: Long
-    ): Flow<List<DailySales>> =
-        transactionDao.observeLastSevenDaysSales(startDate, endDate).map { rows ->
+    override fun observeLastSevenDaysSales(dayBoundaries: List<Long>): Flow<List<DailySales>> {
+        require(dayBoundaries.size == 8)
+        return transactionDao.observeLastSevenDaysSales(
+            day0 = dayBoundaries[0],
+            day1 = dayBoundaries[1],
+            day2 = dayBoundaries[2],
+            day3 = dayBoundaries[3],
+            day4 = dayBoundaries[4],
+            day5 = dayBoundaries[5],
+            day6 = dayBoundaries[6],
+            day7 = dayBoundaries[7]
+        ).map { rows ->
             rows.map { row ->
                 DailySales(
                     dayStartMillis = row.dayStartMillis,
@@ -68,4 +75,5 @@ class DashboardAnalyticsRepositoryImpl(
                 )
             }
         }
+    }
 }

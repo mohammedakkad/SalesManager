@@ -19,8 +19,5 @@ interface DashboardAnalyticsRepository {
 
     fun observeTopDebtorCustomers(limit: Int): Flow<List<TopDebtorCustomer>>
 
-    fun observeLastSevenDaysSales(
-        startDate: Long,
-        endDate: Long
-    ): Flow<List<DailySales>>
+    fun observeLastSevenDaysSales(dayBoundaries: List<Long>): Flow<List<DailySales>>
 }

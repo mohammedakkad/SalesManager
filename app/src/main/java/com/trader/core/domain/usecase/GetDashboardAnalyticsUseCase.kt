@@ -16,17 +16,14 @@ class GetDashboardAnalyticsUseCase(
         val todayEnd = endOfDay(nowMillis)
         val monthStart = startOfMonth(nowMillis)
         val monthEnd = endOfMonth(nowMillis)
-        val lastSevenDaysStart = Calendar.getInstance().apply {
-            timeInMillis = todayStart
-            add(Calendar.DAY_OF_YEAR, -6)
-        }.timeInMillis
+        val dayBoundaries = lastSevenDayBoundaries(todayStart)
 
         return combine(
             repository.observeTodaySalesSummary(todayStart, todayEnd),
             repository.observeTotalOutstandingDebt(),
             repository.observeTopSellingProducts(monthStart, monthEnd, DASHBOARD_LIMIT),
             repository.observeTopDebtorCustomers(DASHBOARD_LIMIT),
-            repository.observeLastSevenDaysSales(lastSevenDaysStart, todayEnd)
+            repository.observeLastSevenDaysSales(dayBoundaries)
         ) { todaySummary, totalDebt, topProducts, topDebtors, dailySales ->
             DashboardAnalytics(
                 todaySummary = todaySummary,
@@ -72,6 +69,19 @@ class GetDashboardAnalyticsUseCase(
             add(Calendar.MONTH, 1)
             add(Calendar.MILLISECOND, -1)
         }.timeInMillis
+
+    private fun lastSevenDayBoundaries(todayStart: Long): List<Long> {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = todayStart
+            add(Calendar.DAY_OF_YEAR, -6)
+        }
+        return buildList {
+            repeat(8) {
+                add(calendar.timeInMillis)
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+            }
+        }
+    }
 
     private companion object {
         const val DASHBOARD_LIMIT = 5
