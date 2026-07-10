@@ -75,6 +75,7 @@ import com.trader.salesmanager.ui.theme.Emerald700
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
+import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -95,6 +96,7 @@ fun HomeScreen(
     onNavigateToInventory: () -> Unit = {},
     onAddTransaction: () -> Unit,
     onTransactionClick: (Long) -> Unit,
+    onCustomerClick: (Long) -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
     syncViewModel: SyncStatusViewModel = koinViewModel()
 ) {
@@ -114,7 +116,7 @@ fun HomeScreen(
     }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = appColors.screenBackground,
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAddTransaction,
@@ -143,14 +145,7 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .height(HEADER_CONTENT_HEIGHT + OVERLAP)
                         .background(
-                            Brush.linearGradient(
-                                listOf(Emerald700, Cyan500),
-                                start = androidx.compose.ui.geometry.Offset(0f, 0f),
-                                end = androidx.compose.ui.geometry.Offset(
-                                    Float.POSITIVE_INFINITY,
-                                    Float.POSITIVE_INFINITY
-                                )
-                            )
+                            Brush.horizontalGradient(listOf(Emerald700, Cyan500))
                         )
                 )
                 Column {
@@ -207,7 +202,7 @@ fun HomeScreen(
                                             .height(18.dp)
                                             .width(badgeWidth)
                                             .clip(RoundedCornerShape(50))
-                                            .background(Color(0xFFEF4444)),
+                                            .background(DebtRed),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
@@ -243,7 +238,7 @@ fun HomeScreen(
                             .shadow(12.dp, RoundedCornerShape(24.dp)),
                         shape = RoundedCornerShape(24.dp),
                         elevation = CardDefaults.cardElevation(0.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        colors = CardDefaults.cardColors(containerColor = appColors.cardBackground)
                     ) {
                         Column(modifier = Modifier.padding(20.dp)) {
                             Text(
@@ -281,6 +276,19 @@ fun HomeScreen(
             Spacer(Modifier.height(OVERLAP / 2 + 24.dp))
 
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+
+                Text(
+                    "لوحة التحليلات",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = appColors.textPrimary
+                )
+                Spacer(Modifier.height(12.dp))
+                AnalyticsDashboardSection(
+                    state = uiState.dashboard,
+                    onCustomerClick = onCustomerClick
+                )
+                Spacer(Modifier.height(28.dp))
 
                 // ── Quick Nav ────────────────────────────────────
                 Text(
