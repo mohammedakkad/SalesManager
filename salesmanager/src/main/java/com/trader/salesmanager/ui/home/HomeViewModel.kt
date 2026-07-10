@@ -5,26 +5,27 @@ import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.ChatRepository
 import com.trader.core.domain.repository.TransactionRepository
-import com.trader.core.util.DateUtils.todayEnd
-import com.trader.core.util.DateUtils.todayStart
+import com.trader.core.domain.usecase.GetDashboardAnalyticsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 class HomeViewModel(
     private val repo: TransactionRepository,
     private val chatRepo: ChatRepository,
-    private val activationRepo: ActivationRepository
+    private val activationRepo: ActivationRepository,
+    getDashboardAnalytics: GetDashboardAnalyticsUseCase
 ) : ViewModel() {
 
     private val _merchantId = MutableStateFlow("")
+    private val dashboardAnalytics = getDashboardAnalytics().distinctUntilChanged()
 
     init {
         viewModelScope.launch {
@@ -34,41 +35,28 @@ class HomeViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<HomeUiState> = combine(
-        repo.getAllTransactions(),
+        repo.observeRecentTransactions(5),
+        dashboardAnalytics,
         _merchantId.flatMapLatest { id ->
             if (id.isEmpty()) flowOf(0)
             else chatRepo.getUnreadCount(id, excludeSenderId = id)
         }
-    ) { transactions, unread ->
-        val todayStart = todayStart()
-        val todayEnd   = todayEnd()
-
-        // Yesterday range
-        val cal = Calendar.getInstance()
-        cal.add(Calendar.DAY_OF_YEAR, -1)
-        cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
-        val yStart = cal.timeInMillis
-        cal.set(Calendar.HOUR_OF_DAY, 23); cal.set(Calendar.MINUTE, 59)
-        cal.set(Calendar.SECOND, 59); cal.set(Calendar.MILLISECOND, 999)
-        val yEnd = cal.timeInMillis
-
-        val todayTx     = transactions.filter { it.date in todayStart..todayEnd }
-        val yesterdayTx = transactions.filter { it.date in yStart..yEnd }
-
-        val total     = todayTx.sumOf { it.amount }
-        val paid      = todayTx.filter { it.isPaid }.sumOf { it.amount }
-        val yTotal    = yesterdayTx.sumOf { it.amount }
-        val recent    = transactions.sortedByDescending { it.date }.take(5)
-
+    ) { recentTransactions, analytics, unread ->
         HomeUiState(
-            todayTotal           = total,
-            todayPaid            = paid,
-            todayUnpaid          = total - paid,
-            yesterdayTotal       = yTotal,
-            recentTransactions   = recent,
-            unreadChatCount      = unread,
-            isLoading            = false
+            todayTotal = analytics.todaySummary.totalSales,
+            todayPaid = analytics.todaySummary.paidSales,
+            todayUnpaid = analytics.todaySummary.unpaidSales,
+            recentTransactions = recentTransactions,
+            unreadChatCount = unread,
+            dashboard = DashboardUiState(
+                todaySales = analytics.todaySummary.totalSales,
+                todayInvoiceCount = analytics.todaySummary.invoiceCount,
+                totalOutstandingDebt = analytics.totalOutstandingDebt,
+                topSellingProducts = analytics.topSellingProducts,
+                topDebtorCustomers = analytics.topDebtorCustomers,
+                lastSevenDaysSales = analytics.lastSevenDaysSales
+            ),
+            isLoading = false
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState(isLoading = true))
 }

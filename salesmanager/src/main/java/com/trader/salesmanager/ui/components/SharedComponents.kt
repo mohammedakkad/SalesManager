@@ -60,6 +60,7 @@ import com.trader.salesmanager.ui.theme.GradientEnd
 import com.trader.salesmanager.ui.theme.GradientStart
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
+import java.util.Locale
 
 // ── Gradient Card ────────────────────────────────────────────────────
 @Composable
@@ -121,7 +122,10 @@ fun AnimatedCounter(
     value: Double,
     modifier: Modifier = Modifier,
     style: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.headlineMedium,
-    color: Color = MaterialTheme.colorScheme.onSurface
+    color: Color = MaterialTheme.colorScheme.onSurface,
+    decimals: Int = 2,
+    prefix: String = "",
+    suffix: String = ""
 ) {
     val animatedValue by animateFloatAsState(
         targetValue = value.toFloat(),
@@ -132,7 +136,7 @@ fun AnimatedCounter(
         label = "counter"
     )
     Text(
-        text = String.format("%.2f", animatedValue),
+        text = prefix + String.format(Locale.US, "%,.${decimals}f", animatedValue) + suffix,
         style = style,
         fontWeight = FontWeight.Bold,
         color = color,

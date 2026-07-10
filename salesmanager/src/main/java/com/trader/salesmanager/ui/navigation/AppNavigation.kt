@@ -251,6 +251,9 @@ fun AppNavigation(
                 },
                 onTransactionClick = { id ->
                     navController.navigate(Screen.TransactionDetails.createRoute(id))
+                },
+                onCustomerClick = { id ->
+                    navController.navigate(Screen.CustomerDetails.createRoute(id))
                 }
             )
         }

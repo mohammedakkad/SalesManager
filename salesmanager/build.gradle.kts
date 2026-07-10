@@ -69,5 +69,7 @@ dependencies {
     implementation(libs.camerax.camera2)
     implementation(libs.camerax.lifecycle)
     implementation(libs.camerax.view)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
     debugImplementation(libs.compose.ui.tooling)
 }

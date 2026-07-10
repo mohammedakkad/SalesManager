@@ -13,7 +13,11 @@ import com.trader.core.domain.model.Transaction
         childColumns = ["customerId"],
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index("customerId")]
+    indices = [
+        Index("customerId"),
+        Index("date"),
+        Index(value = ["isPaid", "customerId"])
+    ]
 )
 data class TransactionEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

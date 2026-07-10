@@ -10,6 +10,7 @@ import com.trader.core.data.repository.ActivationRepositoryImpl
 import com.trader.core.data.repository.CashBoxRepositoryImpl
 import com.trader.core.data.repository.ChatRepositoryImpl
 import com.trader.core.data.repository.CustomerRepositoryImpl
+import com.trader.core.data.repository.DashboardAnalyticsRepositoryImpl
 import com.trader.core.data.repository.EmployeeRepositoryImpl
 import com.trader.core.data.repository.InventoryRepositoryImpl
 import com.trader.core.data.repository.InvoiceItemRepositoryImpl
@@ -24,6 +25,7 @@ import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.CashBoxRepository
 import com.trader.core.domain.repository.ChatRepository
 import com.trader.core.domain.repository.CustomerRepository
+import com.trader.core.domain.repository.DashboardAnalyticsRepository
 import com.trader.core.domain.repository.EmployeeRepository
 import com.trader.core.domain.repository.InventoryRepository
 import com.trader.core.domain.repository.InvoiceItemRepository
@@ -34,6 +36,7 @@ import com.trader.core.domain.repository.ReportsRepository
 import com.trader.core.domain.repository.ReturnRepository
 import com.trader.core.domain.repository.StockRepository
 import com.trader.core.domain.repository.TransactionRepository
+import com.trader.core.domain.usecase.GetDashboardAnalyticsUseCase
 import com.trader.core.util.NetworkMonitor
 import com.trader.core.sync.SyncCoordinator
 import com.trader.core.sync.SyncStatusObserver
@@ -203,6 +206,12 @@ val salesManagerModule = module {
     single<ReportsRepository> {
         ReportsRepositoryImpl(get(), get(), get())
     }
+    single<DashboardAnalyticsRepository> {
+        DashboardAnalyticsRepositoryImpl(get(), get())
+    }
+    single {
+        GetDashboardAnalyticsUseCase(get())
+    }
     single<EmployeeRepository> {
         EmployeeRepositoryImpl(
             get(),
@@ -246,7 +255,7 @@ val salesManagerModule = module {
         MerchantWatcherViewModel(get(), get())
     }
     viewModel {
-        HomeViewModel(get(), get(), get())
+        HomeViewModel(get(), get(), get(), get())
     }
     viewModel {
         SyncStatusViewModel(get(), get())
