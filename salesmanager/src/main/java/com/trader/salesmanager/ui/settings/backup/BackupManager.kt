@@ -2,6 +2,7 @@ package com.trader.salesmanager.ui.settings.backup
 
 import android.content.Context
 import android.util.Log
+import androidx.annotation.Keep
 import com.google.gson.Gson
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
@@ -23,17 +24,17 @@ import java.util.zip.ZipOutputStream
 
 internal const val BACKUP_LOG_TAG = "BackupRestore"
 
+@Keep
 class BackupManager(
     private val context: Context,
     private val database: AppDatabase,
     private val merchantId: String
 ) {
-    private val gson = Gson()
 
     suspend fun exportEncryptedBackup(password: CharArray): File = withContext(Dispatchers.IO) {
         try {
             val payload = collectPayload()
-            val zipBytes = compressJsonToZip(gson.toJson(payload))
+            val zipBytes = compressJsonToZip(GsonHolder.toJson(payload))
             val encrypted = BackupCrypto.encryptZip(
                 zipBytes = zipBytes,
                 password = password,
@@ -172,7 +173,7 @@ class BackupManager(
 
     private fun parseJson(json: String): BackupPayload {
         return try {
-            gson.fromJson(json, BackupPayload::class.java) ?: throw BackupException.Corrupted
+            GsonHolder.fromJson(json)
         } catch (e: JsonSyntaxException) {
             Log.e(BACKUP_LOG_TAG, "JSON syntax error during backup parse", e)
             throw BackupException.Corrupted
@@ -237,6 +238,16 @@ class BackupManager(
             return fallback
         }
     }
+}
+
+@Keep
+private object GsonHolder {
+    private val gson = Gson()
+
+    fun toJson(payload: BackupPayload): String = gson.toJson(payload)
+
+    fun fromJson(json: String): BackupPayload =
+        gson.fromJson(json, BackupPayload::class.java) ?: throw BackupException.Corrupted
 }
 
 sealed class BackupException : Exception() {

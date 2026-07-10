@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.settings.backup
 
+import androidx.annotation.Keep
 import com.trader.core.data.local.entity.CashBoxEntity
 import com.trader.core.data.local.entity.CashBoxMovementEntity
 import com.trader.core.data.local.entity.CustomerEntity
@@ -19,6 +20,7 @@ const val BACKUP_FORMAT_VERSION = 20
 const val BACKUP_JSON_ENTRY = "backup.json"
 const val BACKUP_FILE_EXTENSION = "smbk"
 
+@Keep
 data class BackupPayload(
     val schemaVersion: Int = BACKUP_FORMAT_VERSION,
     val exportedAt: Long = System.currentTimeMillis(),
