@@ -27,7 +27,7 @@ import com.trader.core.domain.model.PaymentType
         CashBoxEntity::class,
         CashBoxMovementEntity::class
     ],
-    version = 18,
+    version = 20,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -421,6 +421,26 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_18_19 = object : Migration(18, 19) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                purgeOrphanedInvoiceItems(db)
+                if (!hasColumn(db, "transactions", "dueDate")) {
+                    db.execSQL("ALTER TABLE transactions ADD COLUMN dueDate INTEGER")
+                }
+                if (!hasColumn(db, "transactions", "reminderEnabled")) {
+                    db.execSQL(
+                        "ALTER TABLE transactions ADD COLUMN reminderEnabled INTEGER NOT NULL DEFAULT 1"
+                    )
+                }
+            }
+        }
+
+        val MIGRATION_19_20 = object : Migration(19, 20) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                rebuildTransactionsTable(db)
+            }
+        }
+
         val MIGRATION_17_18 = object : Migration(17, 18) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
@@ -466,7 +486,9 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_14_15,
             MIGRATION_15_16, // ✅ deviceModel في sessions
             MIGRATION_16_17,
-            MIGRATION_17_18
+            MIGRATION_17_18,
+            MIGRATION_18_19,
+            MIGRATION_19_20
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
@@ -493,6 +515,81 @@ abstract class AppDatabase : RoomDatabase() {
             }
         })
         .build()
+
+        private fun hasColumn(db: SupportSQLiteDatabase, table: String, column: String): Boolean {
+            db.query("PRAGMA table_info($table)").use { cursor ->
+                val nameIndex = cursor.getColumnIndex("name")
+                if (nameIndex < 0) return false
+                while (cursor.moveToNext()) {
+                    if (cursor.getString(nameIndex) == column) return true
+                }
+            }
+            return false
+        }
+
+        private fun purgeOrphanedInvoiceItems(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                DELETE FROM invoice_items
+                WHERE transactionId NOT IN (SELECT id FROM transactions)
+                """.trimIndent()
+            )
+        }
+
+        private fun rebuildTransactionsTable(db: SupportSQLiteDatabase) {
+            purgeOrphanedInvoiceItems(db)
+            val hasDueDate = hasColumn(db, "transactions", "dueDate")
+            val hasReminderEnabled = hasColumn(db, "transactions", "reminderEnabled")
+            val dueDateExpr = if (hasDueDate) "dueDate" else "NULL"
+            val reminderExpr = if (hasReminderEnabled) "reminderEnabled" else "1"
+
+            db.execSQL("PRAGMA foreign_keys=OFF")
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS transactions_new (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    customerId INTEGER NOT NULL,
+                    amount REAL NOT NULL,
+                    isPaid INTEGER NOT NULL,
+                    paymentMethodId INTEGER,
+                    note TEXT NOT NULL DEFAULT '',
+                    date INTEGER NOT NULL,
+                    paidAt INTEGER,
+                    paymentType TEXT NOT NULL DEFAULT 'DEBT',
+                    hasItems INTEGER NOT NULL DEFAULT 0,
+                    syncStatus TEXT NOT NULL DEFAULT 'SYNCED',
+                    dueDate INTEGER,
+                    reminderEnabled INTEGER NOT NULL DEFAULT 1,
+                    FOREIGN KEY(customerId) REFERENCES customers(id) ON DELETE CASCADE
+                )
+                """.trimIndent()
+            )
+            db.execSQL(
+                """
+                INSERT INTO transactions_new (
+                    id, customerId, amount, isPaid, paymentMethodId, note, date,
+                    paidAt, paymentType, hasItems, syncStatus, dueDate, reminderEnabled
+                )
+                SELECT
+                    id, customerId, amount, isPaid, paymentMethodId, note, date,
+                    paidAt, paymentType, hasItems, syncStatus, $dueDateExpr, $reminderExpr
+                FROM transactions
+                """.trimIndent()
+            )
+            db.execSQL("DROP TABLE transactions")
+            db.execSQL("ALTER TABLE transactions_new RENAME TO transactions")
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS index_transactions_customerId ON transactions(customerId)"
+            )
+            db.execSQL("DELETE FROM sqlite_sequence WHERE name = 'transactions'")
+            db.execSQL(
+                """
+                INSERT INTO sqlite_sequence (name, seq)
+                SELECT 'transactions', IFNULL(MAX(id), 0) FROM transactions
+                """.trimIndent()
+            )
+            db.execSQL("PRAGMA foreign_keys=ON")
+        }
     }
 }
 

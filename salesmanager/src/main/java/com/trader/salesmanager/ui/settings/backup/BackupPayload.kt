@@ -15,7 +15,7 @@ import com.trader.core.data.local.entity.ReturnItemEntity
 import com.trader.core.data.local.entity.StockMovementEntity
 import com.trader.core.data.local.entity.TransactionEntity
 
-const val BACKUP_FORMAT_VERSION = 18
+const val BACKUP_FORMAT_VERSION = 20
 const val BACKUP_JSON_ENTRY = "backup.json"
 const val BACKUP_FILE_EXTENSION = "smbk"
 

@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId = "com.trader.salesmanager"
         minSdk = 24; targetSdk = 35
-        versionCode = 10204; versionName = "1.2.4"
+        versionCode = 10206; versionName = "1.2.6"
     }
     signingConfigs {
         create("release") {

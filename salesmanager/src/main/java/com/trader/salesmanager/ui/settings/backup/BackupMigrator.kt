@@ -39,6 +39,8 @@ object BackupMigrator {
         15 -> migrateV15ToV16(payload)
         16 -> migrateV16ToV17(payload)
         17 -> migrateV17ToV18(payload)
+        18 -> migrateV18ToV19(payload)
+        19 -> migrateV19ToV20(payload)
         else -> throw BackupException.UnsupportedBackupVersion(payload.schemaVersion)
     }
 
@@ -128,6 +130,17 @@ object BackupMigrator {
         payload.copy(cashBoxMovements = payload.cashBoxMovements.orEmpty()),
         18
     )
+
+    private fun migrateV18ToV19(payload: BackupPayload): BackupPayload = bump(
+        payload.copy(
+            transactions = payload.transactions.orEmpty().map { transaction ->
+                transaction.copy(dueDate = null, reminderEnabled = true)
+            }
+        ),
+        19
+    )
+
+    private fun migrateV19ToV20(payload: BackupPayload): BackupPayload = bump(payload, 20)
 
     private fun normalize(payload: BackupPayload): BackupPayload = payload.copy(
         customers = payload.customers.orEmpty().map(::normalizeCustomer),
