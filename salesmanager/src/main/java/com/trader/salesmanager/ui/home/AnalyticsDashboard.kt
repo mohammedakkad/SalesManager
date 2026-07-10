@@ -23,11 +23,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
+import androidx.compose.material.icons.automirrored.rounded.ShowChart
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.rounded.Inventory2
 import androidx.compose.material.icons.rounded.People
-import androidx.compose.material.icons.rounded.ReceiptLong
-import androidx.compose.material.icons.rounded.ShowChart
-import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -155,7 +155,7 @@ fun TopIndicatorsRow(
                 modifier = Modifier.width(cardWidth),
                 label = "مبيعات اليوم",
                 value = todaySales,
-                icon = Icons.Rounded.TrendingUp,
+                icon = Icons.AutoMirrored.Rounded.TrendingUp,
                 color = Emerald500,
                 prefix = "₪ "
             )
@@ -163,7 +163,7 @@ fun TopIndicatorsRow(
                 modifier = Modifier.width(cardWidth),
                 label = "عدد الفواتير اليوم",
                 value = todayInvoiceCount.toDouble(),
-                icon = Icons.Rounded.ReceiptLong,
+                icon = Icons.AutoMirrored.Rounded.ReceiptLong,
                 color = Violet500
             )
             IndicatorCard(
@@ -404,7 +404,7 @@ fun SalesChartCard(
         SectionHeader(
             title = "المبيعات خلال 7 أيام",
             subtitle = "إجمالي المبيعات اليومية",
-            icon = Icons.Rounded.ShowChart,
+            icon = Icons.AutoMirrored.Rounded.ShowChart,
             color = Emerald500
         )
         Spacer(Modifier.height(12.dp))
