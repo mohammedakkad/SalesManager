@@ -1,6 +1,7 @@
 package com.trader.core.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.InventorySession
@@ -10,7 +11,13 @@ import com.trader.core.domain.model.SyncStatus
 
 // ── فاتورة أصناف ─────────────────────────────────────────────────
 
-@Entity(tableName = "invoice_items")
+@Entity(
+    tableName = "invoice_items",
+    indices = [
+        Index("transactionId"),
+        Index("productId")
+    ]
+)
 data class InvoiceItemEntity(
     @PrimaryKey val id: String,
     val transactionId: Long,

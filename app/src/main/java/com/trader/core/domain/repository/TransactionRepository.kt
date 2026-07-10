@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TransactionRepository {
     fun getAllTransactions(): Flow<List<Transaction>>
+    fun observeRecentTransactions(limit: Int): Flow<List<Transaction>>
     fun getTransactionsByCustomer(customerId: Long): Flow<List<Transaction>>
     fun getUnpaidTransactions(): Flow<List<Transaction>>
     suspend fun getTransactionById(id: Long): Transaction?

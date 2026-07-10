@@ -27,7 +27,7 @@ import com.trader.core.domain.model.PaymentType
         CashBoxEntity::class,
         CashBoxMovementEntity::class
     ],
-    version = 20,
+    version = 21,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -441,6 +441,24 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_20_21 = object : Migration(20, 21) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_transactions_date ON transactions(date)")
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_transactions_isPaid_customerId " +
+                        "ON transactions(isPaid, customerId)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_invoice_items_transactionId " +
+                        "ON invoice_items(transactionId)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_invoice_items_productId " +
+                        "ON invoice_items(productId)"
+                )
+            }
+        }
+
         val MIGRATION_17_18 = object : Migration(17, 18) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
@@ -488,7 +506,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_16_17,
             MIGRATION_17_18,
             MIGRATION_18_19,
-            MIGRATION_19_20
+            MIGRATION_19_20,
+            MIGRATION_20_21
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {

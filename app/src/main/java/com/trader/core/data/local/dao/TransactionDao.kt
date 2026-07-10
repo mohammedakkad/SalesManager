@@ -15,6 +15,24 @@ data class DebtAgingProjection(
     val moreThanThreeMonthsCount: Int
 )
 
+data class TodaySalesSummaryProjection(
+    val todaySales: Double,
+    val todayInvoiceCount: Int,
+    val todayPaid: Double,
+    val todayUnpaid: Double
+)
+
+data class TopDebtorCustomerProjection(
+    val customerId: Long,
+    val customerName: String,
+    val totalDebt: Double
+)
+
+data class DailySalesProjection(
+    val dayStartMillis: Long,
+    val totalSales: Double
+)
+
 @Dao
 interface TransactionDao {
     @Query("SELECT * FROM transactions ORDER BY date DESC")
@@ -22,6 +40,10 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions ORDER BY date DESC")
     suspend fun getAllOnce(): List<TransactionEntity>
+
+    @Query("SELECT * FROM transactions ORDER BY date DESC LIMIT :limit")
+    fun observeRecentTransactions(limit: Int): Flow<List<TransactionEntity>>
+
     @Query("SELECT * FROM transactions WHERE customerId = :customerId ORDER BY date DESC")
     fun getTransactionsByCustomer(customerId: Long): Flow<List<TransactionEntity>>
     @Query("SELECT * FROM transactions WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
@@ -50,6 +72,67 @@ interface TransactionDao {
     suspend fun getPaidAmountByDate(startDate: Long, endDate: Long): Double
     @Query("SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE isPaid = 0 AND customerId = :customerId")
     suspend fun getUnpaidAmountByCustomer(customerId: Long): Double
+
+    @Query(
+        """
+        SELECT
+            COALESCE(SUM(amount), 0.0) AS todaySales,
+            COUNT(*) AS todayInvoiceCount,
+            COALESCE(SUM(CASE WHEN isPaid = 1 THEN amount ELSE 0.0 END), 0.0) AS todayPaid,
+            COALESCE(SUM(CASE WHEN isPaid = 0 THEN amount ELSE 0.0 END), 0.0) AS todayUnpaid
+        FROM transactions
+        WHERE date BETWEEN :startDate AND :endDate
+        """
+    )
+    fun observeTodaySalesSummary(
+        startDate: Long,
+        endDate: Long
+    ): Flow<TodaySalesSummaryProjection>
+
+    @Query("SELECT COALESCE(SUM(amount), 0.0) FROM transactions WHERE isPaid = 0")
+    fun observeTotalOutstandingDebt(): Flow<Double>
+
+    @Query(
+        """
+        SELECT
+            t.customerId AS customerId,
+            c.name AS customerName,
+            COALESCE(SUM(t.amount), 0.0) AS totalDebt
+        FROM transactions t
+        INNER JOIN customers c ON c.id = t.customerId
+        WHERE t.isPaid = 0
+        GROUP BY t.customerId, c.name
+        ORDER BY totalDebt DESC
+        LIMIT :limit
+        """
+    )
+    fun observeTopDebtorCustomers(limit: Int): Flow<List<TopDebtorCustomerProjection>>
+
+    @Query(
+        """
+        WITH RECURSIVE days(dayIndex, dayStartMillis) AS (
+            SELECT 0, :startDate
+            UNION ALL
+            SELECT dayIndex + 1, dayStartMillis + 86400000
+            FROM days
+            WHERE dayIndex < 6
+        )
+        SELECT
+            days.dayStartMillis AS dayStartMillis,
+            COALESCE(SUM(t.amount), 0.0) AS totalSales
+        FROM days
+        LEFT JOIN transactions t
+            ON t.date >= days.dayStartMillis
+            AND t.date < days.dayStartMillis + 86400000
+            AND t.date <= :endDate
+        GROUP BY days.dayIndex, days.dayStartMillis
+        ORDER BY days.dayIndex ASC
+        """
+    )
+    fun observeLastSevenDaysSales(
+        startDate: Long,
+        endDate: Long
+    ): Flow<List<DailySalesProjection>>
 
     @Query(
         """

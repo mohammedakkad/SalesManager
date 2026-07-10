@@ -106,6 +106,13 @@ class TransactionRepositoryImpl(
         }
     }
 
+    override fun observeRecentTransactions(limit: Int): Flow<List<Transaction>> =
+    transactionDao.observeRecentTransactions(limit).map {
+        it.map {
+            e -> e.enrich()
+        }
+    }
+
     override fun getTransactionsByCustomer(cid: Long) =
     transactionDao.getTransactionsByCustomer(cid).map {
         it.map {

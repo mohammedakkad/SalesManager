@@ -17,6 +17,12 @@ data class DailySalesProfitProjection(
     val profit: Double
 )
 
+data class TopSellingProductProjection(
+    val productId: String,
+    val productName: String,
+    val quantitySold: Double
+)
+
 // ── فاتورة أصناف ─────────────────────────────────────────────────
 
 @Dao
@@ -183,6 +189,26 @@ interface InvoiceItemDao {
         endDate: Long,
         timezoneOffsetMillis: Long
     ): Flow<List<DailySalesProfitProjection>>
+
+    @Query(
+        """
+        SELECT
+            ii.productId AS productId,
+            MAX(ii.productName) AS productName,
+            COALESCE(SUM(ii.quantity), 0.0) AS quantitySold
+        FROM invoice_items ii
+        INNER JOIN transactions t ON t.id = ii.transactionId
+        WHERE t.date BETWEEN :startDate AND :endDate
+        GROUP BY ii.productId
+        ORDER BY quantitySold DESC
+        LIMIT :limit
+        """
+    )
+    fun observeTopSellingProducts(
+        startDate: Long,
+        endDate: Long,
+        limit: Int
+    ): Flow<List<TopSellingProductProjection>>
 }
 
 // ── جرد ──────────────────────────────────────────────────────────
