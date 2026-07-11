@@ -122,7 +122,6 @@ internal object PdfCanvas {
             .setTextDirection(TextDirectionHeuristics.RTL)
             .setIncludePad(false)
             .setLineSpacing(0f, 1.08f)
-            .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
             .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NONE)
             .setMaxLines(maxLines)
             .setEllipsize(TextUtils.TruncateAt.END)

@@ -107,11 +107,12 @@ fun TransactionDetailsScreen(
     }
     val context = LocalContext.current
 
-    val storeName by context.appDataStore.data
-    .map {
-        it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+    val storeNameFlow = remember(context) {
+        context.appDataStore.data.map {
+            it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+        }
     }
-    .collectAsState(initial = "")
+    val storeName by storeNameFlow.collectAsState(initial = "")
 
     val exportVm: ExportViewModel = koinViewModel()
     val exportState by exportVm.state.collectAsStateWithLifecycle()
