@@ -12,6 +12,7 @@ import com.trader.core.domain.repository.ReportsRepository
 import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.DateUtils.todayEnd
 import com.trader.core.util.DateUtils.todayStart
+import com.trader.salesmanager.util.pdf.ReportPdfGenerator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -57,6 +58,8 @@ data class ReportsUiState(
     val inventorySaleValue: Double = 0.0,
     val debtAging: DebtAging = DebtAging(),
     val salesProfitLast7Days: List<SalesProfitDayEntry> = emptyList(),
+    val monthlyReportTotals: FinancialReportTotals = FinancialReportTotals(),
+    val monthlyDailySalesProfit: List<DailySalesProfit> = emptyList(),
     val calendarMonth: Int = Calendar.getInstance().get(Calendar.MONTH),
     val calendarYear: Int = Calendar.getInstance().get(Calendar.YEAR),
     val selectedDay: Int? = null,
@@ -90,7 +93,15 @@ class ReportsViewModel(
         val netProfit: Double,
         val inventoryValue: InventoryValue,
         val debtAging: DebtAging,
-        val salesProfitLast7Days: List<SalesProfitDayEntry>
+        val salesProfitLast7Days: List<SalesProfitDayEntry>,
+        val monthlyReport: CalendarReportState
+    )
+
+    private data class CalendarReportState(
+        val month: Int,
+        val year: Int,
+        val totals: FinancialReportTotals,
+        val dailySalesProfit: List<DailySalesProfit>
     )
 
     private val periodFinancials = _period.flatMapLatest { period ->
@@ -112,6 +123,22 @@ class ReportsViewModel(
         oneMonthAgo = monthsAgo(1),
         threeMonthsAgo = monthsAgo(3)
     )
+
+    private val calendarReport = combine(_calendarMonth, _calendarYear) { month, year ->
+        month to year
+    }.flatMapLatest { (month, year) ->
+        val (start, end) = monthRange(month, year)
+        combine(
+            reportsRepo.observeFinancialReportTotals(start, end),
+            reportsRepo.observeDailySalesProfit(
+                startDate = start,
+                endDate = end,
+                timezoneOffsetMillis = TimeZone.getDefault().getOffset(start).toLong()
+            )
+        ) { totals, daily ->
+            CalendarReportState(month, year, totals, daily)
+        }
+    }
 
     init {
         observeBaseReports()
@@ -142,7 +169,9 @@ class ReportsViewModel(
                         inventoryCostValue = current.inventoryCostValue,
                         inventorySaleValue = current.inventorySaleValue,
                         debtAging = current.debtAging,
-                        salesProfitLast7Days = current.salesProfitLast7Days
+                        salesProfitLast7Days = current.salesProfitLast7Days,
+                        monthlyReportTotals = current.monthlyReportTotals,
+                        monthlyDailySalesProfit = current.monthlyDailySalesProfit
                     )
                 }
             }
@@ -155,13 +184,15 @@ class ReportsViewModel(
                 periodFinancials,
                 reportsRepo.observeInventoryValue(),
                 debtAging,
-                lastSevenDaysSalesProfit
-            ) { financials, inventoryValue, debtAgingValue, salesProfit ->
+                lastSevenDaysSalesProfit,
+                calendarReport
+            ) { financials, inventoryValue, debtAgingValue, salesProfit, monthlyReport ->
                 AdvancedAnalyticsState(
                     netProfit = financials.totals.netProfit,
                     inventoryValue = inventoryValue,
                     debtAging = debtAgingValue,
-                    salesProfitLast7Days = salesProfit
+                    salesProfitLast7Days = salesProfit,
+                    monthlyReport = monthlyReport
                 )
             }.collect { analytics ->
                 _uiState.update { current ->
@@ -170,7 +201,9 @@ class ReportsViewModel(
                         inventoryCostValue = analytics.inventoryValue.costValue,
                         inventorySaleValue = analytics.inventoryValue.saleValue,
                         debtAging = analytics.debtAging,
-                        salesProfitLast7Days = analytics.salesProfitLast7Days
+                        salesProfitLast7Days = analytics.salesProfitLast7Days,
+                        monthlyReportTotals = analytics.monthlyReport.totals,
+                        monthlyDailySalesProfit = analytics.monthlyReport.dailySalesProfit
                     )
                 }
             }
@@ -244,6 +277,21 @@ class ReportsViewModel(
         _calendarMonth.value = cal.get(Calendar.MONTH)
         _calendarYear.value = cal.get(Calendar.YEAR)
         _selectedDay.value = null
+    }
+
+    fun buildMonthlyReportData(storeName: String): ReportPdfGenerator.MonthlyReportPdfData {
+        val state = _uiState.value
+        return ReportPdfGenerator.MonthlyReportPdfData(
+            storeName = storeName,
+            month = state.calendarMonth,
+            year = state.calendarYear,
+            totalSales = state.monthlyReportTotals.totalSales,
+            netProfit = state.monthlyReportTotals.netProfit,
+            inventoryCostValue = state.inventoryCostValue,
+            inventorySaleValue = state.inventorySaleValue,
+            debtAging = state.debtAging,
+            dailySalesProfit = state.monthlyDailySalesProfit
+        )
     }
 
     private fun buildDayTotals(all: List<Transaction>, month: Int, year: Int): Map<Int, Double> {
@@ -351,6 +399,25 @@ class ReportsViewModel(
 
     private fun currentTimezoneOffsetMillis(): Long =
         TimeZone.getDefault().getOffset(System.currentTimeMillis()).toLong()
+
+    private fun monthRange(month: Int, year: Int): Pair<Long, Long> {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val start = calendar.timeInMillis
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+        calendar.set(Calendar.MILLISECOND, 999)
+        return start to calendar.timeInMillis
+    }
 
     private fun periodRange(p: ReportPeriod): Pair<Long, Long> {
         val cal = Calendar.getInstance()

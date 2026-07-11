@@ -33,7 +33,9 @@ import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.EventBusy
 import androidx.compose.material.icons.rounded.OpenInNew
+import androidx.compose.material.icons.rounded.Print
 import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,6 +47,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -90,6 +93,7 @@ import com.trader.salesmanager.util.export.ExportManager
 import com.trader.salesmanager.util.export.ExportState
 import com.trader.salesmanager.util.export.ExportSuccessBottomSheet
 import com.trader.salesmanager.util.export.ExportViewModel
+import com.trader.salesmanager.util.pdf.PdfPrintManager
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
@@ -117,9 +121,19 @@ fun ReportsScreen(
     var showExportSheet by remember {
         mutableStateOf(false)
     }
+    var pendingExportAction by remember {
+        mutableStateOf<ReportExportAction?>(null)
+    }
 
     LaunchedEffect(exportState) {
-        if (exportState is ExportState.Success) showExportSheet = true
+        val success = exportState as? ExportState.Success ?: return@LaunchedEffect
+        if (pendingExportAction == ReportExportAction.PRINT && success.type == com.trader.salesmanager.util.export.ExportType.PDF) {
+            PdfPrintManager.print(context, java.io.File(success.filePath), success.fileName)
+            pendingExportAction = null
+            exportVm.reset()
+        } else {
+            showExportSheet = true
+        }
     }
 
     if (showExportSheet && exportState is ExportState.Success) {
@@ -128,22 +142,41 @@ fun ReportsScreen(
         ExportSuccessBottomSheet(
             state = success,
             onShare = {
-                ExportManager.shareFile(context, file, success.type.mimeType); showExportSheet =
-                false
+                ExportManager.shareFile(context, file, success.type.mimeType)
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
             },
             onWhatsApp = {
                 ExportManager.shareToWhatsApp(
                     context,
                     file,
                     success.type.mimeType
-                ); showExportSheet = false
+                )
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
             },
             onDownload = {
-                ExportManager.saveToDownloads(context, file, success.fileName); showExportSheet =
-                false; exportVm.reset()
+                ExportManager.saveToDownloads(context, file, success.fileName)
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
+            },
+            onPrint = if (success.type == com.trader.salesmanager.util.export.ExportType.PDF) {
+                {
+                    PdfPrintManager.print(context, file, success.fileName)
+                    showExportSheet = false
+                    pendingExportAction = null
+                    exportVm.reset()
+                }
+            } else {
+                null
             },
             onDismiss = {
-                showExportSheet = false; exportVm.reset()
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
             }
         )
     }
@@ -167,6 +200,7 @@ fun ReportsScreen(
                     IconButton(
                         onClick = {
                             if (!isExporting) {
+                                pendingExportAction = ReportExportAction.SHARE
                                 exportVm.exportSalesReportExcel(
                                     transactions = uiState.filteredTransactions,
                                     periodLabel = uiState.period.name,
@@ -210,6 +244,56 @@ fun ReportsScreen(
                     selected = uiState.period,
                     onSelect = viewModel::setPeriod
                 )
+            }
+
+            item {
+                val isExporting = exportState is ExportState.Loading
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Button(
+                        onClick = {
+                            pendingExportAction = ReportExportAction.SHARE
+                            exportVm.exportMonthlyReportPdf(
+                                data = viewModel.buildMonthlyReportData(storeName),
+                                cacheDir = context.cacheDir
+                            )
+                        },
+                        enabled = !isExporting && !uiState.isLoading,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
+                    ) {
+                        if (isExporting && pendingExportAction == ReportExportAction.SHARE) {
+                            CircularProgressIndicator(Modifier.size(18.dp), color = Color.White, strokeWidth = 2.dp)
+                        } else {
+                            Icon(Icons.Rounded.Share, null, Modifier.size(18.dp))
+                        }
+                        Spacer(Modifier.width(7.dp))
+                        Text("مشاركة PDF", fontWeight = FontWeight.SemiBold)
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            pendingExportAction = ReportExportAction.PRINT
+                            exportVm.exportMonthlyReportPdf(
+                                data = viewModel.buildMonthlyReportData(storeName),
+                                cacheDir = context.cacheDir
+                            )
+                        },
+                        enabled = !isExporting && !uiState.isLoading,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        if (isExporting && pendingExportAction == ReportExportAction.PRINT) {
+                            CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                        } else {
+                            Icon(Icons.Rounded.Print, null, Modifier.size(18.dp))
+                        }
+                        Spacer(Modifier.width(7.dp))
+                        Text("طباعة")
+                    }
+                }
             }
 
             item {
@@ -387,6 +471,11 @@ fun ReportsScreen(
             }
         }
     }
+}
+
+private enum class ReportExportAction {
+    SHARE,
+    PRINT
 }
 
 // ── التقويم ───────────────────────────────────────────────────

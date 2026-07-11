@@ -2,6 +2,7 @@ package com.trader.salesmanager.util.export
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -13,12 +14,14 @@ import android.provider.MediaStore
 import androidx.core.content.FileProvider
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.model.InvoiceItem
-import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.model.ProductWithUnits
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.reports.CustomerRank
 import com.trader.salesmanager.ui.reports.DaySalesEntry
 import com.trader.salesmanager.ui.reports.PaymentShare
+import com.trader.salesmanager.util.pdf.InvoicePdfGenerator
+import com.trader.salesmanager.util.pdf.PdfLayoutConstants
+import com.trader.salesmanager.util.pdf.ReportPdfGenerator
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -34,19 +37,19 @@ import java.util.Locale
 object ExportManager {
 
     // ── ألوان المشروع ─────────────────────────────────────────
-    private val GREEN   = Color.parseColor("#10B981")
-    private val GREEN_L = Color.parseColor("#D1FAE5")
-    private val RED     = Color.parseColor("#EF4444")
-    private val RED_L   = Color.parseColor("#FEE2E2")
-    private val AMBER   = Color.parseColor("#F59E0B")
-    private val AMBER_L = Color.parseColor("#FEF3C7")
-    private val VIOLET  = Color.parseColor("#8B5CF6")
-    private val CYAN    = Color.parseColor("#06B6D4")
-    private val GRAY_L  = Color.parseColor("#F8FAFC")
-    private val GRAY_M  = Color.parseColor("#E2E8F0")
-    private val GRAY_D  = Color.parseColor("#64748B")
-    private val BLACK   = Color.parseColor("#1E293B")
-    private val WHITE   = Color.WHITE
+    private val GREEN   = PdfLayoutConstants.EMERALD_500
+    private val GREEN_L = PdfLayoutConstants.EMERALD_100
+    private val RED     = PdfLayoutConstants.RED_500
+    private val RED_L   = PdfLayoutConstants.RED_100
+    private val AMBER   = PdfLayoutConstants.AMBER_500
+    private val AMBER_L = PdfLayoutConstants.AMBER_100
+    private val VIOLET  = PdfLayoutConstants.VIOLET_500
+    private val CYAN    = PdfLayoutConstants.CYAN_500
+    private val GRAY_L  = PdfLayoutConstants.SLATE_50
+    private val GRAY_M  = PdfLayoutConstants.SLATE_200
+    private val GRAY_D  = PdfLayoutConstants.SLATE_600
+    private val BLACK   = PdfLayoutConstants.SLATE_900
+    private val WHITE   = PdfLayoutConstants.WHITE
 
     // A4 dimensions at 72 DPI
     private const val W = 595f
@@ -60,99 +63,26 @@ object ExportManager {
         cacheDir: File,
         transaction: Transaction,
         items: List<InvoiceItem>,
-        storeName: String
-    ): File {
-        val doc = PdfDocument()
-        val info = PdfDocument.PageInfo.Builder(W.toInt(), H.toInt(), 1).create()
-        val page = doc.startPage(info)
-        val c = page.canvas
-        var y = 0f
+        storeName: String,
+        customer: Customer? = null,
+        logo: Bitmap? = null,
+        priorDebtBalance: Double? = null,
+        currentDebtBalance: Double? = null
+    ): File = InvoicePdfGenerator.generate(
+        cacheDir = cacheDir,
+        transaction = transaction,
+        items = items,
+        customer = customer,
+        storeName = storeName,
+        logo = logo,
+        priorDebtBalance = priorDebtBalance,
+        currentDebtBalance = currentDebtBalance
+    )
 
-        // ── Header ────────────────────────────────────────────
-        val headerColor = if (transaction.isPaid) GREEN else AMBER
-        c.drawRect(0f, 0f, W, 80f, fill(headerColor))
-
-        // اسم المحل
-        c.drawText(storeName.ifBlank { "المتجر" }, W - M, 38f, paint(WHITE, 20f, bold = true, align = Paint.Align.RIGHT))
-        c.drawText("فاتورة بيع", W - M, 58f, paint(WHITE.withAlpha(180), 11f, align = Paint.Align.RIGHT))
-
-        // شعار بسيط على اليسار (دائرة)
-        val circlePaint = fill(WHITE.withAlpha(40))
-        c.drawCircle(55f, 40f, 28f, circlePaint)
-        c.drawText("₪", 55f, 48f, paint(WHITE, 24f, bold = true, align = Paint.Align.CENTER))
-
-        y = 90f
-
-        // ── بيانات الفاتورة ───────────────────────────────────
-        c.drawRect(M, y, W - M, y + 120f, fill(GRAY_L))
-        c.drawRect(M, y, W - M, y + 120f, stroke(GRAY_M))
-
-        val df = SimpleDateFormat("dd MMMM yyyy - hh:mm a", Locale("ar"))
-        val date = df.format(Date(transaction.date))
-        val statusTxt = if (transaction.isPaid) "✓ مدفوع" else "⏳ غير مدفوع"
-        val statusColor = if (transaction.isPaid) GREEN else AMBER
-        val payTypeTxt = when (transaction.paymentType) {
-            PaymentType.CASH   -> "كاش"
-            PaymentType.DEBT   -> "دين"
-            PaymentType.BANK   -> "بنك"
-            PaymentType.WALLET -> "محفظة"
-            PaymentType.OTHER  -> "أخرى"
-        }
-
-        infoRow(c, y + 18f, "رقم الفاتورة",   "#${transaction.id}")
-        infoRow(c, y + 36f, "التاريخ",         date)
-        infoRow(c, y + 54f, "الزبون",           transaction.customerName)
-        infoRow(c, y + 72f, "طريقة الدفع",     "${transaction.paymentMethodName} • $payTypeTxt")
-        infoRow(c, y + 90f, "الحالة", statusTxt, valueColor = statusColor)
-        if (transaction.note.isNotEmpty())
-            infoRow(c, y + 108f, "ملاحظة", transaction.note)
-        y += 130f
-
-        // ── جدول الأصناف (إن وجد) ────────────────────────────
-        if (items.isNotEmpty()) {
-            y += 10f
-            c.drawText("أصناف الفاتورة", W - M, y + 14f, paint(BLACK, 13f, bold = true, align = Paint.Align.RIGHT))
-            y += 22f
-
-            // رأس الجدول
-            c.drawRect(M, y, W - M, y + 26f, fill(headerColor))
-            tableHeader(c, y + 18f)
-            y += 26f
-
-            // صفوف
-            items.forEachIndexed { i, item ->
-                val bg = if (i % 2 == 0) WHITE else GRAY_L
-                c.drawRect(M, y, W - M, y + 24f, fill(bg))
-                c.drawRect(M, y, W - M, y + 24f, stroke(GRAY_M, 0.5f))
-                tableRow(c, y + 17f, item)
-                y += 24f
-            }
-
-            // إجمالي
-            c.drawRect(M, y, W - M, y + 28f, fill(headerColor.withAlpha(25)))
-            c.drawRect(M, y, W - M, y + 28f, stroke(headerColor.withAlpha(80)))
-            c.drawText("الإجمالي", W - M - 10f, y + 19f, paint(BLACK, 12f, bold = true, align = Paint.Align.RIGHT))
-            c.drawText("₪${transaction.amount.fmt()}", M + 10f, y + 19f, paint(headerColor, 14f, bold = true, align = Paint.Align.LEFT))
-            y += 36f
-        } else {
-            // لا أصناف — فقط المبلغ
-            y += 10f
-            c.drawRect(M, y, W - M, y + 40f, fill(headerColor.withAlpha(20)))
-            c.drawRect(M, y, W - M, y + 40f, stroke(headerColor.withAlpha(60)))
-            c.drawText("إجمالي الفاتورة", W - M - 10f, y + 26f, paint(GRAY_D, 13f, align = Paint.Align.RIGHT))
-            c.drawText("₪${transaction.amount.fmt()}", M + 10f, y + 26f, paint(headerColor, 18f, bold = true, align = Paint.Align.LEFT))
-            y += 50f
-        }
-
-        // ── Footer ────────────────────────────────────────────
-        drawFooter(c, storeName)
-
-        doc.finishPage(page)
-        val file = File(cacheDir, "invoice_${transaction.id}.pdf")
-        doc.writeTo(FileOutputStream(file))
-        doc.close()
-        return file
-    }
+    fun generateMonthlyReportPdf(
+        cacheDir: File,
+        data: ReportPdfGenerator.MonthlyReportPdfData
+    ): File = ReportPdfGenerator.generate(cacheDir, data)
 
     // ══════════════════════════════════════════════════════════
     // 2. PDF — كشف حساب عميل
@@ -469,35 +399,13 @@ object ExportManager {
     // ══════════════════════════════════════════════════════════
     // PDF helpers
     // ══════════════════════════════════════════════════════════
-    private fun infoRow(c: Canvas, y: Float, label: String, value: String, valueColor: Int = BLACK) {
-        c.drawText(label, W - M - 10f, y, paint(GRAY_D, 9f, align = Paint.Align.RIGHT))
-        c.drawText(value, M + 90f, y, paint(valueColor, 9f, bold = valueColor != BLACK, align = Paint.Align.LEFT))
-        // رسم خط فاصل خفيف
-        c.drawLine(M + 10f, y + 3f, W - M - 10f, y + 3f, stroke(GRAY_M, 0.3f))
-    }
-
-    private fun tableHeader(c: Canvas, y: Float) {
-        c.drawText("المجموع", M + 30f, y, paint(WHITE, 9f, bold = true, align = Paint.Align.LEFT))
-        c.drawText("السعر", M + 130f, y, paint(WHITE, 9f, bold = true, align = Paint.Align.LEFT))
-        c.drawText("الكمية", M + 220f, y, paint(WHITE, 9f, bold = true, align = Paint.Align.LEFT))
-        c.drawText("الصنف", W - M - 10f, y, paint(WHITE, 9f, bold = true, align = Paint.Align.RIGHT))
-    }
-
-    private fun tableRow(c: Canvas, y: Float, item: InvoiceItem) {
-        c.drawText("₪${item.totalPrice.fmt()}", M + 30f, y, paint(VIOLET, 9f, bold = true, align = Paint.Align.LEFT))
-        c.drawText("₪${item.pricePerUnit.fmt()}", M + 130f, y, paint(GRAY_D, 9f, align = Paint.Align.LEFT))
-        val qtyStr = if (item.quantity == item.quantity.toLong().toDouble()) item.quantity.toLong().toString() else "%.2f".format(item.quantity)
-        c.drawText("$qtyStr ${item.unitLabel}", M + 220f, y, paint(GRAY_D, 9f, align = Paint.Align.LEFT))
-        c.drawText(item.productName, W - M - 10f, y, paint(BLACK, 9f, align = Paint.Align.RIGHT))
-    }
-
     private fun summaryBox(c: Canvas, x: Float, y: Float, w: Float, label: String, value: String, color: Int) {
         c.drawText(label, x + w - 5f, y + 16f, paint(GRAY_D, 9f, align = Paint.Align.RIGHT))
         c.drawText(value, x + w - 5f, y + 34f, paint(color, 12f, bold = true, align = Paint.Align.RIGHT))
     }
 
     private fun drawFooter(c: Canvas, storeName: String) {
-        c.drawRect(0f, H - 35f, W, H, fill(Color.parseColor("#F1F5F9")))
+        c.drawRect(0f, H - 35f, W, H, fill(PdfLayoutConstants.SLATE_100))
         c.drawLine(0f, H - 35f, W, H - 35f, stroke(GRAY_M))
         c.drawText("شكراً لتعاملكم معنا", W / 2, H - 15f, paint(GRAY_D, 9f, align = Paint.Align.CENTER))
         val now = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("ar")).format(Date())

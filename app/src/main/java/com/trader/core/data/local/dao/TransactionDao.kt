@@ -75,6 +75,21 @@ interface TransactionDao {
 
     @Query(
         """
+        SELECT COALESCE(SUM(amount), 0.0)
+        FROM transactions
+        WHERE isPaid = 0
+          AND customerId = :customerId
+          AND (date < :transactionDate OR (date = :transactionDate AND id < :transactionId))
+        """
+    )
+    suspend fun getUnpaidAmountBeforeTransaction(
+        customerId: Long,
+        transactionDate: Long,
+        transactionId: Long
+    ): Double
+
+    @Query(
+        """
         SELECT
             COALESCE(SUM(amount), 0.0) AS todaySales,
             COUNT(*) AS todayInvoiceCount,

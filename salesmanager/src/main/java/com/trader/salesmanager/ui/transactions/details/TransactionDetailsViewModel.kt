@@ -2,9 +2,11 @@ package com.trader.salesmanager.ui.transactions.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.trader.core.domain.model.Customer
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.ReturnSummary
 import com.trader.core.domain.model.Transaction
+import com.trader.core.domain.repository.CustomerRepository
 import com.trader.core.domain.repository.InvoiceItemRepository
 import com.trader.core.domain.repository.ReturnRepository
 import com.trader.core.domain.repository.StockRepository
@@ -19,6 +21,9 @@ import kotlinx.coroutines.launch
 data class TransactionDetailsUiState(
     val transaction: Transaction? = null,
     val invoiceItems: List<InvoiceItem> = emptyList(),
+    val customer: Customer? = null,
+    val priorDebtBalance: Double? = null,
+    val currentDebtBalance: Double? = null,
     val isDeleted: Boolean = false,
     val returnSummary: ReturnSummary = ReturnSummary.NONE,
     val isLoadingReturn: Boolean = false
@@ -29,7 +34,8 @@ class TransactionDetailsViewModel(
     private val transactionRepo: TransactionRepository,
     private val invoiceItemRepo: InvoiceItemRepository,
     private val stockRepo: StockRepository,
-    private val returnRepo: ReturnRepository
+    private val returnRepo: ReturnRepository,
+    private val customerRepo: CustomerRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TransactionDetailsUiState())
@@ -40,8 +46,26 @@ class TransactionDetailsViewModel(
         viewModelScope.launch {
             transactionRepo.observeTransactionById(transactionId).collect {
                 t ->
+                val customer = t?.takeIf { it.customerId > 0L }?.let {
+                    customerRepo.getCustomerById(it.customerId)
+                }
+                val priorDebt = t?.takeIf { it.customerId > 0L }?.let {
+                    transactionRepo.getUnpaidAmountBeforeTransaction(
+                        customerId = it.customerId,
+                        transactionDate = it.date,
+                        transactionId = it.id
+                    )
+                }
+                val currentDebt = t?.takeIf { it.customerId > 0L }?.let {
+                    transactionRepo.getUnpaidAmountByCustomer(it.customerId)
+                }
                 _state.update {
-                    it.copy(transaction = t)
+                    it.copy(
+                        transaction = t,
+                        customer = customer,
+                        priorDebtBalance = priorDebt,
+                        currentDebtBalance = currentDebt
+                    )
                 }
             }
         }

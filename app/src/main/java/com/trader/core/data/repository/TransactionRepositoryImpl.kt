@@ -231,4 +231,9 @@ class TransactionRepositoryImpl(
     override suspend fun getTotalAmountByDate(s: Long, e: Long) = transactionDao.getTotalAmountByDate(s, e)
     override suspend fun getPaidAmountByDate(s: Long, e: Long) = transactionDao.getPaidAmountByDate(s, e)
     override suspend fun getUnpaidAmountByCustomer(cid: Long) = transactionDao.getUnpaidAmountByCustomer(cid)
+    override suspend fun getUnpaidAmountBeforeTransaction(
+        customerId: Long,
+        transactionDate: Long,
+        transactionId: Long
+    ) = transactionDao.getUnpaidAmountBeforeTransaction(customerId, transactionDate, transactionId)
 }

@@ -9,6 +9,7 @@ import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.reports.CustomerRank
 import com.trader.salesmanager.ui.reports.DaySalesEntry
 import com.trader.salesmanager.ui.reports.PaymentShare
+import com.trader.salesmanager.util.pdf.ReportPdfGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,9 +40,20 @@ class ExportViewModel : ViewModel() {
         transaction: Transaction,
         items: List<InvoiceItem>,
         storeName: String,
+        customer: Customer? = null,
+        priorDebtBalance: Double? = null,
+        currentDebtBalance: Double? = null,
         cacheDir: File           // ← File بدل Context — لا يحتفظ به ViewModel
     ) = runExport("فاتورة_${transaction.id}.pdf") {
-        ExportManager.generateInvoicePdf(cacheDir, transaction, items, storeName)
+        ExportManager.generateInvoicePdf(
+            cacheDir = cacheDir,
+            transaction = transaction,
+            items = items,
+            storeName = storeName,
+            customer = customer,
+            priorDebtBalance = priorDebtBalance,
+            currentDebtBalance = currentDebtBalance
+        )
     }
 
     fun exportCustomerStatementPdf(
@@ -65,6 +77,13 @@ class ExportViewModel : ViewModel() {
         ExportManager.generateSalesReportExcel(
             cacheDir, transactions, periodLabel, storeName, dailySales, topSpenders, paymentShares
         )
+    }
+
+    fun exportMonthlyReportPdf(
+        data: ReportPdfGenerator.MonthlyReportPdfData,
+        cacheDir: File
+    ) = runExport("تقرير_${data.year}_${data.month + 1}.pdf") {
+        ExportManager.generateMonthlyReportPdf(cacheDir, data)
     }
 
     fun exportInventoryExcel(
