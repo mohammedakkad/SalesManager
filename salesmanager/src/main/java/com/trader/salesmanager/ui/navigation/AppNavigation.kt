@@ -265,11 +265,7 @@ fun AppNavigation(
         composable(Screen.Activation.route) {
             ActivationScreen(
                 onActivated = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Activation.route) {
-                            inclusive = true
-                        }
-                    }
+                    activationVm.checkStartup()
                 },
                 // هذه هي الميزة المطلوبة من الملف الثاني
                 onFreeStart = {
