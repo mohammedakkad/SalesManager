@@ -1,17 +1,22 @@
 package com.trader.salesmanager.ui.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
@@ -27,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.trader.salesmanager.ui.activation.ActivationScreen
@@ -172,37 +178,90 @@ fun AppNavigation(
         }
     }
 
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+    val showBottomNavigation = isMainBottomNavRoute(currentRoute)
 
-    // ✅ Fix 3: Surface تضمن خلفية صحيحة خلف أنيميشن الانتقال بين الشاشات
-    // تمنع الشفافية التي تُظهر الـ Window background الخام أثناء enter/exit transitions
+    BackHandler(
+        enabled = showBottomNavigation && currentRoute != Screen.Home.route
+    ) {
+        navController.navigateToMainTab(Screen.Home.route, currentRoute)
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-    NavHost(
-        navController = navController,
-        startDestination = start,
-        enterTransition = {
-            slideInHorizontally(tween(280)) {
-                it / 4
-            } + fadeIn(tween(280))
-        },
-        exitTransition = {
-            slideOutHorizontally(tween(280)) {
-                -it / 4
-            } + fadeOut(tween(280))
-        },
-        popEnterTransition = {
-            slideInHorizontally(tween(280)) {
-                -it / 4
-            } + fadeIn(tween(280))
-        },
-        popExitTransition = {
-            slideOutHorizontally(tween(280)) {
-                it / 4
-            } + fadeOut(tween(280))
-        }
-    ) {
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            bottomBar = {
+                if (showBottomNavigation) {
+                    MainBottomNavigationBar(
+                        currentRoute = currentRoute,
+                        onTabSelected = { route ->
+                            navController.navigateToMainTab(route, currentRoute)
+                        }
+                    )
+                }
+            }
+        ) { contentPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = start,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding)
+                    .consumeWindowInsets(contentPadding),
+                enterTransition = {
+                    if (
+                        isMainBottomNavRoute(initialState.destination.route) &&
+                        isMainBottomNavRoute(targetState.destination.route)
+                    ) {
+                        fadeIn(tween(220))
+                    } else {
+                        slideInHorizontally(tween(280)) {
+                            it / 4
+                        } + fadeIn(tween(280))
+                    }
+                },
+                exitTransition = {
+                    if (
+                        isMainBottomNavRoute(initialState.destination.route) &&
+                        isMainBottomNavRoute(targetState.destination.route)
+                    ) {
+                        fadeOut(tween(220))
+                    } else {
+                        slideOutHorizontally(tween(280)) {
+                            -it / 4
+                        } + fadeOut(tween(280))
+                    }
+                },
+                popEnterTransition = {
+                    if (
+                        isMainBottomNavRoute(initialState.destination.route) &&
+                        isMainBottomNavRoute(targetState.destination.route)
+                    ) {
+                        fadeIn(tween(220))
+                    } else {
+                        slideInHorizontally(tween(280)) {
+                            -it / 4
+                        } + fadeIn(tween(280))
+                    }
+                },
+                popExitTransition = {
+                    if (
+                        isMainBottomNavRoute(initialState.destination.route) &&
+                        isMainBottomNavRoute(targetState.destination.route)
+                    ) {
+                        fadeOut(tween(220))
+                    } else {
+                        slideOutHorizontally(tween(280)) {
+                            it / 4
+                        } + fadeOut(tween(280))
+                    }
+                }
+            ) {
         composable(Screen.Activation.route) {
             ActivationScreen(
                 onActivated = {
@@ -226,16 +285,16 @@ fun AppNavigation(
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToCustomers = {
-                    navController.navigate(Screen.CustomersList.route)
+                    navController.navigateToMainTab(Screen.CustomersList.route, currentRoute)
                 },
                 onNavigateToTransactions = {
                     navController.navigate(Screen.TransactionsList.route)
                 },
                 onNavigateToReports = {
-                    navController.navigate(Screen.Reports.route)
+                    navController.navigateToMainTab(Screen.Reports.route, currentRoute)
                 },
                 onNavigateToDebts = {
-                    navController.navigate(Screen.Debts.route)
+                    navController.navigateToMainTab(Screen.Debts.route, currentRoute)
                 },
                 onNavigateToSettings = {
                     navController.navigate(Screen.Settings.route)
@@ -244,7 +303,7 @@ fun AppNavigation(
                     navController.navigate(Screen.Chat.route)
                 },
                 onNavigateToInventory = {
-                    navController.navigate(Screen.Inventory.route)
+                    navController.navigateToMainTab(Screen.Inventory.route, currentRoute)
                 },
                 onAddTransaction = {
                     navController.navigate(Screen.AddTransaction.createRoute())
@@ -260,14 +319,15 @@ fun AppNavigation(
         composable(Screen.CustomersList.route) {
             CustomersScreen(
                 onNavigateUp = {
-                    navController.navigateUp()
+                    navController.navigateToMainTab(Screen.Home.route, currentRoute)
                 },
                 onCustomerClick = {
                     navController.navigate(Screen.CustomerDetails.createRoute(it))
                 },
                 onAddCustomer = {
                     navController.navigate(Screen.AddCustomer.route)
-                }
+                },
+                showNavigateUp = false
             )
         }
         composable(Screen.AddCustomer.route) {
@@ -432,21 +492,23 @@ fun AppNavigation(
         composable(Screen.Debts.route) {
             DebtsScreen(
                 onNavigateUp = {
-                    navController.navigateUp()
+                    navController.navigateToMainTab(Screen.Home.route, currentRoute)
                 },
                 onCustomerClick = {
                     navController.navigate(Screen.CustomerDetails.createRoute(it))
-                }
+                },
+                showNavigateUp = false
             )
         }
         composable(Screen.Reports.route) {
             ReportsScreen(
                 onNavigateUp = {
-                    navController.navigateUp()
+                    navController.navigateToMainTab(Screen.Home.route, currentRoute)
                 },
                 onViewDayTransactions = { dateMillis ->
                     navController.navigate(Screen.DayTransactions.createRoute(dateMillis))
-                }
+                },
+                showNavigateUp = false
             )
         }
         composable(Screen.PaymentMethods.route) {
@@ -514,7 +576,7 @@ fun AppNavigation(
         composable(Screen.Inventory.route) {
             InventoryListScreen(
                 onNavigateUp = {
-                    navController.navigateUp()
+                    navController.navigateToMainTab(Screen.Home.route, currentRoute)
                 },
                 onProductClick = { id ->
                     navController.navigate(Screen.ProductDetail.createRoute(id))
@@ -527,7 +589,8 @@ fun AppNavigation(
                 },
                 onStockReports = {
                     navController.navigate(Screen.StockReports.route)
-                }
+                },
+                showNavigateUp = false
             )
         }
         composable(
@@ -641,6 +704,7 @@ fun AppNavigation(
                 onNavigateUp = { navController.navigateUp() }
             )
         }
+            }
+        }
     }
-    } // Surface
 }

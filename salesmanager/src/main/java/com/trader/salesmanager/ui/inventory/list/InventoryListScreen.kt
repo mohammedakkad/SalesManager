@@ -87,8 +87,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
 import com.trader.core.domain.model.ProductWithUnits
@@ -118,23 +116,13 @@ fun InventoryListScreen(
     onAddProduct: (barcode: String?) -> Unit,
     onInventorySession: () -> Unit,
     onStockReports: () -> Unit = {},
+    showNavigateUp: Boolean = true,
     viewModel: InventoryListViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showScanner by remember { mutableStateOf(false) }
     var showNewProduct by remember { mutableStateOf<String?>(null) }
-
-    // Force a data refresh every time this screen enters RESUMED state so that
-    // any changes made in child screens (add/edit product) are immediately visible.
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(lifecycleOwner) {
-        lifecycleOwner.lifecycle.currentStateFlow.collect { state ->
-            if (state == Lifecycle.State.RESUMED) {
-                viewModel.refreshOnResume()
-            }
-        }
-    }
 
     val storeName by context.appDataStore.data
     .map {
@@ -296,8 +284,10 @@ fun InventoryListScreen(
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                        if (showNavigateUp) {
+                            IconButton(onClick = onNavigateUp) {
+                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            }
                         }
                         Text(
                             "المخزن", fontWeight = FontWeight.Bold, color = Color.White,

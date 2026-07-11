@@ -79,6 +79,7 @@ fun CustomersScreen(
     onNavigateUp: () -> Unit,
     onCustomerClick: (Long) -> Unit,
     onAddCustomer: () -> Unit,
+    showNavigateUp: Boolean = true,
     viewModel: CustomersViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -170,10 +171,12 @@ fun CustomersScreen(
             ) {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                        if (showNavigateUp) {
+                            IconButton(onClick = onNavigateUp) {
+                                Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                            }
+                            Spacer(Modifier.width(8.dp))
                         }
-                        Spacer(Modifier.width(8.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 "الزبائن", style = MaterialTheme.typography.headlineMedium,

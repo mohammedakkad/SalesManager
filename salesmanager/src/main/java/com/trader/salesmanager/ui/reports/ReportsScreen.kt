@@ -101,6 +101,7 @@ import kotlin.math.min
 fun ReportsScreen(
     onNavigateUp: () -> Unit,
     onViewDayTransactions: (Long) -> Unit = {},
+    showNavigateUp: Boolean = true,
     viewModel: ReportsViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -155,8 +156,10 @@ fun ReportsScreen(
                     Text("التقارير", fontWeight = FontWeight.Bold)
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
+                    if (showNavigateUp) {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
+                        }
                     }
                 },
                 actions = {
