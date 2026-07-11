@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,17 +23,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Forum
-import androidx.compose.material.icons.rounded.Inventory2
-import androidx.compose.material.icons.rounded.People
-import androidx.compose.material.icons.rounded.Receipt
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,21 +42,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.roundToPx
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.domain.model.Transaction
@@ -74,12 +71,12 @@ import com.trader.salesmanager.ui.theme.Emerald500
 import com.trader.salesmanager.ui.theme.Emerald700
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
-import com.trader.salesmanager.ui.theme.Violet500
 import com.trader.salesmanager.ui.theme.appColors
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
 
 private val HEADER_CONTENT_HEIGHT = 140.dp
 private val OVERLAP = 40.dp
@@ -87,16 +84,13 @@ private val OVERLAP = 40.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToCustomers: () -> Unit,
     onNavigateToTransactions: () -> Unit,
-    onNavigateToReports: () -> Unit,
-    onNavigateToDebts: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToChat: () -> Unit,
-    onNavigateToInventory: () -> Unit = {},
     onAddTransaction: () -> Unit,
     onTransactionClick: (Long) -> Unit,
     onCustomerClick: (Long) -> Unit,
+    onBottomBarVisibilityChanged: (Boolean) -> Unit = {},
     viewModel: HomeViewModel = koinViewModel(),
     syncViewModel: SyncStatusViewModel = koinViewModel()
 ) {
@@ -104,7 +98,43 @@ fun HomeScreen(
     val syncState by syncViewModel.syncState.collectAsStateWithLifecycle()
     val unsyncedItems by syncViewModel.unsyncedItems.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
+    val thresholdPx = with(LocalDensity.current) { 6.dp.roundToPx() }
     var showSyncSheet by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(scrollState, thresholdPx) {
+        var previousOffset = scrollState.value
+        var accumulatedDelta = 0
+        var isVisible = true
+        onBottomBarVisibilityChanged(true)
+        snapshotFlow { scrollState.value }.collect { currentOffset ->
+            val delta = currentOffset - previousOffset
+            previousOffset = currentOffset
+            if (delta == 0) return@collect
+
+            accumulatedDelta += delta
+            if (currentOffset <= thresholdPx) {
+                accumulatedDelta = 0
+                if (!isVisible) {
+                    isVisible = true
+                    onBottomBarVisibilityChanged(true)
+                }
+                return@collect
+            }
+
+            if (abs(accumulatedDelta) < thresholdPx) return@collect
+
+            val nextVisible = accumulatedDelta < 0
+            accumulatedDelta = 0
+            if (nextVisible != isVisible) {
+                isVisible = nextVisible
+                onBottomBarVisibilityChanged(nextVisible)
+            }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { onBottomBarVisibilityChanged(true) }
+    }
 
     if (showSyncSheet) {
         SyncStatusBottomSheet(
@@ -288,37 +318,10 @@ fun HomeScreen(
                     state = uiState.dashboard,
                     onCustomerClick = onCustomerClick
                 )
-                Spacer(Modifier.height(28.dp))
-
-                // ── Quick Nav ────────────────────────────────────
-                Text(
-                    "القوائم",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                val navItems = listOf(
-                    NavItem("الزبائن", Icons.Rounded.People, Emerald500, onNavigateToCustomers),
-                    NavItem("العمليات", Icons.Rounded.Receipt, Cyan500, onNavigateToTransactions),
-                    NavItem("التقارير", Icons.Rounded.BarChart, Violet500, onNavigateToReports),
-                    NavItem("الديون", Icons.Rounded.Warning, DebtRed, onNavigateToDebts),
-                    NavItem("المخزن", Icons.Rounded.Inventory2, Cyan500, onNavigateToInventory),
-                )
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    navItems.chunked(2).forEach { row ->
-                        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            row.forEach {
-                                NavCard(Modifier.weight(1f), it)
-                            }
-                            if (row.size == 1) Spacer(Modifier.weight(1f))
-                        }
-                    }
-                }
+                Spacer(Modifier.height(20.dp))
 
                 // ── آخر 5 عمليات ─────────────────────────────────
                 if (uiState.recentTransactions.isNotEmpty()) {
-                    Spacer(Modifier.height(28.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -452,50 +455,6 @@ private fun MiniStat(modifier: Modifier, label: String, value: Double, color: Co
         )
         Spacer(Modifier.height(2.dp))
         AnimatedCounter(value = value, style = MaterialTheme.typography.titleMedium, color = color)
-    }
-}
-
-private data class NavItem(
-    val label: String,
-    val icon: ImageVector,
-    val color: Color,
-    val onClick: () -> Unit
-)
-
-@Composable
-private fun NavCard(modifier: Modifier, item: NavItem) {
-    Card(
-        modifier = modifier.clickable {
-            item.onClick()
-        },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = item.color.copy(0.08f)),
-        elevation = CardDefaults.cardElevation(0.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(item.color.copy(0.15f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(item.icon, null, tint = item.color, modifier = Modifier.size(22.dp))
-            }
-            Spacer(Modifier.height(12.dp))
-            Text(
-                item.label,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(Modifier.height(2.dp))
-            Icon(
-                Icons.AutoMirrored.Filled.ArrowForward,
-                null,
-                tint = item.color,
-                modifier = Modifier.size(14.dp)
-            )
-        }
     }
 }
 
