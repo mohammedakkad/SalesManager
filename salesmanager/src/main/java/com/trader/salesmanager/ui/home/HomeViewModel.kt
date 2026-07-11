@@ -58,5 +58,5 @@ class HomeViewModel(
             ),
             isLoading = false
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState(isLoading = true))
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, HomeUiState(isLoading = true))
 }

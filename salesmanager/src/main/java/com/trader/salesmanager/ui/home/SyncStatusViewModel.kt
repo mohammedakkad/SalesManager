@@ -17,10 +17,10 @@ class SyncStatusViewModel(
 ) : ViewModel() {
 
     val syncState: StateFlow<GlobalSyncState> = observer.globalSyncState
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), GlobalSyncState.AllSynced)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, GlobalSyncState.AllSynced)
 
     val unsyncedItems: StateFlow<List<UnsyncedItem>> = observer.unsyncedItems
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun retrySync() {
         viewModelScope.launch {

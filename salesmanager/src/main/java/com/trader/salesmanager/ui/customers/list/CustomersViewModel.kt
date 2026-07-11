@@ -44,7 +44,7 @@ class CustomersViewModel(private val repo: CustomerRepository) : ViewModel() {
             isLoading = loading,
             pendingSyncCount = pendingCount
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CustomersUiState(isLoading = true))
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, CustomersUiState(isLoading = true))
 
     fun updateSearch(query: String) {
         _searchQuery.value = query
