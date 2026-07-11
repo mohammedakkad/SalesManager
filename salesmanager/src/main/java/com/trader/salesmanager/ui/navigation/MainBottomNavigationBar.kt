@@ -21,7 +21,6 @@ import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
@@ -34,11 +33,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -76,6 +77,8 @@ internal fun NavHostController.navigateToMainTab(route: String, currentRoute: St
     }
 }
 
+private val DefaultBottomBarSlotHeight = 80.dp + 1.dp
+
 @Composable
 fun MainBottomNavigationBarHost(
     currentRoute: String?,
@@ -85,11 +88,10 @@ fun MainBottomNavigationBarHost(
     val isHomeRoute = currentRoute == Screen.Home.route
     var barHeightPx by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
-    val fallbackBarHeight = NavigationBarDefaults.ContainerHeight + 1.dp
-    val slotHeight = if (barHeightPx > 0) {
+    val slotHeight: Dp = if (barHeightPx > 0) {
         with(density) { barHeightPx.toDp() }
     } else {
-        fallbackBarHeight
+        DefaultBottomBarSlotHeight
     }
     var allowEnterAnimation by remember { mutableStateOf(false) }
     val measureBarHeight: (Int) -> Unit = { measuredHeight ->
@@ -106,7 +108,7 @@ fun MainBottomNavigationBarHost(
         modifier = Modifier
             .fillMaxWidth()
             .height(slotHeight)
-            .clipToBounds(),
+            .clip(RectangleShape),
         contentAlignment = Alignment.BottomCenter
     ) {
         if (isHomeRoute) {
