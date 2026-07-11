@@ -181,13 +181,6 @@ fun AppNavigation(
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
     val showBottomNavigation = isMainBottomNavRoute(currentRoute)
-    var homeBottomBarVisible by remember { mutableStateOf(true) }
-
-    LaunchedEffect(currentRoute) {
-        if (currentRoute != Screen.Home.route) {
-            homeBottomBarVisible = true
-        }
-    }
 
     BackHandler(
         enabled = showBottomNavigation && currentRoute != Screen.Home.route
@@ -204,9 +197,8 @@ fun AppNavigation(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             bottomBar = {
                 if (showBottomNavigation) {
-                    MainBottomNavigationBarHost(
+                    MainBottomNavigationBar(
                         currentRoute = currentRoute,
-                        homeBarVisible = homeBottomBarVisible,
                         onTabSelected = { route ->
                             navController.navigateToMainTab(route, currentRoute)
                         }
@@ -305,11 +297,6 @@ fun AppNavigation(
                 },
                 onCustomerClick = { id ->
                     navController.navigate(Screen.CustomerDetails.createRoute(id))
-                },
-                onBottomBarVisibilityChanged = { visible ->
-                    if (homeBottomBarVisible != visible) {
-                        homeBottomBarVisible = visible
-                    }
                 }
             )
         }

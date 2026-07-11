@@ -42,21 +42,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -75,7 +71,6 @@ import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.abs
 
 private val HEADER_CONTENT_HEIGHT = 140.dp
 private val OVERLAP = 40.dp
@@ -89,7 +84,6 @@ fun HomeScreen(
     onAddTransaction: () -> Unit,
     onTransactionClick: (Long) -> Unit,
     onCustomerClick: (Long) -> Unit,
-    onBottomBarVisibilityChanged: (Boolean) -> Unit = {},
     viewModel: HomeViewModel = koinViewModel(),
     syncViewModel: SyncStatusViewModel = koinViewModel()
 ) {
@@ -97,44 +91,7 @@ fun HomeScreen(
     val syncState by syncViewModel.syncState.collectAsStateWithLifecycle()
     val unsyncedItems by syncViewModel.unsyncedItems.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
-    val thresholdPx = with(LocalDensity.current) { 6.dp.roundToPx() }
     var showSyncSheet by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(scrollState, thresholdPx) {
-        var previousOffset = scrollState.value
-        var accumulatedDelta = 0
-        var isVisible = true
-        snapshotFlow { scrollState.value }.collect { currentOffset ->
-            val delta = currentOffset - previousOffset
-            previousOffset = currentOffset
-            if (delta == 0) return@collect
-
-            accumulatedDelta += delta
-            if (currentOffset <= thresholdPx) {
-                accumulatedDelta = 0
-                if (!isVisible) {
-                    isVisible = true
-                    onBottomBarVisibilityChanged(true)
-                }
-                return@collect
-            }
-
-            if (abs(accumulatedDelta) < thresholdPx) return@collect
-
-            val nextVisible = accumulatedDelta < 0
-            accumulatedDelta = 0
-            if (nextVisible != isVisible) {
-                isVisible = nextVisible
-                onBottomBarVisibilityChanged(nextVisible)
-            }
-        }
-    }
-
-    DisposableEffect(onBottomBarVisibilityChanged) {
-        onDispose {
-            onBottomBarVisibilityChanged(true)
-        }
-    }
 
     if (showSyncSheet) {
         SyncStatusBottomSheet(
