@@ -13,6 +13,7 @@ import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.util.DateUtils.todayEnd
 import com.trader.core.util.DateUtils.todayStart
 import com.trader.salesmanager.util.pdf.ReportPdfGenerator
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -78,6 +79,7 @@ data class ReportsUiState(
             monthlyReportYear == calendarYear
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ReportsViewModel(
     private val txRepo: TransactionRepository,
     private val customerRepo: CustomerRepository,
