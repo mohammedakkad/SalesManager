@@ -10,6 +10,7 @@ import android.text.Layout
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.PaymentType
+import com.trader.core.domain.model.ReturnSummary
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.inventory.invoice.formatAmount
 import com.trader.salesmanager.ui.inventory.invoice.formatQty
@@ -28,7 +29,8 @@ object InvoicePdfGenerator {
         val storeName: String,
         val logo: Bitmap? = null,
         val priorDebtBalance: Double? = null,
-        val currentDebtBalance: Double? = null
+        val currentDebtBalance: Double? = null,
+        val returnSummary: ReturnSummary = ReturnSummary.NONE
     )
 
     fun generate(
@@ -39,7 +41,8 @@ object InvoicePdfGenerator {
         storeName: String,
         logo: Bitmap? = null,
         priorDebtBalance: Double? = null,
-        currentDebtBalance: Double? = null
+        currentDebtBalance: Double? = null,
+        returnSummary: ReturnSummary = ReturnSummary.NONE
     ): File = generate(
         cacheDir,
         InvoicePdfData(
@@ -49,7 +52,8 @@ object InvoicePdfGenerator {
             storeName = storeName,
             logo = logo,
             priorDebtBalance = priorDebtBalance,
-            currentDebtBalance = currentDebtBalance
+            currentDebtBalance = currentDebtBalance,
+            returnSummary = returnSummary
         )
     )
 
@@ -170,10 +174,17 @@ object InvoicePdfGenerator {
                 y += emptyHeight
             } else {
                 data.items.forEachIndexed { index, item ->
+                    val returnedQuantity = data.returnSummary.returnedByUnit[item.unitId] ?: 0.0
+                    val netQuantity = (item.quantity - returnedQuantity).coerceAtLeast(0.0)
                     val productWidth = tableWidths.last() - 8f
                     val rowHeight = max(
                         PdfLayoutConstants.TABLE_ROW_MIN_HEIGHT,
-                        PdfCanvas.measureHeight(item.productName, productWidth, 9f, maxLines = 2) + 12f
+                        PdfCanvas.measureHeight(
+                            if (returnedQuantity > 0.0) "${item.productName} (بعد الإرجاع)" else item.productName,
+                            productWidth,
+                            9f,
+                            maxLines = 2
+                        ) + 12f
                     )
                     if (y + rowHeight > PdfLayoutConstants.CONTENT_BOTTOM) {
                         startPage(true)
@@ -214,11 +225,17 @@ object InvoicePdfGenerator {
                         top = y,
                         height = rowHeight,
                         values = listOf(
-                            "₪ ${item.totalPrice.formatAmount()}",
+                            "₪ ${(netQuantity * item.pricePerUnit).formatAmount()}",
                             "₪ ${item.pricePerUnit.formatAmount()}",
-                            item.quantity.formatQty(),
+                            netQuantity.formatQty(),
                             item.unitLabel.ifBlank { "—" },
-                            item.productName.ifBlank { "—" }
+                            (
+                                if (returnedQuantity > 0.0) {
+                                    "${item.productName} (بعد الإرجاع)"
+                                } else {
+                                    item.productName
+                                }
+                            ).ifBlank { "—" }
                         ),
                         color = PdfLayoutConstants.SLATE_700,
                         bold = false
@@ -227,11 +244,11 @@ object InvoicePdfGenerator {
                 }
             }
 
-            ensureSpace(90f)
+            ensureSpace(120f)
             y += 14f
             y = drawTotals(canvas!!, y, data)
 
-            ensureSpace(if (data.transaction.paymentType == PaymentType.DEBT) 190f else 105f)
+            ensureSpace(if (data.transaction.paymentType == PaymentType.DEBT) 190f else 112f)
             y += 14f
             y = if (data.transaction.paymentType == PaymentType.DEBT) {
                 drawDebtSection(canvas!!, y, data)
@@ -461,12 +478,9 @@ object InvoicePdfGenerator {
     private fun drawTotals(canvas: Canvas, top: Float, data: InvoicePdfData): Float {
         val left = PdfLayoutConstants.PAGE_WIDTH - PdfLayoutConstants.MARGIN - 265f
         val right = PdfLayoutConstants.PAGE_WIDTH - PdfLayoutConstants.MARGIN
-        val subtotal = if (data.items.isEmpty()) {
-            data.transaction.amount
-        } else {
-            data.items.sumOf { it.totalPrice }.takeIf { it > 0.0 } ?: data.transaction.amount
-        }
-        val height = 78f
+        val returned = data.returnSummary.totalRefunded.coerceAtLeast(0.0)
+        val subtotal = data.transaction.amount + returned
+        val height = if (returned > 0.0) 101f else 78f
         PdfCanvas.roundRect(
             canvas,
             left,
@@ -477,18 +491,29 @@ object InvoicePdfGenerator {
             borderColor = PdfLayoutConstants.EMERALD_500
         )
         drawKeyValue(canvas, left + 12f, right - 12f, top + 13f, "المجموع", "₪ ${subtotal.formatAmount()}")
+        if (returned > 0.0) {
+            drawKeyValue(
+                canvas,
+                left + 12f,
+                right - 12f,
+                top + 38f,
+                "المرتجع",
+                "- ₪ ${returned.formatAmount()}"
+            )
+        }
+        val dividerTop = if (returned > 0.0) top + 61f else top + 38f
         canvas.drawLine(
             left + 12f,
-            top + 38f,
+            dividerTop,
             right - 12f,
-            top + 38f,
+            dividerTop,
             PdfCanvas.stroke(PdfLayoutConstants.EMERALD_500, 0.6f)
         )
         drawKeyValue(
             canvas,
             left + 12f,
             right - 12f,
-            top + 49f,
+            dividerTop + 11f,
             "الإجمالي",
             "₪ ${data.transaction.amount.formatAmount()}",
             emphasized = true

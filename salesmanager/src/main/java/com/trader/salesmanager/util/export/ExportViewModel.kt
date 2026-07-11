@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.ProductWithUnits
+import com.trader.core.domain.model.ReturnSummary
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.reports.CustomerRank
 import com.trader.salesmanager.ui.reports.DaySalesEntry
@@ -43,6 +44,7 @@ class ExportViewModel : ViewModel() {
         customer: Customer? = null,
         priorDebtBalance: Double? = null,
         currentDebtBalance: Double? = null,
+        returnSummary: ReturnSummary = ReturnSummary.NONE,
         cacheDir: File           // ← File بدل Context — لا يحتفظ به ViewModel
     ) = runExport("فاتورة_${transaction.id}.pdf") {
         ExportManager.generateInvoicePdf(
@@ -52,7 +54,8 @@ class ExportViewModel : ViewModel() {
             storeName = storeName,
             customer = customer,
             priorDebtBalance = priorDebtBalance,
-            currentDebtBalance = currentDebtBalance
+            currentDebtBalance = currentDebtBalance,
+            returnSummary = returnSummary
         )
     }
 

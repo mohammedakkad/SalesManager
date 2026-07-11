@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.transactions.details
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -124,13 +125,24 @@ fun TransactionDetailsScreen(
     }
 
     LaunchedEffect(exportState) {
-        val success = exportState as? ExportState.Success ?: return@LaunchedEffect
-        if (pendingExportAction == PdfExportAction.PRINT && success.type == com.trader.salesmanager.util.export.ExportType.PDF) {
-            PdfPrintManager.print(context, java.io.File(success.filePath), success.fileName)
-            pendingExportAction = null
-            exportVm.reset()
-        } else {
-            showExportSheet = true
+        when (val state = exportState) {
+            is ExportState.Success -> {
+                if (pendingExportAction == PdfExportAction.PRINT &&
+                    state.type == com.trader.salesmanager.util.export.ExportType.PDF
+                ) {
+                    PdfPrintManager.print(context, java.io.File(state.filePath), state.fileName)
+                    pendingExportAction = null
+                    exportVm.reset()
+                } else {
+                    showExportSheet = true
+                }
+            }
+            is ExportState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                pendingExportAction = null
+                exportVm.dismissError()
+            }
+            else -> Unit
         }
     }
 
@@ -474,6 +486,7 @@ fun TransactionDetailsScreen(
 
         item {
             val isExporting = exportState is ExportState.Loading
+            val isInvoiceReady = uiState.isItemsLoaded
             Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -488,10 +501,11 @@ fun TransactionDetailsScreen(
                             customer = uiState.customer,
                             priorDebtBalance = uiState.priorDebtBalance,
                             currentDebtBalance = uiState.currentDebtBalance,
+                            returnSummary = uiState.returnSummary,
                             cacheDir = context.cacheDir
                         )
                     },
-                    enabled = !isExporting,
+                    enabled = !isExporting && isInvoiceReady,
                     modifier = Modifier.fillMaxWidth().height(48.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
@@ -518,10 +532,11 @@ fun TransactionDetailsScreen(
                                 customer = uiState.customer,
                                 priorDebtBalance = uiState.priorDebtBalance,
                                 currentDebtBalance = uiState.currentDebtBalance,
+                                returnSummary = uiState.returnSummary,
                                 cacheDir = context.cacheDir
                             )
                         },
-                        enabled = !isExporting,
+                        enabled = !isExporting && isInvoiceReady,
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(14.dp)
                     ) {
@@ -542,7 +557,7 @@ fun TransactionDetailsScreen(
                                 storeName = storeName
                             )
                         },
-                        enabled = !isExporting,
+                        enabled = !isExporting && isInvoiceReady,
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(14.dp)
                     ) {

@@ -24,6 +24,7 @@ data class TransactionDetailsUiState(
     val customer: Customer? = null,
     val priorDebtBalance: Double? = null,
     val currentDebtBalance: Double? = null,
+    val isItemsLoaded: Boolean = false,
     val isDeleted: Boolean = false,
     val returnSummary: ReturnSummary = ReturnSummary.NONE,
     val isLoadingReturn: Boolean = false
@@ -90,8 +91,12 @@ class TransactionDetailsViewModel(
                 _state.update {
                     current ->
                     if (sorted.isEmpty() && current.invoiceItems.isNotEmpty()
-                        && current.transaction?.hasItems == true) current
-                    else current.copy(invoiceItems = sorted)
+                        && current.transaction?.hasItems == true
+                    ) {
+                        current.copy(isItemsLoaded = true)
+                    } else {
+                        current.copy(invoiceItems = sorted, isItemsLoaded = true)
+                    }
                 }
                 // ✅ إعادة حساب ReturnSummary من DB عند أي تغيير
                 if (items.isNotEmpty()) {

@@ -60,6 +60,9 @@ data class ReportsUiState(
     val salesProfitLast7Days: List<SalesProfitDayEntry> = emptyList(),
     val monthlyReportTotals: FinancialReportTotals = FinancialReportTotals(),
     val monthlyDailySalesProfit: List<DailySalesProfit> = emptyList(),
+    val monthlyReportMonth: Int = -1,
+    val monthlyReportYear: Int = -1,
+    val isMonthlyReportLoading: Boolean = true,
     val calendarMonth: Int = Calendar.getInstance().get(Calendar.MONTH),
     val calendarYear: Int = Calendar.getInstance().get(Calendar.YEAR),
     val selectedDay: Int? = null,
@@ -68,7 +71,12 @@ data class ReportsUiState(
     val selectedDaySummary: Triple<Double, Double, Double> = Triple(0.0, 0.0, 0.0),
     val todayAnalysis: TimeOfDayAnalysis = TimeOfDayAnalysis(),
     val isLoading: Boolean = true
-)
+) {
+    val isMonthlyReportReady: Boolean
+        get() = !isMonthlyReportLoading &&
+            monthlyReportMonth == calendarMonth &&
+            monthlyReportYear == calendarYear
+}
 
 class ReportsViewModel(
     private val txRepo: TransactionRepository,
@@ -163,6 +171,9 @@ class ReportsViewModel(
                 )
             }.collect { baseState ->
                 _uiState.update { current ->
+                    val monthlyReportMatches =
+                        current.monthlyReportMonth == baseState.calendarMonth &&
+                            current.monthlyReportYear == baseState.calendarYear
                     baseState.copy(
                         isLoading = false,
                         netProfit = current.netProfit,
@@ -170,8 +181,27 @@ class ReportsViewModel(
                         inventorySaleValue = current.inventorySaleValue,
                         debtAging = current.debtAging,
                         salesProfitLast7Days = current.salesProfitLast7Days,
-                        monthlyReportTotals = current.monthlyReportTotals,
-                        monthlyDailySalesProfit = current.monthlyDailySalesProfit
+                        monthlyReportTotals = if (monthlyReportMatches) {
+                            current.monthlyReportTotals
+                        } else {
+                            FinancialReportTotals()
+                        },
+                        monthlyDailySalesProfit = if (monthlyReportMatches) {
+                            current.monthlyDailySalesProfit
+                        } else {
+                            emptyList()
+                        },
+                        monthlyReportMonth = if (monthlyReportMatches) {
+                            current.monthlyReportMonth
+                        } else {
+                            -1
+                        },
+                        monthlyReportYear = if (monthlyReportMatches) {
+                            current.monthlyReportYear
+                        } else {
+                            -1
+                        },
+                        isMonthlyReportLoading = !monthlyReportMatches
                     )
                 }
             }
@@ -203,7 +233,10 @@ class ReportsViewModel(
                         debtAging = analytics.debtAging,
                         salesProfitLast7Days = analytics.salesProfitLast7Days,
                         monthlyReportTotals = analytics.monthlyReport.totals,
-                        monthlyDailySalesProfit = analytics.monthlyReport.dailySalesProfit
+                        monthlyDailySalesProfit = analytics.monthlyReport.dailySalesProfit,
+                        monthlyReportMonth = analytics.monthlyReport.month,
+                        monthlyReportYear = analytics.monthlyReport.year,
+                        isMonthlyReportLoading = false
                     )
                 }
             }
@@ -281,6 +314,7 @@ class ReportsViewModel(
 
     fun buildMonthlyReportData(storeName: String): ReportPdfGenerator.MonthlyReportPdfData {
         val state = _uiState.value
+        check(state.isMonthlyReportReady)
         return ReportPdfGenerator.MonthlyReportPdfData(
             storeName = storeName,
             month = state.calendarMonth,

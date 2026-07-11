@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.ProductWithUnits
+import com.trader.core.domain.model.ReturnSummary
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.reports.CustomerRank
 import com.trader.salesmanager.ui.reports.DaySalesEntry
@@ -67,7 +68,8 @@ object ExportManager {
         customer: Customer? = null,
         logo: Bitmap? = null,
         priorDebtBalance: Double? = null,
-        currentDebtBalance: Double? = null
+        currentDebtBalance: Double? = null,
+        returnSummary: ReturnSummary = ReturnSummary.NONE
     ): File = InvoicePdfGenerator.generate(
         cacheDir = cacheDir,
         transaction = transaction,
@@ -76,7 +78,8 @@ object ExportManager {
         storeName = storeName,
         logo = logo,
         priorDebtBalance = priorDebtBalance,
-        currentDebtBalance = currentDebtBalance
+        currentDebtBalance = currentDebtBalance,
+        returnSummary = returnSummary
     )
 
     fun generateMonthlyReportPdf(

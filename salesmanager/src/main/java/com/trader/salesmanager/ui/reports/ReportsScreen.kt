@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.reports
 
+import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -127,13 +128,24 @@ fun ReportsScreen(
     }
 
     LaunchedEffect(exportState) {
-        val success = exportState as? ExportState.Success ?: return@LaunchedEffect
-        if (pendingExportAction == ReportExportAction.PRINT && success.type == com.trader.salesmanager.util.export.ExportType.PDF) {
-            PdfPrintManager.print(context, java.io.File(success.filePath), success.fileName)
-            pendingExportAction = null
-            exportVm.reset()
-        } else {
-            showExportSheet = true
+        when (val state = exportState) {
+            is ExportState.Success -> {
+                if (pendingExportAction == ReportExportAction.PRINT &&
+                    state.type == com.trader.salesmanager.util.export.ExportType.PDF
+                ) {
+                    PdfPrintManager.print(context, java.io.File(state.filePath), state.fileName)
+                    pendingExportAction = null
+                    exportVm.reset()
+                } else {
+                    showExportSheet = true
+                }
+            }
+            is ExportState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                pendingExportAction = null
+                exportVm.dismissError()
+            }
+            else -> Unit
         }
     }
 
@@ -261,7 +273,7 @@ fun ReportsScreen(
                                 cacheDir = context.cacheDir
                             )
                         },
-                        enabled = !isExporting && !uiState.isLoading,
+                        enabled = !isExporting && uiState.isMonthlyReportReady,
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
@@ -282,7 +294,7 @@ fun ReportsScreen(
                                 cacheDir = context.cacheDir
                             )
                         },
-                        enabled = !isExporting && !uiState.isLoading,
+                        enabled = !isExporting && uiState.isMonthlyReportReady,
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(14.dp)
                     ) {

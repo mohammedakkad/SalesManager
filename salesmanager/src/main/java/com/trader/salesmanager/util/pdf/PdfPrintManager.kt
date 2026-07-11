@@ -47,6 +47,7 @@ object PdfPrintManager {
             callback.onLayoutFinished(
                 PrintDocumentInfo.Builder(file.name)
                     .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
+                    .setPageCount(PrintDocumentInfo.PAGE_COUNT_UNKNOWN)
                     .build(),
                 oldAttributes != newAttributes
             )
