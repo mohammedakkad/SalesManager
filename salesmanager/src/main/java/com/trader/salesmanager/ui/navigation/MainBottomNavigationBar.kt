@@ -80,25 +80,29 @@ fun MainBottomNavigationBar(
 
                 NavigationBarItem(
                     selected = selected,
-                    onClick = { onTabSelected(item.route) },
+                    onClick = {
+                        if (!selected) onTabSelected(item.route)
+                    },
                     icon = {
                         Icon(
                             imageVector = item.icon,
-                            contentDescription = item.label
+                            contentDescription = item.label,
+                            tint = contentColor
                         )
                     },
                     label = {
                         Text(
                             text = item.label,
-                            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+                            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                            color = contentColor
                         )
                     },
                     alwaysShowLabel = true,
                     colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = contentColor,
-                        selectedTextColor = contentColor,
-                        unselectedIconColor = contentColor,
-                        unselectedTextColor = contentColor,
+                        selectedIconColor = Emerald500,
+                        selectedTextColor = Emerald500,
+                        unselectedIconColor = colors.textSubtle,
+                        unselectedTextColor = colors.textSubtle,
                         indicatorColor = indicatorColor
                     )
                 )
