@@ -104,7 +104,6 @@ fun HomeScreen(
         var previousOffset = scrollState.value
         var accumulatedDelta = 0
         var isVisible = true
-        onBottomBarVisibilityChanged(true)
         snapshotFlow { scrollState.value }.collect { currentOffset ->
             val delta = currentOffset - previousOffset
             previousOffset = currentOffset
@@ -131,8 +130,10 @@ fun HomeScreen(
         }
     }
 
-    DisposableEffect(Unit) {
-        onDispose { onBottomBarVisibilityChanged(true) }
+    DisposableEffect(onBottomBarVisibilityChanged) {
+        onDispose {
+            onBottomBarVisibilityChanged(true)
+        }
     }
 
     if (showSyncSheet) {

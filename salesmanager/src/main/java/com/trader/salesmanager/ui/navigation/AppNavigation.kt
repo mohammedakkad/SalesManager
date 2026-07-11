@@ -1,20 +1,14 @@
 package com.trader.salesmanager.ui.navigation
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
@@ -33,9 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -190,11 +182,11 @@ fun AppNavigation(
     val currentRoute = currentBackStackEntry?.destination?.route
     val showBottomNavigation = isMainBottomNavRoute(currentRoute)
     var homeBottomBarVisible by remember { mutableStateOf(true) }
-    val isHomeRoute = currentRoute == Screen.Home.route
-    val animatedBottomBarVisible = if (isHomeRoute) homeBottomBarVisible else true
 
     LaunchedEffect(currentRoute) {
-        if (!isHomeRoute) homeBottomBarVisible = true
+        if (currentRoute != Screen.Home.route) {
+            homeBottomBarVisible = true
+        }
     }
 
     BackHandler(
@@ -212,31 +204,13 @@ fun AppNavigation(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             bottomBar = {
                 if (showBottomNavigation) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(81.dp),
-                        contentAlignment = Alignment.BottomCenter
-                    ) {
-                        AnimatedVisibility(
-                            visible = animatedBottomBarVisible,
-                            enter = slideInVertically(
-                                animationSpec = tween(240),
-                                initialOffsetY = { it }
-                            ) + fadeIn(tween(220)),
-                            exit = slideOutVertically(
-                                animationSpec = tween(240),
-                                targetOffsetY = { it }
-                            ) + fadeOut(tween(220))
-                        ) {
-                            MainBottomNavigationBar(
-                                currentRoute = currentRoute,
-                                onTabSelected = { route ->
-                                    navController.navigateToMainTab(route, currentRoute)
-                                }
-                            )
+                    MainBottomNavigationBarHost(
+                        currentRoute = currentRoute,
+                        homeBarVisible = homeBottomBarVisible,
+                        onTabSelected = { route ->
+                            navController.navigateToMainTab(route, currentRoute)
                         }
-                    }
+                    )
                 }
             }
         ) { contentPadding ->
@@ -333,7 +307,9 @@ fun AppNavigation(
                     navController.navigate(Screen.CustomerDetails.createRoute(id))
                 },
                 onBottomBarVisibilityChanged = { visible ->
-                    homeBottomBarVisible = visible
+                    if (homeBottomBarVisible != visible) {
+                        homeBottomBarVisible = visible
+                    }
                 }
             )
         }
