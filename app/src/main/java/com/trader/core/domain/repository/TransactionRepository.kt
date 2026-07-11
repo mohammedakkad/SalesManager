@@ -16,6 +16,11 @@ interface TransactionRepository {
     suspend fun getTotalAmountByDate(startDate: Long, endDate: Long): Double
     suspend fun getPaidAmountByDate(startDate: Long, endDate: Long): Double
     suspend fun getUnpaidAmountByCustomer(customerId: Long): Double
+    suspend fun getUnpaidAmountBeforeTransaction(
+        customerId: Long,
+        transactionDate: Long,
+        transactionId: Long
+    ): Double
     fun getTransactionsByDate(startDate: Long, endDate: Long): Flow<List<Transaction>>
     suspend fun syncPendingTransactions()
 }

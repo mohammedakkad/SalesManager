@@ -31,6 +31,7 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.FileDownload
+import androidx.compose.material.icons.rounded.Print
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -67,6 +68,7 @@ import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
 import com.trader.salesmanager.ui.theme.Violet500
 import com.trader.salesmanager.ui.theme.appColors
+import com.trader.salesmanager.util.pdf.PdfPrintManager
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -146,6 +148,14 @@ fun ExportActionButton(
                 ExportManager.saveToDownloads(context, file, state.fileName)
                 showSheet = false
             },
+            onPrint = if (state.type == ExportType.PDF) {
+                {
+                    PdfPrintManager.print(context, file, state.fileName)
+                    showSheet = false
+                }
+            } else {
+                null
+            },
             onDismiss = {
                 showSheet = false
             }
@@ -166,6 +176,7 @@ private fun ExportSuccessSheet(
     onShare: () -> Unit,
     onWhatsApp: () -> Unit,
     onDownload: () -> Unit,
+    onPrint: (() -> Unit)?,
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -204,6 +215,9 @@ private fun ExportSuccessSheet(
 
             SheetAction(Icons.Rounded.Share, Cyan500, "مشاركة", "عبر أي تطبيق", onShare)
             SheetAction(Icons.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
+            onPrint?.let {
+                SheetAction(Icons.Rounded.Print, Emerald500, "طباعة", "عبر خدمة الطباعة", it)
+            }
             SheetAction(Icons.Rounded.Download, Violet500, "تنزيل", "حفظ في التنزيلات", onDownload)
 
             TextButton(onClick = {
@@ -263,6 +277,7 @@ fun ExportSuccessBottomSheet(
     onShare: () -> Unit,
     onWhatsApp: () -> Unit,
     onDownload: () -> Unit,
+    onPrint: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -294,6 +309,9 @@ fun ExportSuccessBottomSheet(
             HorizontalDivider(color = appColors.divider)
             SheetAction(Icons.Rounded.Share, Cyan500, "مشاركة", "عبر أي تطبيق", onShare)
             SheetAction(Icons.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
+            onPrint?.let {
+                SheetAction(Icons.Rounded.Print, Emerald500, "طباعة", "عبر خدمة الطباعة", it)
+            }
             SheetAction(Icons.Rounded.Download, Violet500, "تنزيل", "حفظ في التنزيلات", onDownload)
             TextButton(
                 onClick = {

@@ -5,6 +5,8 @@ import android.content.Intent
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.model.Transaction
+import com.trader.salesmanager.ui.inventory.invoice.formatAmount
+import com.trader.salesmanager.ui.inventory.invoice.formatQty
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -45,15 +47,14 @@ object InvoiceSharer {
             if (items.isNotEmpty()) {
                 appendLine("*الأصناف:*")
                 items.forEach { item ->
-                    val qtyStr = if (item.quantity == item.quantity.toLong().toDouble())
-                        item.quantity.toLong().toString()
-                    else String.format("%.3f", item.quantity).trimEnd('0').trimEnd('.')
-                    appendLine("• ${item.productName} (${item.unitLabel}) × $qtyStr = ₪${String.format("%.2f", item.totalPrice)}")
+                    appendLine(
+                        "• ${item.productName} (${item.unitLabel}) × ${item.quantity.formatQty()} = ₪${item.totalPrice.formatAmount()}"
+                    )
                 }
                 appendLine("━━━━━━━━━━━━━━━━━━━━")
             }
 
-            appendLine("💰 *الإجمالي:* ₪${String.format("%.2f", transaction.amount)}")
+            appendLine("💰 *الإجمالي:* ₪${transaction.amount.formatAmount()}")
             val paymentStr = when (transaction.paymentType) {
                 PaymentType.CASH   -> "✅ كاش"
                 PaymentType.DEBT   -> "📋 دين"

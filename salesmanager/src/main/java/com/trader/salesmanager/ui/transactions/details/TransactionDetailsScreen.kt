@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.transactions.details
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,7 +30,9 @@ import androidx.compose.material.icons.rounded.Notes
 import androidx.compose.material.icons.rounded.Payment
 import androidx.compose.material.icons.rounded.PendingActions
 import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.PictureAsPdf
+import androidx.compose.material.icons.rounded.Print
+import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.Chat
 import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -70,6 +73,8 @@ import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.ReturnSummary
 import com.trader.core.util.DateUtils.toDateTimeString
 import com.trader.salesmanager.ui.components.StatusChip
+import com.trader.salesmanager.ui.inventory.invoice.formatAmount
+import com.trader.salesmanager.ui.inventory.invoice.formatQty
 import com.trader.salesmanager.ui.theme.Cyan500
 import com.trader.salesmanager.ui.theme.DebtRed
 import com.trader.salesmanager.ui.theme.Emerald500
@@ -78,10 +83,12 @@ import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
 import com.trader.salesmanager.ui.theme.appColors
+import com.trader.salesmanager.util.InvoiceSharer
 import com.trader.salesmanager.util.export.ExportManager
 import com.trader.salesmanager.util.export.ExportState
 import com.trader.salesmanager.util.export.ExportSuccessBottomSheet
 import com.trader.salesmanager.util.export.ExportViewModel
+import com.trader.salesmanager.util.pdf.PdfPrintManager
 import kotlinx.coroutines.flow.map
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -101,20 +108,42 @@ fun TransactionDetailsScreen(
     }
     val context = LocalContext.current
 
-    val storeName by context.appDataStore.data
-    .map {
-        it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+    val storeNameFlow = remember(context) {
+        context.appDataStore.data.map {
+            it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
+        }
     }
-    .collectAsState(initial = "")
+    val storeName by storeNameFlow.collectAsState(initial = "")
 
     val exportVm: ExportViewModel = koinViewModel()
     val exportState by exportVm.state.collectAsStateWithLifecycle()
     var showExportSheet by remember {
         mutableStateOf(false)
     }
+    var pendingExportAction by remember {
+        mutableStateOf<PdfExportAction?>(null)
+    }
 
     LaunchedEffect(exportState) {
-        if (exportState is ExportState.Success) showExportSheet = true
+        when (val state = exportState) {
+            is ExportState.Success -> {
+                if (pendingExportAction == PdfExportAction.PRINT &&
+                    state.type == com.trader.salesmanager.util.export.ExportType.PDF
+                ) {
+                    PdfPrintManager.print(context, java.io.File(state.filePath), state.fileName)
+                    pendingExportAction = null
+                    exportVm.reset()
+                } else {
+                    showExportSheet = true
+                }
+            }
+            is ExportState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                pendingExportAction = null
+                exportVm.dismissError()
+            }
+            else -> Unit
+        }
     }
 
     if (showExportSheet && exportState is ExportState.Success) {
@@ -123,16 +152,33 @@ fun TransactionDetailsScreen(
         ExportSuccessBottomSheet(
             state = success,
             onShare = {
-                ExportManager.shareFile(context, file, success.type.mimeType); showExportSheet = false
+                ExportManager.shareFile(context, file, success.type.mimeType)
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
             },
             onWhatsApp = {
-                ExportManager.shareToWhatsApp(context, file, success.type.mimeType); showExportSheet = false
+                ExportManager.shareToWhatsApp(context, file, success.type.mimeType)
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
             },
             onDownload = {
-                ExportManager.saveToDownloads(context, file, success.fileName); showExportSheet = false; exportVm.reset()
+                ExportManager.saveToDownloads(context, file, success.fileName)
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
+            },
+            onPrint = {
+                PdfPrintManager.print(context, file, success.fileName)
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
             },
             onDismiss = {
-                showExportSheet = false; exportVm.reset()
+                showExportSheet = false
+                pendingExportAction = null
+                exportVm.reset()
             }
         )
     }
@@ -237,27 +283,6 @@ fun TransactionDetailsScreen(
                                 )
                             }
                         }
-                        val isExporting = exportState is ExportState.Loading
-                        IconButton(
-                            onClick = {
-                                if (!isExporting) {
-                                    exportVm.exportInvoicePdf(
-                                        transaction = t,
-                                        items = uiState.invoiceItems,
-                                        storeName = storeName,
-                                        cacheDir = context.cacheDir
-                                    )
-                                }
-                            },
-                            modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
-                        ) {
-                            if (isExporting) {
-                                CircularProgressIndicator(Modifier.size(18.dp), color = Color.White, strokeWidth = 2.dp)
-                            } else {
-                                Icon(Icons.Rounded.PictureAsPdf, null, tint = Color.White)
-                            }
-                        }
-
                         IconButton(onClick = {
                             onEdit(transactionId)
                         }) {
@@ -288,14 +313,14 @@ fun TransactionDetailsScreen(
                             // ✅ المبلغ الأصلي مشطوب إذا حدث إرجاع
                             if (t.hasAnyReturn && t.amountChanged) {
                                 Text(
-                                    "₪${String.format("%.2f", t.originalAmount)}",
+                                    "₪${t.originalAmount.formatAmount()}",
                                     color = Color.White.copy(0.5f),
                                     style = MaterialTheme.typography.titleSmall,
                                     textDecoration = TextDecoration.LineThrough
                                 )
                             }
                             Text(
-                                "₪${String.format("%.2f", t.amount)}",
+                                "₪${t.amount.formatAmount()}",
                                 color = Color.White,
                                 style = MaterialTheme.typography.displaySmall,
                                 fontWeight = FontWeight.Bold
@@ -396,9 +421,9 @@ fun TransactionDetailsScreen(
                             // مبلغ إضافي (عملية بدون أصناف أُضيفت لاحقاً)
                             if (baseAmount > 0.001) {
                                 TotalsRow("مجموع الأصناف",
-                                    "₪${String.format("%.2f", itemsTotal)}", appColors.textSubtle)
+                                    "₪${itemsTotal.formatAmount()}", appColors.textSubtle)
                                 TotalsRow("مبلغ إضافي",
-                                    "₪${String.format("%.2f", baseAmount)}", appColors.textSubtle)
+                                    "₪${baseAmount.formatAmount()}", appColors.textSubtle)
                                 HorizontalDivider(color = appColors.divider,
                                     modifier = Modifier.padding(vertical = 2.dp))
                             }
@@ -408,7 +433,7 @@ fun TransactionDetailsScreen(
                                 // إجمالي قبل الإرجاع
                                 TotalsRow(
                                     label = "إجمالي الأصناف",
-                                    value = "₪${String.format("%.2f", itemsTotal)}",
+                                    value = "₪${itemsTotal.formatAmount()}",
                                     valueColor = appColors.textSubtle,
                                     strikethrough = true
                                 )
@@ -430,7 +455,7 @@ fun TransactionDetailsScreen(
                                     }
                                     Text(
                                         // ✅ فصل الكمية عن العملة
-                                        "- ₪${String.format("%.2f", uiState.returnSummary.totalRefunded)}",
+                                        "- ₪${uiState.returnSummary.totalRefunded.formatAmount()}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = DebtRed,
                                         fontWeight = FontWeight.SemiBold
@@ -447,7 +472,7 @@ fun TransactionDetailsScreen(
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.bodyMedium)
                                 Text(
-                                    "₪${String.format("%.2f", t.amount)}",
+                                    "₪${t.amount.formatAmount()}",
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.titleSmall,
                                     color = Violet500
@@ -459,11 +484,97 @@ fun TransactionDetailsScreen(
             }
         }
 
-        // ── زر PDF في الهيدر يفتح Sheet مباشرة — لا نحتاج زر سفلي ──
         item {
-            Spacer(Modifier.height(24.dp))
+            val isExporting = exportState is ExportState.Loading
+            val isInvoiceReady = uiState.isItemsLoaded
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Button(
+                    onClick = {
+                        pendingExportAction = PdfExportAction.SHARE
+                        exportVm.exportInvoicePdf(
+                            transaction = t,
+                            items = uiState.invoiceItems,
+                            storeName = storeName,
+                            customer = uiState.customer,
+                            priorDebtBalance = uiState.priorDebtBalance,
+                            currentDebtBalance = uiState.currentDebtBalance,
+                            returnSummary = uiState.returnSummary,
+                            cacheDir = context.cacheDir
+                        )
+                    },
+                    enabled = !isExporting && isInvoiceReady,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
+                ) {
+                    if (isExporting && pendingExportAction == PdfExportAction.SHARE) {
+                        CircularProgressIndicator(Modifier.size(18.dp), color = Color.White, strokeWidth = 2.dp)
+                    } else {
+                        Icon(Icons.Rounded.Share, null, Modifier.size(18.dp))
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Text("مشاركة PDF", fontWeight = FontWeight.SemiBold)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            pendingExportAction = PdfExportAction.PRINT
+                            exportVm.exportInvoicePdf(
+                                transaction = t,
+                                items = uiState.invoiceItems,
+                                storeName = storeName,
+                                customer = uiState.customer,
+                                priorDebtBalance = uiState.priorDebtBalance,
+                                currentDebtBalance = uiState.currentDebtBalance,
+                                returnSummary = uiState.returnSummary,
+                                cacheDir = context.cacheDir
+                            )
+                        },
+                        enabled = !isExporting && isInvoiceReady,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        if (isExporting && pendingExportAction == PdfExportAction.PRINT) {
+                            CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+                        } else {
+                            Icon(Icons.Rounded.Print, null, Modifier.size(18.dp))
+                        }
+                        Spacer(Modifier.width(6.dp))
+                        Text("طباعة")
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            InvoiceSharer.shareInvoice(
+                                context = context,
+                                transaction = t,
+                                items = uiState.invoiceItems,
+                                storeName = storeName
+                            )
+                        },
+                        enabled = !isExporting && isInvoiceReady,
+                        modifier = Modifier.weight(1f).height(48.dp),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Icon(Icons.Rounded.Chat, null, Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("مشاركة نصية سريعة", maxLines = 1)
+                    }
+                }
+            }
+            Spacer(Modifier.height(8.dp))
         }
     }
+}
+
+private enum class PdfExportAction {
+    SHARE,
+    PRINT
 }
 
 @Composable
@@ -472,9 +583,6 @@ private fun InvoiceItemRow(item: InvoiceItem, returnSummary: ReturnSummary) {
     val isFullReturn = returnedQty >= item.quantity && returnedQty > 0
     val isPartReturn = returnedQty > 0 && returnedQty < item.quantity
     val netQty = (item.quantity - returnedQty).coerceAtLeast(0.0)
-
-    fun Double.fmt(): String = if (this == toLong().toDouble()) toLong().toString()
-    else String.format("%.3f", this).trimEnd('0').trimEnd('.')
 
     Row(
         Modifier.fillMaxWidth().padding(14.dp),
@@ -506,7 +614,7 @@ private fun InvoiceItemRow(item: InvoiceItem, returnSummary: ReturnSummary) {
                 if (isFullReturn || isPartReturn) {
                     val badgeColor = if (isFullReturn) DebtRed else UnpaidAmber
                     val badgeText = if (isFullReturn) "مرتجع كامل"
-                    else "أُرجع ${returnedQty.fmt()}"
+                    else "أُرجع ${returnedQty.formatQty()}"
                     Surface(shape = RoundedCornerShape(20.dp), color = badgeColor.copy(0.12f)) {
                         Text(badgeText,
                             Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
@@ -523,7 +631,7 @@ private fun InvoiceItemRow(item: InvoiceItem, returnSummary: ReturnSummary) {
                     verticalAlignment = Alignment.CenterVertically) {
                     // الكمية الأصلية مشطوبة
                     Text(
-                        "${item.quantity.fmt()} ${item.unitLabel}",
+                        "${item.quantity.formatQty()} ${item.unitLabel}",
                         style = MaterialTheme.typography.labelSmall.copy(
                             textDecoration = TextDecoration.LineThrough
                         ),
@@ -532,17 +640,17 @@ private fun InvoiceItemRow(item: InvoiceItem, returnSummary: ReturnSummary) {
                     if (!isFullReturn) {
                         Icon(Icons.Rounded.ArrowForward, null,
                             tint = appColors.textSubtle, modifier = Modifier.size(10.dp))
-                        Text("${netQty.fmt()} ${item.unitLabel}",
+                        Text("${netQty.formatQty()} ${item.unitLabel}",
                             style = MaterialTheme.typography.labelSmall,
                             color = appColors.textPrimary,
                             fontWeight = FontWeight.SemiBold)
                     }
-                    Text("× ₪${String.format("%.2f", item.pricePerUnit)}",
+                    Text("× ₪${item.pricePerUnit.formatAmount()}",
                         style = MaterialTheme.typography.labelSmall,
                         color = appColors.textSubtle)
                 }
             } else {
-                Text("${item.quantity.fmt()} ${item.unitLabel}  ×  ₪${String.format("%.2f", item.pricePerUnit)}",
+                Text("${item.quantity.formatQty()} ${item.unitLabel}  ×  ₪${item.pricePerUnit.formatAmount()}",
                     style = MaterialTheme.typography.labelSmall,
                     color = appColors.textSubtle)
             }
@@ -551,17 +659,17 @@ private fun InvoiceItemRow(item: InvoiceItem, returnSummary: ReturnSummary) {
         // ✅ السعر الصافي — مشطوب إذا تغيّر
         Column(horizontalAlignment = Alignment.End) {
             if (isPartReturn) {
-                Text("₪${String.format("%.2f", item.totalPrice)}",
+                Text("₪${item.totalPrice.formatAmount()}",
                     style = MaterialTheme.typography.labelSmall.copy(
                         textDecoration = TextDecoration.LineThrough
                     ),
                     color = appColors.textSubtle)
-                Text("₪${String.format("%.2f", netQty * item.pricePerUnit)}",
+                Text("₪${(netQty * item.pricePerUnit).formatAmount()}",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodySmall,
                     color = UnpaidAmber)
             } else {
-                Text("₪${String.format("%.2f", item.totalPrice)}",
+                Text("₪${item.totalPrice.formatAmount()}",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodySmall,
                     color = if (isFullReturn) appColors.textSubtle else Violet500,
