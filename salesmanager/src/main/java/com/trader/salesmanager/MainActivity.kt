@@ -92,5 +92,6 @@ class MainActivity : ComponentActivity() {
         const val EXTRA_NAVIGATE_TO = "navigate_to"
         const val EXTRA_INSTALL_UPDATE = "install_update"
         const val NAV_SETTINGS = "settings"
+        const val NAV_LOW_STOCK = "inventory_low_stock"
     }
 }

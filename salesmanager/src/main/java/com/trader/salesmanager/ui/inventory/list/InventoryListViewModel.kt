@@ -34,6 +34,7 @@ data class InventoryListUiState(
             StockFilter.ALL -> true
             StockFilter.LOW -> p.isLowStock
             StockFilter.OUT -> p.isOutOfStock
+            StockFilter.ATTENTION -> p.needsStockAttention
         }
         matchQuery && matchFilter
     }
@@ -51,7 +52,7 @@ data class InventoryListUiState(
 }
 
 enum class StockFilter {
-    ALL, LOW, OUT
+    ALL, LOW, OUT, ATTENTION
 }
 
 class InventoryListViewModel(

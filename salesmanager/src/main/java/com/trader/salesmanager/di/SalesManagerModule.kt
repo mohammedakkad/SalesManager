@@ -14,6 +14,8 @@ import com.trader.core.data.repository.DashboardAnalyticsRepositoryImpl
 import com.trader.core.data.repository.EmployeeRepositoryImpl
 import com.trader.core.data.repository.InventoryRepositoryImpl
 import com.trader.core.data.repository.InvoiceItemRepositoryImpl
+import com.trader.core.data.repository.LowStockAlertRepositoryImpl
+import com.trader.core.data.repository.LowStockSettingsRepositoryImpl
 import com.trader.core.data.repository.MerchantStatusRepositoryImpl
 import com.trader.core.data.repository.PaymentMethodRepositoryImpl
 import com.trader.core.data.repository.ProductRepositoryImpl
@@ -29,6 +31,8 @@ import com.trader.core.domain.repository.DashboardAnalyticsRepository
 import com.trader.core.domain.repository.EmployeeRepository
 import com.trader.core.domain.repository.InventoryRepository
 import com.trader.core.domain.repository.InvoiceItemRepository
+import com.trader.core.domain.repository.LowStockAlertRepository
+import com.trader.core.domain.repository.LowStockSettingsRepository
 import com.trader.core.domain.repository.MerchantStatusRepository
 import com.trader.core.domain.repository.PaymentMethodRepository
 import com.trader.core.domain.repository.ProductRepository
@@ -118,6 +122,9 @@ val salesManagerModule = module {
     single {
         get<AppDatabase>().cashBoxMovementDao()
     }
+    single {
+        get<AppDatabase>().lowStockAlertDao()
+    }
 
     // ── Remote ───────────────────────────────────────────────────
     single {
@@ -167,6 +174,12 @@ val salesManagerModule = module {
     }
     single<ProductRepository> {
         ProductRepositoryImpl(get(), get(), get(), get(), get<NetworkMonitor>())
+    }
+    single<LowStockAlertRepository> {
+        LowStockAlertRepositoryImpl(get(), get(), get())
+    }
+    single<LowStockSettingsRepository> {
+        LowStockSettingsRepositoryImpl(androidContext())
     }
     single<StockRepository> {
         StockRepositoryImpl(

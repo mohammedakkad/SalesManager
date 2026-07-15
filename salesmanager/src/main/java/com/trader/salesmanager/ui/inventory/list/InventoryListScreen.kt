@@ -14,6 +14,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -117,12 +119,21 @@ fun InventoryListScreen(
     onInventorySession: () -> Unit,
     onStockReports: () -> Unit = {},
     showNavigateUp: Boolean = true,
+    initialFilter: StockFilter? = null,
+    onInitialFilterApplied: () -> Unit = {},
     viewModel: InventoryListViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showScanner by remember { mutableStateOf(false) }
     var showNewProduct by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(initialFilter) {
+        initialFilter?.let {
+            viewModel.setFilter(it)
+            onInitialFilterApplied()
+        }
+    }
 
     val storeName by context.appDataStore.data
     .map {
@@ -426,6 +437,7 @@ fun InventoryListScreen(
             Row(
                 Modifier
                 .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -435,6 +447,7 @@ fun InventoryListScreen(
                         StockFilter.ALL -> "الكل"
                         StockFilter.LOW -> "نقص"
                         StockFilter.OUT -> "نفد"
+                        StockFilter.ATTENTION -> "نقص أو نفد"
                     }
                     val sel = state.filter == f
                     FilterChip(
@@ -453,11 +466,13 @@ fun InventoryListScreen(
                                 StockFilter.ALL -> Emerald500.copy(0.15f)
                                 StockFilter.LOW -> UnpaidAmber.copy(0.15f)
                                 StockFilter.OUT -> DebtRed.copy(0.15f)
+                                StockFilter.ATTENTION -> Violet500.copy(0.15f)
                             },
                             selectedLabelColor = when (f) {
                                 StockFilter.ALL -> Emerald500
                                 StockFilter.LOW -> UnpaidAmber
                                 StockFilter.OUT -> DebtRed
+                                StockFilter.ATTENTION -> Violet500
                             },
                             containerColor = appColors.cardBackgroundVariant
                         )

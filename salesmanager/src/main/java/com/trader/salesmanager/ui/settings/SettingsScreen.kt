@@ -27,8 +27,10 @@ import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.InstallMobile
 import androidx.compose.material.icons.rounded.Key
 import androidx.compose.material.icons.rounded.LightMode
+import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.Payment
 import androidx.compose.material.icons.rounded.Savings
+import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Store
 import androidx.compose.material.icons.rounded.SupportAgent
 import androidx.compose.material.icons.rounded.SystemUpdate
@@ -38,6 +40,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -71,6 +75,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.trader.core.data.local.appDataStore
+import com.trader.core.domain.repository.LowStockAlertSettings
+import com.trader.core.domain.repository.LowStockSettingsRepository
 import com.trader.salesmanager.R
 import com.trader.salesmanager.ui.settings.backup.LAST_BACKUP_AT_KEY
 import com.trader.salesmanager.ui.settings.backup.formatLastBackupRelative
@@ -87,9 +93,11 @@ import com.trader.salesmanager.ui.theme.toggleTheme
 import com.trader.salesmanager.update.AppUpdateDownloader
 import com.trader.salesmanager.update.AppUpdateUiState
 import com.trader.salesmanager.update.AppUpdateViewModel
+import com.trader.salesmanager.worker.LowStockCheckWorker
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 val STORE_NAME_KEY = stringPreferencesKey("store_name")
 val MERCHANT_CODE_KEY = stringPreferencesKey("merchant_code")
@@ -101,7 +109,8 @@ fun SettingsScreen(
     onNavigateToCashBoxes: () -> Unit = {},
     onNavigateToChat: () -> Unit = {},
     onNavigateToBackup: () -> Unit = {},
-    updateViewModel: AppUpdateViewModel = koinViewModel()
+    updateViewModel: AppUpdateViewModel = koinViewModel(),
+    lowStockSettingsRepository: LowStockSettingsRepository = koinInject()
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
@@ -120,6 +129,8 @@ fun SettingsScreen(
         R.string.settings_backup_last,
         formatLastBackupRelative(lastBackupAt)
     )
+    val lowStockSettings by lowStockSettingsRepository.settings
+        .collectAsStateWithLifecycle(initialValue = LowStockAlertSettings())
 
     var showStoreNameDialog by remember { mutableStateOf(false) }
 
@@ -196,6 +207,36 @@ fun SettingsScreen(
 
                 DarkModeSettingItem()
 
+                LowStockAlertsSettingItem(
+                    settings = lowStockSettings,
+                    onEnabledChange = { enabled ->
+                        scope.launch {
+                            lowStockSettingsRepository.setEnabled(enabled)
+                            if (enabled) {
+                                LowStockCheckWorker.schedule(
+                                    context.applicationContext,
+                                    lowStockSettings.preferredHour,
+                                    replaceExisting = true
+                                )
+                            } else {
+                                LowStockCheckWorker.cancel(context.applicationContext)
+                            }
+                        }
+                    },
+                    onHourChange = { hour ->
+                        scope.launch {
+                            lowStockSettingsRepository.setPreferredHour(hour)
+                            if (lowStockSettings.enabled) {
+                                LowStockCheckWorker.schedule(
+                                    context.applicationContext,
+                                    hour,
+                                    replaceExisting = true
+                                )
+                            }
+                        }
+                    }
+                )
+
                 SettingItem(
                     icon = Icons.Rounded.Payment,
                     title = "طرق الدفع",
@@ -237,6 +278,101 @@ fun SettingsScreen(
                     onInstall = { updateViewModel.installUpdate() },
                     onOpenInstallSettings = { updateViewModel.openInstallSettings() }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LowStockAlertsSettingItem(
+    settings: LowStockAlertSettings,
+    onEnabledChange: (Boolean) -> Unit,
+    onHourChange: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(1.dp)
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(UnpaidAmber.copy(0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Rounded.NotificationsActive,
+                        contentDescription = null,
+                        tint = UnpaidAmber
+                    )
+                }
+                Spacer(Modifier.width(14.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        "تنبيهات نقص المخزون",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        if (settings.enabled) "مفعّلة يومياً مع منع التكرار" else "متوقفة",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(
+                    checked = settings.enabled,
+                    onCheckedChange = onEnabledChange,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = UnpaidAmber,
+                        uncheckedThumbColor = Color.White,
+                        uncheckedTrackColor = Slate400
+                    )
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        Icons.Rounded.Schedule,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        "وقت التنبيه",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        LowStockAlertSettings.MORNING_HOUR to "صباحاً",
+                        LowStockAlertSettings.EVENING_HOUR to "مساءً"
+                    ).forEach { (hour, label) ->
+                        FilterChip(
+                            selected = settings.preferredHour == hour,
+                            onClick = { onHourChange(hour) },
+                            enabled = settings.enabled,
+                            label = { Text(label) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = UnpaidAmber.copy(0.15f),
+                                selectedLabelColor = UnpaidAmber
+                            )
+                        )
+                    }
+                }
             }
         }
     }

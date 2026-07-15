@@ -16,7 +16,9 @@ import com.trader.core.domain.model.Customer
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.ProductWithUnits
 import com.trader.core.domain.model.ReturnSummary
+import com.trader.core.domain.model.StockLevel
 import com.trader.core.domain.model.Transaction
+import com.trader.core.domain.model.stockLevel
 import com.trader.salesmanager.ui.reports.CustomerRank
 import com.trader.salesmanager.ui.reports.DaySalesEntry
 import com.trader.salesmanager.ui.reports.PaymentShare
@@ -303,8 +305,8 @@ object ExportManager {
         var rowIdx = 0
         products.forEach { pw ->
             pw.units.forEach { unit ->
-                val isLow  = unit.quantityInStock in 0.001..unit.lowStockThreshold
-                val isOut  = unit.quantityInStock <= 0.001
+                val isLow  = unit.stockLevel == StockLevel.LOW
+                val isOut  = unit.stockLevel == StockLevel.OUT
                 val rowStyle = when {
                     isOut  -> redStyle
                     isLow  -> yellowStyle
@@ -332,8 +334,8 @@ object ExportManager {
         // ملخص
         xlsx.addEmptyRow()
         val totalValue = products.sumOf { pw -> pw.units.sumOf { it.quantityInStock * it.price } }
-        val outCount   = products.count { pw -> pw.units.all { it.quantityInStock <= 0.001 } }
-        val lowCount   = products.count { pw -> pw.units.any { it.quantityInStock in 0.001..it.lowStockThreshold } }
+        val outCount   = products.count { pw -> pw.units.all { it.stockLevel == StockLevel.OUT } }
+        val lowCount   = products.count { pw -> pw.units.any { it.stockLevel == StockLevel.LOW } }
         val sumStyle   = XlsxWriter.CellStyle(bold = true, bgColor = "FF0EA5E9", fontColor = "FFFFFFFF")
         xlsx.addRow("" to normalStyle, "إجمالي قيمة المخزون" to sumStyle, null to normalStyle, null to normalStyle, null to normalStyle, null to normalStyle, totalValue to sumStyle)
         xlsx.addRow("" to normalStyle, "أصناف نفدت" to redStyle, outCount to redStyle)
