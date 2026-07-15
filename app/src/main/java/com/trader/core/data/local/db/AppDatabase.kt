@@ -25,9 +25,10 @@ import com.trader.core.domain.model.PaymentType
         SessionEntity::class,
         EmployeeEntity::class,
         CashBoxEntity::class,
-        CashBoxMovementEntity::class
+        CashBoxMovementEntity::class,
+        LowStockAlertStateEntity::class
     ],
-    version = 21,
+    version = 22,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -44,6 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun employeeDao(): EmployeeDao
     abstract fun cashBoxDao(): CashBoxDao
     abstract fun cashBoxMovementDao(): CashBoxMovementDao
+    abstract fun lowStockAlertDao(): LowStockAlertDao
 
     companion object {
         const val DB_NAME = "sales_manager.db"
@@ -459,6 +461,21 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_21_22 = object : Migration(21, 22) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS low_stock_alert_states (
+                        unitId TEXT NOT NULL PRIMARY KEY,
+                        lastStatus TEXT NOT NULL,
+                        lastNotifiedAt INTEGER,
+                        FOREIGN KEY (unitId) REFERENCES product_units(id) ON DELETE CASCADE
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
         val MIGRATION_17_18 = object : Migration(17, 18) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
@@ -507,7 +524,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_17_18,
             MIGRATION_18_19,
             MIGRATION_19_20,
-            MIGRATION_20_21
+            MIGRATION_20_21,
+            MIGRATION_21_22
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {

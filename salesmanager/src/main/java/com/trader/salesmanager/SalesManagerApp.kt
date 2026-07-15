@@ -5,11 +5,13 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
 import com.trader.core.data.local.dao.ProductDao
 import com.trader.core.domain.repository.ActivationRepository
+import com.trader.core.domain.repository.LowStockSettingsRepository
 import com.trader.core.sync.SyncCoordinator
 import com.trader.core.util.ExpiryNotificationHelper
 import com.trader.core.worker.StatusCheckWorker
 import com.trader.salesmanager.di.salesManagerModule
 import com.trader.salesmanager.update.BackgroundUpdateWorker
+import com.trader.salesmanager.worker.LowStockCheckWorker
 import com.trader.salesmanager.worker.UnpaidDebtWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +41,16 @@ class SalesManagerApp : Application(), KoinComponent {
         BackgroundUpdateWorker.schedulePeriodic(this)
 
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            val lowStockSettingsRepository: LowStockSettingsRepository by inject()
+            val lowStockSettings = lowStockSettingsRepository.getSettings()
+            if (lowStockSettings.enabled) {
+                LowStockCheckWorker.schedule(
+                    this@SalesManagerApp,
+                    lowStockSettings.preferredHour
+                )
+            } else {
+                LowStockCheckWorker.cancel(this@SalesManagerApp)
+            }
             runCatching {
                 val syncCoordinator: SyncCoordinator by inject()
                 syncCoordinator.start()

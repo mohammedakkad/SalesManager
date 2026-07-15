@@ -58,6 +58,17 @@ data class ProductUnit(
     }
 }
 
+enum class StockLevel {
+    AVAILABLE, LOW, OUT
+}
+
+val ProductUnit.stockLevel: StockLevel
+    get() = when {
+        quantityInStock <= 0 -> StockLevel.OUT
+        quantityInStock <= lowStockThreshold -> StockLevel.LOW
+        else -> StockLevel.AVAILABLE
+    }
+
 data class ProductWithUnits(
     val product: Product,
     val units: List<ProductUnit>
@@ -65,12 +76,11 @@ data class ProductWithUnits(
     val defaultUnit: ProductUnit? get() = units.firstOrNull {
         it.isDefault
     } ?: units.firstOrNull()
-    val isLowStock: Boolean get() = units.any {
-        it.quantityInStock > 0 && it.quantityInStock <= it.lowStockThreshold
-    }
-    val isOutOfStock: Boolean get() = units.isNotEmpty() && units.all {
-        it.quantityInStock <= 0
-    }
+    val isLowStock: Boolean get() = units.any { it.stockLevel == StockLevel.LOW }
+    val isOutOfStock: Boolean get() =
+        units.isNotEmpty() && units.all { it.stockLevel == StockLevel.OUT }
+    val needsStockAttention: Boolean get() =
+        units.any { it.stockLevel == StockLevel.LOW || it.stockLevel == StockLevel.OUT }
 }
 
 enum class UnitType {

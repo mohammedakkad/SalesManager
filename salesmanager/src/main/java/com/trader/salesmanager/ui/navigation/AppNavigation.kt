@@ -53,6 +53,7 @@ import com.trader.salesmanager.ui.inventory.detail.ProductDetailScreen
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceItemsScreen
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceLineItem
 import com.trader.salesmanager.ui.inventory.list.InventoryListScreen
+import com.trader.salesmanager.ui.inventory.list.StockFilter
 import com.trader.salesmanager.ui.inventory.reports.StockReportsScreen
 import com.trader.salesmanager.ui.payments.PaymentMethodsScreen
 import com.trader.salesmanager.ui.reports.DayTransactionsScreen
@@ -99,6 +100,9 @@ fun AppNavigation(
     val startupState by activationVm.startupState.collectAsStateWithLifecycle()
     var liveBlockMessage by remember {
         mutableStateOf<String?>(null)
+    }
+    var inventoryInitialFilter by remember {
+        mutableStateOf<StockFilter?>(null)
     }
 
     LaunchedEffect(Unit) {
@@ -170,11 +174,18 @@ fun AppNavigation(
     }
 
     LaunchedEffect(pendingNavigation, startupState) {
-        if (pendingNavigation == com.trader.salesmanager.MainActivity.NAV_SETTINGS &&
-            (startupState == StartupState.Proceed || startupState is StartupState.ProceedFree)
-        ) {
-            navController.navigate(Screen.Settings.route)
-            onNavigationHandled()
+        if (startupState == StartupState.Proceed || startupState is StartupState.ProceedFree) {
+            when (pendingNavigation) {
+                com.trader.salesmanager.MainActivity.NAV_SETTINGS -> {
+                    navController.navigate(Screen.Settings.route)
+                    onNavigationHandled()
+                }
+                com.trader.salesmanager.MainActivity.NAV_LOW_STOCK -> {
+                    inventoryInitialFilter = StockFilter.ATTENTION
+                    navController.navigate(Screen.Inventory.route)
+                    onNavigationHandled()
+                }
+            }
         }
     }
 
@@ -574,7 +585,9 @@ fun AppNavigation(
                 onStockReports = {
                     navController.navigate(Screen.StockReports.route)
                 },
-                showNavigateUp = false
+                showNavigateUp = false,
+                initialFilter = inventoryInitialFilter,
+                onInitialFilterApplied = { inventoryInitialFilter = null }
             )
         }
         composable(
