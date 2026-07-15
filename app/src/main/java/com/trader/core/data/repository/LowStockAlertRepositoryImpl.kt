@@ -30,12 +30,16 @@ class LowStockAlertRepositoryImpl(
         val candidates = currentUnits.mapNotNull { (productId, unit, status) ->
             if (status == StockLevel.AVAILABLE) return@mapNotNull null
             val previous = previousByUnit[unit.id]
+            val previousStatus = previous?.lastStatus?.let(StockLevel::valueOf)
             val lastNotifiedStatus = previous?.lastNotifiedStatus?.let(StockLevel::valueOf)
             val cooldownExpired = previous?.lastNotifiedAt?.let {
                 nowMillis - it >= cooldownMillis
             } ?: true
             val shouldNotify = lastNotifiedStatus == null ||
-                lastNotifiedStatus == StockLevel.LOW && status == StockLevel.OUT ||
+                (status == StockLevel.OUT && (
+                    previousStatus == StockLevel.LOW ||
+                        lastNotifiedStatus == StockLevel.LOW
+                    )) ||
                 cooldownExpired
 
             if (shouldNotify) {
