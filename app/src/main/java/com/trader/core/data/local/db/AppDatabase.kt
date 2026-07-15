@@ -468,8 +468,8 @@ abstract class AppDatabase : RoomDatabase() {
                     CREATE TABLE IF NOT EXISTS low_stock_alert_states (
                         unitId TEXT NOT NULL PRIMARY KEY,
                         lastStatus TEXT NOT NULL,
-                        lastNotifiedAt INTEGER,
-                        FOREIGN KEY (unitId) REFERENCES product_units(id) ON DELETE CASCADE
+                        lastNotifiedStatus TEXT,
+                        lastNotifiedAt INTEGER
                     )
                     """.trimIndent()
                 )

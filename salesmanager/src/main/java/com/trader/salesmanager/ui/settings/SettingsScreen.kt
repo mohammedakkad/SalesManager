@@ -334,38 +334,44 @@ private fun LowStockAlertsSettingItem(
                 )
             }
 
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Icon(
-                    Icons.Rounded.Schedule,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(18.dp)
-                )
-                Text(
-                    "وقت التنبيه",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                listOf(
-                    LowStockAlertSettings.MORNING_HOUR to "صباحاً",
-                    LowStockAlertSettings.EVENING_HOUR to "مساءً"
-                ).forEach { (hour, label) ->
-                    FilterChip(
-                        selected = settings.preferredHour == hour,
-                        onClick = { onHourChange(hour) },
-                        enabled = settings.enabled,
-                        label = { Text(label) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = UnpaidAmber.copy(0.15f),
-                            selectedLabelColor = UnpaidAmber
-                        )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        Icons.Rounded.Schedule,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(18.dp)
                     )
+                    Text(
+                        "وقت التنبيه",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        LowStockAlertSettings.MORNING_HOUR to "صباحاً",
+                        LowStockAlertSettings.EVENING_HOUR to "مساءً"
+                    ).forEach { (hour, label) ->
+                        FilterChip(
+                            selected = settings.preferredHour == hour,
+                            onClick = { onHourChange(hour) },
+                            enabled = settings.enabled,
+                            label = { Text(label) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = UnpaidAmber.copy(0.15f),
+                                selectedLabelColor = UnpaidAmber
+                            )
+                        )
+                    }
                 }
             }
         }

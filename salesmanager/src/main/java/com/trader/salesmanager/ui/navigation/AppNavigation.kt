@@ -182,7 +182,10 @@ fun AppNavigation(
                 }
                 com.trader.salesmanager.MainActivity.NAV_LOW_STOCK -> {
                     inventoryInitialFilter = StockFilter.ATTENTION
-                    navController.navigate(Screen.Inventory.route)
+                    navController.navigateToMainTab(
+                        Screen.Inventory.route,
+                        navController.currentDestination?.route
+                    )
                     onNavigationHandled()
                 }
             }

@@ -41,15 +41,17 @@ class SalesManagerApp : Application(), KoinComponent {
         BackgroundUpdateWorker.schedulePeriodic(this)
 
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
-            val lowStockSettingsRepository: LowStockSettingsRepository by inject()
-            val lowStockSettings = lowStockSettingsRepository.getSettings()
-            if (lowStockSettings.enabled) {
-                LowStockCheckWorker.schedule(
-                    this@SalesManagerApp,
-                    lowStockSettings.preferredHour
-                )
-            } else {
-                LowStockCheckWorker.cancel(this@SalesManagerApp)
+            runCatching {
+                val lowStockSettingsRepository: LowStockSettingsRepository by inject()
+                val lowStockSettings = lowStockSettingsRepository.getSettings()
+                if (lowStockSettings.enabled) {
+                    LowStockCheckWorker.schedule(
+                        this@SalesManagerApp,
+                        lowStockSettings.preferredHour
+                    )
+                } else {
+                    LowStockCheckWorker.cancel(this@SalesManagerApp)
+                }
             }
             runCatching {
                 val syncCoordinator: SyncCoordinator by inject()

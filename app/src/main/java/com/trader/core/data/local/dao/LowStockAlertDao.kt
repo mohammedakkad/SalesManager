@@ -16,8 +16,18 @@ interface LowStockAlertDao {
 
     @Query(
         """
+        DELETE FROM low_stock_alert_states
+        WHERE unitId NOT IN (SELECT id FROM product_units)
+        """
+    )
+    suspend fun deleteOrphans()
+
+    @Query(
+        """
         UPDATE low_stock_alert_states
-        SET lastStatus = :status, lastNotifiedAt = :notifiedAt
+        SET lastStatus = :status,
+            lastNotifiedStatus = :status,
+            lastNotifiedAt = :notifiedAt
         WHERE unitId = :unitId
         """
     )

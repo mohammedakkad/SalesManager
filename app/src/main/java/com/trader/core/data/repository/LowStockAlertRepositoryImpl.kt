@@ -30,13 +30,12 @@ class LowStockAlertRepositoryImpl(
         val candidates = currentUnits.mapNotNull { (productId, unit, status) ->
             if (status == StockLevel.AVAILABLE) return@mapNotNull null
             val previous = previousByUnit[unit.id]
-            val previousStatus = previous?.lastStatus?.let(StockLevel::valueOf)
+            val lastNotifiedStatus = previous?.lastNotifiedStatus?.let(StockLevel::valueOf)
             val cooldownExpired = previous?.lastNotifiedAt?.let {
                 nowMillis - it >= cooldownMillis
             } ?: true
-            val shouldNotify = previousStatus == null ||
-                previousStatus == StockLevel.AVAILABLE ||
-                previousStatus == StockLevel.LOW && status == StockLevel.OUT ||
+            val shouldNotify = lastNotifiedStatus == null ||
+                lastNotifiedStatus == StockLevel.LOW && status == StockLevel.OUT ||
                 cooldownExpired
 
             if (shouldNotify) {
@@ -51,13 +50,24 @@ class LowStockAlertRepositoryImpl(
         }
 
         val currentStates = currentUnits.map { (_, unit, status) ->
+            val previous = previousByUnit[unit.id]
             LowStockAlertStateEntity(
                 unitId = unit.id,
                 lastStatus = status.name,
-                lastNotifiedAt = previousByUnit[unit.id]?.lastNotifiedAt
+                lastNotifiedStatus = if (status == StockLevel.AVAILABLE) {
+                    null
+                } else {
+                    previous?.lastNotifiedStatus
+                },
+                lastNotifiedAt = if (status == StockLevel.AVAILABLE) {
+                    null
+                } else {
+                    previous?.lastNotifiedAt
+                }
             )
         }
         if (currentStates.isNotEmpty()) alertDao.upsertAll(currentStates)
+        alertDao.deleteOrphans()
         candidates
     }
 

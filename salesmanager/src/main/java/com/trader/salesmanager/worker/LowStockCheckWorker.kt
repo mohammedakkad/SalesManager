@@ -22,7 +22,8 @@ import com.trader.core.domain.repository.LowStockSettingsRepository
 import com.trader.salesmanager.MainActivity
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.ZonedDateTime
+import java.util.Calendar
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 class LowStockCheckWorker(
@@ -161,15 +162,18 @@ class LowStockCheckWorker(
 
         internal fun initialDelayMillis(
             preferredHour: Int,
-            now: ZonedDateTime = ZonedDateTime.now()
+            nowMillis: Long = System.currentTimeMillis(),
+            timeZone: TimeZone = TimeZone.getDefault()
         ): Long {
-            var nextRun = now
-                .withHour(preferredHour)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0)
-            if (!nextRun.isAfter(now)) nextRun = nextRun.plusDays(1)
-            return java.time.Duration.between(now, nextRun).toMillis()
+            val nextRun = Calendar.getInstance(timeZone).apply {
+                timeInMillis = nowMillis
+                set(Calendar.HOUR_OF_DAY, preferredHour)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+                if (timeInMillis <= nowMillis) add(Calendar.DAY_OF_YEAR, 1)
+            }
+            return nextRun.timeInMillis - nowMillis
         }
     }
 }
