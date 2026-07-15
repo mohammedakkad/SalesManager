@@ -1,0 +1,149 @@
+package com.trader.salesmanager.ui.customers.addedit
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.trader.core.domain.model.Customer
+import com.trader.core.domain.repository.CustomerRepository
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+// الأسماء المحجوزة للزبون الزائر — لا يمكن لأي عميل حقيقي استخدامها
+private val RESERVED_NAMES = setOf(
+    "زبون زائر", "زبون", "زبون مجهول", "walk-in", "walkincustomer",
+    "walk in", "زائر", "مجهول", "غير محدد"
+)
+
+data class AddEditCustomerUiState(
+    val name: String = "",
+    val phone: String = "",
+    val phoneConflict: String? = null,
+    val phoneChecking: Boolean = false,
+    val isLoading: Boolean = false,
+    val isSaved: Boolean = false,
+    val error: String? = null,
+    val isEditMode: Boolean = false
+) {
+    val isReservedName: Boolean
+    get() = name.trim().lowercase() in RESERVED_NAMES.map {
+        it.lowercase()
+    }
+
+    val nameError: String? get() = when {
+        name.isEmpty() -> null
+        isReservedName -> "reserved" // كود داخلي — الشاشة تعرض بطاقة خاصة
+        name.trim().length < 2 -> "الاسم يجب أن يكون حرفين على الأقل"
+        else -> null
+    }
+    val phoneError: String? get() = when {
+        phoneConflict != null -> phoneConflict
+        phone.isEmpty() -> null
+        phone.length != 10 -> "رقم الهاتف يجب أن يكون 10 أرقام"
+        !phone.all {
+            it.isDigit()
+        } -> "رقم الهاتف يجب أن يحتوي أرقام فقط"
+        else -> null
+    }
+    val canSave get() = name.trim().length >= 2
+    && !isReservedName
+    && phoneConflict == null
+    && !phoneChecking
+    && (phone.isEmpty() || phone.length == 10)
+}
+
+class AddEditCustomerViewModel(private val repo: CustomerRepository) : ViewModel() {
+    private val _uiState = MutableStateFlow(AddEditCustomerUiState())
+    val uiState: StateFlow<AddEditCustomerUiState> = _uiState.asStateFlow()
+    private var editingId: Long? = null
+    private var phoneCheckJob: Job? = null
+
+    fun loadCustomer(id: Long?) {
+        if (id == null) return
+        editingId = id
+        viewModelScope.launch {
+            val c = repo.getCustomerById(id) ?: return@launch
+            _uiState.update {
+                it.copy(name = c.name, phone = c.phone, isEditMode = true)
+            }
+        }
+    }
+
+    fun updateName(v: String) = _uiState.update {
+        it.copy(name = v, error = null)
+    }
+
+    fun updatePhone(v: String) {
+        // ✅ فلترة: أرقام فقط، بحد أقصى 10
+        val digits = v.filter {
+            it.isDigit()
+        }.take(10)
+        _uiState.update {
+            it.copy(phone = digits, phoneConflict = null)
+        }
+        // تحقق من التعارض فقط إذا اكتمل الرقم
+        if (digits.length == 10) checkPhone(digits)
+    }
+
+    private fun checkPhone(phone: String) {
+        phoneCheckJob?.cancel()
+        if (phone.isBlank()) {
+            _uiState.update {
+                it.copy(phoneConflict = null, phoneChecking = false)
+            }
+            return
+        }
+        phoneCheckJob = viewModelScope.launch {
+            _uiState.update {
+                it.copy(phoneChecking = true)
+            }
+            delay(350)
+            val conflictName = repo.getPhoneConflict(phone, editingId ?: -999L)
+            _uiState.update {
+                it.copy(
+                    phoneChecking = false,
+                    phoneConflict = conflictName?.let {
+                        n -> "مستخدم للعميل: $n"
+                    }
+                )
+            }
+        }
+    }
+
+    fun save() {
+        val state = _uiState.value
+        val name = state.name.trim()
+        if (name.length < 2) {
+            _uiState.update {
+                it.copy(error = "الاسم يجب أن يكون حرفين على الأقل")
+            }
+            return
+        }
+        if (state.isReservedName) return // ✅ حماية أخيرة
+        if (!state.canSave) return
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            val phone = state.phone.trim()
+            if (phone.isNotBlank()) {
+                val conflict = repo.getPhoneConflict(phone, editingId ?: -999L)
+                if (conflict != null) {
+                    _uiState.update {
+                        it.copy(isLoading = false, phoneConflict = "مستخدم للعميل: $conflict")
+                    }
+                    return@launch
+                }
+            }
+            val id = editingId
+            if (id == null) repo.insertCustomer(Customer(name = name, phone = phone))
+            else repo.updateCustomer(Customer(id = id, name = name, phone = phone))
+            _uiState.update {
+                it.copy(isLoading = false, isSaved = true)
+            }
+        }
+    }
+}

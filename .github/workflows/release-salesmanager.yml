@@ -1,0 +1,116 @@
+name: Build SalesManager Release APK
+
+on:
+  push:
+    branches: ['**']
+    tags:
+      - 'salesmanager-v*'       # إصدار برودكشن  → salesmanager-v1.0.1
+      - 'salesmanagertest-v*'   # إصدار اختبار   → salesmanagertest-v1.0.1
+  workflow_dispatch:
+
+
+# ✅ Required for creating GitHub releases
+permissions:
+  contents: write
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Add google-services.json
+        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > salesmanager/google-services.json
+
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
+
+      # ── تحديد نوع البناء والإصدار من التاج ───────────────────
+      # salesmanagertest-v1.2.3  →  BUILD_TYPE=staging  │ APK_PREFIX=salesmanagertest
+      # salesmanager-v1.2.3      →  BUILD_TYPE=release  │ APK_PREFIX=salesmanager
+      - name: Parse version and build type from tag
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/salesmanagertest-v* ]]; then
+            BUILD_TYPE="staging"
+            APK_PREFIX="salesmanagertest"
+            VERSION="${GITHUB_REF#refs/tags/salesmanagertest-v}"
+          elif [[ "${GITHUB_REF}" == refs/tags/salesmanager-v* ]]; then
+            BUILD_TYPE="release"
+            APK_PREFIX="salesmanager"
+            VERSION="${GITHUB_REF#refs/tags/salesmanager-v}"
+          else
+            BUILD_TYPE="release"
+            APK_PREFIX="salesmanager"
+            VERSION="1.0.0"
+          fi
+
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+          VERSION_CODE=$(( MAJOR * 10000 + MINOR * 100 + PATCH ))
+
+          echo "BUILD_TYPE=$BUILD_TYPE"         >> $GITHUB_ENV
+          echo "APK_PREFIX=$APK_PREFIX"         >> $GITHUB_ENV
+          echo "VERSION_NAME=$VERSION"          >> $GITHUB_ENV
+          echo "VERSION_CODE=$VERSION_CODE"     >> $GITHUB_ENV
+
+      - name: Patch build.gradle.kts
+        run: |
+          sed -i "s/versionCode = [0-9]*/versionCode = $VERSION_CODE/"   salesmanager/build.gradle.kts
+          sed -i "s/versionName = \"[^\"]*\"/versionName = \"$VERSION_NAME\"/" salesmanager/build.gradle.kts
+
+      - name: Build APK
+        env:
+          KEYSTORE_PATH: ${{ github.workspace }}/keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /tmp/gradle
+          export PATH="/tmp/gradle/gradle-8.7/bin:$PATH"
+
+          # assembleStaging  أو  assembleRelease
+          GRADLE_TASK="assemble$(echo ${BUILD_TYPE^})"
+          gradle :salesmanager:${GRADLE_TASK} --stacktrace
+
+      # ── إعادة تسمية الـ APK بالبريفكس الصحيح ────────────────
+      - name: Rename APK
+        run: |
+          SRC="salesmanager/build/outputs/apk/${BUILD_TYPE}/salesmanager-${BUILD_TYPE}.apk"
+          DEST="salesmanager/build/outputs/apk/${BUILD_TYPE}/${APK_PREFIX}-v${VERSION_NAME}.apk"
+          mv "$SRC" "$DEST"
+          echo "APK_PATH=$DEST" >> $GITHUB_ENV
+          if [[ "$BUILD_TYPE" == "release" ]]; then
+            RELEASE_ASSET="salesmanager/build/outputs/apk/${BUILD_TYPE}/salesmanager-release.apk"
+            cp "$DEST" "$RELEASE_ASSET"
+            echo "RELEASE_ASSET_PATH=$RELEASE_ASSET" >> $GITHUB_ENV
+          else
+            echo "RELEASE_ASSET_PATH=$DEST" >> $GITHUB_ENV
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APK_PREFIX }}-v${{ env.VERSION_NAME }}
+          path: ${{ env.APK_PATH }}
+
+      # ── ينشر Release فقط عند وجود تاج (برودكشن أو اختبار) ───
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: >-
+            ${{ env.BUILD_TYPE == 'staging' && format('🧪 اختبار {0}', env.VERSION_NAME) || format('🚀 الإصدار {0}', env.VERSION_NAME) }}
+          prerelease: ${{ env.BUILD_TYPE == 'staging' }}
+          body: |
+            ${{ env.BUILD_TYPE == 'staging' && '> نسخة اختبار — ليست للاستخدام النهائي' || '- إصلاح عرض التاريخ في تفاصيل العملية' }}
+          files: ${{ env.RELEASE_ASSET_PATH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

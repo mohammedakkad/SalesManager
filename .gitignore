@@ -71,6 +71,9 @@ gradle.properties.user
 .vscode/
 
 schemas/
-
-google-services.json
-/app/release
+/app/google-services.json
+/admin/google-services.json
+/salesmanager/google-services.json
+keystore_base64.txt
+keystore.properties
+.cursorrules
