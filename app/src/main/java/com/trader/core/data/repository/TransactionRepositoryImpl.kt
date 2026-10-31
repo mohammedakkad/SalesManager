@@ -43,12 +43,10 @@ class TransactionRepositoryImpl(
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
-            .filter {
-                it.isNotEmpty()
-            } // wait for activation
             .distinctUntilChanged()
             .collectLatest {
                 code ->
+                if (code.isBlank()) return@collectLatest
                 // collectLatest cancels previous collector when code changes
                 sync.observeTransactions(code).collect {
                     list ->
@@ -191,11 +189,14 @@ class TransactionRepositoryImpl(
         val merchantCode = code()
         if (merchantCode.isEmpty()) return
         transactionDao.getAllOnce()
-            .filter { it.syncStatus == SyncStatus.PENDING.name }
+            .filter { it.syncStatus == SyncStatus.PENDING.name || it.syncStatus == SyncStatus.FAILED.name }
             .forEach { entity ->
                 runCatching { sync.pushTransaction(merchantCode, entity.enrich()) }
                     .onSuccess { transactionDao.markSynced(entity.id) }
-                    .onFailure { transactionDao.markFailed(entity.id) }
+                    .onFailure { error ->
+                        if (error is CancellationException) throw error
+                        transactionDao.markFailed(entity.id)
+                    }
             }
     }
 

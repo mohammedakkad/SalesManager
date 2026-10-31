@@ -1,6 +1,6 @@
 # Seller test strategy — current state
 
-Existing audit branch and original30 tests were retained. Current JVM suite:70 passing tests in15 classes;40 added during this continuation. No ignored/disabled JVM tests and no production coverage exclusions.
+Existing audit branch and original30 tests were retained. Current JVM suite:75 passing tests in15 classes;45 added across the continuation,including5 in Stage5. No ignored/disabled JVM tests and no production coverage exclusions.
 
 ## Deterministic testing
 

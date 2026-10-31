@@ -1,5 +1,5 @@
 module,class,line_covered,line_missed,branch_covered,branch_missed,method_covered,method_missed,class_covered,class_missed
-app,com/trader/core/data/repository/ReturnRepositoryImpl,73,15,33,27,6,5,1,0
+app,com/trader/core/data/repository/ReturnRepositoryImpl,73,15,35,25,6,5,1,0
 app,com/trader/core/data/repository/CashBoxRepositoryImpl$getAllMovements$$inlined$map$1$2,0,1,0,0,0,1,0,1
 app,com/trader/core/data/repository/InvoiceItemRepositoryImpl$saveItems$3,0,10,0,8,0,1,0,1
 app,com/trader/core/data/repository/TransactionRepositoryImpl$updateTransaction$2,0,8,0,4,0,1,0,1
@@ -21,7 +21,6 @@ app,com/trader/core/data/repository/StockRepositoryImpl,0,72,0,24,0,12,0,1
 app,com/trader/core/data/repository/CustomerRepositoryImpl$startRealtimeSync$1$invokeSuspend$$inlined$filter$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/EmployeeRepositoryImpl$startRealtimeSync$1$invokeSuspend$$inlined$filter$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/CustomerRepositoryImpl$getAllCustomers$$inlined$map$1,0,3,0,0,0,2,0,1
-app,com/trader/core/data/repository/TransactionRepositoryImpl$startRealtimeSync$1$invokeSuspend$$inlined$filter$1$2$1,0,0,0,0,1,1,1,0
 app,com/trader/core/data/repository/LowStockSettingsRepositoryImpl$special$$inlined$map$1$2,0,1,0,0,0,1,0,1
 app,com/trader/core/data/repository/CustomerRepositoryImpl$searchCustomers$$inlined$map$1$2,0,1,0,0,0,1,0,1
 app,com/trader/core/data/repository/CustomerRepositoryImpl$getAllCustomers$$inlined$map$1$2,0,1,0,0,0,1,0,1
@@ -35,6 +34,7 @@ app,com/trader/core/data/repository/AdminSubscriptionSettingsRepositoryImpl,0,24
 app,com/trader/core/data/repository/InvoiceItemRepositoryImpl,0,37,0,10,0,7,0,1
 app,com/trader/core/data/repository/CashBoxRepositoryImpl$startRealtimeSync$1$2$1$1,0,11,0,4,0,1,0,1
 app,com/trader/core/data/repository/ProductRepositoryImpl$startRealtimeSync$1$invokeSuspend$$inlined$filter$1$2$1,0,0,0,0,0,2,0,1
+app,com/trader/core/data/repository/TransactionRepositoryImpl$startRealtimeSync$1$1$1,12,13,4,6,1,0,1,0
 app,com/trader/core/data/repository/ProductRepositoryImpl$startPendingSyncOnReconnect$1$invokeSuspend$$inlined$filter$1$2,0,1,0,0,0,1,0,1
 app,com/trader/core/data/repository/CashBoxRepositoryImpl,0,146,0,60,0,20,0,1
 app,com/trader/core/data/repository/ProductRepositoryImpl$getAllProducts$$inlined$map$1,0,3,0,0,0,2,0,1
@@ -84,7 +84,6 @@ app,com/trader/core/data/repository/TransactionRepositoryImpl$getAllTransactions
 app,com/trader/core/data/repository/ReturnRepositoryImpl$startRealtimeSync$1,3,1,0,0,1,0,1,0
 app,com/trader/core/data/repository/StockRepositoryImpl$applyMovement$2,0,11,0,8,0,1,0,1
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeDailySalesProfit$$inlined$map$1,0,3,0,0,0,2,0,1
-app,com/trader/core/data/repository/TransactionRepositoryImpl$startRealtimeSync$1$2$1,12,13,4,6,1,0,1,0
 app,com/trader/core/data/repository/InventoryRepositoryImpl$getActiveSession$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/CashBoxRepositoryImpl$startRealtimeSync$1$2$1,0,2,0,0,0,1,0,1
 app,com/trader/core/data/repository/ProductRepositoryImpl$deleteUnit$2,0,2,0,0,0,1,0,1
@@ -103,7 +102,7 @@ app,com/trader/core/data/repository/InvoiceItemRepositoryImpl$getItemsForTransac
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeInventoryValue$$inlined$map$1,0,3,0,0,0,2,0,1
 app,com/trader/core/data/repository/ActivationRepositoryImpl$observeMerchantStatus$1$1,0,6,0,0,0,1,0,1
 app,com/trader/core/data/repository/DashboardAnalyticsRepositoryImpl$observeTodaySalesSummary$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
-app,com/trader/core/data/repository/ReturnRepositoryImpl$processReturn$persisted$1,26,2,26,12,1,0,1,0
+app,com/trader/core/data/repository/ReturnRepositoryImpl$processReturn$persisted$1,28,2,28,12,1,0,1,0
 app,com/trader/core/data/repository/TransactionRepositoryImpl$getAllTransactions$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeInventoryValue$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/CustomerRepositoryImpl$startRealtimeSync$1$2$1,0,4,0,2,0,1,0,1
@@ -217,7 +216,7 @@ app,com/trader/core/data/repository/CashBoxRepositoryImpl$getAllBoxes$$inlined$m
 app,com/trader/core/data/repository/ProductRepositoryImpl$saveProduct$3,0,12,0,0,0,1,0,1
 app,com/trader/core/data/repository/TransactionRepositoryImpl$getUnpaidTransactions$$inlined$map$1$2,0,1,0,0,0,1,0,1
 app,com/trader/core/data/repository/PaymentMethodRepositoryImpl,0,26,0,2,0,8,0,1
-app,com/trader/core/data/repository/TransactionRepositoryImpl,42,53,10,24,5,16,1,0
+app,com/trader/core/data/repository/TransactionRepositoryImpl,57,41,22,18,7,14,1,0
 app,com/trader/core/data/repository/CashBoxRepositoryImpl$startRealtimeSync$1$invokeSuspend$$inlined$filter$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/ProductRepositoryImpl$startPendingSyncOnReconnect$1,0,4,0,0,0,1,0,1
 app,com/trader/core/sync/SyncCoordinator$syncAll$3,4,0,1,1,1,0,1,0
@@ -449,7 +448,7 @@ app,com/trader/core/data/local/dao/InventoryDao_Impl$1,0,12,0,2,0,3,0,1
 app,com/trader/core/data/local/dao/InventoryDao_Impl$2,0,13,0,2,0,3,0,1
 app,com/trader/core/data/local/dao/InventoryDao_Impl$3,0,13,0,2,0,3,0,1
 app,com/trader/core/data/local/dao/CustomerDao_Impl,19,30,0,0,7,9,1,0
-app,com/trader/core/data/local/dao/CashBoxDao_Impl,20,30,0,0,5,13,1,0
+app,com/trader/core/data/local/dao/CashBoxDao_Impl,21,29,0,0,6,12,1,0
 app,com/trader/core/data/local/dao/InventoryDao_Impl$8,0,6,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/InventoryDao_Impl$9,0,6,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/InventoryDao_Impl$4,0,14,0,2,0,3,0,1
@@ -500,7 +499,6 @@ app,com/trader/core/data/local/dao/CashBoxDao_Impl$7,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$6,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$1,13,1,1,1,3,0,1,0
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$3,1,2,0,0,1,1,1,0
-app,com/trader/core/data/local/dao/CashBoxDao_Impl$2,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$19,0,8,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$17,0,10,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$18,0,10,0,0,0,2,0,1
@@ -524,7 +522,6 @@ app,com/trader/core/data/local/dao/CashBoxDao_Impl$16,0,8,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$15,0,10,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$14,0,10,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$12,0,18,0,0,0,2,0,1
-app,com/trader/core/data/local/dao/CashBoxDao_Impl$11,0,14,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$19,0,30,0,4,0,2,0,1
 app,com/trader/core/data/local/dao/LowStockAlertDao_Impl,1,13,0,0,1,5,1,0
 app,com/trader/core/data/local/dao/DebtAgingProjection,0,9,0,0,0,9,0,1
@@ -650,7 +647,7 @@ app,com/trader/core/data/local/dao/TransactionDao_Impl$7,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$6,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$9,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$8,1,2,0,0,1,1,1,0
-app,com/trader/core/data/local/dao/TransactionDao_Impl$3,27,5,8,8,3,0,1,0
+app,com/trader/core/data/local/dao/TransactionDao_Impl$3,27,5,9,7,3,0,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$2,1,3,0,0,1,2,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$5,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$4,1,2,0,0,1,1,1,0

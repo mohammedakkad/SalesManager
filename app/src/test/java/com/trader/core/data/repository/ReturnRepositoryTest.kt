@@ -172,4 +172,17 @@ class ReturnRepositoryTest {
         assertEquals(75.0,db.transactionDao().getTransactionById(8)!!.amount,0.0)
         assertEquals(4.0,db.productDao().getQuantity("u")!!,0.0)
     }
+
+    @Test fun fractionalReturnsConserveCashAndStockAtFloatingPointBoundary()=runTest {
+        seedSale();val repo=repo();runCurrent()
+        db.transactionDao().updateTransaction(TransactionEntity.fromDomain(Transaction(id=8,customerId=7,amount=30.0,isPaid=true,date=0)))
+        db.cashBoxDao().updateBalance("box",30.0,0)
+        db.invoiceItemDao().insertInvoiceItem(InvoiceItem(id="line",transactionId=8,productId="p",unitId="u",quantity=0.3,pricePerUnit=100.0,totalPrice=30.0).toEntity())
+        repo.processReturn(invoice(amount=10.0),listOf(ReturnItem(id="first",returnInvoiceId="r",productId="p",unitId="u",originalQuantity=0.3,returnedQuantity=0.1,pricePerUnit=100.0)))
+        repo.processReturn(invoice("r2",20.0),listOf(ReturnItem(id="second",returnInvoiceId="r2",productId="p",unitId="u",originalQuantity=0.3,returnedQuantity=0.2,pricePerUnit=100.0)))
+        assertEquals(0.0,db.cashBoxDao().getById("box")!!.currentBalance,0.0)
+        assertEquals(0.0,db.transactionDao().getTransactionById(8)!!.amount,0.0)
+        assertEquals(3.3,db.productDao().getQuantity("u")!!,0.000000001)
+        assertEquals(2,db.returnDao().getAllInvoicesOnce().size)
+    }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.core.domain.model.ProductStockTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:19:59" hostname="1845f097faca" time="0.009">
+<testsuite name="com.trader.core.domain.model.ProductStockTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-31T20:13:02" hostname="1845f097faca" time="0.033">
   <properties/>
-  <testcase name="explicitDefaultWinsOtherwiseFirst" classname="com.trader.core.domain.model.ProductStockTest" time="0.006"/>
+  <testcase name="explicitDefaultWinsOtherwiseFirst" classname="com.trader.core.domain.model.ProductStockTest" time="0.032"/>
   <testcase name="aggregateAttentionIncludesOutOfStockUnits" classname="com.trader.core.domain.model.ProductStockTest" time="0.001"/>
   <testcase name="stockBoundaryClassification" classname="com.trader.core.domain.model.ProductStockTest" time="0.0"/>
   <testcase name="profitIncludesLossButUnspecifiedCostIsUnknown" classname="com.trader.core.domain.model.ProductStockTest" time="0.0"/>

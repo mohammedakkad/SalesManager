@@ -112,7 +112,10 @@ class ReturnRepositoryImpl(
                     "Returned unit is not part of the original invoice"
                 }
                 val remaining = sold.sumOf { it.quantity } - dao.totalReturnedForUnit(originalTx.id, unitId)
-                require(requested.sumOf { it.returnedQuantity } <= remaining) { "Returned quantity exceeds remaining sold stock" }
+                val quantity = requested.sumOf { it.returnedQuantity }
+                // Permit only arithmetic representation error, not a business quantity tolerance.
+                val roundingError = 4 * Math.ulp(maxOf(kotlin.math.abs(quantity), kotlin.math.abs(remaining)))
+                require(quantity <= remaining || quantity - remaining <= roundingError) { "Returned quantity exceeds remaining sold stock" }
             }
             require(returnInvoice.totalRefund <= originalTx.amount + 0.000001) { "Refund exceeds remaining sale amount" }
             dao.insertReturnWithItems(invoiceWithMerchant.toEntity(), items.map { it.toEntity() })

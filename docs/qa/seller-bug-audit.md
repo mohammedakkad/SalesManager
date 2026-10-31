@@ -32,3 +32,6 @@ All fixes below have failing before evidence and passing regression checks. They
 - Native PDF generation/content and UI/device behavior remain unexecuted locally. Robolectric's zero native PDF handle is a test-platform limitation; no production workaround or fabricated PDF was introduced. Device generation + host assertions preserve the intended checks.
 
 No production merchant data was read or modified during these regressions. All databases were disposable/in-memory fixtures; Firebase calls used controlled mocks or were blocked before access.
+
+## Stage5 confirmed regressions
+Failed transaction uploads were excluded from reconnect retries;runCatching swallowed cancellation and marked interrupted work failed;filtering blank merchant codes kept old transaction listeners alive. Tests reproduced all three;retry selection now includes FAILED without auto-resolving CONFLICT,cancellation propagates,and logout reaches collectLatest to cancel the subscription. A 0.3−0.1 subtraction rejected a valid0.2 return;comparison now permits only four ULPs of floating representation difference. No broad business quantity tolerance/conflict policy was added. Existing aggregate over-return assertions remain intact. Cross-repository atomicity is still unproven,not silently treated as fixed.

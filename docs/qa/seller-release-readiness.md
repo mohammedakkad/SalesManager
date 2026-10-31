@@ -4,9 +4,9 @@ The audit continues on `codex/seller-full-coverage-audit`; it was not restarted.
 
 | Check | Status | Measured evidence / limits |
 | --- | --- | --- |
-| JVM regression suite | PASS | 70 passed, 0 failed, 0 skipped, 15 classes; original30 retained;40 added this continuation |
-| Line / branch coverage | FAIL (100% target) | Weighted9.3401% lines /3.2318% branches; method11.8854%, class10.9980%; exact gaps and original XML saved |
-| Baseline CI coverage floors | PASS | Raised: shared line21.3%, branch11.8%; Seller line2.9%, branch1.6%; no production exclusions |
+| JVM regression suite | PASS | 75 passed, 0 failed, 0 skipped, 15 classes; original30 retained;40 added this continuation |
+| Line / branch coverage | FAIL (100% target) | Weighted9.4480% lines /3.3483% branches; method11.8854%, class10.9980%; exact gaps and original XML saved |
+| Baseline CI coverage floors | PASS | Raised: shared line21.6%, branch12.5%; Seller line2.9%, branch1.6%; no production exclusions |
 | Room22→23 upgrade | PASS | Actual exported22 schema; representative fixture records; state backfill, record preservation, FK checks, sequence, rollback |
 | Older migration chains | BLOCKED | Authentic versions1–21 schemas/databases absent in checkout and available history; never fabricated |
 | Backup/restore | PASS (tested cases) | Encrypted round trip, rollback on orphan input, corrupted input, legacy return recovery, export snapshot boundary |
@@ -51,15 +51,9 @@ Do not upload Crashlytics mappings during QA. No production signing key or merch
 - Execute all four device tests and both host content tests, then signed upgrades, minified backup round trips, print/share, RTL visual/accessibility/restoration and profiling. Large/corrupted JSON structures and ZIP-size limits require further hardening.
 - Cover all remaining classes/lines/branches from the gap CSVs;100% and zero remaining P0 defects are not claimed.
 
-## Draft PR continuation
+## Existing PR51
 
-No Draft PR was created because API access remains denied. Exact comparison URL:
-https://github.com/mohammedakkad/SalesManager/compare/production...codex/seller-full-coverage-audit?expand=1
+The user supplied existing Draft PR https://github.com/mohammedakkad/SalesManager/pull/51. Do not create another PR or merge it. Live state/CI inspection and body update remain BLOCKED: `Post "https://api.github.com/graphql": Forbidden`. Git pushes work. After networking permits api.github.com, inspect PR51 and update it with `gh pr edit 51 --body-file docs/qa/draft-pr-body.md`; preserve Draft/unmerged state. Do not paste credentials in chat.
 
-Allow `api.github.com` in environment networking while preserving existing entries/presets, then reuse existing authentication and run:
-```bash
-gh pr create --draft --base production --head codex/seller-full-coverage-audit \
-  --title 'Seller audit: preserve return state and prevent duplicate financial effects' \
-  --body-file docs/qa/draft-pr-body.md
-```
-Do not paste tokens in chat. Keep the PR unmerged. Environment requirement persistence was not confirmed; the proposed network addition remains recorded in environment-requirements.json.
+## Stage5 verified increment
+Starting HEAD60785ece9b9c8ca9fa127c2f12af6674bc7d9954. Five tests added;75 pass,0 fail/skip. Shared-layer transaction retries now include FAILED records, propagate cancellation, and stop listeners on logout. Fractional returns tolerate only four ULPs of representation error. Full JVM/coverage/lint/debug/minified-unsigned build passed (7m16s);32 lint warnings remain. Seller coverage stays2.9653% lines/1.6901% branches. Existing PR51 API update remains blocked; no new PR was created. See stage5-blockers.md for the per-version migration and sync matrix, emulator prerequisites, aggregate-atomicity gaps and owner signing checklist. Stage5 phases remain partial; full acceptance remains FAIL.

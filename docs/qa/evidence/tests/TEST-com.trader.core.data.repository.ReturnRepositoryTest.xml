@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.core.data.repository.ReturnRepositoryTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:19:55" hostname="1845f097faca" time="3.227">
+<testsuite name="com.trader.core.data.repository.ReturnRepositoryTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-10-31T20:12:21" hostname="1845f097faca" time="33.022">
   <properties/>
-  <testcase name="processInterruptionBeforeUploadRetainsReturnForNextRepository" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="1.429"/>
-  <testcase name="sameReturnIdCannotApplyRefundAndStockTwice" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.205"/>
-  <testcase name="staleRemoteUpdateDoesNotOverwritePendingRefundOrItsItems" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.197"/>
-  <testcase name="aggregateQuantityCannotExceedSoldStockInOneBatch" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.136"/>
-  <testcase name="concurrentRetriesSerializeOneAcknowledgement" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.147"/>
-  <testcase name="successfulPartialReturnMaintainsCashStockInvoiceAndReturnSummary" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.141"/>
-  <testcase name="cancellationLeavesReturnUnacknowledgedAndRetryable" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.153"/>
-  <testcase name="emptyRemoteSnapshotPreservesPendingFailedAndConflictingReturns" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.145"/>
-  <testcase name="failedUploadRetriesSameDurableIdWithoutReplayingCashOrStock" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.165"/>
-  <testcase name="stockFailureRollsBackReturnLedgerAndFinancialChanges" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.129"/>
-  <testcase name="retryNeverPushesAnotherMerchantOrConflict" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.123"/>
-  <testcase name="logoutCancelsPreviousMerchantListener" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.109"/>
-  <testcase name="duplicateIdWithDifferentPayloadIsRejectedWithoutChangingBalances" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.146"/>
+  <testcase name="processInterruptionBeforeUploadRetainsReturnForNextRepository" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="27.25"/>
+  <testcase name="sameReturnIdCannotApplyRefundAndStockTwice" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.645"/>
+  <testcase name="staleRemoteUpdateDoesNotOverwritePendingRefundOrItsItems" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.523"/>
+  <testcase name="aggregateQuantityCannotExceedSoldStockInOneBatch" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.523"/>
+  <testcase name="concurrentRetriesSerializeOneAcknowledgement" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.411"/>
+  <testcase name="fractionalReturnsConserveCashAndStockAtFloatingPointBoundary" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.497"/>
+  <testcase name="successfulPartialReturnMaintainsCashStockInvoiceAndReturnSummary" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.486"/>
+  <testcase name="cancellationLeavesReturnUnacknowledgedAndRetryable" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.486"/>
+  <testcase name="emptyRemoteSnapshotPreservesPendingFailedAndConflictingReturns" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.57"/>
+  <testcase name="failedUploadRetriesSameDurableIdWithoutReplayingCashOrStock" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.425"/>
+  <testcase name="stockFailureRollsBackReturnLedgerAndFinancialChanges" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.295"/>
+  <testcase name="retryNeverPushesAnotherMerchantOrConflict" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.319"/>
+  <testcase name="logoutCancelsPreviousMerchantListener" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.285"/>
+  <testcase name="duplicateIdWithDifferentPayloadIsRejectedWithoutChangingBalances" classname="com.trader.core.data.repository.ReturnRepositoryTest" time="0.303"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
