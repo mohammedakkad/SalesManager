@@ -28,8 +28,8 @@ import com.trader.core.domain.model.PaymentType
         CashBoxMovementEntity::class,
         LowStockAlertStateEntity::class
     ],
-    version = 22,
-    exportSchema = false
+    version = 23,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun customerDao(): CustomerDao
@@ -501,6 +501,37 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Additive upgrade: preserve all existing records and reconstruct only state
+        // supported by the durable return ledger. Missing historical returns cannot
+        // be recovered locally; a later remote snapshot may provide that state.
+        val MIGRATION_22_23 = object : Migration(22, 23) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE transactions ADD COLUMN originalAmount REAL")
+                db.execSQL("ALTER TABLE transactions ADD COLUMN returnStatus TEXT")
+                db.execSQL("""
+                    UPDATE transactions SET originalAmount = amount + (
+                        SELECT COALESCE(SUM(totalRefund), 0.0) FROM return_invoices
+                        WHERE originalTransactionId = transactions.id
+                    ), returnStatus = CASE
+                        WHEN NOT EXISTS (SELECT 1 FROM return_invoices
+                            WHERE originalTransactionId = transactions.id) THEN 'NONE'
+                        WHEN EXISTS (SELECT 1 FROM invoice_items WHERE transactionId = transactions.id)
+                            AND NOT EXISTS (
+                                SELECT unitId FROM invoice_items
+                                WHERE transactionId = transactions.id GROUP BY unitId
+                                HAVING SUM(quantity) > COALESCE((
+                                    SELECT SUM(ri.returnedQuantity) FROM return_items ri
+                                    JOIN return_invoices inv ON inv.id = ri.returnInvoiceId
+                                    WHERE inv.originalTransactionId = transactions.id
+                                        AND ri.unitId = invoice_items.unitId
+                                ), 0.0)
+                            ) THEN 'FULLY_RETURNED'
+                        ELSE 'PARTIALLY_RETURNED'
+                    END
+                """.trimIndent())
+            }
+        }
+
         // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
         Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
@@ -525,7 +556,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_18_19,
             MIGRATION_19_20,
             MIGRATION_20_21,
-            MIGRATION_21_22
+            MIGRATION_21_22,
+            MIGRATION_22_23
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {

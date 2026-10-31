@@ -12,6 +12,7 @@ android {
     defaultConfig {
         minSdk = 24
     }
+    sourceSets.getByName("test").assets.srcDir("$projectDir/schemas")
     testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11
@@ -63,3 +64,5 @@ dependencies {
     api(libs.coil.compose)
 }
 apply(from = rootProject.file("gradle/qa-coverage.gradle"))
+
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }
