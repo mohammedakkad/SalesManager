@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-31T16:19:40" hostname="1845f097faca" time="4.249">
+  <properties/>
+  <testcase name="randomSaltAndIvPreventIdenticalCiphertexts" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="2.066"/>
+  <testcase name="encryptedRoundTripPreservesArabicBytesAndHeader" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="1.504"/>
+  <testcase name="emptyArchiveRoundTrips" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.438"/>
+  <testcase name="wrongPasswordRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.09"/>
+  <testcase name="ciphertextTamperingRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.098"/>
+  <testcase name="unknownEncryptionVersionRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.052"/>
+  <testcase name="truncatedHeaderRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

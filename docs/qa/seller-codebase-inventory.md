@@ -228,4 +228,4 @@ This is a discovery inventory, not a claim that every method has received a deep
 | `salesmanager/src/main/java/com/trader/salesmanager/worker/LowStockCheckWorker.kt` | LowStockCheckWorker |
 | `salesmanager/src/main/java/com/trader/salesmanager/worker/UnpaidDebtWorker.kt` | UnpaidDebtWorker |
 
-Total production Kotlin files enumerated: **200**. No production Java files found.
+Total production Kotlin files enumerated: **200**; declared types found by source declaration scan: **340** (includes nested types, not a bytecode class count). No production Java files found. Enumeration is complete; deep method-by-method review remains incomplete.

@@ -1,0 +1,12 @@
+{
+  "app": {
+    "xml_sha256": "1198e32251a21608d9c30f0d38e74ea15e70e2bc47add6b7011819662c969bf9",
+    "compressed_xml": "docs/qa/evidence/coverage/app.xml.gz",
+    "scope": "debug JVM tests; all compiled production classes; generated code included"
+  },
+  "salesmanager": {
+    "xml_sha256": "ba655ca814a4f246436afecded6a7cf53cc3f19d9ba01bc14f8cef9a790528ec",
+    "compressed_xml": "docs/qa/evidence/coverage/salesmanager.xml.gz",
+    "scope": "debug JVM tests; all compiled production classes; generated code included"
+  }
+}

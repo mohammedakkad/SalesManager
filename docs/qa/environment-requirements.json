@@ -1,0 +1,8 @@
+{
+  "purpose": "GitHub API access for the requested draft PR and CI observations",
+  "required_additional_allowed_domains": ["api.github.com"],
+  "preserve_existing_domains_and_presets": true,
+  "save_status": "unconfirmed: onboarding draft is not editable",
+  "credentials": "Reuse platform authentication; do not enter tokens in chat",
+  "runtime": "JDK 17 with jlink, Gradle 8.9, SDK platform 35 and build-tools 34.0.0"
+}

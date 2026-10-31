@@ -1,0 +1,55 @@
+name: Seller QA
+on:
+  pull_request:
+    branches: [production]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  seller:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android platform
+        run: sdkmanager 'platforms;android-35' 'build-tools;34.0.0'
+      - name: Install verified Gradle
+        run: |
+          curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip -o /tmp/gradle.zip
+          curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip.sha256 -o /tmp/gradle.sha256
+          echo "$(cat /tmp/gradle.sha256)  /tmp/gradle.zip" | sha256sum -c -
+          unzip -q /tmp/gradle.zip -d /tmp/qa-gradle
+          echo /tmp/qa-gradle/gradle-8.9/bin >> "$GITHUB_PATH"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: seller-qa-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle/libs.versions.toml') }}
+      - name: Generate offline packaging fixture (never production Firebase)
+        run: |
+          python3 - <<'PY'
+          import json,pathlib
+          data={"project_info":{"project_number":"123456789","project_id":"seller-qa-offline"},"client":[]}
+          for package in ["com.trader.salesmanager","com.trader.salesmanager.debug"]:
+              data["client"].append({"client_info":{"mobilesdk_app_id":"1:123456789:android:0000000000000000","android_client_info":{"package_name":package}},"api_key":[{"current_key":"offline-test-fixture-not-a-credential"}]})
+          pathlib.Path('salesmanager/google-services.json').write_text(json.dumps(data))
+          PY
+      - name: Test, coverage, lint and debug assembly
+        run: |
+          scripts/qa-seller.sh
+          python3 scripts/report-seller-coverage.py --check
+      - name: Build minified unsigned QA release (not distributable)
+        run: gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=4 :salesmanager:assembleRelease -x :salesmanager:uploadCrashlyticsMappingFileRelease
+      - name: Preserve reports even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seller-qa-reports
+          path: |
+            app/build/reports/
+            app/build/test-results/
+            salesmanager/build/reports/
+            salesmanager/build/test-results/

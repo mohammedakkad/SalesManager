@@ -5,7 +5,7 @@ tasks.withType(Test).configureEach {
 }
 tasks.register('qaCoverage', JacocoReport) {
     dependsOn 'testDebugUnitTest'
-    executionData.from(fileTree(buildDir).include('**/testDebugUnitTest.exec'))
+    executionData.from(file("$buildDir/jacoco/testDebugUnitTest.exec"))
     classDirectories.from(files("$buildDir/tmp/kotlin-classes/debug", "$buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes"))
     sourceDirectories.from(files('src/main/java', 'src/main/kotlin'))
     reports { xml.required = true; html.required = true }
