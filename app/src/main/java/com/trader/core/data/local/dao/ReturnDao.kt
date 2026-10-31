@@ -36,8 +36,17 @@ interface ReturnDao {
     @Query("SELECT id FROM return_invoices")
     suspend fun getAllReturnIds(): List<String>
 
-    @Query("DELETE FROM return_invoices WHERE id = :id")
+    @Query("DELETE FROM return_invoices WHERE id = :id AND syncStatus = 'SYNCED'")
     suspend fun deleteReturnInvoiceById(id: String)
+
+    @Query("SELECT * FROM return_invoices WHERE id = :id")
+    suspend fun getById(id: String): ReturnInvoiceEntity?
+
+    @Transaction
+    suspend fun mergeRemoteReturn(invoice: ReturnInvoiceEntity, items: List<ReturnItemEntity>) {
+        val local = getById(invoice.id)
+        if (local == null || local.syncStatus == "SYNCED") insertReturnWithItems(invoice, items)
+    }
 
     // ── Queries ────────────────────────────────────────────────
     @Query("SELECT * FROM return_invoices WHERE originalTransactionId = :transactionId ORDER BY createdAt DESC")
@@ -69,11 +78,14 @@ interface ReturnDao {
     suspend fun totalReturnedForUnit(transactionId: Long, unitId: String): Double
 
     // ── Sync pending ───────────────────────────────────────────
-    @Query("SELECT * FROM return_invoices WHERE syncStatus = 'PENDING'")
-    suspend fun getPendingReturns(): List<ReturnInvoiceEntity>
+    @Query("SELECT * FROM return_invoices WHERE merchantId = :merchantId AND syncStatus IN ('PENDING', 'FAILED')")
+    suspend fun getPendingReturns(merchantId: String): List<ReturnInvoiceEntity>
 
-    @Query("UPDATE return_invoices SET syncStatus = 'SYNCED' WHERE id = :id")
+    @Query("UPDATE return_invoices SET syncStatus = 'SYNCED' WHERE id = :id AND syncStatus IN ('PENDING', 'FAILED')")
     suspend fun markSynced(id: String)
+
+    @Query("UPDATE return_invoices SET syncStatus = 'FAILED' WHERE id = :id AND syncStatus IN ('PENDING', 'FAILED')")
+    suspend fun markFailed(id: String)
 
     /**
      * ملخص الكمية المُرجَعة لكل unitId في عملية معينة.

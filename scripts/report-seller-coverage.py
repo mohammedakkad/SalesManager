@@ -36,11 +36,11 @@ for module in ('app', 'salesmanager'):
             if missed_lines or missed_branches:
                 gaps.append((module, package.attrib['name'] + '/' + source.attrib['name'], ' '.join(missed_lines), ' '.join(missed_branches)))
 with (output / 'seller-coverage-gaps.csv').open('w', newline='') as f:
-    writer = csv.writer(f)
+    writer = csv.writer(f, lineterminator="\n")
     writer.writerow(['module', 'source', 'lines_with_missed_instructions', 'line:missed_branch_count'])
     writer.writerows(gaps)
 with (output / 'seller-class-coverage-gaps.csv').open('w', newline='') as f:
-    writer = csv.writer(f)
+    writer = csv.writer(f, lineterminator="\n")
     writer.writerow(['module', 'class'] + [k + '_' + part for k in ('line', 'branch', 'method', 'class') for part in ('covered', 'missed')])
     writer.writerows(class_gaps)
 s = '# Seller measured coverage\n\nDebug JVM tests only. Not device/instrumentation or minified release coverage. Counts include compiled production classes, generated classes and compiler-generated branches; no production exclusions. Partial lines count as covered in JaCoCo line totals, while the gap CSV also identifies lines with any missed instructions.\n\n| Module | Metric | Covered | Missed | Coverage |\n| --- | --- | ---: | ---: | ---: |\n'

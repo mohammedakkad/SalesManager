@@ -243,7 +243,8 @@ val salesManagerModule = module {
             stockRepository = get(),
             invoiceItemRepository = get(),
             cashBoxRepository = get(),
-            transactionRepository = get()
+            transactionRepository = get(),
+            returnRepository = get()
         )
     }
 

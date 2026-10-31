@@ -4,6 +4,9 @@ import com.trader.core.domain.model.*
 import kotlinx.coroutines.flow.Flow
 
 interface ReturnRepository {
+    /** Upload durable pending/failed returns without replaying their financial effects. */
+    suspend fun syncPendingReturns()
+
 
     /**
      * الدالة الرئيسية — تعالج كل خطوات الإرجاع في transaction ذرية:
