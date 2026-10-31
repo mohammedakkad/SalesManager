@@ -1,12 +1,12 @@
 {
   "app": {
-    "xml_sha256": "1198e32251a21608d9c30f0d38e74ea15e70e2bc47add6b7011819662c969bf9",
+    "xml_sha256": "37bb7f44ace44f1ef487a97352796358c6a5a33861f47e145e2a37e13e2ed07b",
     "compressed_xml": "docs/qa/evidence/coverage/app.xml.gz",
-    "scope": "debug JVM tests; all compiled production classes; generated code included"
+    "scope": "debug JVM suite; all compiled production classes, no exclusions"
   },
   "salesmanager": {
-    "xml_sha256": "ba655ca814a4f246436afecded6a7cf53cc3f19d9ba01bc14f8cef9a790528ec",
+    "xml_sha256": "baa9af571c464b0baf5b5041c76cf88acf9d88fe27de7ed7bc7b1c527bacef67",
     "compressed_xml": "docs/qa/evidence/coverage/salesmanager.xml.gz",
-    "scope": "debug JVM tests; all compiled production classes; generated code included"
+    "scope": "debug JVM suite; all compiled production classes, no exclusions"
   }
 }

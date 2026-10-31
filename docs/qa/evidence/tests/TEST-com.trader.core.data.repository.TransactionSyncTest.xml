@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.core.data.repository.TransactionSyncTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-31T16:18:05" hostname="1845f097faca" time="3.915">
+<testsuite name="com.trader.core.data.repository.TransactionSyncTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:19:58" hostname="1845f097faca" time="0.869">
   <properties/>
-  <testcase name="remoteAbsenceMustNotDeleteUnsyncedSales" classname="com.trader.core.data.repository.TransactionSyncTest" time="3.915"/>
+  <testcase name="deletingPartiallyReturnedSaleRestoresOnlyRemainingUnitsAndCash" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.667"/>
+  <testcase name="remoteAbsenceMustNotDeleteUnsyncedSales" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.188"/>
+  <testcase name="deletingFullyReturnedSaleDoesNotRestoreStockAgain" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.012"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

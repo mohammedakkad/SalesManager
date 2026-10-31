@@ -35,8 +35,10 @@ data class BackupUiState(
 
 class BackupViewModel(
     private val backupManager: BackupManager,
-    private val context: Context
+    context: Context
 ) : ViewModel() {
+
+    private val context = context.applicationContext
 
     private val _uiState = MutableStateFlow(BackupUiState())
     val uiState: StateFlow<BackupUiState> = _uiState.asStateFlow()

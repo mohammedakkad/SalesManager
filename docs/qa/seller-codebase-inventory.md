@@ -11,7 +11,7 @@ Startup: SalesManagerApp initializes FCM/Crashlytics/Realtime Database persisten
 Navigation/features verified: activation/blocking, dashboard/sync status, customers, transactions/invoice items, debts/reminders, payment methods/cash boxes, inventory/product units/counting/stock reports, returns, analytics/day transactions, barcode camera, chat, settings, sessions/employees, encrypted backup/restore, PDF export/print, APK updates. Feature correctness is not established by inventory.
 
 ## Baseline
-No test/testAndroid source sets or coverage configuration found in Seller/shared modules. Line/branch/method/class coverage **not measured** (not 0% and not 100%). No exported historical Room schemas found. Database version 22 has migrations 1→22 and exportSchema=false. No destructive fallback found in its builder.
+At initial production discovery no test source sets/coverage configuration were present. Current state:70 JVM tests,4 compiled instrumentation tests,and2 host PDF-content tests awaiting device fixtures. Line/branch/method/class coverage **not measured** (not 0% and not 100%). No historical schemas were present initially; actual pre-change22 and current23 compiler exports are now committed. Baseline database version22 had migrations1→22 and exportSchema=false. Continuation exports real22/23 schemas and adds the verified22→23 migration; older schemas remain absent. No destructive fallback found in its builder.
 
 Baseline command: `/workspace/setup/gradle --no-daemon --max-workers=4 :salesmanager:tasks --all` failed during `:admin` configuration: missing signing values cast to non-null String (admin/build.gradle.kts:26). Seller has the same unsafe pattern. No tests ran. Logs: `/workspace/setup/production-baseline.log` (local).
 
@@ -228,4 +228,7 @@ This is a discovery inventory, not a claim that every method has received a deep
 | `salesmanager/src/main/java/com/trader/salesmanager/worker/LowStockCheckWorker.kt` | LowStockCheckWorker |
 | `salesmanager/src/main/java/com/trader/salesmanager/worker/UnpaidDebtWorker.kt` | UnpaidDebtWorker |
 
-Total production Kotlin files enumerated: **200**; declared types found by source declaration scan: **340** (includes nested types, not a bytecode class count). No production Java files found. Enumeration is complete; deep method-by-method review remains incomplete.
+Total production Kotlin files enumerated: **200**; declared types found by source declaration scan: **340** (includes nested types, not a bytecode class count). No production Java files found. The standalone qa/pdf-verifier contains test-only Java,not application production code. Enumeration is complete; deep method-by-method review remains incomplete.
+
+## Continuation architecture
+Room version23 persists originalAmount/returnStatus. ReturnRepository now has durable syncPendingReturns,atomic remote merge guards,and stable-ID replay checks;SyncCoordinator/Seller DI wire retries. QA adds an isolated Android runner and fake customer journeys plus native PDF generation. The independent Java/PDFBox host verifier consumes only real device-produced PDFs. No production classes were excluded from coverage. See seller-audit-continuation.md for tested stages and remaining scope.

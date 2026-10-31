@@ -1,37 +1,35 @@
-# Seller test strategy
+# Seller test strategy — current state
 
-Status: incremental implementation, not complete acceptance.
+Existing audit branch and original30 tests were retained. Current JVM suite:70 passing tests in15 classes;40 added during this continuation. No ignored/disabled JVM tests and no production coverage exclusions.
 
-## Reproduce
-Use a full JDK 17 (not a JRE), SDK platform 35/build-tools 34, and Gradle 8.9. The production wrapper JAR is absent, so install Gradle from its official distribution and verify its published SHA256. On this cloud instance:
+## Deterministic testing
+
+JUnit4.13.2, MockK1.13.13, coroutines-test1.9.0 and Robolectric4.14.1 are pinned in the version catalog. TestScope/backgroundScope and explicit ViewModelStore cleanup control lifecycle. Room observer assertions wait for the expected database signal with a bounded real IO timeout; virtual deadlines must not race SQLite's executor. Upload timeouts use controlled Firebase Tasks and virtual time. No live merchant Firebase or signing key is used.
+
+Room23 persists return state. Versions22 and23 schemas are actual compiler exports;22 provenance/hash is recorded. Real22 createSQL/indices/identity build representative disposable fixtures; Room performs migration/validation. Check partial/full/multiple-line state, missing invoice lines, balances, stock, invoices, pending writes, sequence and rollback. Versions1–21 remain BLOCKED without real schemas/databases.
+
+Return regressions exercise the actual repository with in-memory Room and controlled stock/transaction collaborators; they prove local invariants under those collaborators, not full distributed consistency. Sync tests protect pending state, stable-ID retries, conflicts held for review, logout, cancellation and reconnection. Backup checks cover encrypted round trip, orphan-input rollback, corruption, legacy state and snapshot boundaries. Form/input tests cover save/edit/validation/debounce/duplicate calls, Arabic separators, finite numbers, formatting and weight round trips.
+
+## Execution
+
+Use full JDK17, SDK35/build-tools34 and verified Gradle8.9. Cloud helper: /workspace/setup/gradle; local current JDK: /workspace/toolchains/jdk-17.0.17+10. Preserve proxy/CA trust and TLS/checksum verification. Run the command in seller-release-readiness.md; configuration-on-demand avoids unrelated admin signing configuration. Always exclude uploadCrashlyticsMappingFileRelease from QA release commands.
 
 ```bash
-cd /workspace/SalesManager
-export JAVA_HOME='/workspace/toolchains/jdk-17.0.17+10'
+python3 scripts/check-seller-secrets.py
 GRADLE_CMD=/workspace/setup/gradle scripts/qa-seller.sh \
   -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts \
   -Pkotlin.compiler.execution.strategy=in-process
+python3 scripts/report-seller-coverage.py --check
 ```
 
-Network-dependent commands need sandbox network permission. The helper preserves the inherited proxy and sets ANDROID_HOME. Use system CA trust; never disable TLS verification. Configuration-on-demand avoids configuring the out-of-scope admin signing block. Configuration cache is disabled for QA tasks (not globally). Seller no longer casts missing release signing values to non-null Strings; release without a store is unsigned, not a distributable signed release.
+Raise explicitly reviewed coverage floors as meaningful tests are added; never rewrite thresholds automatically from each run or exclude difficult production classes. Current floors:shared line21.3%/branch11.8%; Seller line2.9%/branch1.6%. They are regression floors, not full acceptance.
 
-Google Services config belongs in ignored `salesmanager/google-services.json`. Do not print/commit it. Local packaging uses the environment's provided config; unit/Room tests never connect to merchant Firebase. CI uses an explicitly offline packaging fixture, not a valid credential or production project. Do not install that artifact as a production app.
+## Device and PDF checks — BLOCKED locally
 
-## Implemented
-JUnit 4.13.2, MockK 1.13.13, coroutines-test 1.9.0; injectable repository scope and TestScope/backgroundScope for deterministic snapshot processing, no sleeps. Robolectric 4.14.1/API28 current-schema Room tests. Seller backup uses actual AES-GCM/PBKDF2 and Arabic byte fixtures. JaCoCo 0.8.12 XML/HTML for both modules without excluding production classes.
+Four Android instrumentation tests compile: create/edit Arabic customer journeys with fake repositories and two real PDF fixture generators/PdfRenderer checks. OfflineQaRunner refuses non-fixture Firebase projects before initialization and uses an ordinary Application instead of Seller startup. Run only in a disposable fixture checkout/emulator. No connected device is available locally; connectedDebugAndroidTest was attempted and failed with No connected devices.
 
-## Remaining required suites
-- Transaction editing/deletion after partial returns; entity round-trip of original amount/return status; exact cash/debt reconciliation; concurrent sales and stock adjustments.
-- Every DAO query, rollback/failure atomicity, authentic 1→22 migration fixtures. Current Room tests are not migration validation. Historical exported schemas are missing.
-- Activation, deactivation cancellation, realtime return sync, conflict resolution, retries, process interruption using controlled Firebase emulators/fakes.
-- Backup corruption/versioning/large ZIP limits/transactional restore and equality of all tables; PDF content, Arabic shaping/pagination and R8 runtime round-trip.
-- Compose full journeys, RTL, semantics/accessibility, configuration restoration, themes and small screens using isolated app/DI configuration. No UI instrumentation suite is claimed in this increment.
-- Device leak/ANR/performance profiling; dependency advisory scan; mutation testing.
+Robolectric does not implement native PdfDocument; its zero handle caused two PDF probe failures. Do not fake successful PDFs. The assertions are preserved in qa/pdf-verifier: two host tests parse real device-generated PDFs with PDFBox3.0.8 and check signature, pages, invoice ID, Arabic text, totals and final multipage item. Host testClasses compiles; execution is NOT TESTED until a device supplies the files. See qa/pdf-verifier/README.md. The CI emulator job runs instrumentation, pulls the actual PDFs and runs the host verifier; no remote pass has been observed.
 
-Do not set 100% gates or exclude untested production code. First record actual baseline, then add meaningful tests and reviewed gates. Every additional fix must have a failing regression followed by a passing run. CI workflow is proposed infrastructure; a saved workflow is not an observed GitHub Actions success.
+## Remaining expansion
 
-Additional activation suite: controlled Main dispatcher, mocked activation repository, explicit ViewModelStore cleanup; active/blocked startup, blank code, trim-and-save ordering, disabled/expired/not-found rejection, network snackbar recovery. These unit tests do not validate Firebase server rules or app-level activation bypass resistance.
-
-For local unsigned/minified QA release, append `:salesmanager:assembleRelease -x :salesmanager:uploadCrashlyticsMappingFileRelease`. Exclude the Crashlytics upload during testing even if resource-generation config is available. Never use tracked signing material or production merchant data. The initial release attempt's automatic mapping upload was denied (HTTP403); subsequent commands exclude it.
-
-Measured initial CI floors (rounded down to one decimal): shared library line 5.6%, branch 4.5%; Seller line 1.5%, branch 0.6%. These preserve the initial measured suite, not a quality target or full acceptance. `python3 scripts/report-seller-coverage.py --check` passed against current XML reports. Raise floors as meaningful tests are added.
+All DAO queries/migration chains, atomic cash/debt/stock failure paths, fractional/concurrent returns, Firebase emulator conflict/process-death cases, every screen/navigation journey, RTL visual/accessibility/restoration/themes/keyboard/small screens, large/corrupt backup structures, minified backup round trips, PDF printing/sharing, profiling and mutation/advisory scans remain incomplete. See exact coverage gaps and the release status table.

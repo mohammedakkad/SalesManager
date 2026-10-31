@@ -10,7 +10,7 @@
         summary="Obsolete custom lint check"
         explanation="Lint can be extended with &quot;custom checks&quot;: additional checks implemented by developers and libraries to for example enforce specific API usages required by a library or a company coding style guideline.&#xA;&#xA;The Lint APIs are not yet stable, so these checks may either cause a performance degradation, or stop working, or provide wrong results.&#xA;&#xA;This warning flags custom lint checks that are found to be using obsolete APIs and will need to be updated to run in the current lint environment.&#xA;&#xA;It may also flag issues found to be using a **newer** version of the API, meaning that you need to use a newer version of lint (or Android Studio or Gradle plugin etc) to work with these checks.">
         <location
-            file="/home/agent/.gradle/caches/8.9/transforms/fe5d63d0abf861acfe8afc986ba4715c/transformed/ui-release/jars/lint.jar"/>
+            file="/home/agent/.gradle/caches/8.9/transforms/58aa8d77777b05741c97945252dceedc/transformed/ui-release/jars/lint.jar"/>
     </issue>
 
     <issue
@@ -22,7 +22,7 @@
         summary="Obsolete custom lint check"
         explanation="Lint can be extended with &quot;custom checks&quot;: additional checks implemented by developers and libraries to for example enforce specific API usages required by a library or a company coding style guideline.&#xA;&#xA;The Lint APIs are not yet stable, so these checks may either cause a performance degradation, or stop working, or provide wrong results.&#xA;&#xA;This warning flags custom lint checks that are found to be using obsolete APIs and will need to be updated to run in the current lint environment.&#xA;&#xA;It may also flag issues found to be using a **newer** version of the API, meaning that you need to use a newer version of lint (or Android Studio or Gradle plugin etc) to work with these checks.">
         <location
-            file="/home/agent/.gradle/caches/8.9/transforms/344f9fd21d980ea3a890915214f3a542/transformed/navigation-common-2.8.2/jars/lint.jar"/>
+            file="/home/agent/.gradle/caches/8.9/transforms/3aaaa07b7298ca2c32e0c9bc5663c35d/transformed/navigation-common-2.8.2/jars/lint.jar"/>
     </issue>
 
     <issue
@@ -34,7 +34,7 @@
         summary="Obsolete custom lint check"
         explanation="Lint can be extended with &quot;custom checks&quot;: additional checks implemented by developers and libraries to for example enforce specific API usages required by a library or a company coding style guideline.&#xA;&#xA;The Lint APIs are not yet stable, so these checks may either cause a performance degradation, or stop working, or provide wrong results.&#xA;&#xA;This warning flags custom lint checks that are found to be using obsolete APIs and will need to be updated to run in the current lint environment.&#xA;&#xA;It may also flag issues found to be using a **newer** version of the API, meaning that you need to use a newer version of lint (or Android Studio or Gradle plugin etc) to work with these checks.">
         <location
-            file="/home/agent/.gradle/caches/8.9/transforms/d8b330c829971f30c1f10b99a2559ff6/transformed/navigation-compose-2.8.2/jars/lint.jar"/>
+            file="/home/agent/.gradle/caches/8.9/transforms/6e32d7c5490c7da24291d60a5ef1a1b3/transformed/navigation-compose-2.8.2/jars/lint.jar"/>
     </issue>
 
     <issue
@@ -46,7 +46,7 @@
         summary="Obsolete custom lint check"
         explanation="Lint can be extended with &quot;custom checks&quot;: additional checks implemented by developers and libraries to for example enforce specific API usages required by a library or a company coding style guideline.&#xA;&#xA;The Lint APIs are not yet stable, so these checks may either cause a performance degradation, or stop working, or provide wrong results.&#xA;&#xA;This warning flags custom lint checks that are found to be using obsolete APIs and will need to be updated to run in the current lint environment.&#xA;&#xA;It may also flag issues found to be using a **newer** version of the API, meaning that you need to use a newer version of lint (or Android Studio or Gradle plugin etc) to work with these checks.">
         <location
-            file="/home/agent/.gradle/caches/8.9/transforms/df9e258cce54b79be800bb98eed9c4b4/transformed/navigation-runtime-2.8.2/jars/lint.jar"/>
+            file="/home/agent/.gradle/caches/8.9/transforms/c70df203fbe6a7aa09c0f831b196121f/transformed/navigation-runtime-2.8.2/jars/lint.jar"/>
     </issue>
 
     <issue
@@ -63,22 +63,6 @@
             file="/workspace/SalesManager/salesmanager/src/main/AndroidManifest.xml"
             line="17"
             column="9"/>
-    </issue>
-
-    <issue
-        id="ObsoleteSdkInt"
-        severity="Warning"
-        message="Unnecessary; SDK_INT is always >= 24"
-        category="Performance"
-        priority="6"
-        summary="Obsolete SDK_INT Version Check"
-        explanation="This check flags version checks that are not necessary, because the `minSdkVersion` (or surrounding known API level) is already at least as high as the version checked for.&#xA;&#xA;Similarly, it also looks for resources in `-vNN` folders, such as `values-v14` where the version qualifier is less than or equal to the `minSdkVersion`, where the contents should be merged into the best folder."
-        errorLine1="        val uri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {"
-        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="/workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/update/AppUpdateDownloader.kt"
-            line="71"
-            column="28"/>
     </issue>
 
     <issue
@@ -101,11 +85,11 @@
         priority="6"
         summary="Static Field Leaks"
         explanation="A static field will leak contexts.&#xA;&#xA;Non-static inner classes have an implicit reference to their outer class. If that outer class is for example a `Fragment` or `Activity`, then this reference means that the long-running handler/loader/task will hold a reference to the activity which prevents it from getting garbage collected.&#xA;&#xA;Similarly, direct field references to activities and fragments from these longer running instances can cause leaks.&#xA;&#xA;ViewModel classes should never point to Views or non-application Contexts."
-        errorLine1="    private val context: Context"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="    private val context = context.applicationContext"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupViewModel.kt"
-            line="38"
+            line="41"
             column="5"/>
     </issue>
 
@@ -117,11 +101,11 @@
         priority="6"
         summary="Static Field Leaks"
         explanation="A static field will leak contexts.&#xA;&#xA;Non-static inner classes have an implicit reference to their outer class. If that outer class is for example a `Fragment` or `Activity`, then this reference means that the long-running handler/loader/task will hold a reference to the activity which prevents it from getting garbage collected.&#xA;&#xA;Similarly, direct field references to activities and fragments from these longer running instances can cause leaks.&#xA;&#xA;ViewModel classes should never point to Views or non-application Contexts."
-        errorLine1="    private val context: Context"
-        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        errorLine1="    private val context = context.applicationContext"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="/workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/boxes/BoxesViewModel.kt"
-            line="38"
+            line="41"
             column="5"/>
     </issue>
 
@@ -473,54 +457,6 @@
             file="/workspace/SalesManager/salesmanager/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"/>
         <location
             file="/workspace/SalesManager/salesmanager/src/main/res/mipmap-xxxhdpi/ic_launcher.png"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        severity="Warning"
-        message="Use version catalog instead"
-        category="Productivity"
-        priority="4"
-        summary="Use TOML Version Catalog Instead"
-        explanation="If your project is using a `libs.versions.toml` file, you should place all Gradle dependencies in the TOML file. This lint check looks for version declarations outside of the TOML file and suggests moving them (and in the IDE, provides a quickfix to performing the operation automatically)."
-        errorLine1="    testImplementation(&quot;junit:junit:4.13.2&quot;)"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="/workspace/SalesManager/salesmanager/build.gradle.kts"
-            line="71"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        severity="Warning"
-        message="Use version catalog instead"
-        category="Productivity"
-        priority="4"
-        summary="Use TOML Version Catalog Instead"
-        explanation="If your project is using a `libs.versions.toml` file, you should place all Gradle dependencies in the TOML file. This lint check looks for version declarations outside of the TOML file and suggests moving them (and in the IDE, provides a quickfix to performing the operation automatically)."
-        errorLine1="    testImplementation(&quot;io.mockk:mockk:1.13.13&quot;)"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="/workspace/SalesManager/salesmanager/build.gradle.kts"
-            line="72"
-            column="25"/>
-    </issue>
-
-    <issue
-        id="UseTomlInstead"
-        severity="Warning"
-        message="Use version catalog instead"
-        category="Productivity"
-        priority="4"
-        summary="Use TOML Version Catalog Instead"
-        explanation="If your project is using a `libs.versions.toml` file, you should place all Gradle dependencies in the TOML file. This lint check looks for version declarations outside of the TOML file and suggests moving them (and in the IDE, provides a quickfix to performing the operation automatically)."
-        errorLine1="    testImplementation(&quot;org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0&quot;)"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="/workspace/SalesManager/salesmanager/build.gradle.kts"
-            line="73"
-            column="25"/>
     </issue>
 
 </issues>

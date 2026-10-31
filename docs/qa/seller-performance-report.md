@@ -1,9 +1,11 @@
 # Seller performance and stability
 
-Status: **not measured on device**. No connected device and no /dev/kvm detected. No startup time, frame-time, heap retention, ANR rate, battery cost or query latency claim is made.
+Status: NOT TESTED on device. No connected device/emulator or /dev/kvm is available in this instance. No startup/frame-time/heap/ANR/battery/query-latency figures are claimed.
 
-Verified source risks: runBlocking merchant ID resolution in Koin; repository-owned IO scopes with process lifetime; filtered activation flows leave existing listeners active after deactivation; unbounded ZIP extraction; per-transaction enrichment performs customer/payment lookups; full snapshot reconciliation iterates records and awaits many DAO calls. APK downloader streams are manually closed only on success. These are candidates for measurement, not measured regressions.
+Verified source improvements: return listener cancellation on logout, serialized durable return retries, application-context normalization in two ViewModels and transactionally consistent backup collection. Their regression/static checks are not substitutes for profiling. Backup collection holds a database transaction while copying tables, then releases it before JSON/encryption; benchmark lock duration and large datasets.
 
-Required continuation: profile cold/warm startup and repeated navigation on API24 and API35; benchmark 10k customers/100k sales using isolated Room fixtures; record query plans and p50/p95; inspect coroutine/listener lifecycle after logout; stress backup/restore cancellation and ZIP limits; inspect retained Activities/ViewModels using a debug-only leak detector. Preserve baseline numbers and environment/device metadata before enforcing performance budgets.
+Remaining source risks: runBlocking merchant resolution/theme initialization, process-owned IO scopes, activation filters in other repositories, cross-repository writes, unbounded ZIP extraction, per-record enrichment queries, full snapshot reconciliation and APK downloader cleanup on failure. Context-typed fields still produce lint warnings; actual retained Activities were not measured.
 
-The QA runner limits Gradle to four workers (matching the container CPU quota). Build durations in logs describe build infrastructure, not app runtime performance.
+Continue with API24/API35 cold/warm startup and repeated navigation, 10k-customer/100k-sale fixtures, query plans and p50/p95, post-logout listener/heap checks, backup interruption and ZIP limits, and a debug-only leak detector. Record device/toolchain/dataset metadata before setting performance gates.
+
+Build checks use four workers for the four-CPU quota and reuse valid outputs. JVM build/test timings in logs describe infrastructure, not app runtime performance. Native PDF and Compose timing await the emulator job/device; no measurements are fabricated.

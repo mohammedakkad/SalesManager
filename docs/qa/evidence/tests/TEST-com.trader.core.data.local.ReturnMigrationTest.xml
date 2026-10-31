@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.ReturnMigrationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-31T17:19:40" hostname="1845f097faca" time="10.105">
+  <properties/>
+  <testcase name="upgradePreservesFinancialRecordsForeignKeysAndPendingWrites" classname="com.trader.core.data.local.ReturnMigrationTest" time="9.16"/>
+  <testcase name="failedUpgradeRollsBackSchemaAndData" classname="com.trader.core.data.local.ReturnMigrationTest" time="0.678"/>
+  <testcase name="backfillsPartialFullUnreturnedAndMissingLineStates" classname="com.trader.core.data.local.ReturnMigrationTest" time="0.267"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

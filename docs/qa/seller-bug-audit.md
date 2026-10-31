@@ -1,30 +1,34 @@
-# Seller bug audit
+# Seller bug audit — continued work
 
-## Reproduced and repaired (verification result in release-readiness)
+All fixes below have failing before evidence and passing regression checks. They do not establish absence of other defects. See seller-audit-continuation.md for per-stage results and evidence/continuation/ for logs.
 
-### P0: remote snapshot deletes unsynced local sales
-Reproduction: a local PENDING/FAILED/CONFLICT transaction exists, remote transactions emits an empty snapshot. Baseline reconciliation iterates every local ID absent remotely and deletes it, invoice items, and applies stock/cash reversals. Regression `TransactionSyncTest.remoteAbsenceMustNotDeleteUnsyncedSales` failed against the old behavior (before log). Fix: only delete absent records already marked SYNCED. The test includes a SYNCED control that must still be deleted. Repository scope is injectable solely to control execution/lifecycle deterministically.
-Limit: this is not multi-device conflict resolution or tombstone handling. A stale remote snapshot can still remove SYNCED records; deletion side effects across devices require further tests.
+| Defect | Status | Reproduction / repair |
+| --- | --- | --- |
+| Unsynced sale deleted by snapshot | PASS previous stage | Original regression retained; pending/failed/conflicting sales preserved |
+| Return state lost on persistence/restart | PASS | Two close/reopen regressions failed; persist originalAmount/returnStatus; additive Room22→23 ledger-backed backfill |
+| Pending returns deleted/overwritten | PASS | Empty/stale snapshots reproduced loss; transactional merge and conditional SYNCED deletion preserve local writes/items |
+| Return listener survives logout | PASS | Subscription-count regression; empty/changed merchant now cancels the return collector |
+| Duplicate refund/restock | PASS | Same stable ID applied effects twice; identical replay is idempotent, conflicting payload rejected |
+| Over-return batch | PASS | Individually valid lines exceeded remaining stock; validate aggregate unit quantities and refund totals before writes |
+| Stock failure swallowed | PASS | Failure left refund ledger/balance changes; actual write errors roll back local return transaction; deleted units explicitly skipped |
+| Timeout falsely acknowledged | PASS | Mocked uncompleted Firebase Task silently succeeded; return upload now throws on timeout and remains retryable |
+| Lost profit omitted on sync | PASS | Payload assertion failed; lostProfit retained for other devices |
+| No durable return retry | PASS tested paths | Reconnect/failed writes/concurrent calls/interruption tested; retry uploads stable ledger IDs without replaying financial effects |
+| Deletion double-restocks returned units | PASS | Partial/full-return deletion regressions; restore only remaining quantity and clean local return ledger |
+| Non-finite/Arabic financial input | PASS | Arabic decimal/grouping failed; NaN/infinity accepted; normalize separators and reject non-finite parsed values |
+| Customer double save | PASS | Rapid calls inserted twice; mark loading before scheduling and reject in-flight/already-saved requests |
+| Inconsistent backup snapshot | PASS boundary test | DAO observation found no shared transaction; collect all tables in one transaction, encrypt afterward |
+| Legacy backup loses return state | PASS | Old JSON has no new fields; derive missing state from available return ledger while preserving explicit newer fields |
+| Signing export / token logging | PASS containment; rotation BLOCKED | Policy failed before removal from tracking/logs; local file retained; history still requires owner remediation |
 
-### P1: return validation accepts NaN/infinity and invalid price inputs
-Reproduction: valid ReturnItem copied with returnedQuantity=NaN, originalQuantity=NaN/infinity, or negative/nonfinite price/cost. Baseline comparison guards accept these cases; three regression tests fail. Fix: require finite quantity, prices and derived amounts, positive original quantity and nonnegative prices. Valid partial/full/free returns remain covered. Financial precision/rounding policy is unchanged.
+## Unresolved risks and required regressions
 
-### Development blocker: Seller task configuration requires release secrets
-Baseline full configuration fails in admin line26; isolated Seller configuration also fails in Seller line29. Seller signing uses nullable values and only assigns signing when a store path exists. Debug/unit QA works without signing secrets; release is unsigned without a keystore. Admin remains unchanged and requires configure-on-demand for Seller QA.
+- Older migration chains1→22 are not proven by the authentic22→23 test. No historical schemas were fabricated.
+- Snapshot absence is not a complete remote tombstone protocol. Previously SYNCED records can still be removed by stale snapshots; remote cascades can recreate orphan returns. Cross-collection server atomicity/merchant switching/in-flight logout need emulator tests and a reviewed protocol.
+- Transaction/cash/stock deletion spans repositories; failure atomicity across all paths is not established. Tests verify net local effects and return transaction rollback through controlled collaborators, not a distributed transaction.
+- Returns keyed only by unit need more tests for multiple sale prices per unit, fractional rounding, concurrent devices, cancelled writes and historical corruption. Missing ledger/history cannot be recovered from current balances alone.
+- Malformed JSON object structures, ZIP expansion limits, large/interrupted restore and concurrent sync during restore require further hardening. Current restore rollback and export snapshot checks cover specific invariants.
+- Other repositories still filter empty activation codes before collectLatest; only the return listener was corrected here. Process-owned scopes and a singleton merchant ID need broader lifecycle review.
+- Native PDF generation/content and UI/device behavior remain unexecuted locally. Robolectric's zero native PDF handle is a test-platform limitation; no production workaround or fabricated PDF was introduced. Device generation + host assertions preserve the intended checks.
 
-## Verified source defects / unresolved risks (not repaired or runtime-certified)
-- P0 candidate: TransactionEntity does not persist Transaction.originalAmount or returnStatus. Repository enrich uses toDomain defaults, so returned-sale state is lost on persistence round-trip. A schema change requires a reviewed migration/backfill strategy and fixtures before repair. This is a release blocker; no production schema was changed in this increment.
-- P0 candidate: ReturnRepositoryImpl deletes local return invoices absent from remote without checking pending status; remote upserts do not preserve pending local return changes. Needs deterministic return sync regression, retry semantics and transactional tests.
-- Activation collectors filter out empty merchant code before collectLatest, so deactivation does not cancel existing listeners as comments promise. Similar pattern exists in multiple repositories. Not fixed without lifecycle regression coverage.
-- Financial updates span transaction, cash and stock repositories; rollback/idempotency under failure and simultaneous devices remain untested. Deleting a partially returned transaction may restore full invoice quantities again; must reproduce with full DAO/repository fixtures.
-- Return processing validates each item independently; duplicate unit entries in a single batch and explicit invoice/item refund totals need consistency tests.
-- Backup export reads tables separately, not inside a snapshot transaction. ZIP extraction uses unbounded readBytes. Restore is transactional but races with realtime sync and merchant identity require isolated integration tests.
-
-Before evidence: `evidence/regression-before.log`. This log includes two CA-trust infrastructure failures; they are not Room product failures. Final outcomes and exact counts are in seller-release-readiness.md. Do not infer the absence of other defects from these findings.
-
-## Static regressions addressed (rerun recorded in release-readiness)
-Lint baseline: 8 errors, 36 warnings. Six mapped DataStore flows were created directly in composition; remember the mapped flow by Context to preserve subscription identity across recompositions. The camera marker is a Java/AndroidX opt-in annotation, so Kotlin @OptIn had no effect; use androidx.annotation.OptIn. Add braces to the conditional payment-method Text to make the existing execution scope explicit. No warning suppressions/baseline filters were added. See evidence/lint-before.xml and lint-errors-before.txt.
-
-QA tooling: narrow JaCoCo executionData to build/jacoco/testDebugUnitTest.exec. Scanning the whole build directory caused Gradle implicit-dependency validation failures when tests, lint and release tasks were combined. This is a tooling defect, not a coverage exclusion.
-
-Release attempt: R8 completed but automatic uploadCrashlyticsMappingFileRelease received HTTP403. No successful upload was observed. QA release commands/CI now exclude this network-write task explicitly; production release behavior is not globally disabled. An unsigned/minified build remains distinct from signed release and device verification.
+No production merchant data was read or modified during these regressions. All databases were disposable/in-memory fixtures; Firebase calls used controlled mocks or were blocked before access.

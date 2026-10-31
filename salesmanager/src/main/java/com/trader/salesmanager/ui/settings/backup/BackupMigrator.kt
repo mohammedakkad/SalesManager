@@ -144,7 +144,7 @@ object BackupMigrator {
 
     private fun normalize(payload: BackupPayload): BackupPayload = payload.copy(
         customers = payload.customers.orEmpty().map(::normalizeCustomer),
-        transactions = payload.transactions.orEmpty().map(::normalizeTransaction),
+        transactions = normalizeTransactions(payload),
         paymentMethods = payload.paymentMethods.orEmpty(),
         products = payload.products.orEmpty(),
         productUnits = payload.productUnits.orEmpty().map(::normalizeProductUnit),
@@ -158,6 +158,29 @@ object BackupMigrator {
         cashBoxes = payload.cashBoxes.orEmpty(),
         cashBoxMovements = payload.cashBoxMovements.orEmpty()
     )
+
+    // Old backups have no return-state columns. Reconstruct only from their
+    // durable ledger; preserve explicitly stored newer state without overwriting it.
+    private fun normalizeTransactions(payload: BackupPayload): List<TransactionEntity> {
+        val invoices = payload.returnInvoices.orEmpty().groupBy { it.originalTransactionId }
+        val items = payload.returnItems.orEmpty().groupBy { it.returnInvoiceId }
+        val sold = payload.invoiceItems.orEmpty().groupBy { it.transactionId }
+        return payload.transactions.orEmpty().map { raw ->
+            val tx = normalizeTransaction(raw)
+            val returns = invoices[tx.id].orEmpty()
+            if (returns.isEmpty() || (tx.originalAmount != null && tx.returnStatus != null)) tx
+            else {
+                val returned = returns.flatMap { items[it.id].orEmpty() }.groupBy { it.unitId }
+                    .mapValues { (_, lines) -> lines.sumOf { it.returnedQuantity } }
+                val quantities = sold[tx.id].orEmpty().groupBy { it.unitId }
+                val full = quantities.isNotEmpty() && quantities.all { (unit, lines) ->
+                    (returned[unit] ?: 0.0) >= lines.sumOf { it.quantity }
+                }
+                tx.copy(originalAmount = tx.originalAmount ?: (tx.amount + returns.sumOf { it.totalRefund }),
+                    returnStatus = tx.returnStatus ?: if (full) "FULLY_RETURNED" else "PARTIALLY_RETURNED")
+            }
+        }
+    }
 
     private fun normalizeCustomer(customer: CustomerEntity): CustomerEntity =
         customer.copy(phone = customer.phone.ifBlank { "" })

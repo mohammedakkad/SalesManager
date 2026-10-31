@@ -1,17 +1,21 @@
-# Seller security review
+# Seller security review — partial, not release clearance
 
-Status: partial source review; no penetration test or vulnerability advisory scan completed.
+## Verified changes
 
-## Verified
-- `keystore_base64.txt` is tracked, base64 decodes to a 2752-byte ASN.1 container consistent with PKCS#12 signing material. Contents/passwords were not printed, used or copied into reports. Owner must assess exposure, rotate the signing material where feasible, and plan repository-history remediation. Deleting the file now would not revoke prior exposure; no history rewriting was performed.
-- SalesManagerApp logs FCM registration tokens at debug level. Remove sensitive token logging with a regression/static rule in a subsequent change; do not assume release logging is stripped.
-- MainActivity is exported as the launcher. Messaging service, update receiver and FileProvider are nonexported. FileProvider grants URI permissions but exposes whole cache/external-files roots; narrow paths after testing export/update journeys.
-- OS backup excludes device.xml only; data-extraction policy allows other app data. Confirm merchant privacy requirements and activation/session behavior after restore.
-- Backups use AES-GCM, random salt/IV and PBKDF2-HMAC-SHA256 (100,000 iterations); actual encryption/tamper/password tests added. The version-1 cleartext schema/timestamp header is not authenticated as AAD. Payload schema is separately parsed, but tamper guarantees must be documented before changing the format.
-- Downloaded APK installation delegates signing checks to Android. Downloader lacks explicit trusted-host/checksum policy and finally-based cleanup. Transport/failure/cancellation tests remain needed.
-- Existing release workflow interpolates secrets into shell commands and signs on all branch pushes. New QA workflow uses no production secrets and cannot deploy or publish releases.
+The new scripts/check-seller-secrets.py policy failed on the tracked root signing export and FCM token logging, then passed after fixes. The export was removed from the Git index and ignored; its existing local file was retained without copying or displaying values. FCM token retrieval remains but the token is no longer logged. The scanner reports locations only, checks signing/private-key/server-account structures and intentionally excludes admin changes; it is not a complete history scan.
 
-## Blocked / not tested
-Firebase rules and authorization assumptions were not available for review; no live Firebase data/activation requests or merchant-account tests were made. Gradle attempted a Crashlytics mapping upload, which was denied with HTTP403; QA commands now exclude that task. No successful production write was observed. Runtime RBAC/activation bypass, FileProvider grants, backup exposure and signed upgrade security were not device-tested. GitHub API request returned Forbidden; no advisory scan/CI result was obtained. No claim of zero known vulnerabilities.
+**BLOCKED: history still contains signing material.** Owner-controlled exposure assessment, rotation where feasible and history remediation are required. No private key was used, rotated or revoked here. Removing a tracked file does not invalidate historical copies or prove exposure is resolved.
 
-New QA XML/HTML reports include all production compiled class directories. `jdk.internal.*` is excluded only from JaCoCo's JVM instrumentation to avoid instrumenting JDK internals, not from the production report. No business-code coverage exclusions were added.
+The current index tracks Seller/admin Firebase client configurations. Their values were not displayed or changed. Firebase client metadata is not automatically a server credential; API restrictions and server rules still need review. Earlier reports describing ignored configuration were not current-index evidence. Admin business/configuration files remain unchanged.
+
+Application-context normalization was added to Backup/Boxes ViewModels. Lint still reports two Context-typed fields; no suppression or unmeasured runtime leak claim was made. MainActivity is exported as launcher; messaging/receiver/FileProvider are nonexported. Broad cache/external-file provider paths and OS backup policy remain review items.
+
+## Isolation and unverified boundaries
+
+All regression data is synthetic and local. Firebase repository/reference tasks are mocked, with a direct-call guard in return tests. No merchant Firebase data or activation request was sent. QA release commands exclude Crashlytics mapping uploads. A prior baseline attempt was denied403; no successful upload was observed.
+
+The instrumentation runner refuses real Firebase project configuration before Application/provider initialization; CI generates only an offline fixture and avoids Seller Application startup/scheduling. No device execution has yet verified the runner or UI. Host PDF tests require actual emulator-generated files; no fabricated PDFs or passing shadows were introduced.
+
+Backups use AES-GCM/random salt+IV/PBKDF2-HMAC-SHA256 and retain passing password/tamper tests. Export reads now share one transaction; restore rollback is tested. Cleartext header authentication, malicious JSON/ZIP limits, concurrent restore/sync, FileProvider sharing, activation/RBAC bypass and minified runtime behavior remain NOT TESTED or require further work.
+
+GitHub API/advisory access remains denied. No vulnerability-free, rule-security, signed-upgrade or penetration-test claim is made. Release dependency/runtime review and signing-owner action remain prerequisites.

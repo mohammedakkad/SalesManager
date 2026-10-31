@@ -33,7 +33,7 @@ class BackupManager(
 
     suspend fun exportEncryptedBackup(password: CharArray): File = withContext(Dispatchers.IO) {
         try {
-            val payload = collectPayload()
+            val payload = database.withTransaction { collectPayload() }
             val zipBytes = compressJsonToZip(GsonHolder.toJson(payload))
             val encrypted = BackupCrypto.encryptZip(
                 zipBytes = zipBytes,

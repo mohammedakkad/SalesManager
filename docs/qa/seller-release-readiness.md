@@ -1,26 +1,33 @@
-# Seller release readiness — incomplete audit
+# Seller release readiness — full acceptance FAIL
 
-**Do not approve a production release from this increment.** Inventory and initial test/fix infrastructure are prepared; the master task's full acceptance criteria are not met.
+The audit continues on `codex/seller-full-coverage-audit`; it was not restarted. Resume HEAD: `9197b5045e60cff140e043239ad526522f97c4b7`; original production base: `22381d5b55fb59a9270932bcf720b283fa1c90ff`. Admin business logic and production data were not modified. Do not approve a production release from these results.
 
-Starting production SHA: `22381d5b55fb59a9270932bcf720b283fa1c90ff`.
-Feature branch: `codex/seller-full-coverage-audit`.
-201 production Kotlin source files / 340 source declarations inventoried; full method-by-method audit is incomplete. No admin business logic changed. Production and main were not modified.
+| Check | Status | Measured evidence / limits |
+| --- | --- | --- |
+| JVM regression suite | PASS | 70 passed, 0 failed, 0 skipped, 15 classes; original30 retained;40 added this continuation |
+| Line / branch coverage | FAIL (100% target) | Weighted9.3401% lines /3.2318% branches; method11.8854%, class10.9980%; exact gaps and original XML saved |
+| Baseline CI coverage floors | PASS | Raised: shared line21.3%, branch11.8%; Seller line2.9%, branch1.6%; no production exclusions |
+| Room22→23 upgrade | PASS | Actual exported22 schema; representative fixture records; state backfill, record preservation, FK checks, sequence, rollback |
+| Older migration chains | BLOCKED | Authentic versions1–21 schemas/databases absent in checkout and available history; never fabricated |
+| Backup/restore | PASS (tested cases) | Encrypted round trip, rollback on orphan input, corrupted input, legacy return recovery, export snapshot boundary |
+| Native PDF content | BLOCKED | Robolectric has no PdfDocument native implementation; assertions moved intact to real-device generation +host PDFBox verification; not executed |
+| Compose/device tests | BLOCKED | Four instrumentation tests compile; actual connectedDebugAndroidTest fails `DeviceException: No connected devices!`; no device passes claimed |
+| Host PDF verifier | PASS compile / NOT TESTED execution | testClasses compiled;2 content tests need real Android-generated PDFs |
+| Android Lint | PASS errors / warnings remain | 0 errors, 32 warnings, 1 information;36→32; no suppression/baseline added |
+| Debug APK | PASS | Assembly and apksigner verification; artifact path/hash in evidence/apk-manifest.json |
+| Minified unsigned release | PASS build | Actual R8/resource shrinking ran; current outputs reused on successful final aggregate; unsigned status confirmed; not installed/published |
+| Signed/minified device behavior | BLOCKED / NOT TESTED | Approved uncompromised signing setup and device needed; R8 build alone is not runtime verification |
+| Signing exposure containment | PASS current index / rotation BLOCKED | Signing export untracked/ignored, local file preserved, token logging removed; history still contains material; owner assessment/rotation required |
+| Firebase multi-device / server rules | NOT TESTED | Deterministic mocks cover local paths; no production Firebase data/activation requests; no full emulator integration |
+| GitHub Actions / Draft PR | BLOCKED | `Post "https://api.github.com/graphql": Forbidden`; Git pushes work; remote CI execution not observed |
 
-## Verified evidence
-- Initial baseline task discovery failed due missing signing configuration in admin; isolated Seller configuration had the same unsafe casts. Seller debug QA no longer needs release signing values. QA uses configure-on-demand to avoid unrelated admin configuration.
-- First executable regression run: 14 tests, 6 failures (4 behavioral regressions and 2 CA trust setup errors). Before log committed under evidence/.
-- Current executed suite: **30 tests, 30 passed, 0 failed, 0 errors, 0 skipped**, across 7 test classes. Exact JUnit XML is under evidence/tests/. This does not count unimplemented instrumentation tests as passing or skipped.
-- Current-schema in-memory Room integrity tests: 2 passed. Customer upsert preserves sale/debt; orphan transaction insertion is rejected. **Historical Room migrations 1→22 are not verified.** No authentic exported historical schemas/fixtures are present. Backup payload migration tests cover supported payload versions 1→20; they are not Room migration tests.
-- Measured weighted debug JVM coverage: **2.9383% lines, 1.1990% branches, 4.7124% methods, 5.0562% classes**. Module metrics and exact class/source/branch gaps are in seller-coverage-report.md and the two gap CSVs. Compressed original XML and hashes are in evidence/coverage/.
-- Coverage gates passed on measured XML: app line ≥5.6%, branch ≥4.5%; Seller line ≥1.5%, branch ≥0.6%. These are baseline ratchets, not release quality targets. No production exclusions.
-- Lint after correction: **0 errors, 36 warnings, 1 informational issue**. Before: 8 errors/36 warnings. Warnings include outdated custom lint API compatibility; some library checks are skipped by the existing tooling, so lint is not exhaustive. No suppression/baseline added. YAML syntax, runner shell syntax and git diff whitespace checks passed.
+## Completed stages and evidence
 
-## Final local build outcome — passed
-The combined command below completed **BUILD SUCCESSFUL** in 7m59s: 201 actionable tasks (45 executed, 156 valid cached/up-to-date outputs). Test, JaCoCo, debug lint, debug APK assembly and actual R8/resource-shrunk release assembly all completed. Crashlytics mapping upload was explicitly excluded. Final log: evidence/final-verification.log.
+See seller-audit-continuation.md for each stage's tests, coverage, changed files, commands and blockers. Stage1 fixed durable return state with an additive23 migration (35 passing). Stage2 fixed return synchronization/idempotency/retry and timeout/profit serialization (51 passing). Stage3 fixed double restocking on deletion and signing/logging policy (53 passing). Stage4 fixed backup/form/financial input failures and added supported UI/PDF infrastructure (70 passing).
 
-Debug APK: 51,108,594 bytes, `com.trader.salesmanager.debug`, version 1.2.5/10205; Android apksigner verification passed. Release APK: 26,638,363 bytes, `com.trader.salesmanager`, version 1.2.5/10205, min SDK24/target35, unsigned. AAPT confirms MainActivity and package metadata. SHA256 hashes and paths are in evidence/apk-manifest.json. No signed release or on-device behavior is verified. No APK was installed or published.
+Before/after logs: evidence/continuation/stage1–stage4/. Latest complete run: evidence/continuation/stage4/stage4-verified.log: **BUILD SUCCESSFUL, 1m6s, 227 actionable tasks (24 executed, 203 valid up-to-date outputs)**. JUnit XML:evidence/tests/. Compressed JaCoCo XML +hashes:evidence/coverage/. The earlier final-build.log contains2 unsupported Robolectric PDF failures, not hidden application passes. The corrected run moves native assertions to supported device/host tests; PDF production JVM counters remain0 covered lines/branches rather than manufacturing output.
 
-## Required command
+## Reproduce supported local checks
 ```bash
 cd /workspace/SalesManager
 export JAVA_HOME='/workspace/toolchains/jdk-17.0.17+10'
@@ -29,23 +36,30 @@ export JAVA_HOME='/workspace/toolchains/jdk-17.0.17+10'
   -Pkotlin.compiler.execution.strategy=in-process \
   --configure-on-demand --no-configuration-cache --no-daemon --max-workers=4 --continue \
   :app:qaCoverage :salesmanager:qaCoverage :salesmanager:lintDebug \
-  :salesmanager:assembleDebug :salesmanager:assembleRelease \
+  :salesmanager:assembleDebug :salesmanager:assembleDebugAndroidTest :salesmanager:assembleRelease \
   -x :salesmanager:uploadCrashlyticsMappingFileRelease
 python3 scripts/report-seller-coverage.py --check
+python3 scripts/check-seller-secrets.py
 ```
 
-The full JDK17 archive was downloaded from Temurin's official GitHub release and SHA256 verified. Java's system trust store is propagated to test JVMs for Robolectric dependencies. Do not disable TLS/artifact verification. Do not print the ignored Firebase configuration or reuse tracked signing material. The first release attempt automatically tried uploading a Crashlytics mapping and was rejected HTTP403; subsequent QA runs exclude that task. No successful upload was observed.
+Do not upload Crashlytics mappings during QA. No production signing key or merchant data was used. Existing client configuration was used only for local packaging, not live operation. The offline fixture generator is for disposable CI checkouts only; do not overwrite a user's config. The instrumentation runner refuses real Firebase project configuration before Application/provider initialization and avoids Seller startup/workers. See qa/pdf-verifier/README.md for real PDF extraction/validation commands. CI adds the emulator/host verification job, but no remote success is claimed.
 
-## Remaining release blockers and continuation
-1. Persist/backfill Transaction originalAmount and returnStatus with a reviewed, non-destructive migration and regression fixtures. Verify deletion after partial returns does not duplicate stock.
-2. Protect pending return synchronization and cancellation on deactivation; verify retries, tombstones, merchant switching, concurrent writes and process interruption against isolated Firebase emulators/fakes.
-3. Obtain authentic historical Room schemas/fixtures and verify every supported upgrade/data-preservation path. No invented historical schema tests or destructive migrations.
-4. Test transaction/cash/stock atomicity, refunds/overpayments, full backup restore consistency/corruption/ZIP limits, and PDF content. Current tests cover only a small subset.
-5. Implement and run Compose/device journeys (RTL, accessibility, restoration, camera, notifications, printing) and profile startup/memory/large datasets. No connected device/emulator was configured; no /dev/kvm found. These suites are not implemented in this increment.
-6. Review/rotate tracked signing material, remove FCM token logging safely, review Firebase rules and OS backup/FileProvider policy; perform dependency advisory review. Security report distinguishes observations from untested exploitability.
-7. Verify a signed release on a device and signed upgrades using approved signing configuration. An unsigned/minified APK does not satisfy that criterion.
-8. Enable `api.github.com` access and retry draft PR creation/CI observation with existing platform authentication. The attempted domain draft save was rejected as uneditable, so persistence is unconfirmed; proposed addition is preserved in environment-requirements.json. No token values are needed in chat.
+## Remaining release blockers
+- Missing return history cannot be reconstructed; backfill only uses durable existing records. Versions1–21 migration safety remains unverified.
+- Cross-repository atomicity and server-side transaction/stock/cash/return consistency, remote cascades/tombstones, in-flight logout, merchant-switching and multi-price invoice-line returns need more regression coverage. Pending records and repeated stable-ID processing are protected; no complete conflict resolver is claimed.
+- Key rotation/history remediation requires the signing owner. Firebase rules and client API restrictions need owner review. Current index contains Firebase client metadata, not automatically a server credential; values were not printed or changed here.
+- Execute all four device tests and both host content tests, then signed upgrades, minified backup round trips, print/share, RTL visual/accessibility/restoration and profiling. Large/corrupted JSON structures and ZIP-size limits require further hardening.
+- Cover all remaining classes/lines/branches from the gap CSVs;100% and zero remaining P0 defects are not claimed.
 
-CI workflow seller-qa.yml is an initial secret-free pipeline for compilation, unit/Room tests, lint, baseline coverage, debug and unsigned/minified QA release. It does **not** implement instrumentation, Firebase emulator integration, signed release testing, all migration tests or mutation testing. Its presence/YAML syntax validation is not proof of a GitHub Actions pass.
+## Draft PR continuation
 
-Stages: A inventory complete (deep audit incomplete); B infrastructure prepared; C initial regressions repaired; D current Room only; E transaction sync only; F not implemented; G partial static/security and local build checks; H baseline reports/gates and proposed CI only. Full 100% coverage and zero remaining critical defects are not claimed.
+No Draft PR was created because API access remains denied. Exact comparison URL:
+https://github.com/mohammedakkad/SalesManager/compare/production...codex/seller-full-coverage-audit?expand=1
+
+Allow `api.github.com` in environment networking while preserving existing entries/presets, then reuse existing authentication and run:
+```bash
+gh pr create --draft --base production --head codex/seller-full-coverage-audit \
+  --title 'Seller audit: preserve return state and prevent duplicate financial effects' \
+  --body-file docs/qa/draft-pr-body.md
+```
+Do not paste tokens in chat. Keep the PR unmerged. Environment requirement persistence was not confirmed; the proposed network addition remains recorded in environment-requirements.json.

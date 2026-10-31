@@ -19,6 +19,7 @@ android {
     namespace  = "com.trader.salesmanager"
     compileSdk = 35
     defaultConfig {
+        testInstrumentationRunner = "com.trader.salesmanager.qa.OfflineQaRunner"
         applicationId = "com.trader.salesmanager"
         minSdk = 24; targetSdk = 35
         versionCode = 10205; versionName = "1.2.5"
@@ -68,9 +69,16 @@ android {
 }
 
 dependencies {
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.mockk:mockk:1.13.13")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation(libs.test.robolectric)
+    testImplementation(libs.test.androidx.core)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.test.androidx.runner)
+    androidTestImplementation(libs.test.androidx.junit)
+    androidTestImplementation(libs.test.compose.junit)
+    debugImplementation(libs.test.compose.manifest)
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
     implementation(project(":app"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
