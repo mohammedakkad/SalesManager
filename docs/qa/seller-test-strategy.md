@@ -22,7 +22,7 @@ GRADLE_CMD=/workspace/setup/gradle scripts/qa-seller.sh \
 python3 scripts/report-seller-coverage.py --check
 ```
 
-Raise explicitly reviewed coverage floors as meaningful tests are added; never rewrite thresholds automatically from each run or exclude difficult production classes. Current floors:shared line21.3%/branch11.8%; Seller line2.9%/branch1.6%. They are regression floors, not full acceptance.
+Raise explicitly reviewed coverage floors as meaningful tests are added; never rewrite thresholds automatically from each run or exclude difficult production classes. Current floors:shared line21.6%/branch12.5%; Seller line2.9%/branch1.6%. They are regression floors, not full acceptance.
 
 ## Device and PDF checks — BLOCKED locally
 

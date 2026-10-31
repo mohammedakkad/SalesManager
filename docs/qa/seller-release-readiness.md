@@ -4,7 +4,7 @@ The audit continues on `codex/seller-full-coverage-audit`; it was not restarted.
 
 | Check | Status | Measured evidence / limits |
 | --- | --- | --- |
-| JVM regression suite | PASS | 75 passed, 0 failed, 0 skipped, 15 classes; original30 retained;40 added this continuation |
+| JVM regression suite | PASS | 75 passed, 0 failed, 0 skipped, 15 classes; original30 retained;45 added across continuations |
 | Line / branch coverage | FAIL (100% target) | Weighted9.4480% lines /3.3483% branches; method11.8854%, class10.9980%; exact gaps and original XML saved |
 | Baseline CI coverage floors | PASS | Raised: shared line21.6%, branch12.5%; Seller line2.9%, branch1.6%; no production exclusions |
 | Room22→23 upgrade | PASS | Actual exported22 schema; representative fixture records; state backfill, record preservation, FK checks, sequence, rollback |

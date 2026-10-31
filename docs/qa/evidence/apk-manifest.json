@@ -2,8 +2,8 @@
   {
     "variant": "debug",
     "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
-    "sha256": "3b74ab6e21e0a1f8ecae10287a7340603e463d4c441f0e21b10b0b7ebcc91f08",
-    "bytes": 50864094,
+    "bytes": 50963148,
+    "sha256": "f6391a950ea61b3f1724dceb020c41d0ec6b06ae0c873a3a746d44add67a1798",
     "applicationId": "com.trader.salesmanager.debug",
     "versionCode": 10205,
     "signing": "debug signature verified"
@@ -11,10 +11,10 @@
   {
     "variant": "release",
     "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
-    "sha256": "15584857c93e75003d19d16beb087a9acc5676b8588b0527e5046d538cb05336",
     "bytes": 26638363,
+    "sha256": "7c12a25c6d4ad0b56a1232787cd93e0265c1720faa9db02371ce76610bb6e598",
     "applicationId": "com.trader.salesmanager",
     "versionCode": 10205,
-    "signing": "unsigned confirmed; signed release not verified"
+    "signing": "unsigned; signed device behavior not tested"
   }
 ]
