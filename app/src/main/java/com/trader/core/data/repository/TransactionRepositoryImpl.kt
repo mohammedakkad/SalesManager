@@ -82,7 +82,11 @@ class TransactionRepositoryImpl(
                         localId ->
                         if (localId !in remoteIds) {
                             val entity = transactionDao.getTransactionById(localId) ?: return@forEach
-                            deleteTransactionLocally(entity.enrich(), syncRemote = false)
+                            // A snapshot cannot acknowledge an offline local write.
+                            // Preserve pending, failed and conflicting changes until resolved.
+                            if (entity.syncStatus == SyncStatus.SYNCED.name) {
+                                deleteTransactionLocally(entity.enrich(), syncRemote = false)
+                            }
                         }
                     }
                 }

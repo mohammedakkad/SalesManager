@@ -53,6 +53,12 @@ data class ReturnItem(
 ) {
     /** التحقق من صحة البيانات قبل الحفظ — منع Double Return أو إرجاع سالب */
     fun validate(): Result<Unit> = when {
+        !returnedQuantity.isFinite() || !originalQuantity.isFinite() ||
+            !pricePerUnit.isFinite() || !costPricePerUnit.isFinite() ||
+            !totalRefund.isFinite() || !lostProfit.isFinite() ->
+            Result.failure(IllegalArgumentException("قيم الإرجاع يجب أن تكون أرقاماً محدودة"))
+        originalQuantity <= 0 || pricePerUnit < 0 || costPricePerUnit < 0 ->
+            Result.failure(IllegalArgumentException("كمية أو سعر الإرجاع غير صالح"))
         returnedQuantity <= 0 ->
             Result.failure(IllegalArgumentException("الكمية المرجعة يجب أن تكون أكبر من صفر"))
         returnedQuantity > originalQuantity ->

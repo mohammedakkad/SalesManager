@@ -11,7 +11,7 @@ tasks.register('qaCoverage', JacocoReport) {
     reports { xml.required = true; html.required = true }
 }
 tasks.withType(Test).configureEach {
-    ['https.proxyHost','https.proxyPort','http.proxyHost','http.proxyPort'].each { key ->
+    ['https.proxyHost','https.proxyPort','http.proxyHost','http.proxyPort','javax.net.ssl.trustStore'].each { key ->
         if (System.getProperty(key)) systemProperty key, System.getProperty(key)
     }
     systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
