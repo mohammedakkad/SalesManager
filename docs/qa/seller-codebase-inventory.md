@@ -1,0 +1,231 @@
+# Seller codebase inventory — Stage A
+
+Starting production SHA: `22381d5b55fb59a9270932bcf720b283fa1c90ff` (freshly fetched).
+Branch: `codex/seller-full-coverage-audit`. Initial tree clean. Admin business logic is outside scope.
+
+## Architecture (verified by source)
+`:salesmanager` is the Seller Android application; `:app` is now a shared Android library (not the application on main). `:admin` consumes the same library but is outside the audit scope. Kotlin 2.0.21, AGP 8.3.2, KSP 2.0.21-1.0.27, Compose, Room 2.6.1, coroutines 1.9.0, Koin 3.5.6, Firebase BOM 33.4.0. compile/target SDK 35, min SDK 24. Debug, staging, release variants; staging and release use R8 and release signing.
+
+Startup: SalesManagerApp initializes FCM/Crashlytics/Realtime Database persistence, Koin salesManagerModule, debt/status/update workers, and SyncCoordinator. MainActivity enters AppNavigation; startup/activation gates precede merchant screens. Koin provides database DAOs, concrete remote services, repository interfaces, parameterized ViewModels, worker dependencies, and a runBlocking merchantId singleton.
+
+Navigation/features verified: activation/blocking, dashboard/sync status, customers, transactions/invoice items, debts/reminders, payment methods/cash boxes, inventory/product units/counting/stock reports, returns, analytics/day transactions, barcode camera, chat, settings, sessions/employees, encrypted backup/restore, PDF export/print, APK updates. Feature correctness is not established by inventory.
+
+## Baseline
+No test/testAndroid source sets or coverage configuration found in Seller/shared modules. Line/branch/method/class coverage **not measured** (not 0% and not 100%). No exported historical Room schemas found. Database version 22 has migrations 1→22 and exportSchema=false. No destructive fallback found in its builder.
+
+Baseline command: `/workspace/setup/gradle --no-daemon --max-workers=4 :salesmanager:tasks --all` failed during `:admin` configuration: missing signing values cast to non-null String (admin/build.gradle.kts:26). Seller has the same unsafe pattern. No tests ran. Logs: `/workspace/setup/production-baseline.log` (local).
+
+## Risk and test strategy
+P0 candidates: remote snapshot deletes unsynced local transactions/returns; migration table rebuild and FK behavior; non-finite return values; snapshot/restore consistency; financial writes across repository boundaries. These require regression reproduction before asserting runtime effects. P1: activation listener cancellation, stale merchant singleton, retry/failed sync handling, double returns, stock/cash consistency. P2: locale/RTL formatting, navigation escaping, long lists, export and update error handling.
+
+Required journeys: activation→customer→sale→cash/debt; partial/full return→stock/refund; offline sale→reconnect; count adjustment; backup→isolated restore→record comparison. All require isolated fixtures/fakes; never live merchant data. External boundaries: Firebase Auth/Realtime DB/Firestore/FCM/Remote Config/Crashlytics, Cloudinary, GitHub updates, Android camera/notifications/storage/print.
+
+Use JUnit, coroutine test dispatchers, mocks only at external boundaries; Robolectric for Room/integration; Compose instrumentation on an emulator for end-to-end behavior. Add JaCoCo XML/HTML without production class exclusions. Do not derive gates from unmeasured coverage. Historical migration tests require authentic schemas; current in-memory DB tests do not validate upgrades.
+
+## Complete source enumeration
+This is a discovery inventory, not a claim that every method has received a deep correctness review. Each source is listed with declared types; top-level functions remain included by file.
+
+| Source | Types |
+| --- | --- |
+| `app/src/main/java/com/trader/core/data/local/DataStoreProvider.kt` |  |
+| `app/src/main/java/com/trader/core/data/local/dao/CashBoxDao.kt` | CashBoxDao |
+| `app/src/main/java/com/trader/core/data/local/dao/CashBoxMovementDao.kt` | CashBoxMovementDao |
+| `app/src/main/java/com/trader/core/data/local/dao/CustomerDao.kt` | CustomerDao |
+| `app/src/main/java/com/trader/core/data/local/dao/EmployeeDao.kt` | EmployeeDao |
+| `app/src/main/java/com/trader/core/data/local/dao/InventoryDao.kt` | FinancialReportTotalsProjection, DailySalesProfitProjection, TopSellingProductProjection, InvoiceItemDao, InventoryDao |
+| `app/src/main/java/com/trader/core/data/local/dao/LowStockAlertDao.kt` | LowStockAlertDao |
+| `app/src/main/java/com/trader/core/data/local/dao/PaymentMethodDao.kt` | PaymentMethodDao |
+| `app/src/main/java/com/trader/core/data/local/dao/PendingMessageDao.kt` | PendingMessageDao |
+| `app/src/main/java/com/trader/core/data/local/dao/ProductDao.kt` | ProductWithUnitsRelation, InventoryValueProjection, ProductDao |
+| `app/src/main/java/com/trader/core/data/local/dao/ReturnDao.kt` | ReturnDao, UnitReturnSummary |
+| `app/src/main/java/com/trader/core/data/local/dao/SessionDao.kt` | SessionDao |
+| `app/src/main/java/com/trader/core/data/local/dao/StockMovementDao.kt` | StockMovementDao |
+| `app/src/main/java/com/trader/core/data/local/dao/TransactionDao.kt` | DebtAgingProjection, TodaySalesSummaryProjection, TopDebtorCustomerProjection, DailySalesProjection, TransactionDao |
+| `app/src/main/java/com/trader/core/data/local/db/AppDatabase.kt` | AppDatabase |
+| `app/src/main/java/com/trader/core/data/local/entity/CashBoxEntity.kt` | CashBoxEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/CashBoxMovementEntity.kt` | CashBoxMovementEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/CustomerEntity.kt` | CustomerEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/EmployeeEntity.kt` | EmployeeEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/InvoiceAndInventoryEntities.kt` | InvoiceItemEntity, InventorySessionEntity, InventorySessionItemEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/LowStockAlertStateEntity.kt` | LowStockAlertStateEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/PaymentMethodEntity.kt` | PaymentMethodEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/PendingMessageEntity.kt` | PendingMessageEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/ProductEntity.kt` | ProductEntity, ProductUnitEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/ReturnEntities.kt` | ReturnInvoiceEntity, ReturnItemEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/SessionEntity.kt` | SessionEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/StockMovementEntity.kt` | StockMovementEntity |
+| `app/src/main/java/com/trader/core/data/local/entity/TransactionEntity.kt` | TransactionEntity |
+| `app/src/main/java/com/trader/core/data/manager/EmployeeSessionManager.kt` | EmployeeSessionManager |
+| `app/src/main/java/com/trader/core/data/migration/FirestoreMigrationHelper.kt` | FirestoreMigrationHelper |
+| `app/src/main/java/com/trader/core/data/remote/ChatService.kt` | ChatService |
+| `app/src/main/java/com/trader/core/data/remote/CloudinaryUploader.kt` | CloudinaryUploader, CloudinaryUploadException |
+| `app/src/main/java/com/trader/core/data/remote/FirebaseSyncService.kt` | FirebaseSyncService, MerchantData, ValidationResult, Active, Disabled, Expired, NotFound, NetworkError |
+| `app/src/main/java/com/trader/core/data/remote/MerchantAdminService.kt` | MerchantAdminService |
+| `app/src/main/java/com/trader/core/data/remote/ProductFirestoreService.kt` | ProductFirestoreService |
+| `app/src/main/java/com/trader/core/data/repository/ActivationRepositoryImpl.kt` | ActivationRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/AdminSubscriptionSettingsRepositoryImpl.kt` | AdminSubscriptionSettingsRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/CashBoxRepositoryImpl.kt` | CashBoxRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/ChatRepositoryImpl.kt` | ChatRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/CustomerRepositoryImpl.kt` | CustomerRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/DashboardAnalyticsRepositoryImpl.kt` | DashboardAnalyticsRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/EmployeeRepositoryImpl.kt` | EmployeeRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/FirebaseSubscriptionRepositoryImpl.kt` | FirebaseSubscriptionRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/InventoryRepositoryImpl.kt` | InventoryRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/InvoiceItemRepositoryImpl.kt` | InvoiceItemRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/LowStockAlertRepositoryImpl.kt` | LowStockAlertRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/LowStockSettingsRepositoryImpl.kt` | LowStockSettingsRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/MerchantAdminRepositoryImpl.kt` | MerchantAdminRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/MerchantStatusRepositoryImpl.kt` | MerchantStatusRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/PaymentMethodRepositoryImpl.kt` | PaymentMethodRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/ProductRepositoryImpl.kt` | ProductRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/ReportsRepositoryImpl.kt` | ReportsRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/ReturnRepositoryImpl.kt` | ReturnRepositoryImpl |
+| `app/src/main/java/com/trader/core/data/repository/StockRepositoryImpl.kt` | StockRepositoryImpl, StockConflict |
+| `app/src/main/java/com/trader/core/data/repository/TransactionRepositoryImpl.kt` | TransactionRepositoryImpl |
+| `app/src/main/java/com/trader/core/device/DeviceFingerprintProvider.kt` | DeviceFingerprintProvider, DeviceInfo |
+| `app/src/main/java/com/trader/core/domain/model/CashBox.kt` | CashBox |
+| `app/src/main/java/com/trader/core/domain/model/CashBoxMovement.kt` | CashBoxMovement, CashBoxMovementType, AdjustmentReason |
+| `app/src/main/java/com/trader/core/domain/model/ChatMessage.kt` | MessageStatus, ChatMessage |
+| `app/src/main/java/com/trader/core/domain/model/Customer.kt` | Customer |
+| `app/src/main/java/com/trader/core/domain/model/DashboardAnalytics.kt` | TodaySalesSummary, TopSellingProduct, TopDebtorCustomer, DailySales, DashboardAnalytics |
+| `app/src/main/java/com/trader/core/domain/model/Employee.kt` | EmployeeRole, Employee |
+| `app/src/main/java/com/trader/core/domain/model/Inventory.kt` | InvoiceItem, InventorySession, InventorySessionItem, InventoryStatus |
+| `app/src/main/java/com/trader/core/domain/model/Merchant.kt` | MerchantStatus, Merchant |
+| `app/src/main/java/com/trader/core/domain/model/MerchantTier.kt` | MerchantTier |
+| `app/src/main/java/com/trader/core/domain/model/PaymentMethod.kt` | PaymentMethod, PaymentType |
+| `app/src/main/java/com/trader/core/domain/model/Product.kt` | Product, ProductUnit, StockLevel, ProductWithUnits, UnitType, WeightUnit, SyncStatus |
+| `app/src/main/java/com/trader/core/domain/model/ReportAnalytics.kt` | FinancialReportTotals, DailySalesProfit, InventoryValue, DebtAging |
+| `app/src/main/java/com/trader/core/domain/model/ReturnModels.kt` | TransactionReturnStatus, ReturnType, ReturnSyncStatus, ReturnInvoice, ReturnItem, ReturnSummary, ReturnUiState, Idle, Loading, Success, Error |
+| `app/src/main/java/com/trader/core/domain/model/Session.kt` | Session |
+| `app/src/main/java/com/trader/core/domain/model/StartupStatus.kt` | StartupStatus |
+| `app/src/main/java/com/trader/core/domain/model/StockMovement.kt` | StockMovement, MovementType |
+| `app/src/main/java/com/trader/core/domain/model/SubscriptionConfig.kt` | SubscriptionPlan, SubscriptionPaymentMethod |
+| `app/src/main/java/com/trader/core/domain/model/SubscriptionRequest.kt` | SubscriptionRequest, SubscriptionStatus |
+| `app/src/main/java/com/trader/core/domain/model/SubscriptionState.kt` | SubscriptionState |
+| `app/src/main/java/com/trader/core/domain/model/Transaction.kt` | Transaction |
+| `app/src/main/java/com/trader/core/domain/repository/ActivationRepository.kt` | ActivationRepository |
+| `app/src/main/java/com/trader/core/domain/repository/AdminSubscriptionSettingsRepository.kt` | AdminSubscriptionSettingsRepository |
+| `app/src/main/java/com/trader/core/domain/repository/CashBoxRepository.kt` | CashBoxRepository |
+| `app/src/main/java/com/trader/core/domain/repository/ChatRepository.kt` | ChatRepository |
+| `app/src/main/java/com/trader/core/domain/repository/CustomerRepository.kt` | CustomerRepository |
+| `app/src/main/java/com/trader/core/domain/repository/DashboardAnalyticsRepository.kt` | DashboardAnalyticsRepository |
+| `app/src/main/java/com/trader/core/domain/repository/EmployeeRepository.kt` | EmployeeRepository |
+| `app/src/main/java/com/trader/core/domain/repository/InventoryRepository.kt` | InventoryRepository |
+| `app/src/main/java/com/trader/core/domain/repository/InvoiceItemRepository.kt` | InvoiceItemRepository |
+| `app/src/main/java/com/trader/core/domain/repository/LowStockAlertRepository.kt` | LowStockAlertCandidate, LowStockAlertRepository |
+| `app/src/main/java/com/trader/core/domain/repository/LowStockSettingsRepository.kt` | LowStockAlertSettings, LowStockSettingsRepository |
+| `app/src/main/java/com/trader/core/domain/repository/MerchantAdminRepository.kt` | MerchantAdminRepository |
+| `app/src/main/java/com/trader/core/domain/repository/MerchantStatusRepository.kt` | MerchantStatusRepository |
+| `app/src/main/java/com/trader/core/domain/repository/PaymentMethodRepository.kt` | PaymentMethodRepository |
+| `app/src/main/java/com/trader/core/domain/repository/ProductRepository.kt` | ProductRepository |
+| `app/src/main/java/com/trader/core/domain/repository/ReportsRepository.kt` | ReportsRepository |
+| `app/src/main/java/com/trader/core/domain/repository/ReturnRepository.kt` | ReturnRepository |
+| `app/src/main/java/com/trader/core/domain/repository/StockRepository.kt` | StockRepository |
+| `app/src/main/java/com/trader/core/domain/repository/SubscriptionRepository.kt` | SubscriptionRepository |
+| `app/src/main/java/com/trader/core/domain/repository/TransactionRepository.kt` | TransactionRepository |
+| `app/src/main/java/com/trader/core/domain/usecase/GetDashboardAnalyticsUseCase.kt` | GetDashboardAnalyticsUseCase |
+| `app/src/main/java/com/trader/core/sync/GlobalSyncState.kt` | GlobalSyncState, AllSynced, Pending, Failed, UnsyncedItem, UnsyncedItemType |
+| `app/src/main/java/com/trader/core/sync/SyncCoordinator.kt` | SyncCoordinator |
+| `app/src/main/java/com/trader/core/sync/SyncStatusObserver.kt` | SyncStatusObserver |
+| `app/src/main/java/com/trader/core/util/DateUtils.kt` | DateUtils |
+| `app/src/main/java/com/trader/core/util/ExpiryNotificationHelper.kt` | ExpiryNotificationHelper |
+| `app/src/main/java/com/trader/core/util/ImageCompressor.kt` | ImageCompressor |
+| `app/src/main/java/com/trader/core/util/NetworkMonitor.kt` | NetworkMonitor |
+| `app/src/main/java/com/trader/core/worker/StatusCheckWorker.kt` | StatusCheckWorker |
+| `salesmanager/src/main/java/com/trader/salesmanager/ChatNotificationService.kt` | ChatNotificationService |
+| `salesmanager/src/main/java/com/trader/salesmanager/MainActivity.kt` | MainActivity |
+| `salesmanager/src/main/java/com/trader/salesmanager/SalesManagerApp.kt` | SalesManagerApp |
+| `salesmanager/src/main/java/com/trader/salesmanager/di/SalesManagerModule.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/service/NotificationService.kt` | NotificationService |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/activation/ActivationScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/activation/ActivationUiState.kt` | ActivationUiState |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/activation/ActivationViewModel.kt` | StartupState, Checking, Proceed, ProceedFree, NeedActivation, Blocked, ActivationViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/activation/MerchantWatcherViewModel.kt` | MerchantEvent, Disabled, Deleted, Expired, ExpiryWarning, MerchantWatcherViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/boxes/BoxesScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/boxes/BoxesViewModel.kt` | BoxesUiState, BoxesViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatViewModel.kt` | ChatUiState, ChatViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/components/SharedComponents.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/customers/addedit/AddEditCustomerScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/customers/addedit/AddEditCustomerViewModel.kt` | AddEditCustomerUiState, AddEditCustomerViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/customers/details/CustomerDetailsScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/customers/details/CustomerDetailsViewModel.kt` | CustomerDetailsUiState, CustomerDetailsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/customers/list/CustomersScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/customers/list/CustomersUiState.kt` | DeleteConfirmState, CustomersUiState |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/customers/list/CustomersViewModel.kt` | CustomersViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/debts/DebtsScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/debts/DebtsViewModel.kt` | CustomerDebt, DebtsUiState, DebtsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/employees/EmployeeManagementScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/employees/EmployeeManagementViewModel.kt` | AddEmployeeError, AddEmployeeForm, EmployeeManagementEvent, EmployeeAdded, EmployeeDeleted, Failure, EmployeeManagementViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/home/AnalyticsDashboard.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/home/HomeScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/home/HomeUiState.kt` | DashboardUiState, HomeUiState |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/home/HomeViewModel.kt` | HomeViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/home/SyncStatusSheet.kt` | SheetHeaderData |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/home/SyncStatusViewModel.kt` | SyncStatusViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/addedit/AddEditProductScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/addedit/AddEditProductViewModel.kt` | UnitDraft, AddEditProductUiState, AddEditProductViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/detail/ProductDetailScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/detail/ProductDetailViewModel.kt` | ManualAdjustState, ProductDetailUiState, ProductDetailViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsViewModel.kt` | InvoiceLineItem, InvoiceItemsUiState, InvoiceItemsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceUtils.kt` | SaleWeightUnit |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/list/InventoryListScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/list/InventoryListViewModel.kt` | InventoryListUiState, StockFilter, InventoryListViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/reports/StockReportsScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/reports/StockReportsViewModel.kt` | StockReportItem, CashSummary, StockReportsUiState, StockReportsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/session/InventorySessionScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/session/InventorySessionViewModel.kt` | InventorySessionUiState, InventorySessionViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/navigation/AppNavigation.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/navigation/MainBottomNavigationBar.kt` | BottomNavItem |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/navigation/Screen.kt` | Screen, Activation, Home, CustomersList, AddCustomer, EditCustomer, CustomerDetails, TransactionsList, AddTransaction, EditTransaction, TransactionDetails, Reports, PaymentMethods, CashBoxes, Sessions, Debts, Settings, Backup, Chat, DayTransactions, Inventory, AddProduct, EditProduct, ProductDetail, InventorySession, InvoiceItems, StockReports, ReturnProcess, EmployeeManagement |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/navigation/SplashAndBlocked.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/payments/PaymentMethodsScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/payments/PaymentMethodsViewModel.kt` | PaymentMethodsUiState, PaymentMethodsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/reports/DayTransactionsScreen.kt` | DayTxUiState, DayTransactionsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/reports/ReportsScreen.kt` | ReportExportAction |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/reports/ReportsViewModel.kt` | ReportPeriod, DaySalesEntry, CustomerRank, PaymentShare, SalesProfitDayEntry, TimeOfDayAnalysis, ReportsUiState, ReportsViewModel, PeriodFinancials, AdvancedAnalyticsState, CalendarReportState |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnViewModel.kt` | ReturnLineState, ReturnScreenState, ReturnViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/scanner/BarcodeScannerScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/SettingsScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupCrypto.kt` | BackupCrypto, FileHeader |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupFormatting.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupManager.kt` | BackupManager, GsonHolder, BackupException, NewerBackupVersion, UnsupportedBackupVersion, Corrupted, WrongPasswordOrCorrupted, PasswordRequired, EmptyBackup, InvalidFile, StorageFailed, ReadFailed |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupMigrator.kt` | BackupMigrator |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupPayload.kt` | BackupPayload |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupViewModel.kt` | BackupUiState, BackupViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/sessions/SessionsScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/settings/sessions/SessionsViewModel.kt` | SessionsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/theme/Color.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/theme/Theme.kt` | AppColorTokens |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/theme/Type.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionViewModel.kt` | AddEditTransactionUiState, AddEditTransactionViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt` | PdfExportAction |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/details/TransactionDetailsViewModel.kt` | TransactionDetailsUiState, TransactionDetailsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/list/TransactionsScreen.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/list/TransactionsUiState.kt` | TransactionsUiState |
+| `salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/list/TransactionsViewModel.kt` | TransactionsViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/update/AppUpdateChecker.kt` | AppUpdateChecker |
+| `salesmanager/src/main/java/com/trader/salesmanager/update/AppUpdateDownloader.kt` | AppUpdateDownloader |
+| `salesmanager/src/main/java/com/trader/salesmanager/update/AppUpdateInfo.kt` | AppUpdateInfo |
+| `salesmanager/src/main/java/com/trader/salesmanager/update/AppUpdateViewModel.kt` | AppUpdateUiState, AppUpdateViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/update/BackgroundUpdateWorker.kt` | BackgroundUpdateWorker |
+| `salesmanager/src/main/java/com/trader/salesmanager/update/UpdateDownloadReceiver.kt` | UpdateDownloadReceiver |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/InvoiceSharer.kt` | InvoiceSharer |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/export/ExportActionButton.kt` |  |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/export/ExportManager.kt` | ExportManager |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/export/ExportState.kt` | ExportState, Idle, Loading, Success, Error, ExportType, ExportTarget |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/export/ExportViewModel.kt` | ExportViewModel |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/export/XlsxWriter.kt` | XlsxWriter, CellStyle |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/pdf/InvoicePdfGenerator.kt` | InvoicePdfGenerator, InvoicePdfData |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/pdf/PdfCanvas.kt` | PdfCanvas |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/pdf/PdfLayoutConstants.kt` | PdfLayoutConstants |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/pdf/PdfPrintManager.kt` | PdfPrintManager, ExistingPdfAdapter |
+| `salesmanager/src/main/java/com/trader/salesmanager/util/pdf/ReportPdfGenerator.kt` | ReportPdfGenerator, MonthlyReportPdfData, DebtRow |
+| `salesmanager/src/main/java/com/trader/salesmanager/worker/LowStockCheckWorker.kt` | LowStockCheckWorker |
+| `salesmanager/src/main/java/com/trader/salesmanager/worker/UnpaidDebtWorker.kt` | UnpaidDebtWorker |
+
+Total production Kotlin files enumerated: **200**. No production Java files found.
