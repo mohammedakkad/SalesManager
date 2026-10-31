@@ -26,9 +26,6 @@ class SalesManagerApp : Application(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
         com.google.firebase.messaging.FirebaseMessaging.getInstance().token
-            .addOnSuccessListener { token ->
-                android.util.Log.d("FCM", "Token: $token")
-            }
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
         FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         ExpiryNotificationHelper.createChannel(this)

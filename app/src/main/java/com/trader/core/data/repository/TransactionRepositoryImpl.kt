@@ -24,6 +24,7 @@ class TransactionRepositoryImpl(
     private val invoiceItemRepo: InvoiceItemRepository,
     private val stockRepo: StockRepository,
     private val cashBoxRepo: CashBoxRepository,
+    private val returnDao: ReturnDao,
     private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) : TransactionRepository {
 
@@ -204,18 +205,15 @@ class TransactionRepositoryImpl(
 
     private suspend fun deleteTransactionLocally(t: Transaction, syncRemote: Boolean) {
         val items = invoiceItemRepo.getItemsForTransactionOnce(t.id)
-        if (items.isNotEmpty()) {
-            items.forEach { item ->
-                stockRepo.returnStock(
-                    productId = item.productId,
-                    unitId = item.unitId,
-                    quantity = item.quantity,
-                    transactionId = t.id,
-                    productName = item.productName,
-                    unitLabel = item.unitLabel
-                )
+        val returnedByUnit = returnDao.getReturnedByUnit(t.id).associate { it.unitId to it.total }
+        items.groupBy { it.unitId }.forEach { (unitId, lines) ->
+            val remaining = (lines.sumOf { it.quantity } - (returnedByUnit[unitId] ?: 0.0)).coerceAtLeast(0.0)
+            if (remaining > 0) {
+                val item = lines.first()
+                stockRepo.returnStock(item.productId, unitId, remaining, t.id, item.productName, item.unitLabel)
             }
         }
+        returnDao.deleteForTransaction(t.id)
         invoiceItemRepo.deleteItemsForTransaction(t.id)
         transactionDao.deleteTransaction(TransactionEntity.fromDomain(t))
         cashBoxRepo.applyTransactionEffect(

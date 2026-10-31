@@ -48,6 +48,9 @@ interface ReturnDao {
         if (local == null || local.syncStatus == "SYNCED") insertReturnWithItems(invoice, items)
     }
 
+    @Query("DELETE FROM return_invoices WHERE originalTransactionId = :transactionId")
+    suspend fun deleteForTransaction(transactionId: Long)
+
     // ── Queries ────────────────────────────────────────────────
     @Query("SELECT * FROM return_invoices WHERE originalTransactionId = :transactionId ORDER BY createdAt DESC")
     fun getReturnsByTransaction(transactionId: Long): Flow<List<ReturnInvoiceEntity>>
