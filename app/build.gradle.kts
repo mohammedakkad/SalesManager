@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    jacoco
 }
 
 android {
@@ -11,6 +12,7 @@ android {
     defaultConfig {
         minSdk = 24
     }
+    testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11
     }
@@ -25,6 +27,11 @@ android {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("androidx.test:core:1.6.1")
     api(libs.androidx.core.ktx)
     api(libs.androidx.lifecycle.runtime)
     api(libs.androidx.lifecycle.viewmodel)
@@ -55,3 +62,4 @@ dependencies {
     api(libs.gson)
     api(libs.coil.compose)
 }
+apply(from = rootProject.file("gradle/qa-coverage.gradle"))

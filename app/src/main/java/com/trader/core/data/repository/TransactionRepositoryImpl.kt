@@ -23,10 +23,10 @@ class TransactionRepositoryImpl(
     private val activationRepo: ActivationRepository,
     private val invoiceItemRepo: InvoiceItemRepository,
     private val stockRepo: StockRepository,
-    private val cashBoxRepo: CashBoxRepository
+    private val cashBoxRepo: CashBoxRepository,
+    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) : TransactionRepository {
 
-    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
         startRealtimeSync()

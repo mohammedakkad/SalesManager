@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    jacoco
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -24,10 +25,10 @@ android {
     }
     signingConfigs {
         create("release") {
-            storeFile   = file(System.getenv("KEYSTORE_PATH")     ?: keystoreProperties["storeFile"]    as String)
-            storePassword = System.getenv("KEYSTORE_PASSWORD")    ?: keystoreProperties["storePassword"] as String
-            keyAlias    = System.getenv("KEY_ALIAS")              ?: keystoreProperties["keyAlias"]     as String
-            keyPassword = System.getenv("KEY_PASSWORD")           ?: keystoreProperties["keyPassword"]  as String
+            storeFile = (System.getenv("KEYSTORE_PATH") ?: keystoreProperties["storeFile"] as String?)?.let { file(it) }
+            storePassword = System.getenv("KEYSTORE_PASSWORD")    ?: keystoreProperties["storePassword"] as String?
+            keyAlias    = System.getenv("KEY_ALIAS")              ?: keystoreProperties["keyAlias"]     as String?
+            keyPassword = System.getenv("KEY_PASSWORD")           ?: keystoreProperties["keyPassword"]  as String?
         }
     }
     buildTypes {
@@ -50,6 +51,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+    testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
     kotlinOptions { jvmTarget = "11" }
     buildFeatures {
@@ -60,6 +62,9 @@ android {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.13")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
     implementation(project(":app"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
@@ -73,3 +78,5 @@ dependencies {
     implementation(libs.vico.compose.m3)
     debugImplementation(libs.compose.ui.tooling)
 }
+
+apply(from = rootProject.file("gradle/qa-coverage.gradle"))

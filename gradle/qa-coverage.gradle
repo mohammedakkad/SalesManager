@@ -1,0 +1,18 @@
+// Report every compiled production Kotlin class; no coverage exclusions.
+jacoco { toolVersion = '0.8.12' }
+tasks.withType(Test).configureEach {
+    jacoco { includeNoLocationClasses = true; excludes = ['jdk.internal.*'] }
+}
+tasks.register('qaCoverage', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+    executionData.from(fileTree(buildDir).include('**/testDebugUnitTest.exec'))
+    classDirectories.from(files("$buildDir/tmp/kotlin-classes/debug", "$buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes"))
+    sourceDirectories.from(files('src/main/java', 'src/main/kotlin'))
+    reports { xml.required = true; html.required = true }
+}
+tasks.withType(Test).configureEach {
+    ['https.proxyHost','https.proxyPort','http.proxyHost','http.proxyPort'].each { key ->
+        if (System.getProperty(key)) systemProperty key, System.getProperty(key)
+    }
+    systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
+}
