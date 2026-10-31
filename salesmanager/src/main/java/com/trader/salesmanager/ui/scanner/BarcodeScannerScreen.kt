@@ -67,7 +67,7 @@ import com.trader.salesmanager.ui.theme.Cyan500
 import com.trader.salesmanager.ui.theme.Emerald500
 import java.util.concurrent.Executors
 
-@OptIn(ExperimentalGetImage::class)
+@androidx.annotation.OptIn(ExperimentalGetImage::class)
 @Composable
 fun BarcodeScannerScreen(
     onBarcodeDetected: (String) -> Unit,
