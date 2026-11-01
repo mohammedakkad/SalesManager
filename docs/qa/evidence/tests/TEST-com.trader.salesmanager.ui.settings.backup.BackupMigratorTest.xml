@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupMigratorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:44:33" hostname="1845f097faca" time="0.011">
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupMigratorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:58:38" hostname="1845f097faca" time="0.043">
   <properties/>
-  <testcase name="futurePayloadIsRejectedRatherThanRestored" classname="com.trader.salesmanager.ui.settings.backup.BackupMigratorTest" time="0.004"/>
+  <testcase name="futurePayloadIsRejectedRatherThanRestored" classname="com.trader.salesmanager.ui.settings.backup.BackupMigratorTest" time="0.014"/>
   <testcase name="unsupportedOldPayloadIsRejectedRatherThanRestored" classname="com.trader.salesmanager.ui.settings.backup.BackupMigratorTest" time="0.0"/>
-  <testcase name="allSupportedPayloadVersionsPreserveFinancialRecords" classname="com.trader.salesmanager.ui.settings.backup.BackupMigratorTest" time="0.007"/>
+  <testcase name="allSupportedPayloadVersionsPreserveFinancialRecords" classname="com.trader.salesmanager.ui.settings.backup.BackupMigratorTest" time="0.028"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

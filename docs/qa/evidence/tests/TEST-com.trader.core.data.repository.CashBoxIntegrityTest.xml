@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.CashBoxIntegrityTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:57:07" hostname="1845f097faca" time="4.936">
+  <properties/>
+  <testcase name="failedRecordsRetryWithoutReapplyingBalancesOrConflicts" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="2.508"/>
+  <testcase name="paidTransferReconcilesBalancesAndLedger" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.336"/>
+  <testcase name="offlineRetryKeepsDurableRecordsWithoutRemoteRequests" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.22"/>
+  <testcase name="cancelledBoxUploadPropagatesWithoutMarkingFailed" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.221"/>
+  <testcase name="cancelledMovementUploadPropagatesWithoutMarkingFailed" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.247"/>
+  <testcase name="unchangedPaymentDoesNotCreateLedgerNoise" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.184"/>
+  <testcase name="logoutCancelsBothRemoteSubscriptions" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.18"/>
+  <testcase name="unpaidSaleDoesNotAffectCash" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.163"/>
+  <testcase name="manualCorrectionRecordsOnlyDifferenceAndKeepsInitialHistory" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.243"/>
+  <testcase name="partialBatchFailureDoesNotBlockOthersAndRetryUsesSameLedgerId" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.254"/>
+  <testcase name="initialBalanceCanBeSetOnlyOnce" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.194"/>
+  <testcase name="secondBoxFailureRollsBackWholePaymentTransfer" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.185"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

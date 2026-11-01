@@ -1,40 +1,41 @@
 # Seller release readiness — full acceptance FAIL
 
-The audit continues on `codex/seller-full-coverage-audit`; it was not restarted. Resume HEAD: `9197b5045e60cff140e043239ad526522f97c4b7`; original production base: `22381d5b55fb59a9270932bcf720b283fa1c90ff`. Admin business logic and production data were not modified. Do not approve a production release from these results.
+Continued on existing `codex/seller-full-coverage-audit` from `cea574c4049b5f989fc9e88bc07a39cd4a130eaa`; Stage6 committed/pushed as5efe40a, Stage7 follows it. Fresh production base remains `22381d5b55fb59a9270932bcf720b283fa1c90ff`. No branch restart, admin-module change, production-data access, force-push, merge or deployment. Do not approve a production release from these results.
 
 | Check | Status | Measured evidence / limits |
 | --- | --- | --- |
-| JVM regression suite | PASS | 88 passed, 0 failed, 0 skipped, 18 classes; original30 retained;58 added across continuations |
-| Line / branch coverage | FAIL (100% target) | Weighted11.3066% lines /3.8294% branches; method14.1563%, class12.7866%; exact gaps and original XML saved |
-| Baseline CI coverage floors | PASS | Raised: shared line26.6%, branch15.2%; Seller line2.9%, branch1.6%; no production exclusions |
-| Room22→23 upgrade | PASS | Actual exported22 schema; representative fixture records; state backfill, record preservation, FK checks, sequence, rollback |
-| Older migration chains | BLOCKED | Authentic versions1–21 schemas/databases absent in checkout and available history; never fabricated |
-| Backup/restore | PASS (tested cases) | Encrypted round trip, rollback on orphan input, corrupted input, legacy return recovery, export snapshot boundary |
-| Native PDF content | BLOCKED | Robolectric has no PdfDocument native implementation; assertions moved intact to real-device generation +host PDFBox verification; not executed |
-| Compose/device tests | BLOCKED | Four instrumentation tests compile; actual connectedDebugAndroidTest fails `DeviceException: No connected devices!`; no device passes claimed |
-| Host PDF verifier | PASS compile / NOT TESTED execution | testClasses compiled;2 content tests need real Android-generated PDFs |
-| Android Lint | PASS errors / warnings remain | 0 errors, 32 warnings, 1 information;36→32; no suppression/baseline added |
-| Debug APK | PASS | Assembly and apksigner verification; artifact path/hash in evidence/apk-manifest.json |
-| Minified unsigned release | PASS build | Actual R8/resource shrinking ran; current outputs reused on successful final aggregate; unsigned status confirmed; not installed/published |
-| Signed/minified device behavior | BLOCKED / NOT TESTED | Approved uncompromised signing setup and device needed; R8 build alone is not runtime verification |
-| Signing exposure containment | PASS current index / rotation BLOCKED | Signing export untracked/ignored, local file preserved, token logging removed; history still contains material; owner assessment/rotation required |
-| Firebase multi-device / server rules | NOT TESTED | Deterministic mocks cover local paths; no production Firebase data/activation requests; no full emulator integration |
-| GitHub Actions / Draft PR | BLOCKED | `Post "https://api.github.com/graphql": Forbidden`; Git pushes work; remote CI execution not observed |
+| JVM regression suite | PASS | 100 passed,0 failed,0 skipped,19 classes;25 added this continuation; original30 audit tests and all75 starting tests retained |
+| 100% coverage target | FAIL | Weighted13.1653% lines /4.3662% branches; method15.9734%,class14.6789%;3490/26509 lines,704/16124 branches |
+| Module coverage | Verified | Shared32.0230% lines/18.7224% branches; Seller3.1272%/1.7455%; no production exclusions |
+| Reviewed regression floors | PASS | Shared31.9% lines/18.5% branches; Seller3.0%/1.7%; all raised after measurements |
+| Room22→23 upgrade | PASS canonical fixtures | Authentic exported22 schema; state backfill, records/balances/invoices/stock,FK checks,sequence and rollback |
+| Historical upgrades1–21→23 | BLOCKED | Authentic schemas/databases unavailable; per-version acquisition matrix in stage5-blockers.md; no invented schemas |
+| Return persistence / retries | PASS tested paths | Durable close/reopen, stable-ID idempotency, pending/conflict protection, timeout/cancellation and fractional return regressions retained |
+| Inventory integrity | PASS tested local paths | Atomic session/snapshot/finalization, durable duplicate guard, local stock rollback, history/count/merchant validation; stock collaborator controlled |
+| Customer sync | PASS tested paths | Remote snapshots preserve PENDING/FAILED/CONFLICT edits; synced edits retain debt history/visitor; logout cancels listener |
+| Cash transfer / retry | PASS tested local paths | Real SQLite abort rolls back both balances/ledger; valid transfer conservation, initialization/correction history,FAILED retries,offline retention,batch isolation,cancellation and merchant listener replacement |
+| Whole-sale / distributed atomicity | NOT TESTED comprehensively | Cash sub-operation is transactional; sale/stock/debt/invoice/cash aggregate and independent remote writes remain unproven |
+| Backup/restore | PASS tested cases | Encrypted round trip,orphan rollback,corruption,legacy return recovery and export snapshot boundary; large/interrupted/concurrent/minified workflows incomplete |
+| Android instrumentation | BLOCKED execution / PASS compile | Four tests package successfully; adb finds no device,/dev/kvm absent; prior connectedDebugAndroidTest failed No connected devices |
+| Native PDF content | BLOCKED | Two host verifier tests require real Android-generated PDFs; verifier compilation previously passed,execution not claimed |
+| Android Lint | PASS errors / warnings remain | 0 errors,24 warnings,0 information;32→24 warnings this turn; four incompatible dependency registries skipped,explicit triage,no suppression |
+| Debug APK | PASS | Assembly and debug apksigner verification; hash/size/application ID in evidence/apk-manifest.json |
+| Minified unsigned release APK | PASS build | Actual R8/resource shrinking in stage7-verified.log; valid output reused in successful final aggregate; unsigned status confirmed |
+| Signed/minified device runtime | BLOCKED / NOT TESTED | Approved uncompromised signing setup and device required; no installation/distribution or runtime pass claimed |
+| Signing material policy | PASS current index / rotation BLOCKED | Export untracked/ignored and retained locally; history exposure requires owner assessment/rotation/remediation; contents never displayed |
+| Firebase emulator / multiple devices / rules | NOT TESTED | Deterministic mocked protocol tests only; no production merchant requests |
+| Device profiling / full security/advisory scan | NOT TESTED / BLOCKED external access | No device timing/heap/ANR figures or vulnerability-free claim |
+| GitHub Actions | BLOCKED live verification | Workflow structure/local equivalent commands reviewed; API403 prevents observing remote runs; no CI success claimed |
+| Existing PR51 | BLOCKED live state/update | User-provided Draft PR https://github.com/mohammedakkad/SalesManager/pull/51; no duplicate PR or merge; gh pr view51 returns Forbidden |
+| Reusable setup draft | BLOCKED save / PASS local repeat | Service says draft uneditable; tested complete installer/start instructions preserved in environment-setup/,not confirmed saved/published |
 
-## Completed stages and evidence
+## Evidence and reproduction
 
-See seller-audit-continuation.md for each stage's tests, coverage, changed files, commands and blockers. Stage1 fixed durable return state with an additive23 migration (35 passing). Stage2 fixed return synchronization/idempotency/retry and timeout/profit serialization (51 passing). Stage3 fixed double restocking on deletion and signing/logging policy (53 passing). Stage4 fixed backup/form/financial input failures and added supported UI/PDF infrastructure (70 passing).
+Stage7 before evidence: evidence/continuation/stage7/stage7-cash-before.log and cash-before.xml (5failures/8tests). Initial after:8/8 pass. Expanded/final suite:100/100. Actual R8 aggregate:stage7-verified.log **BUILD SUCCESSFUL in6m57s**. Final exact-source aggregate:stage7-final.log **BUILD SUCCESSFUL in3m45s,227 tasks (54executed,173valid up-to-date)**. The final run rechecks the last transaction boundary and removes the empty obsolete drawable folder; it does not claim R8 ran twice. Current JUnit:evidence/tests/. Actual original XML compressed with hashes:evidence/coverage/. Exact uncovered classes,source lines and branch counts:seller-class-coverage-gaps.csv and seller-coverage-gaps.csv. APK metadata/signatures:evidence/apk-manifest.json. Stage-by-stage files/bugs/counts:seller-audit-continuation.md.
 
-Before/after logs: evidence/continuation/stage1–stage4/. Latest complete run: evidence/continuation/stage4/stage4-verified.log: **BUILD SUCCESSFUL, 1m6s, 227 actionable tasks (24 executed, 203 valid up-to-date outputs)**. JUnit XML:evidence/tests/. Compressed JaCoCo XML +hashes:evidence/coverage/. The earlier final-build.log contains2 unsupported Robolectric PDF failures, not hidden application passes. The corrected run moves native assertions to supported device/host tests; PDF production JVM counters remain0 covered lines/branches rather than manufacturing output.
-
-## Reproduce supported local checks
 ```bash
 cd /workspace/SalesManager
-export JAVA_HOME='/workspace/toolchains/jdk-17.0.17+10'
-/workspace/setup/gradle -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts \
-  -Dorg.gradle.jvmargs='-Xmx6g -Dfile.encoding=UTF-8' \
-  -Pkotlin.compiler.execution.strategy=in-process \
-  --configure-on-demand --no-configuration-cache --no-daemon --max-workers=4 --continue \
+/workspace/setup/continuation/gradle --continue \
   :app:qaCoverage :salesmanager:qaCoverage :salesmanager:lintDebug \
   :salesmanager:assembleDebug :salesmanager:assembleDebugAndroidTest :salesmanager:assembleRelease \
   -x :salesmanager:uploadCrashlyticsMappingFileRelease
@@ -42,23 +43,18 @@ python3 scripts/report-seller-coverage.py --check
 python3 scripts/check-seller-secrets.py
 ```
 
-Do not upload Crashlytics mappings during QA. No production signing key or merchant data was used. Existing client configuration was used only for local packaging, not live operation. The offline fixture generator is for disposable CI checkouts only; do not overwrite a user's config. The instrumentation runner refuses real Firebase project configuration before Application/provider initialization and avoids Seller startup/workers. See qa/pdf-verifier/README.md for real PDF extraction/validation commands. CI adds the emulator/host verification job, but no remote success is claimed.
+Full JDK17,SDK35/build-tools34 and checksum-verified Gradle8.9 are required. The tested helper preserves proxy/CA trust,uses four workers and avoids unrelated admin signing configuration. Complete transferable setup:environment-setup/install.sh and start.md. No Crashlytics mapping upload or production key use. Existing client config is for packaging only. Use the offline fixture generator only in a disposable checkout; OfflineQaRunner refuses real Firebase projects before Application/provider initialization. See qa/pdf-verifier/README.md for actual device/PDF commands. Compiled tests are not executed tests.
 
-## Remaining release blockers
-- Missing return history cannot be reconstructed; backfill only uses durable existing records. Versions1–21 migration safety remains unverified.
-- Cross-repository atomicity and server-side transaction/stock/cash/return consistency, remote cascades/tombstones, in-flight logout, merchant-switching and multi-price invoice-line returns need more regression coverage. Pending records and repeated stable-ID processing are protected; no complete conflict resolver is claimed.
-- Key rotation/history remediation requires the signing owner. Firebase rules and client API restrictions need owner review. Current index contains Firebase client metadata, not automatically a server credential; values were not printed or changed here.
-- Execute all four device tests and both host content tests, then signed upgrades, minified backup round trips, print/share, RTL visual/accessibility/restoration and profiling. Large/corrupted JSON structures and ZIP-size limits require further hardening.
-- Cover all remaining classes/lines/branches from the gap CSVs;100% and zero remaining P0 defects are not claimed.
+## Remaining release blockers and next priorities
 
-## Existing PR51
+1. Reproduce aggregate failure paths in TransactionRepository insert/update/delete across sale,cash,stock,invoice and debt,then implement a reviewed shared local transaction/outbox boundary. StockRepositoryImpl launches remote writes independently; inventory rollback tests use a controlled transaction-aware collaborator and do not prove remote rollback. Stale upload acknowledgements,concurrent restore/sync,tombstones,merchant switching and same-unit/multiple-price returns need further regression coverage and explicit server policy. No complete conflict resolver or zero remaining P0 guarantee is claimed.
+2. Obtain authentic schemas/sanitized databases1–21 with provenance/version/identity hashes and test every supported chain; historical records missing from durable ledgers cannot be reconstructed from balances alone. Follow stage5-blockers.md; never use destructive fallback.
+3. Signing owner must assess/rotate/reset exposed material through approved procedures and verify update continuity. Current-index removal does not revoke historical copies. Firebase API restrictions/rules and dependency advisory review remain unverified.
+4. Execute4 instrumentation tests and2 host PDF content tests in the isolated CI emulator/device workflow. Then verify signed/minified upgrades,backup round trips,print/share,RTL/accessibility/restoration and profiling. Large/malformed JSON and ZIP expansion limits remain incomplete.
+5. Close exact coverage gaps meaningfully;100 tests are not100% coverage. Align dependency lint registries with a validated toolchain,review Context fields on device and address launcher design warnings. No coverage/quality gate was weakened.
 
-The user supplied existing Draft PR https://github.com/mohammedakkad/SalesManager/pull/51. Do not create another PR or merge it. Live state/CI inspection and body update remain BLOCKED: `Post "https://api.github.com/graphql": Forbidden`. Git pushes work. After networking permits api.github.com, inspect PR51 and update it with `gh pr edit 51 --body-file docs/qa/draft-pr-body.md`; preserve Draft/unmerged state. Do not paste credentials in chat.
+## PR and setup access blockers
 
-## Stage5 verified increment
-Starting HEAD60785ece9b9c8ca9fa127c2f12af6674bc7d9954. Five tests added;75 pass,0 fail/skip. Shared-layer transaction retries now include FAILED records, propagate cancellation, and stop listeners on logout. Fractional returns tolerate only four ULPs of representation error. Full JVM/coverage/lint/debug/minified-unsigned build passed (7m16s);32 lint warnings remain. Seller coverage stays2.9653% lines/1.6901% branches. Existing PR51 API update remains blocked; no new PR was created. See stage5-blockers.md for the per-version migration and sync matrix, emulator prerequisites, aggregate-atomicity gaps and owner signing checklist. Stage5 phases remain partial; full acceptance remains FAIL.
+`gh pr view 51 --json url,state,isDraft,baseRefName,headRefName,statusCheckRollup` returned `Post "https://api.github.com/graphql": Forbidden`. Native Git fetch/push works; no GitHub connector is available. Allow authorized api.github.com access through environment networking/proxy settings,then inspect PR51 and use `gh pr edit 51 --body-file docs/qa/draft-pr-body.md`; preserve Draft/unmerged state. Do not ask for or paste token contents. Exact comparison URL: https://github.com/mohammedakkad/SalesManager/compare/production...codex/seller-full-coverage-audit .
 
-## Stage6 verified increment
-Continued from cea574c4049b5f989fc9e88bc07a39cd4a130eaa. Thirteen tests added;88 pass,0 fail/skip in18 classes. Nine failures reproduced before fixes. Inventory snapshots/finalization now share a local Room transaction, repeated completion is durable/idempotent, history and merchant ownership are preserved and invalid counts are rejected. Customer snapshots preserve PENDING/FAILED/CONFLICT edits; logout cancels the listener. Tests also retain synced customer debt history and visitor protection.
-
-Measured weighted coverage11.3066% lines/3.8294% branches; shared26.7058%/15.3008%; Seller3.1272%/1.7455%. Shared floors raised to26.6%/15.2%; Seller floors unchanged. Full aggregate succeeded in6m35s including actual R8; Seller boundary-test/suite refresh succeeded in1m15s. Logs are evidence/continuation/stage6/, current JUnit/JaCoCo/lint/APK hashes are evidence/. Lint remains0 errors/32 warnings/1 information with explicit category triage in seller-lint-triage.md. Draft setup update was rejected as uneditable; complete tested proposed instructions are preserved in environment-setup/ and were not confirmed saved. Device/PDF/older migration/signing/remote CI blockers remain. StockRepositoryImpl's independent remote launches are outside the proved local inventory rollback boundary. Cash transfer atomicity and failed cash retries are the next regression targets. Full acceptance remains FAIL.
+The setup service rejected install_script/start_skill persistence: "This draft cannot be edited in its current state. It may already have been published, or a publication operation may still be in progress." A reread remained revision3. Proposed tested files are preserved in environment-setup/ for transfer to a new setup chat from environment settings; no save/publication was confirmed and no existing allowlist/secret binding was replaced.

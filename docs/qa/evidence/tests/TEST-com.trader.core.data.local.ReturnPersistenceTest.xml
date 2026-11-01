@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.core.data.local.ReturnPersistenceTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:37:00" hostname="1845f097faca" time="0.148">
+<testsuite name="com.trader.core.data.local.ReturnPersistenceTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:57:01" hostname="1845f097faca" time="0.489">
   <properties/>
-  <testcase name="partialReturnSurvivesDatabaseCloseAndReopenWithoutChangingDebt" classname="com.trader.core.data.local.ReturnPersistenceTest" time="0.091"/>
-  <testcase name="fullReturnSurvivesRestartWithOriginalInvoiceValue" classname="com.trader.core.data.local.ReturnPersistenceTest" time="0.057"/>
+  <testcase name="partialReturnSurvivesDatabaseCloseAndReopenWithoutChangingDebt" classname="com.trader.core.data.local.ReturnPersistenceTest" time="0.352"/>
+  <testcase name="fullReturnSurvivesRestartWithOriginalInvoiceValue" classname="com.trader.core.data.local.ReturnPersistenceTest" time="0.137"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

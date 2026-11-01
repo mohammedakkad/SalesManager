@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:44:23" hostname="1845f097faca" time="0.012">
+<testsuite name="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:58:23" hostname="1845f097faca" time="0.017">
   <properties/>
-  <testcase name="arabicDecimalAndGroupingSeparatorsAreParsed" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.005"/>
-  <testcase name="supportedWeightConversionsRoundTrip" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.003"/>
-  <testcase name="amountFormattingIsIndependentOfDeviceLocale" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.001"/>
+  <testcase name="arabicDecimalAndGroupingSeparatorsAreParsed" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.008"/>
+  <testcase name="supportedWeightConversionsRoundTrip" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.001"/>
+  <testcase name="amountFormattingIsIndependentOfDeviceLocale" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.005"/>
   <testcase name="quantityFormattingKeepsFractionalStock" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.001"/>
   <testcase name="latinAndPersianDigitsAreParsed" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.0"/>
   <testcase name="nonFiniteAndMalformedFinancialInputsAreRejected" classname="com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest" time="0.0"/>

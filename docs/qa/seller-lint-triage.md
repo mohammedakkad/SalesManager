@@ -1,8 +1,8 @@
 # Seller lint triage
 
-Stage6 measured lint: 0 errors, 32 warnings, 1 information. No baseline or suppression was added. The warning count is not zero and four dependency registries are skipped by lint; successful lint execution does not mean those missing checks ran.
+Latest Stage7 measured lint: **0 errors, 24 warnings, 0 information**. Stage6 baseline:0 errors,32 warnings,1 information. No baseline or suppression was added. The warning count is not zero and four dependency registries are skipped by lint; successful lint execution does not mean those missing checks ran.
 
-| Finding | Count | Decision / next validation |
+| Finding | Stage6 count | Decision / next validation |
 | --- | ---: | --- |
 | UnusedResources | 7 | Seller-only unused colors/subtitle; verify static and dynamic references before removal. |
 | ObsoleteSdkInt | 1 | Identical drawable and drawable-v24 launcher XML (same SHA256); minSdk24 permits retaining only base resource. |
@@ -15,3 +15,7 @@ Stage6 measured lint: 0 errors, 32 warnings, 1 information. No baseline or suppr
 | AutoboxingStateCreation (information) | 1 | Scanner timestamp can use mutableLongStateOf without changing scan cooldown. |
 
 Compiler deprecations and compileSdk35/AGP8.3.2 compatibility warnings are separately retained in build logs. They are not counted as lint errors. Security policy checks are also separate and do not substitute for lint or dependency advisory scanning.
+
+Stage7 verified changes: removed all six unused Seller colors and the unused backup subtitle after source/resource/dynamic lookup review; removed the byte-identical drawable-v24 copy while retaining the base icon; switched the scanner cooldown timestamp to mutableLongStateOf. No branding, backup-policy attribute, dependency warning or leak warning was suppressed.
+
+Final stage7-final.log:24 warnings (17 launcher branding/themed-icon,4 incompatible dependency registries,2 Context-typed ViewModel fields,1 intentional API31+ backup attribute). All7 unused resource warnings, the obsolete folder warning and scanner information are gone. The intermediate stage7-verified.log still reports the empty v24 directory; removing that empty directory and re-running lint produced the final24. No lint XML was manually edited.

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.core.data.repository.TransactionSyncTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:37:09" hostname="1845f097faca" time="1.022">
+<testsuite name="com.trader.core.data.repository.TransactionSyncTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:57:21" hostname="1845f097faca" time="3.282">
   <properties/>
-  <testcase name="interruptedUploadPropagatesCancellationWithoutFalseFailureAck" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.784"/>
-  <testcase name="deletingPartiallyReturnedSaleRestoresOnlyRemainingUnitsAndCash" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.064"/>
-  <testcase name="reconnectRetriesFailedAndPendingButNeverConflicts" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.015"/>
-  <testcase name="failedFirstUploadDoesNotPreventLaterPendingUpload" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.017"/>
-  <testcase name="transactionListenerStopsOnLogout" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.046"/>
-  <testcase name="remoteAbsenceMustNotDeleteUnsyncedSales" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.083"/>
-  <testcase name="deletingFullyReturnedSaleDoesNotRestoreStockAgain" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.012"/>
+  <testcase name="interruptedUploadPropagatesCancellationWithoutFalseFailureAck" classname="com.trader.core.data.repository.TransactionSyncTest" time="2.598"/>
+  <testcase name="deletingPartiallyReturnedSaleRestoresOnlyRemainingUnitsAndCash" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.162"/>
+  <testcase name="reconnectRetriesFailedAndPendingButNeverConflicts" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.039"/>
+  <testcase name="failedFirstUploadDoesNotPreventLaterPendingUpload" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.049"/>
+  <testcase name="transactionListenerStopsOnLogout" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.095"/>
+  <testcase name="remoteAbsenceMustNotDeleteUnsyncedSales" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.3"/>
+  <testcase name="deletingFullyReturnedSaleDoesNotRestoreStockAgain" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.025"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
