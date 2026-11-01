@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.core.sync.ReturnRetryCoordinatorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-31T20:13:02" hostname="1845f097faca" time="0.571">
+<testsuite name="com.trader.core.sync.ReturnRetryCoordinatorTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:37:10" hostname="1845f097faca" time="0.166">
   <properties/>
-  <testcase name="reconnectRetriesReturnsEvenWhenStockUploadFails" classname="com.trader.core.sync.ReturnRetryCoordinatorTest" time="0.571"/>
+  <testcase name="reconnectRetriesReturnsEvenWhenStockUploadFails" classname="com.trader.core.sync.ReturnRetryCoordinatorTest" time="0.166"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

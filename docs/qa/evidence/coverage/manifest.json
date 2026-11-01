@@ -1,11 +1,11 @@
 {
   "app": {
-    "xml_sha256": "49e6d433b284db6ba30d2e417ba81e24ce09562b9b00b6956db3a5b024ee5d21",
+    "xml_sha256": "bcfdfc9badbe320473a5c850af8c1dcd5599eacad1d4ed378b00d173a6bcf777",
     "compressed_xml": "docs/qa/evidence/coverage/app.xml.gz",
     "scope": "debug JVM; no production exclusions"
   },
   "salesmanager": {
-    "xml_sha256": "6ef6c66de2c53b5b77d13db29b639ee5a198a945d18559f5bfba776219c8db2c",
+    "xml_sha256": "6897ab0982ed825beb993ba623887fb09b553080105791daa49800fed60e3606",
     "compressed_xml": "docs/qa/evidence/coverage/salesmanager.xml.gz",
     "scope": "debug JVM; no production exclusions"
   }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-31T20:14:34" hostname="1845f097faca" time="3.714">
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:44:23" hostname="1845f097faca" time="2.118">
   <properties/>
-  <testcase name="randomSaltAndIvPreventIdenticalCiphertexts" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="2.163"/>
-  <testcase name="encryptedRoundTripPreservesArabicBytesAndHeader" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.597"/>
-  <testcase name="emptyArchiveRoundTrips" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.56"/>
-  <testcase name="wrongPasswordRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.212"/>
-  <testcase name="ciphertextTamperingRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.125"/>
-  <testcase name="unknownEncryptionVersionRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.055"/>
-  <testcase name="truncatedHeaderRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.001"/>
+  <testcase name="randomSaltAndIvPreventIdenticalCiphertexts" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="1.642"/>
+  <testcase name="encryptedRoundTripPreservesArabicBytesAndHeader" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.22"/>
+  <testcase name="emptyArchiveRoundTrips" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.083"/>
+  <testcase name="wrongPasswordRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.073"/>
+  <testcase name="ciphertextTamperingRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.065"/>
+  <testcase name="unknownEncryptionVersionRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.033"/>
+  <testcase name="truncatedHeaderRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

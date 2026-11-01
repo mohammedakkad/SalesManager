@@ -9,3 +9,5 @@ Remaining source risks: runBlocking merchant resolution/theme initialization, pr
 Continue with API24/API35 cold/warm startup and repeated navigation, 10k-customer/100k-sale fixtures, query plans and p50/p95, post-logout listener/heap checks, backup interruption and ZIP limits, and a debug-only leak detector. Record device/toolchain/dataset metadata before setting performance gates.
 
 Build checks use four workers for the four-CPU quota and reuse valid outputs. JVM build/test timings in logs describe infrastructure, not app runtime performance. Native PDF and Compose timing await the emulator job/device; no measurements are fabricated.
+
+Stage6 additionally cancels customer snapshot listeners on logout and creates inventory snapshots within one database transaction. Local regression behavior passes; database lock duration, frame times and process death remain unmeasured. Lint dependency checks skipped by incompatible registries are documented in seller-lint-triage.md.

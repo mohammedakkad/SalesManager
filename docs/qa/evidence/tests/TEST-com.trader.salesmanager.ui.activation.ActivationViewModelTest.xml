@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.salesmanager.ui.activation.ActivationViewModelTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-31T20:14:26" hostname="1845f097faca" time="7.438">
+<testsuite name="com.trader.salesmanager.ui.activation.ActivationViewModelTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:44:19" hostname="1845f097faca" time="4.292">
   <properties/>
-  <testcase name="validCodeIsTrimmedAndSavedOnlyAfterRemoteValidation" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="7.102"/>
-  <testcase name="activeAccountProceeds" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.024"/>
-  <testcase name="disabledAndExpiredAccountsAreBlocked" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.058"/>
-  <testcase name="blankCodeDoesNotCallRemoteOrSaveActivation" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.096"/>
-  <testcase name="networkFailureOffersRetryWithoutActivating" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.076"/>
-  <testcase name="rejectedCodesNeverPersistActivation" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.081"/>
+  <testcase name="validCodeIsTrimmedAndSavedOnlyAfterRemoteValidation" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="4.143"/>
+  <testcase name="activeAccountProceeds" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.011"/>
+  <testcase name="disabledAndExpiredAccountsAreBlocked" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.021"/>
+  <testcase name="blankCodeDoesNotCallRemoteOrSaveActivation" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.046"/>
+  <testcase name="networkFailureOffersRetryWithoutActivating" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.03"/>
+  <testcase name="rejectedCodesNeverPersistActivation" classname="com.trader.salesmanager.ui.activation.ActivationViewModelTest" time="0.04"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

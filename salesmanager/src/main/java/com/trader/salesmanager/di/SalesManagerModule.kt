@@ -202,7 +202,8 @@ val salesManagerModule = module {
             get(),
             get(),
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+            get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            get()
         )
     }
     single<ReturnRepository> {

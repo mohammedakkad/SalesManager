@@ -1,6 +1,6 @@
 # Seller test strategy — current state
 
-Existing audit branch and original30 tests were retained. Current JVM suite:75 passing tests in15 classes;45 added across the continuation,including5 in Stage5. No ignored/disabled JVM tests and no production coverage exclusions.
+Existing audit branch and original30 tests were retained. Current JVM suite:88 passing tests in18 classes;58 added across continuations,including13 in Stage6. No ignored/disabled JVM tests and no production coverage exclusions.
 
 ## Deterministic testing
 
@@ -22,7 +22,7 @@ GRADLE_CMD=/workspace/setup/gradle scripts/qa-seller.sh \
 python3 scripts/report-seller-coverage.py --check
 ```
 
-Raise explicitly reviewed coverage floors as meaningful tests are added; never rewrite thresholds automatically from each run or exclude difficult production classes. Current floors:shared line21.6%/branch12.5%; Seller line2.9%/branch1.6%. They are regression floors, not full acceptance.
+Raise explicitly reviewed coverage floors as meaningful tests are added; never rewrite thresholds automatically from each run or exclude difficult production classes. Current floors:shared line26.6%/branch15.2%; Seller line2.9%/branch1.6%. They are regression floors, not full acceptance.
 
 ## Device and PDF checks — BLOCKED locally
 
@@ -33,3 +33,5 @@ Robolectric does not implement native PdfDocument; its zero handle caused two PD
 ## Remaining expansion
 
 All DAO queries/migration chains, atomic cash/debt/stock failure paths, fractional/concurrent returns, Firebase emulator conflict/process-death cases, every screen/navigation journey, RTL visual/accessibility/restoration/themes/keyboard/small screens, large/corrupt backup structures, minified backup round trips, PDF printing/sharing, profiling and mutation/advisory scans remain incomplete. See exact coverage gaps and the release status table.
+
+Stage6 uses real in-memory Room for inventory rollback, duplicate finalization, snapshots and count/merchant validation. Customer sync uses controlled flows and a database completion signal; PENDING/FAILED/CONFLICT rows remain local, while synced edits preserve debt history. A Seller ViewModel test asserts rejected non-finite/negative input never persists and valid/cleared counts retain identity. These do not certify remote stock transactionality.

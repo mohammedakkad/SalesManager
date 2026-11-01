@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.core.domain.model.ReturnItemTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-31T20:13:02" hostname="1845f097faca" time="0.008">
+<testsuite name="com.trader.core.domain.model.ReturnItemTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:37:10" hostname="1845f097faca" time="0.006">
   <properties/>
-  <testcase name="partialRefundPreservesFinancialAmounts" classname="com.trader.core.domain.model.ReturnItemTest" time="0.001"/>
+  <testcase name="partialRefundPreservesFinancialAmounts" classname="com.trader.core.domain.model.ReturnItemTest" time="0.003"/>
   <testcase name="invalidOriginalQuantityIsRejected" classname="com.trader.core.domain.model.ReturnItemTest" time="0.0"/>
   <testcase name="blankIdentityIsRejected" classname="com.trader.core.domain.model.ReturnItemTest" time="0.0"/>
-  <testcase name="invalidQuantitiesAreRejected" classname="com.trader.core.domain.model.ReturnItemTest" time="0.003"/>
-  <testcase name="fullReturnIsAllowed" classname="com.trader.core.domain.model.ReturnItemTest" time="0.004"/>
+  <testcase name="invalidQuantitiesAreRejected" classname="com.trader.core.domain.model.ReturnItemTest" time="0.002"/>
+  <testcase name="fullReturnIsAllowed" classname="com.trader.core.domain.model.ReturnItemTest" time="0.0"/>
   <testcase name="freeReturnWithoutCostIsAllowed" classname="com.trader.core.domain.model.ReturnItemTest" time="0.0"/>
   <testcase name="invalidPricesAreRejected" classname="com.trader.core.domain.model.ReturnItemTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>

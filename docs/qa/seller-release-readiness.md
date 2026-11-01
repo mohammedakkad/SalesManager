@@ -4,9 +4,9 @@ The audit continues on `codex/seller-full-coverage-audit`; it was not restarted.
 
 | Check | Status | Measured evidence / limits |
 | --- | --- | --- |
-| JVM regression suite | PASS | 75 passed, 0 failed, 0 skipped, 15 classes; original30 retained;45 added across continuations |
-| Line / branch coverage | FAIL (100% target) | Weighted9.4480% lines /3.3483% branches; method11.8854%, class10.9980%; exact gaps and original XML saved |
-| Baseline CI coverage floors | PASS | Raised: shared line21.6%, branch12.5%; Seller line2.9%, branch1.6%; no production exclusions |
+| JVM regression suite | PASS | 88 passed, 0 failed, 0 skipped, 18 classes; original30 retained;58 added across continuations |
+| Line / branch coverage | FAIL (100% target) | Weighted11.3066% lines /3.8294% branches; method14.1563%, class12.7866%; exact gaps and original XML saved |
+| Baseline CI coverage floors | PASS | Raised: shared line26.6%, branch15.2%; Seller line2.9%, branch1.6%; no production exclusions |
 | Room22→23 upgrade | PASS | Actual exported22 schema; representative fixture records; state backfill, record preservation, FK checks, sequence, rollback |
 | Older migration chains | BLOCKED | Authentic versions1–21 schemas/databases absent in checkout and available history; never fabricated |
 | Backup/restore | PASS (tested cases) | Encrypted round trip, rollback on orphan input, corrupted input, legacy return recovery, export snapshot boundary |
@@ -57,3 +57,8 @@ The user supplied existing Draft PR https://github.com/mohammedakkad/SalesManage
 
 ## Stage5 verified increment
 Starting HEAD60785ece9b9c8ca9fa127c2f12af6674bc7d9954. Five tests added;75 pass,0 fail/skip. Shared-layer transaction retries now include FAILED records, propagate cancellation, and stop listeners on logout. Fractional returns tolerate only four ULPs of representation error. Full JVM/coverage/lint/debug/minified-unsigned build passed (7m16s);32 lint warnings remain. Seller coverage stays2.9653% lines/1.6901% branches. Existing PR51 API update remains blocked; no new PR was created. See stage5-blockers.md for the per-version migration and sync matrix, emulator prerequisites, aggregate-atomicity gaps and owner signing checklist. Stage5 phases remain partial; full acceptance remains FAIL.
+
+## Stage6 verified increment
+Continued from cea574c4049b5f989fc9e88bc07a39cd4a130eaa. Thirteen tests added;88 pass,0 fail/skip in18 classes. Nine failures reproduced before fixes. Inventory snapshots/finalization now share a local Room transaction, repeated completion is durable/idempotent, history and merchant ownership are preserved and invalid counts are rejected. Customer snapshots preserve PENDING/FAILED/CONFLICT edits; logout cancels the listener. Tests also retain synced customer debt history and visitor protection.
+
+Measured weighted coverage11.3066% lines/3.8294% branches; shared26.7058%/15.3008%; Seller3.1272%/1.7455%. Shared floors raised to26.6%/15.2%; Seller floors unchanged. Full aggregate succeeded in6m35s including actual R8; Seller boundary-test/suite refresh succeeded in1m15s. Logs are evidence/continuation/stage6/, current JUnit/JaCoCo/lint/APK hashes are evidence/. Lint remains0 errors/32 warnings/1 information with explicit category triage in seller-lint-triage.md. Draft setup update was rejected as uneditable; complete tested proposed instructions are preserved in environment-setup/ and were not confirmed saved. Device/PDF/older migration/signing/remote CI blockers remain. StockRepositoryImpl's independent remote launches are outside the proved local inventory rollback boundary. Cash transfer atomicity and failed cash retries are the next regression targets. Full acceptance remains FAIL.
