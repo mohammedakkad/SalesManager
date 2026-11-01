@@ -203,6 +203,13 @@ interface TransactionDao {
     @Query("UPDATE transactions SET syncStatus = 'FAILED' WHERE id = :id")
     suspend fun markFailed(id: Long)
 
+    /** A completion belongs to the uploaded snapshot, not a newer local edit. */
+    @Transaction
+    suspend fun finishUpload(snapshot: TransactionEntity, succeeded: Boolean) {
+        if (getTransactionById(snapshot.id) != snapshot) return
+        if (succeeded) markSynced(snapshot.id) else markFailed(snapshot.id)
+    }
+
     /** عند حذف عميل → تُنقل عملياته للزبون الزائر (id=-1) بدل حذفها */
     @Query("UPDATE transactions SET customerId = -1 WHERE customerId = :customerId")
     suspend fun reassignToVisitor(customerId: Long)

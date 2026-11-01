@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.core.data.local.ReturnMigrationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:56:46" hostname="1845f097faca" time="14.902">
+<testsuite name="com.trader.core.data.local.ReturnMigrationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-01T05:34:14" hostname="1845f097faca" time="1.699">
   <properties/>
-  <testcase name="upgradePreservesFinancialRecordsForeignKeysAndPendingWrites" classname="com.trader.core.data.local.ReturnMigrationTest" time="13.696"/>
-  <testcase name="failedUpgradeRollsBackSchemaAndData" classname="com.trader.core.data.local.ReturnMigrationTest" time="0.799"/>
-  <testcase name="backfillsPartialFullUnreturnedAndMissingLineStates" classname="com.trader.core.data.local.ReturnMigrationTest" time="0.407"/>
+  <testcase name="upgradePreservesFinancialRecordsForeignKeysAndPendingWrites" classname="com.trader.core.data.local.ReturnMigrationTest" time="0.646"/>
+  <testcase name="failedUpgradeRollsBackSchemaAndData" classname="com.trader.core.data.local.ReturnMigrationTest" time="0.691"/>
+  <testcase name="backfillsPartialFullUnreturnedAndMissingLineStates" classname="com.trader.core.data.local.ReturnMigrationTest" time="0.362"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

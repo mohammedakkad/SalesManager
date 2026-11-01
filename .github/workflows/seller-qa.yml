@@ -14,9 +14,12 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: Install Android platform
-        run: sdkmanager 'platforms;android-35' 'build-tools;34.0.0'
+      - name: Provision verified isolated Android SDK
+        env:
+          SELLER_QA_SDK_ROOT: ${{ runner.temp }}/seller-android-sdk
+        run: |
+          set -o pipefail
+          scripts/setup-seller-android.sh 2>&1 | tee "$RUNNER_TEMP/seller-sdk-setup.log"
       - name: Install verified Gradle
         run: |
           curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip -o /tmp/gradle.zip
@@ -43,6 +46,7 @@ jobs:
         with:
           name: seller-qa-reports
           path: |
+            ${{ runner.temp }}/seller-sdk-setup.log
             app/build/reports/
             app/build/test-results/
             salesmanager/build/reports/
@@ -57,10 +61,14 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: Install verified Gradle and platform
+      - name: Provision verified isolated Android SDK
+        env:
+          SELLER_QA_SDK_ROOT: ${{ runner.temp }}/seller-android-sdk
         run: |
-          sdkmanager 'platforms;android-35' 'build-tools;34.0.0'
+          set -o pipefail
+          scripts/setup-seller-android.sh 2>&1 | tee "$RUNNER_TEMP/seller-sdk-setup.log"
+      - name: Install verified Gradle
+        run: |
           curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip -o /tmp/gradle.zip
           curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip.sha256 -o /tmp/gradle.sha256
           echo "$(cat /tmp/gradle.sha256)  /tmp/gradle.zip" | sha256sum -c -
@@ -85,6 +93,7 @@ jobs:
         with:
           name: seller-compose-results
           path: |
+            ${{ runner.temp }}/seller-sdk-setup.log
             salesmanager/build/reports/androidTests/
             salesmanager/build/outputs/androidTest-results/
             qa/pdf-verifier/build/reports/

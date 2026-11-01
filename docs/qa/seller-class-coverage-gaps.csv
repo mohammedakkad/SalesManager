@@ -194,7 +194,7 @@ app,com/trader/core/data/repository/ReportsRepositoryImpl,0,12,0,0,0,5,0,1
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeFinancialReportTotals$$inlined$map$1,0,3,0,0,0,2,0,1
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeDebtAging$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/ReturnRepositoryImpl$getReturnsByTransaction$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
-app,com/trader/core/data/repository/ReturnRepositoryImpl$startRealtimeSync$1$1$1,14,3,1,1,1,0,1,0
+app,com/trader/core/data/repository/ReturnRepositoryImpl$startRealtimeSync$1$1$1,14,3,2,0,1,0,1,0
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeDailySalesProfit$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/ActivationRepositoryImpl$observeMerchantCode$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/InventoryRepositoryImpl$cancelSession$2,8,0,1,1,1,0,1,0
@@ -473,7 +473,7 @@ app,com/trader/core/data/local/dao/StockMovementDao_Impl$15,0,41,0,4,0,3,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$23,0,54,0,18,0,3,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$20,0,54,0,18,0,3,0,1
 app,com/trader/core/data/local/dao/StockMovementDao_Impl$12,0,41,0,4,0,3,0,1
-app,com/trader/core/data/local/dao/TransactionDao_Impl$21,48,5,10,8,2,0,1,0
+app,com/trader/core/data/local/dao/TransactionDao_Impl$21,50,3,13,5,2,0,1,0
 app,com/trader/core/data/local/dao/StockMovementDao_Impl$13,0,40,0,4,0,2,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$30,0,10,0,2,0,2,0,1
 app,com/trader/core/data/local/dao/DailySalesProjection,0,3,0,0,0,3,0,1
@@ -483,9 +483,7 @@ app,com/trader/core/data/local/dao/SessionDao$DefaultImpls,0,4,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$7,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/CashBoxDao_Impl$6,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$19,0,8,0,0,0,2,0,1
-app,com/trader/core/data/local/dao/TransactionDao_Impl$17,0,10,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$18,0,10,0,0,0,2,0,1
-app,com/trader/core/data/local/dao/TransactionDao_Impl$15,0,10,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$16,0,10,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$14,0,8,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/TransactionDao_Impl$11,0,6,0,0,0,2,0,1
@@ -562,7 +560,7 @@ app,com/trader/core/data/local/dao/ProductDao_Impl$10,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/ReturnDao_Impl,67,8,0,0,20,4,1,0
 app,com/trader/core/data/local/dao/ProductDao_Impl$18,0,10,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/ProductDao_Impl$19,0,10,0,0,0,2,0,1
-app,com/trader/core/data/local/dao/TransactionDao_Impl,31,153,0,0,7,26,1,0
+app,com/trader/core/data/local/dao/TransactionDao_Impl,34,151,0,0,11,24,1,0
 app,com/trader/core/data/local/dao/InventoryValueProjection,0,3,0,0,0,3,0,1
 app,com/trader/core/data/local/dao/ProductDao_Impl$30,0,41,0,6,0,2,0,1
 app,com/trader/core/data/local/dao/ProductDao_Impl$31,0,41,0,6,0,2,0,1
@@ -614,13 +612,11 @@ app,com/trader/core/data/local/dao/PaymentMethodDao_Impl$8,0,6,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/PaymentMethodDao_Impl$5,0,6,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/PaymentMethodDao_Impl$6,0,6,0,0,0,2,0,1
 app,com/trader/core/data/local/dao/PendingMessageDao_Impl,1,16,0,0,1,6,1,0
-app,com/trader/core/data/local/dao/TransactionDao_Impl$7,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$6,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$9,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$8,1,2,0,0,1,1,1,0
-app,com/trader/core/data/local/dao/TransactionDao_Impl$3,27,5,9,7,3,0,1,0
+app,com/trader/core/data/local/dao/TransactionDao_Impl$3,29,3,12,4,3,0,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$2,1,3,0,0,1,2,1,0
-app,com/trader/core/data/local/dao/TransactionDao_Impl$5,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$4,1,2,0,0,1,1,1,0
 app,com/trader/core/data/local/dao/TransactionDao_Impl$1,28,3,12,4,3,0,1,0
 app,com/trader/core/data/local/dao/TopDebtorCustomerProjection,0,4,0,0,0,4,0,1

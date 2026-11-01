@@ -1,20 +1,20 @@
 # Seller release readiness — full acceptance FAIL
 
-Continued on existing `codex/seller-full-coverage-audit` from `cea574c4049b5f989fc9e88bc07a39cd4a130eaa`; Stage6 committed/pushed as5efe40a, Stage7 follows it. Fresh production base remains `22381d5b55fb59a9270932bcf720b283fa1c90ff`. No branch restart, admin-module change, production-data access, force-push, merge or deployment. Do not approve a production release from these results.
+Stage8 continues on existing `codex/seller-full-coverage-audit` from `a693da48b9c1a4114ac4508763710f4b24777542`. Original production base remains `22381d5b55fb59a9270932bcf720b283fa1c90ff`. Stage8 is **partial**, not accepted: whole-sale atomicity and a durable outbox remain unimplemented. No production data, Admin module, production branch, signing key or Git history was altered.
 
 | Check | Status | Measured evidence / limits |
 | --- | --- | --- |
-| JVM regression suite | PASS | 100 passed,0 failed,0 skipped,19 classes;25 added this continuation; original30 audit tests and all75 starting tests retained |
-| 100% coverage target | FAIL | Weighted13.1653% lines /4.3662% branches; method15.9734%,class14.6789%;3490/26509 lines,704/16124 branches |
-| Module coverage | Verified | Shared32.0230% lines/18.7224% branches; Seller3.1272%/1.7455%; no production exclusions |
-| Reviewed regression floors | PASS | Shared31.9% lines/18.5% branches; Seller3.0%/1.7%; all raised after measurements |
+| JVM regression suite | PASS | 104 passed,0 failed,0 skipped,20 classes;4 added in Stage8; all100 starting tests retained (retry routing assertions now check exact snapshot completion calls) |
+| 100% coverage target | FAIL | Weighted13.2840% lines /4.4333% branches; method16.1678%,class14.8242%;3522/26513 lines,715/16128 branches |
+| Module coverage | Verified | Shared32.3565% lines/19.1336% branches; Seller3.1272%/1.7455%; no production exclusions |
+| Reviewed regression floors | PASS | Shared32.1% lines/18.9% branches; Seller3.0%/1.7%; all raised after measurements |
 | Room22→23 upgrade | PASS canonical fixtures | Authentic exported22 schema; state backfill, records/balances/invoices/stock,FK checks,sequence and rollback |
 | Historical upgrades1–21→23 | BLOCKED | Authentic schemas/databases unavailable; per-version acquisition matrix in stage5-blockers.md; no invented schemas |
 | Return persistence / retries | PASS tested paths | Durable close/reopen, stable-ID idempotency, pending/conflict protection, timeout/cancellation and fractional return regressions retained |
 | Inventory integrity | PASS tested local paths | Atomic session/snapshot/finalization, durable duplicate guard, local stock rollback, history/count/merchant validation; stock collaborator controlled |
 | Customer sync | PASS tested paths | Remote snapshots preserve PENDING/FAILED/CONFLICT edits; synced edits retain debt history/visitor; logout cancels listener |
 | Cash transfer / retry | PASS tested local paths | Real SQLite abort rolls back both balances/ledger; valid transfer conservation, initialization/correction history,FAILED retries,offline retention,batch isolation,cancellation and merchant listener replacement |
-| Whole-sale / distributed atomicity | NOT TESTED comprehensively | Cash sub-operation is transactional; sale/stock/debt/invoice/cash aggregate and independent remote writes remain unproven |
+| Whole-sale / distributed atomicity | FAIL acceptance / NOT TESTED comprehensively | Cash sub-operation is transactional; sale/stock/debt/invoice/cash aggregate and independent remote writes remain unproven |
 | Backup/restore | PASS tested cases | Encrypted round trip,orphan rollback,corruption,legacy return recovery and export snapshot boundary; large/interrupted/concurrent/minified workflows incomplete |
 | Android instrumentation | BLOCKED execution / PASS compile | Four tests package successfully; adb finds no device,/dev/kvm absent; prior connectedDebugAndroidTest failed No connected devices |
 | Native PDF content | BLOCKED | Two host verifier tests require real Android-generated PDFs; verifier compilation previously passed,execution not claimed |
@@ -58,3 +58,12 @@ Full JDK17,SDK35/build-tools34 and checksum-verified Gradle8.9 are required. The
 `gh pr view 51 --json url,state,isDraft,baseRefName,headRefName,statusCheckRollup` returned `Post "https://api.github.com/graphql": Forbidden`. Native Git fetch/push works; no GitHub connector is available. Allow authorized api.github.com access through environment networking/proxy settings,then inspect PR51 and use `gh pr edit 51 --body-file docs/qa/draft-pr-body.md`; preserve Draft/unmerged state. Do not ask for or paste token contents. Exact comparison URL: https://github.com/mohammedakkad/SalesManager/compare/production...codex/seller-full-coverage-audit .
 
 The setup service rejected install_script/start_skill persistence: "This draft cannot be edited in its current state. It may already have been published, or a publication operation may still be in progress." A reread remained revision3. Proposed tested files are preserved in environment-setup/ for transfer to a new setup chat from environment settings; no save/publication was confirmed and no existing allowlist/secret binding was replaced.
+
+## Stage8 partial increment
+Four real-Room tests added: stale retry success/failure cannot overwrite the status of a newer edit; unchanged success/failure still acknowledge/remain retryable. Before:2/2failed; after:104 JVM tests pass. Reconnect completion compares the full uploaded snapshot and updates status within one Room transaction. Existing routing assertions now verify the uploaded snapshot ID/status and success/failure flag; cancellation/conflict selection assertions are retained. Initial async insert/update uploads, account switching, identical-content ABA and deletions are outside this fix.
+
+The full aggregate (same commands above) passed in7m33s,227 tasks (64executed,163up-to-date), including actual R8. Lint remains0errors/24warnings. Coverage gates raised after measurement to shared32.1%/18.9%; Seller3.0%/1.7% unchanged. No exclusions or assertion weakening. Stage8 evidence is evidence/continuation/stage8/; current original JaCoCo XML/JUnit/APK hashes remain in evidence/.
+
+CI recovery: both jobs replace setup-android@v3 with a SHA256-pinned isolated SDK installer that retains stderr, checks license-command status and asserts required tools/packages. Fresh JDK17 install and repeat pass locally. Forced resource linking printed /workspace/setup/stage8-sdk and passed; Debug assembly uses that SDK (incremental). This is not a claim of clean hosted compilation. The exact hosted SDK failure preceding stderr remains inaccessible; user-reported run41275351544 is not reclassified as passing. A legacy tools probe with the new CLI printed missing-package text but returned0, so it is not the hosted16.0 failure reproduction. See stage8-atomicity-and-outbox.md.
+
+Whole-sale atomicity and transactional outbox: **NOT IMPLEMENTED; acceptance FAIL**, not externally blocked. The actual ViewModel/repository write graph, ten-boundary test matrix, durable deletion/revision/tenant requirements and remaining implementation are explicitly recorded in stage8-atomicity-and-outbox.md. Versions1–21 remain BLOCKED in stage8-migration-matrix.md. Device/PDF execution remains BLOCKED (no device/KVM; hosted API denied). Full Stage8 request and release acceptance are incomplete. No exactly-once remote guarantee is claimed.

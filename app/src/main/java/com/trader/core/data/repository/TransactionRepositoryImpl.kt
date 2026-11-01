@@ -192,10 +192,10 @@ class TransactionRepositoryImpl(
             .filter { it.syncStatus == SyncStatus.PENDING.name || it.syncStatus == SyncStatus.FAILED.name }
             .forEach { entity ->
                 runCatching { sync.pushTransaction(merchantCode, entity.enrich()) }
-                    .onSuccess { transactionDao.markSynced(entity.id) }
+                    .onSuccess { transactionDao.finishUpload(entity, true) }
                     .onFailure { error ->
                         if (error is CancellationException) throw error
-                        transactionDao.markFailed(entity.id)
+                        transactionDao.finishUpload(entity, false)
                     }
             }
     }

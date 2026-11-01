@@ -13,3 +13,5 @@ Build checks use four workers for the four-CPU quota and reuse valid outputs. JV
 Stage6 additionally cancels customer snapshot listeners on logout and creates inventory snapshots within one database transaction. Local regression behavior passes; database lock duration, frame times and process death remain unmeasured. Lint dependency checks skipped by incompatible registries are documented in seller-lint-triage.md.
 
 Stage7 binds cash listeners to the merchant collector and moves remote box provisioning before the shared balance/ledger write transaction. This prevents network fetches from extending that transaction by construction; no lock-time benchmark is claimed. Cash-box tests measure correctness with synthetic data, not production latency. Scanner cooldown uses primitive Long state without changing its value or timing rule. Device profiling remains NOT TESTED.
+
+Stage8 retry completion adds a bounded single-row read/compare/status write within Room; network I/O remains outside that transaction. No latency/profile measurement or distributed performance claim. Whole-sale/outbox coordination remains unimplemented.

@@ -1,6 +1,6 @@
 # Seller test strategy — current state
 
-Existing audit branch and original30 tests were retained. Current JVM suite:100 passing tests in19 classes;70 added after the original30 audit tests,including13 in Stage6 and12 in Stage7. No ignored/disabled JVM tests and no production coverage exclusions.
+Existing audit branch and original30 tests were retained. Current JVM suite:104 passing tests in20 classes;74 added after the original30 audit tests,including4 in Stage8. No ignored/disabled JVM tests and no production coverage exclusions.
 
 ## Deterministic testing
 
@@ -22,7 +22,7 @@ GRADLE_CMD=/workspace/setup/gradle scripts/qa-seller.sh \
 python3 scripts/report-seller-coverage.py --check
 ```
 
-Raise explicitly reviewed coverage floors as meaningful tests are added; never rewrite thresholds automatically from each run or exclude difficult production classes. Current floors:shared line31.9%/branch18.5%; Seller line3.0%/branch1.7%. They are regression floors, not full acceptance.
+Raise explicitly reviewed coverage floors as meaningful tests are added; never rewrite thresholds automatically from each run or exclude difficult production classes. Current floors:shared line32.1%/branch18.9%; Seller line3.0%/branch1.7%. They are regression floors, not full acceptance.
 
 ## Device and PDF checks — BLOCKED locally
 
@@ -37,3 +37,5 @@ All DAO queries/migration chains, atomic cash/debt/stock failure paths, fraction
 Stage6 uses real in-memory Room for inventory rollback, duplicate finalization, snapshots and count/merchant validation. Customer sync uses controlled flows and a database completion signal; PENDING/FAILED/CONFLICT rows remain local, while synced edits preserve debt history. A Seller ViewModel test asserts rejected non-finite/negative input never persists and valid/cleared counts retain identity. These do not certify remote stock transactionality.
 
 Stage7 cash tests use real SQLite triggers to abort the second movement and verify both balances/ledger roll back; successful transfer, unpaid/unchanged effects, initial balance/correction history, durable failed retry, cancellation, merchant replacement/logout and offline/batch-failure cases are asserted. Remote provisioning precedes the Room write transaction. Whole-sale/distributed atomicity remains unproven.
+
+Stage8 adds real-Room deterministic stale completion interleavings and unchanged-row controls. Old retry call assertions now verify snapshot completion requests, not unconditional acknowledgement methods. Aggregate sale/outbox cases remain NOT TESTED/NOT IMPLEMENTED as enumerated in stage8-atomicity-and-outbox.md.

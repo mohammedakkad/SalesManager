@@ -81,14 +81,14 @@ class TransactionSyncTest {
     @Test fun reconnectRetriesFailedAndPendingButNeverConflicts()=runTest {
         val f=Fixture(backgroundScope);f.queue();f.repo().syncPendingTransactions()
         coVerify(exactly=2) { f.sync.pushTransaction("fixture",any()) }
-        coVerify { f.dao.markSynced(1) };coVerify { f.dao.markSynced(3) }
-        coVerify(exactly=0) { f.dao.markSynced(4) }
+        coVerify { f.dao.finishUpload(match { it.id==1L && it.syncStatus=="PENDING" },true) };coVerify { f.dao.finishUpload(match { it.id==3L && it.syncStatus=="FAILED" },true) }
+        coVerify(exactly=0) { f.dao.finishUpload(match { it.id==4L },true) }
     }
     @Test fun interruptedUploadPropagatesCancellationWithoutFalseFailureAck()=runTest {
         val f=Fixture(backgroundScope);f.queue()
         coEvery { f.sync.pushTransaction(any(),any()) } throws kotlinx.coroutines.CancellationException("fixture interruption")
         try { f.repo().syncPendingTransactions();org.junit.Assert.fail("Cancellation swallowed") } catch(expected:kotlinx.coroutines.CancellationException) { }
-        coVerify(exactly=0) { f.dao.markFailed(any()) };coVerify(exactly=0) { f.dao.markSynced(any()) }
+        coVerify(exactly=0) { f.dao.finishUpload(any(),false) };coVerify(exactly=0) { f.dao.finishUpload(any(),true) }
     }
     @Test fun transactionListenerStopsOnLogout()=runTest {
         val f=Fixture(backgroundScope);f.repo();runCurrent()
@@ -101,6 +101,6 @@ class TransactionSyncTest {
         coEvery { f.dao.getAllOnce() } returns listOf(1L,2L).map { TransactionEntity(id=it,customerId=7,amount=10.0,isPaid=false,syncStatus="PENDING") }
         coEvery { f.sync.pushTransaction(any(),match { it.id==1L }) } throws java.io.IOException("offline fixture")
         f.repo().syncPendingTransactions()
-        coVerify { f.dao.markFailed(1) };coVerify { f.dao.markSynced(2) }
+        coVerify { f.dao.finishUpload(match { it.id==1L },false) };coVerify { f.dao.finishUpload(match { it.id==2L },true) }
     }
 }

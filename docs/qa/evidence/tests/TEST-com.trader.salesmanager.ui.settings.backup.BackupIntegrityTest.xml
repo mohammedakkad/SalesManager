@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-01T04:58:27" hostname="1845f097faca" time="11.102">
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-01T05:35:25" hostname="1845f097faca" time="10.454">
   <properties/>
-  <testcase name="exportReadsTablesInsideOneDatabaseSnapshot" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="9.333"/>
-  <testcase name="encryptedExportImportRoundTripPreservesAmountsAndReturnState" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="1.261"/>
-  <testcase name="malformedFilesAreRejectedWithoutTouchingDatabase" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.171"/>
-  <testcase name="failedRestoreRollsBackExistingMerchantData" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.226"/>
-  <testcase name="legacyBackupRestoresReturnStateFromItsDurableLedger" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.11"/>
+  <testcase name="exportReadsTablesInsideOneDatabaseSnapshot" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="9.454"/>
+  <testcase name="encryptedExportImportRoundTripPreservesAmountsAndReturnState" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.553"/>
+  <testcase name="malformedFilesAreRejectedWithoutTouchingDatabase" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.168"/>
+  <testcase name="failedRestoreRollsBackExistingMerchantData" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.179"/>
+  <testcase name="legacyBackupRestoresReturnStateFromItsDurableLedger" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.099"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
