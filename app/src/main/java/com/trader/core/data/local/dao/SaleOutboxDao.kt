@@ -20,6 +20,12 @@ interface SaleOutboxDao {
     suspend fun manages(aggregateId: Long): Boolean
     @Query("SELECT EXISTS(SELECT 1 FROM sale_outbox WHERE state != 'ACKNOWLEDGED')")
     suspend fun hasOutstanding(): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM sale_outbox WHERE merchantId = :merchant AND state != 'ACKNOWLEDGED')")
+    suspend fun hasOutstandingFor(merchant: String): Boolean
+    @Query("SELECT COALESCE(MAX(sequence), 0) FROM sale_outbox")
+    fun observeLatestSequence(): Flow<Long>
+    @Query("SELECT * FROM sale_outbox WHERE state != 'ACKNOWLEDGED' ORDER BY sequence")
+    fun observeUnacknowledged(): Flow<List<SaleOutboxEntity>>
     @Query("SELECT COUNT(*) FROM sale_outbox WHERE state != 'ACKNOWLEDGED'")
     fun observeOutstanding(): Flow<Int>
     @Query("UPDATE sale_outbox SET state = 'PROCESSING', retryCount = retryCount + 1, leaseOwner = :owner, leaseExpiresAt = :expires, updatedAt = :now WHERE eventId = :eventId")
