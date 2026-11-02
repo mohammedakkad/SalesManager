@@ -4,24 +4,19 @@ Debug JVM tests only. Not device/instrumentation or minified release coverage. C
 
 | Module | Metric | Covered | Missed | Coverage |
 | --- | --- | ---: | ---: | ---: |
-| app | BRANCH | 477 | 2016 | 19.1336% |
-| app | LINE | 2981 | 6232 | 32.3565% |
-| app | METHOD | 733 | 1616 | 31.2048% |
-| app | CLASS | 253 | 475 | 34.7527% |
-| salesmanager | BRANCH | 238 | 13397 | 1.7455% |
-| salesmanager | LINE | 541 | 16759 | 3.1272% |
-| salesmanager | METHOD | 142 | 2921 | 4.6360% |
-| salesmanager | CLASS | 38 | 1197 | 3.0769% |
-| weighted overall | BRANCH | 715 | 15413 | 4.4333% |
-| weighted overall | LINE | 3522 | 22991 | 13.2840% |
-| weighted overall | METHOD | 875 | 4537 | 16.1678% |
-| weighted overall | CLASS | 291 | 1672 | 14.8242% |
+| app | BRANCH | 481 | 2020 | 19.2323% |
+| app | LINE | 3029 | 6263 | 32.5979% |
+| app | METHOD | 743 | 1627 | 31.3502% |
+| app | CLASS | 257 | 477 | 35.0136% |
+| salesmanager | BRANCH | 288 | 13499 | 2.0889% |
+| salesmanager | LINE | 592 | 16772 | 3.4094% |
+| salesmanager | METHOD | 151 | 2924 | 4.9106% |
+| salesmanager | CLASS | 41 | 1197 | 3.3118% |
+| weighted overall | BRANCH | 769 | 15519 | 4.7213% |
+| weighted overall | LINE | 3621 | 23035 | 13.5842% |
+| weighted overall | METHOD | 894 | 4551 | 16.4187% |
+| weighted overall | CLASS | 298 | 1674 | 15.1116% |
 
 Exact class counters: seller-class-coverage-gaps.csv. Exact source line and branch gaps: seller-coverage-gaps.csv (branch counts per line; no true/false labels in JaCoCo XML). HTML and XML: each module build/reports/jacoco/qaCoverage/. No claim of 100% coverage or absence of defects. Initial production baseline had no tests/reports and was unmeasured; no verified numeric baseline was reduced. Reviewed CI floors in coverage-thresholds.json are based on measured module baselines with a small fixed margin for scheduled/generated paths; they are raised explicitly, never rewritten automatically by a test run.
 
 Remaining coverage: repository/DAO/migration faults, activation, sync conflicts/process interruption, cash/stock atomicity, backup restore/PDF, every Compose screen and navigation journey, workers/update behavior and release runtime. Full component inventory and test strategy identify the required continuation.
-
-
-## Stage 9 continuation
-
-See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.

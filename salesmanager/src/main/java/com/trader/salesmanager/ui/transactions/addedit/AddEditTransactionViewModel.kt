@@ -53,11 +53,16 @@ class AddEditTransactionViewModel(
     private val productRepo: ProductRepository,
     private val stockRepo: StockRepository,
     private val invoiceRepo: InvoiceItemRepository,
-    private val merchantId: String
+    private val merchantId: String,
+    private val saleCommands: com.trader.salesmanager.sales.SaleCommands,
+    private val syncCoordinator: com.trader.core.sync.SyncCoordinator,
+    private val savedState: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
+    private val operationId: String = savedState.get<String>("saleOperationId") ?: UUID.randomUUID().toString().also { savedState["saleOperationId"] = it }
+    private val commandDate: Long = savedState.get<Long>("saleCommandDate") ?: System.currentTimeMillis().also { savedState["saleCommandDate"] = it }
     private var editingId: Long? = null
     private var isSavingInProgress = false
 
@@ -262,7 +267,7 @@ class AddEditTransactionViewModel(
     }
 
     fun save() {
-        if (isSavingInProgress || _uiState.value.isLoading) return
+        if (isSavingInProgress || _uiState.value.isLoading || _uiState.value.isSaved) return
         val state = _uiState.value
         val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
 
@@ -281,30 +286,30 @@ class AddEditTransactionViewModel(
             return
         }
 
+        isSavingInProgress = true
         viewModelScope.launch {
             try {
-                isSavingInProgress = true
                 _uiState.update {
                     it.copy(isLoading = true, error = null)
                 }
 
                 val transaction = Transaction(
                     id = editingId ?: 0,
+                    date = commandDate,
                     customerId = customer.id,
                     amount = amount, // ✅ المبلغ الصحيح دائماً
                     isPaid = state.isPaid,
                     paymentType = state.paymentType,
                     paymentMethodId = state.selectedPaymentMethod?.id,
                     note = state.note,
-                    paidAt = if (state.isPaid) System.currentTimeMillis() else null,
+                    paidAt = if (state.isPaid) commandDate else null,
                     hasItems = state.pendingLines.isNotEmpty()
                 )
 
                 if (editingId == null) {
-                    val savedId = transactionRepo.insertTransaction(transaction)
-                    if (state.pendingLines.isNotEmpty()) {
-                        saveItemsAndDeductStock(savedId, state.pendingLines)
-                    }
+                    val savedId = saleCommands.create(operationId, merchantId, transaction,
+                        buildItems(0, state.pendingLines))
+                    syncCoordinator.syncAll()
                     _uiState.update {
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
                     }
@@ -331,6 +336,8 @@ class AddEditTransactionViewModel(
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = txId)
                     }
                 }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 isSavingInProgress = false
                 _uiState.update {
@@ -362,6 +369,21 @@ class AddEditTransactionViewModel(
         lines: List<InvoiceLineItem>,
         oldItems: List<InvoiceItem> = emptyList()
     ) {
+        val items = buildItems(transactionId, lines, oldItems)
+        invoiceRepo.saveItems(items)
+
+        lines.forEach { line ->
+            stockRepo.deductStock(
+                productId = line.product.product.id,
+                unitId = line.selectedUnit.id,
+                quantity = line.quantity,
+                transactionId = transactionId,
+                productName = line.product.product.name,
+                unitLabel = line.selectedUnit.unitLabel
+            )
+        }
+    }
+    private fun buildItems(transactionId: Long, lines: List<InvoiceLineItem>, oldItems: List<InvoiceItem> = emptyList()): List<InvoiceItem> {
         // ✅ خريطة productId:unitId → UUID القديم
         // إذا وجد نفس الصنف + الوحدة في العملية القديمة → نُعيد استخدام UUID
         // هذا يجعل Firebase يرى UPDATE بدل DELETE+INSERT → لا تكرار
@@ -369,9 +391,9 @@ class AddEditTransactionViewModel(
             "${it.productId}:${it.unitId}" to it.id
         }
 
-        val items = lines.map { line ->
+        return lines.mapIndexed { index, line ->
             val key = "${line.product.product.id}:${line.selectedUnit.id}"
-            val itemId = oldIdMap[key] ?: UUID.randomUUID().toString()
+            val itemId = oldIdMap[key] ?: UUID.nameUUIDFromBytes("$operationId:$index:$key".toByteArray()).toString()
 
             val unitLabelDisplay = if (
                 line.selectedUnit.unitType == UnitType.WEIGHT &&
@@ -393,19 +415,8 @@ class AddEditTransactionViewModel(
             )
         }
 
-        invoiceRepo.saveItems(items)
-
-        lines.forEach { line ->
-            stockRepo.deductStock(
-                productId = line.product.product.id,
-                unitId = line.selectedUnit.id,
-                quantity = line.quantity,
-                transactionId = transactionId,
-                productName = line.product.product.name,
-                unitLabel = line.selectedUnit.unitLabel
-            )
-        }
     }
+
 }
 
 private fun String.toLatinDigits(): String = this

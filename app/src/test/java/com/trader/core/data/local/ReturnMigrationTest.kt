@@ -78,7 +78,7 @@ class ReturnMigrationTest {
         }
     }
     private fun upgraded(migration:Migration=AppDatabase.MIGRATION_22_23):AppDatabase = Room.databaseBuilder(context,AppDatabase::class.java,name)
-        .allowMainThreadQueries().addMigrations(migration).build().also { room=it }
+        .allowMainThreadQueries().addMigrations(migration, AppDatabase.MIGRATION_23_24).build().also { room=it }
     @After fun cleanup() { room?.close();context.deleteDatabase(name) }
     @Test fun backfillsPartialFullUnreturnedAndMissingLineStates()=runTest {
         val dao=upgraded().transactionDao()

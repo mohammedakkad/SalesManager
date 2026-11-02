@@ -1,0 +1,12 @@
+package com.trader.core.data.local.dao
+
+import androidx.room.*
+import com.trader.core.data.local.entity.SaleOperationEntity
+
+@Dao
+interface SaleOperationDao {
+    @Query("SELECT * FROM sale_operations WHERE merchantId = :merchantId AND operationId = :operationId")
+    suspend fun get(merchantId: String, operationId: String): SaleOperationEntity?
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insert(receipt: SaleOperationEntity)
+}
