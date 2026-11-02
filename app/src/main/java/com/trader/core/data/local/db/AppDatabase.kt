@@ -10,6 +10,7 @@ import com.trader.core.domain.model.PaymentType
 
 @Database(
     entities = [
+        SaleOutboxEntity::class,
         SaleOperationEntity::class,
         CustomerEntity::class,
         TransactionEntity::class,
@@ -29,10 +30,11 @@ import com.trader.core.domain.model.PaymentType
         CashBoxMovementEntity::class,
         LowStockAlertStateEntity::class
     ],
-    version = 24,
+    version = 25,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun saleOutboxDao(): SaleOutboxDao
     abstract fun saleOperationDao(): SaleOperationDao
     abstract fun customerDao(): CustomerDao
     abstract fun transactionDao(): TransactionDao
@@ -50,6 +52,17 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun lowStockAlertDao(): LowStockAlertDao
 
     companion object {
+        val MIGRATION_24_25 = object : Migration(24, 25) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS sale_outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, eventId TEXT NOT NULL, operationId TEXT NOT NULL, merchantId TEXT NOT NULL, aggregateId INTEGER NOT NULL, aggregateRevision INTEGER NOT NULL, eventType TEXT NOT NULL, payloadVersion INTEGER NOT NULL, payload TEXT NOT NULL, state TEXT NOT NULL, retryCount INTEGER NOT NULL, nextAttemptAt INTEGER NOT NULL, leaseOwner TEXT, leaseExpiresAt INTEGER, createdAt INTEGER NOT NULL, updatedAt INTEGER NOT NULL, acknowledgedAt INTEGER, remoteReceipt TEXT, lastError TEXT)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_sale_outbox_eventId ON sale_outbox(eventId)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_sale_outbox_merchantId_operationId ON sale_outbox(merchantId, operationId)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_sale_outbox_merchantId_aggregateId_aggregateRevision ON sale_outbox(merchantId, aggregateId, aggregateRevision)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_sale_outbox_merchantId_state_sequence ON sale_outbox(merchantId, state, sequence)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_sale_outbox_leaseExpiresAt ON sale_outbox(leaseExpiresAt)")
+            }
+        }
+
         val MIGRATION_23_24 = object : Migration(23, 24) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("CREATE TABLE IF NOT EXISTS sale_operations (merchantId TEXT NOT NULL, operationId TEXT NOT NULL, kind TEXT NOT NULL, requestHash TEXT NOT NULL, transactionId INTEGER NOT NULL, PRIMARY KEY(merchantId, operationId))")
@@ -567,7 +580,8 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_20_21,
             MIGRATION_21_22,
             MIGRATION_22_23,
-            MIGRATION_23_24
+            MIGRATION_23_24,
+            MIGRATION_24_25
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {

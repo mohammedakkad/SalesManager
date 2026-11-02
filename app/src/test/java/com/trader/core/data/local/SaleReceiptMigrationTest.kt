@@ -78,7 +78,7 @@ class SaleReceiptMigrationTest {
         }
     }
     private fun upgraded(migration:Migration=AppDatabase.MIGRATION_23_24):AppDatabase = Room.databaseBuilder(context,AppDatabase::class.java,name)
-        .allowMainThreadQueries().addMigrations(migration).build().also { room=it }
+        .allowMainThreadQueries().addMigrations(migration, AppDatabase.MIGRATION_24_25).build().also { room=it }
     @After fun cleanup() { room?.close();context.deleteDatabase(name) }
     @Test fun migrationPreservesAllFinancialRowsAndValidatesRoomSchema()=runTest {
         val before=legacy().use { snapshot(it.writableDatabase) }
