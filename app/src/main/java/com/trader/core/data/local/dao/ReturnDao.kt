@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ReturnDao {
+    @Query("SELECT * FROM return_invoices WHERE originalTransactionId = :id")
+    suspend fun forTransactionOnce(id: Long): List<ReturnInvoiceEntity>
+
 
     // ── Insert ─────────────────────────────────────────────────
     @Insert(onConflict = OnConflictStrategy.REPLACE)

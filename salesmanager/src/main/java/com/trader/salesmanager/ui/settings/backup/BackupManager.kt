@@ -99,6 +99,7 @@ class BackupManager(
             val cashBoxDao = database.cashBoxDao()
             val cashBoxMovementDao = database.cashBoxMovementDao()
 
+            database.saleOutboxDao().deleteAll()
             database.saleOperationDao().deleteAll()
             cashBoxMovementDao.deleteAll()
             cashBoxDao.deleteAll()
@@ -170,6 +171,12 @@ class BackupManager(
 
             require(payload.saleOperations.orEmpty().all { it.merchantId == merchantId }) { "Backup command receipts belong to another merchant" }
             payload.saleOperations.orEmpty().forEach { database.saleOperationDao().insert(it) }
+            require(payload.saleOutbox.orEmpty().all { it.merchantId == merchantId }) { "Outbox belongs to another merchant" }
+            payload.saleOutbox.orEmpty().forEach { event ->
+                // Never restore a worker's ownership token. Old completions must fail their CAS.
+                database.saleOutboxDao().insert(event.copy(leaseOwner = null, leaseExpiresAt = null,
+                    state = if (event.state == "PROCESSING") "PENDING" else event.state))
+            }
             transactionDao.recalculateHasItems()
         }
     }
@@ -208,7 +215,8 @@ class BackupManager(
             employees = database.employeeDao().getAllOnce(merchantId),
             cashBoxes = database.cashBoxDao().getAllOnce(),
             cashBoxMovements = database.cashBoxMovementDao().getAllOnce(),
-            saleOperations = database.saleOperationDao().allForMerchant(merchantId)
+            saleOperations = database.saleOperationDao().allForMerchant(merchantId),
+            saleOutbox = database.saleOutboxDao().all().filter { it.merchantId == merchantId }
         )
     }
 

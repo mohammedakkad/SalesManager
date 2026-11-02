@@ -15,7 +15,7 @@ class SaleCommands internal constructor(private val db: AppDatabase, private val
     suspend fun create(operationId: String, merchantId: String, sale: Transaction, items: List<InvoiceItem>): Long {
         require(sale.id == 0L)
         val hash = hash(listOf(sale, items))
-        return mutation(operationId, merchantId, "CREATE", hash) {
+        return mutation(operationId, merchantId, "CREATE", hash, 0, items, sale.paymentMethodId) {
             require(sale.amount.isFinite() && sale.amount > 0)
             validateLines(items, 0, sale.amount)
             val id = db.transactionDao().insertTransaction(TransactionEntity.fromDomain(
@@ -31,7 +31,7 @@ class SaleCommands internal constructor(private val db: AppDatabase, private val
     /** sale.amount is the gross invoice value; recorded refunds remain deducted. Null lines preserve the invoice. */
     suspend fun edit(operationId: String, merchantId: String, expected: Transaction, sale: Transaction, items: List<InvoiceItem>?): Long {
         val hash = hash(listOf(expected, sale, items))
-        return mutation(operationId, merchantId, "EDIT", hash) {
+        return mutation(operationId, merchantId, "EDIT", hash, expected.id, items.orEmpty(), sale.paymentMethodId) {
             editLocal(merchantId, expected, sale, items)
         }
     }
@@ -74,7 +74,7 @@ class SaleCommands internal constructor(private val db: AppDatabase, private val
 
     suspend fun delete(operationId: String, merchantId: String, expected: Transaction): Long {
         require(expected.id > 0)
-        return mutation(operationId, merchantId, "DELETE", hash(expected)) {
+        return mutation(operationId, merchantId, "DELETE", hash(expected), expected.id, emptyList(), expected.paymentMethodId) {
             deleteLocal(merchantId, expected)
         }
     }
@@ -125,13 +125,23 @@ class SaleCommands internal constructor(private val db: AppDatabase, private val
         }
     }
 
-    private suspend fun mutation(op: String, merchant: String, kind: String, hash: String, body: suspend () -> Long): Long = db.withTransaction {
+    private suspend fun mutation(op: String, merchant: String, kind: String, hash: String, aggregateId: Long, items: List<InvoiceItem>, method: Long?, body: suspend () -> Long): Long = db.withTransaction {
         require(op.isNotBlank() && merchant.isNotBlank())
         db.saleOperationDao().get(merchant, op)?.let {
             check(it.kind == kind && it.requestHash == hash) { "Operation ID reused for another request" }
             return@withTransaction it.transactionId
         }
+        val oldItems = db.invoiceItemDao().getForTransactionOnce(aggregateId)
+        val unitRefs = (oldItems.map { it.productId to it.unitId } + items.map { it.productId to it.unitId }).toSet()
+        val methods = listOfNotNull(method, db.transactionDao().getTransactionById(aggregateId)?.paymentMethodId).toSet()
+        val before = com.trader.salesmanager.sales.outbox.SaleProjection.capture(db, merchant, aggregateId, unitRefs, methods)
         val id = body()
+        val after = com.trader.salesmanager.sales.outbox.SaleProjection.capture(db, merchant, id, unitRefs, methods)
+        val payload = com.trader.salesmanager.sales.outbox.SalePayload(changes = before.changesTo(after), local = after.local)
+        val now = System.currentTimeMillis()
+        db.saleOutboxDao().insert(SaleOutboxEntity(eventId = UUID.randomUUID().toString(), operationId = op,
+            merchantId = merchant, aggregateId = id, aggregateRevision = db.saleOutboxDao().revision(merchant, id) + 1,
+            eventType = kind, payloadVersion = 1, payload = Gson().toJson(payload), createdAt = now, updatedAt = now))
         beforeCommit()
         currentCoroutineContext().ensureActive()
         db.saleOperationDao().insert(SaleOperationEntity(merchant, op, kind, hash, id))

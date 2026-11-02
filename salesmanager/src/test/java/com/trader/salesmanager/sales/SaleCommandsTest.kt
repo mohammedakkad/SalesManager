@@ -35,7 +35,7 @@ class SaleCommandsTest {
     }
     @After fun close() { db.close(); context.deleteDatabase(name) }
     private fun snapshot(): Map<String, List<List<String?>>> = listOf("transactions", "invoice_items", "product_units",
-        "stock_movements", "cash_boxes", "cash_box_movements", "return_invoices", "return_items", "sale_operations").associateWith { table ->
+        "stock_movements", "cash_boxes", "cash_box_movements", "return_invoices", "return_items", "sale_operations", "sale_outbox").associateWith { table ->
         db.openHelper.writableDatabase.query("SELECT * FROM $table ORDER BY rowid").use { c ->
             buildList { while (c.moveToNext()) add((0 until c.columnCount).map { if (c.isNull(it)) null else c.getString(it) }) }
         }
@@ -311,6 +311,33 @@ class SaleCommandsTest {
         try { SaleCommands(db).delete("delete", "other", old); fail("Wrong merchant accepted") }
         catch (expected: IllegalArgumentException) { }
         assertEquals(before, snapshot())
+    }
+
+    @Test fun commitCreatesExactlyOneOutboxEventAndReplayDoesNotDuplicateIt() = runBlocking {
+        val commands=SaleCommands(db)
+        val id=commands.create("outbox-create",merchant,sale,lines)
+        commands.create("outbox-create",merchant,sale,lines)
+        val event=db.saleOutboxDao().all().single()
+        assertEquals(id,event.aggregateId);assertEquals(1L,event.aggregateRevision)
+        assertEquals("CREATE",event.eventType);assertEquals("PENDING",event.state)
+        assertEquals("outbox-create",event.operationId)
+        assertTrue(event.payload.contains("transactions/$id"))
+    }
+    @Test fun editAndDeletionCreateVersionedOutboxTombstone() = runBlocking {
+        val old=original();val commands=SaleCommands(db)
+        commands.edit("edit",merchant,old,old.copy(amount=60.0),null)
+        val edited=db.transactionDao().getTransactionById(old.id)!!.toDomain()
+        commands.delete("delete",merchant,edited)
+        val events=db.saleOutboxDao().all()
+        assertEquals(listOf(1L,2L,3L),events.map { it.aggregateRevision })
+        assertEquals(listOf("CREATE","EDIT","DELETE"),events.map { it.eventType })
+        assertTrue(events.last().payload.contains("transactions/${old.id}"))
+        assertNull(db.transactionDao().getTransactionById(old.id))
+    }
+    @Test fun outboxInsertFailureRollsBackSaleStockCashAndReceipt() = runBlocking { assertCreationRollback("sale_outbox") }
+    @Test fun restartKeepsCommittedOutboxPayloadUnchanged() = runBlocking {
+        original();val before=db.saleOutboxDao().all();assertEquals(1,before.size)
+        db.close();open();assertEquals(before,db.saleOutboxDao().all())
     }
 
 }

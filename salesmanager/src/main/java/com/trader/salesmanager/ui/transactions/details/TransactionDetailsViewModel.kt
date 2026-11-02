@@ -128,7 +128,6 @@ class TransactionDetailsViewModel(
         val t = _state.value.transaction ?: return
         viewModelScope.launch {
             saleCommands.delete(java.util.UUID.randomUUID().toString(), merchantId, t)
-            saleSync.deleted(merchantId, t.id)
             _state.update {
                 it.copy(isDeleted = true)
             }

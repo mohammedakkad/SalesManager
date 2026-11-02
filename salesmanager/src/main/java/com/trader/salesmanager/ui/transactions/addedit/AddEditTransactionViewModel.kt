@@ -315,7 +315,7 @@ class AddEditTransactionViewModel(
                 if (editingId == null) {
                     val savedId = saleCommands.create(operationId, merchantId, transaction,
                         buildItems(0, state.pendingLines))
-                    syncCoordinator.syncAll()
+                    // Dispatch is driven by durable outbox observation after commit.
                     _uiState.update {
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
                     }
@@ -324,7 +324,7 @@ class AddEditTransactionViewModel(
                     val expected = loadedSale ?: error("Sale has not loaded")
                     saleCommands.edit(operationId, merchantId, expected, transaction,
                         if (state.userEditedLines) buildItems(txId, state.pendingLines, loadedItems) else null)
-                    syncCoordinator.syncAll()
+                    // Dispatch is driven by durable outbox observation after commit.
 
                     _uiState.update {
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = txId)

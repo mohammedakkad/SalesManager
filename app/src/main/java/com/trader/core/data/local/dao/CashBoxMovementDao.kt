@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CashBoxMovementDao {
+    @Query("SELECT * FROM cash_box_movements WHERE relatedTransactionId = :id")
+    suspend fun forTransactionOnce(id: Long): List<CashBoxMovementEntity>
+
     @Query("SELECT * FROM cash_box_movements ORDER BY createdAt DESC")
     fun getAll(): Flow<List<CashBoxMovementEntity>>
 

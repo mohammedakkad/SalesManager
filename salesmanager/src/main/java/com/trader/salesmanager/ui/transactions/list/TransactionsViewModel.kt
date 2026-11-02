@@ -40,7 +40,6 @@ class TransactionsViewModel(private val repo: TransactionRepository,
     fun deleteTransaction(transaction: Transaction) {
         viewModelScope.launch {
             saleCommands.delete(java.util.UUID.randomUUID().toString(), merchantId, transaction)
-            saleSync.deleted(merchantId, transaction.id)
         }
     }
 }
