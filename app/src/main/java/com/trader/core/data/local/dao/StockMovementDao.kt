@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StockMovementDao {
+    @Query("SELECT * FROM stock_movements WHERE relatedTransactionId = :id")
+    suspend fun forTransactionOnce(id: Long): List<StockMovementEntity>
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(movement: StockMovementEntity)

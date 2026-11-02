@@ -1,0 +1,136 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+Configuration on demand is an incubating feature.
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 35
+
+This Android Gradle plugin (8.3.2) was tested up to compileSdk = 34.
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 35.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 35 is available.
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=35
+to this project's gradle.properties.
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:generateDebugRFile UP-TO-DATE
+> Task :app:kspDebugKotlin UP-TO-DATE
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :salesmanager:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :salesmanager:preBuild UP-TO-DATE
+> Task :salesmanager:preDebugBuild UP-TO-DATE
+> Task :salesmanager:generateDebugBuildConfig UP-TO-DATE
+> Task :app:compileDebugLibraryResources UP-TO-DATE
+> Task :app:writeDebugAarMetadata UP-TO-DATE
+> Task :salesmanager:checkDebugAarMetadata UP-TO-DATE
+> Task :salesmanager:generateDebugResValues UP-TO-DATE
+> Task :salesmanager:injectCrashlyticsMappingFileIdDebug UP-TO-DATE
+> Task :salesmanager:processDebugGoogleServices UP-TO-DATE
+> Task :salesmanager:mapDebugSourceSetPaths UP-TO-DATE
+> Task :salesmanager:generateDebugResources UP-TO-DATE
+> Task :salesmanager:mergeDebugResources UP-TO-DATE
+> Task :salesmanager:packageDebugResources UP-TO-DATE
+> Task :salesmanager:parseDebugLocalResources UP-TO-DATE
+> Task :salesmanager:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :salesmanager:extractDeepLinksDebug UP-TO-DATE
+> Task :salesmanager:processDebugMainManifest UP-TO-DATE
+> Task :salesmanager:processDebugManifest UP-TO-DATE
+> Task :salesmanager:processDebugManifestForPackage UP-TO-DATE
+> Task :salesmanager:processDebugResources UP-TO-DATE
+> Task :salesmanager:compileDebugKotlin UP-TO-DATE
+> Task :salesmanager:javaPreCompileDebug UP-TO-DATE
+> Task :salesmanager:compileDebugJavaWithJavac UP-TO-DATE
+> Task :salesmanager:bundleDebugClassesToCompileJar UP-TO-DATE
+> Task :salesmanager:preDebugAndroidTestBuild SKIPPED
+> Task :salesmanager:processDebugAndroidTestManifest UP-TO-DATE
+> Task :salesmanager:generateDebugAndroidTestBuildConfig UP-TO-DATE
+> Task :salesmanager:checkDebugAndroidTestAarMetadata UP-TO-DATE
+> Task :salesmanager:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :salesmanager:mapDebugAndroidTestSourceSetPaths UP-TO-DATE
+> Task :salesmanager:generateDebugAndroidTestResources UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestResources UP-TO-DATE
+> Task :salesmanager:processDebugAndroidTestResources UP-TO-DATE
+> Task :salesmanager:compileDebugAndroidTestKotlin UP-TO-DATE
+> Task :salesmanager:javaPreCompileDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:compileDebugAndroidTestJavaWithJavac UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:packageDebugAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugShaders UP-TO-DATE
+> Task :salesmanager:compileDebugShaders NO-SOURCE
+> Task :salesmanager:generateDebugAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugAssets UP-TO-DATE
+> Task :salesmanager:compressDebugAssets UP-TO-DATE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :salesmanager:processDebugJavaRes UP-TO-DATE
+> Task :salesmanager:mergeDebugJavaResource UP-TO-DATE
+> Task :salesmanager:checkDebugDuplicateClasses UP-TO-DATE
+> Task :salesmanager:desugarDebugFileDependencies UP-TO-DATE
+> Task :salesmanager:mergeExtDexDebug UP-TO-DATE
+> Task :app:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :salesmanager:dexBuilderDebug UP-TO-DATE
+> Task :salesmanager:mergeLibDexDebug UP-TO-DATE
+> Task :salesmanager:mergeProjectDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :salesmanager:mergeDebugJniLibFolders UP-TO-DATE
+> Task :salesmanager:mergeDebugNativeLibs UP-TO-DATE
+> Task :salesmanager:stripDebugDebugSymbols UP-TO-DATE
+> Task :salesmanager:validateSigningDebug UP-TO-DATE
+> Task :salesmanager:writeDebugAppMetadata UP-TO-DATE
+> Task :salesmanager:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :salesmanager:packageDebug UP-TO-DATE
+> Task :salesmanager:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestShaders UP-TO-DATE
+> Task :salesmanager:compileDebugAndroidTestShaders NO-SOURCE
+> Task :salesmanager:generateDebugAndroidTestAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestAssets UP-TO-DATE
+> Task :salesmanager:compressDebugAndroidTestAssets UP-TO-DATE
+> Task :salesmanager:processDebugAndroidTestJavaRes UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestJavaResource UP-TO-DATE
+> Task :salesmanager:checkDebugAndroidTestDuplicateClasses UP-TO-DATE
+> Task :salesmanager:desugarDebugAndroidTestFileDependencies UP-TO-DATE
+> Task :salesmanager:mergeExtDexDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:mergeLibDexDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:dexBuilderDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:mergeProjectDexDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestJniLibFolders UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestNativeLibs NO-SOURCE
+> Task :salesmanager:stripDebugAndroidTestDebugSymbols NO-SOURCE
+> Task :salesmanager:validateSigningDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:writeDebugAndroidTestSigningConfigVersions UP-TO-DATE
+> Task :salesmanager:packageDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:createDebugAndroidTestApkListingFileRedirect UP-TO-DATE
+> Task :salesmanager:connectedDebugAndroidTest FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':salesmanager:connectedDebugAndroidTest'.
+> com.android.builder.testing.api.DeviceException: No connected devices!
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 25s
+88 actionable tasks: 1 executed, 87 up-to-date

@@ -583,11 +583,11 @@ private fun CountInputDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    input.toDoubleOrNull()?.let {
+                    input.toDoubleOrNull()?.takeIf { it.isFinite() && it >= 0 }?.let {
                         onConfirm(it)
                     }
                 },
-                enabled = input.toDoubleOrNull() != null,
+                enabled = input.toDoubleOrNull()?.let { it.isFinite() && it >= 0 } == true,
                 colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
             ) {
                 Text("تأكيد")

@@ -31,7 +31,8 @@ class ActivationRepositoryImpl(
     private val returnDao: ReturnDao,
     private val invoiceItemDao: InvoiceItemDao,
     private val cashBoxDao: CashBoxDao,
-    private val cashBoxMovementDao: CashBoxMovementDao
+    private val cashBoxMovementDao: CashBoxMovementDao,
+    private val outboxDatabase: com.trader.core.data.local.db.AppDatabase? = null
 ) : ActivationRepository {
 
     private val realtimeDb = FirebaseDatabase.getInstance().reference
@@ -112,6 +113,8 @@ class ActivationRepositoryImpl(
             }
 
     private suspend fun fetchAndStoreAllData(code: String) {
+        // Unversioned bulk snapshots cannot supersede managed local sale history or tombstones.
+        if (outboxDatabase?.saleOutboxDao()?.hasHistoryFor(code) == true) return
         val data = try {
             firebaseService.fetchAllData(code)
         } catch (e: Exception) {

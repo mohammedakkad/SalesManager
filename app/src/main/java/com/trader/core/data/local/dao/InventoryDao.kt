@@ -27,6 +27,9 @@ data class TopSellingProductProjection(
 
 @Dao
 interface InvoiceItemDao {
+    @Query("SELECT * FROM invoice_items WHERE id = :id")
+    suspend fun getById(id: String): InvoiceItemEntity?
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInvoiceItem(item: InvoiceItemEntity)
@@ -225,6 +228,9 @@ interface InventoryDao {
 
     @Update
     suspend fun updateSession(session: InventorySessionEntity)
+
+    @Query("SELECT * FROM inventory_sessions WHERE id = :id")
+    suspend fun getSessionById(id: String): InventorySessionEntity?
 
     @Query("SELECT * FROM inventory_sessions WHERE status = 'IN_PROGRESS' LIMIT 1")
     fun getActiveSession(): Flow<InventorySessionEntity?>

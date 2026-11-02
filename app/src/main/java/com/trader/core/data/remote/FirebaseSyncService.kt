@@ -13,6 +13,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.launch
 import com.trader.core.domain.model.InvoiceItem
@@ -643,7 +644,7 @@ class FirebaseSyncService {
     }
 
     suspend fun pushReturnInvoice(merchantCode: String, returnInvoice: ReturnInvoice, items: List<ReturnItem>) {
-        withTimeoutOrNull(8_000) {
+        withTimeout(8_000) {
             val ref = db.reference.child("merchants").child(merchantCode).child("return_invoices").child(returnInvoice.id)
             ref.setValue(mapOf(
                 "id" to returnInvoice.id,
@@ -664,7 +665,8 @@ class FirebaseSyncService {
                         "returnedQty" to it.returnedQuantity,
                         "pricePerUnit" to it.pricePerUnit,
                         "costPricePerUnit" to it.costPricePerUnit,
-                        "totalRefund" to it.totalRefund
+                        "totalRefund" to it.totalRefund,
+                        "lostProfit" to it.lostProfit
                     )
                 }
             )).await()

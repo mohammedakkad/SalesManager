@@ -69,13 +69,12 @@ class InventorySessionViewModel(
 
     fun startNewSession() {
         viewModelScope.launch {
-            val sessionId = inventoryRepo.startNewSession(merchantId)
-            (inventoryRepo as? com.trader.core.data.repository.InventoryRepositoryImpl)
-                ?.populateSessionItems(sessionId)
+            inventoryRepo.startNewSession(merchantId)
         }
     }
 
     fun updateItemCount(item: InventorySessionItem, actualQty: Double) {
+        if (!actualQty.isFinite() || actualQty < 0) return
         viewModelScope.launch { inventoryRepo.updateSessionItem(item.copy(actualQuantity = actualQty)) }
     }
 

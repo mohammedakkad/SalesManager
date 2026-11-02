@@ -1,0 +1,24 @@
+# Seller measured coverage
+
+Debug JVM tests only. Not device/instrumentation or minified release coverage. Counts include compiled production classes, generated classes and compiler-generated branches; no production exclusions. Partial lines count as covered in JaCoCo line totals, while the gap CSV also identifies lines with any missed instructions.
+
+| Module | Metric | Covered | Missed | Coverage |
+| --- | --- | ---: | ---: | ---: |
+| app | BRANCH | 481 | 2026 | 19.1863% |
+| app | LINE | 3030 | 6359 | 32.2718% |
+| app | METHOD | 744 | 1640 | 31.2081% |
+| app | CLASS | 258 | 481 | 34.9120% |
+| salesmanager | BRANCH | 425 | 13547 | 3.0418% |
+| salesmanager | LINE | 716 | 16743 | 4.1010% |
+| salesmanager | METHOD | 170 | 2923 | 5.4963% |
+| salesmanager | CLASS | 47 | 1197 | 3.7781% |
+| weighted overall | BRANCH | 906 | 15573 | 5.4979% |
+| weighted overall | LINE | 3746 | 23102 | 13.9526% |
+| weighted overall | METHOD | 914 | 4563 | 16.6880% |
+| weighted overall | CLASS | 305 | 1678 | 15.3807% |
+
+Exact class counters: seller-class-coverage-gaps.csv. Exact source line and branch gaps: seller-coverage-gaps.csv (branch counts per line; no true/false labels in JaCoCo XML). HTML and XML: each module build/reports/jacoco/qaCoverage/. No claim of 100% coverage or absence of defects. Initial production baseline had no tests/reports and was unmeasured; no verified numeric baseline was reduced. Reviewed CI floors in coverage-thresholds.json are based on measured module baselines with a small fixed margin for scheduled/generated paths; they are raised explicitly, never rewritten automatically by a test run.
+
+Remaining coverage: repository/DAO/migration faults, activation, sync conflicts/process interruption, cash/stock atomicity, backup restore/PDF, every Compose screen and navigation journey, workers/update behavior and release runtime. Full component inventory and test strategy identify the required continuation.
+
+Measured baseline coverage gates passed.

@@ -104,11 +104,8 @@ val initial = name.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
 val rawPhone = phone.filter {
     it.isDigit()
 }.trimStart('0')
-val storeName by context.appDataStore.data
-.map {
-    it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
-}
-.collectAsState(initial = "")
+val storeNameFlow = remember(context) { context.appDataStore.data.map { it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: "" } }
+    val storeName by storeNameFlow.collectAsState(initial = "")
 
 val exportVm: ExportViewModel = koinViewModel()
 val exportState by exportVm.state.collectAsStateWithLifecycle()
@@ -482,12 +479,13 @@ tx.date.toDateString(),
 style = MaterialTheme.typography.labelSmall,
 color = MaterialTheme.colorScheme.onSurfaceVariant
 )
-if (tx.paymentMethodName.isNotEmpty())
-Text(
-tx.paymentMethodName,
-style = MaterialTheme.typography.bodySmall,
-color = MaterialTheme.colorScheme.onSurfaceVariant
-)
+if (tx.paymentMethodName.isNotEmpty()) {
+    Text(
+        tx.paymentMethodName,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
 }
 Spacer(Modifier.width(12.dp))
 Text(

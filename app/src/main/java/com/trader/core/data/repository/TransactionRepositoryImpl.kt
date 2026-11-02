@@ -1,5 +1,6 @@
 package com.trader.core.data.repository
 
+import androidx.room.withTransaction
 import com.trader.core.data.local.dao.*
 import com.trader.core.data.local.entity.TransactionEntity
 import com.trader.core.data.remote.FirebaseSyncService
@@ -23,10 +24,12 @@ class TransactionRepositoryImpl(
     private val activationRepo: ActivationRepository,
     private val invoiceItemRepo: InvoiceItemRepository,
     private val stockRepo: StockRepository,
-    private val cashBoxRepo: CashBoxRepository
+    private val cashBoxRepo: CashBoxRepository,
+    private val returnDao: ReturnDao,
+    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+    private val outboxDatabase: com.trader.core.data.local.db.AppDatabase? = null
 ) : TransactionRepository {
 
-    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
         startRealtimeSync()
@@ -39,52 +42,34 @@ class TransactionRepositoryImpl(
      *      then starts the realtime Firebase listener.
      * If the user deactivates (code → ""), the sync collector is cancelled automatically.
      */
+    private suspend fun localFence(body: suspend () -> Unit) {
+        if (outboxDatabase == null) body() else outboxDatabase.withTransaction { body() }
+    }
+
     private fun startRealtimeSync() {
         syncScope.launch {
-            activationRepo.observeMerchantCode()
-            .filter {
-                it.isNotEmpty()
-            } // wait for activation
-            .distinctUntilChanged()
-            .collectLatest {
-                code ->
-                // collectLatest cancels previous collector when code changes
-                sync.observeTransactions(code).collect {
-                    list ->
-                    list.forEach {
-                        t ->
-                        try {
-                            val existing = transactionDao.getTransactionById(t.id)
-                            if (existing == null) {
-                                transactionDao.insertTransaction(
-                                    TransactionEntity.fromDomain(
-                                        t.copy(syncStatus = SyncStatus.SYNCED)
-                                    )
-                                )
-                            } else if (existing.syncStatus == SyncStatus.SYNCED.name) {
-                                // فقط حدّث إذا كانت SYNCED — لا تلمس PENDING
-                                transactionDao.insertTransaction(
-                                    TransactionEntity.fromDomain(
-                                        t.copy(syncStatus = SyncStatus.SYNCED)
-                                    )
-                                )
+            activationRepo.observeMerchantCode().distinctUntilChanged().collectLatest { merchant ->
+                if (merchant.isBlank()) return@collectLatest
+                sync.observeTransactions(merchant).collect { list ->
+                    list.forEach { remote -> localFence {
+                        if (outboxDatabase?.saleOutboxDao()?.manages(remote.id) != true) {
+                            val existing = transactionDao.getTransactionById(remote.id)
+                            if (existing == null || existing.syncStatus == SyncStatus.SYNCED.name) {
+                                try { transactionDao.insertTransaction(TransactionEntity.fromDomain(remote.copy(syncStatus = SyncStatus.SYNCED))) }
+                                catch (missingParent: android.database.sqlite.SQLiteConstraintException) { /* A later customer snapshot can resolve this. */ }
                             }
-                        } catch (e: android.database.sqlite.SQLiteConstraintException) {
-                            // Customer not synced yet — skip silently
                         }
-
-                    }
-                    val remoteIds = list.map {
-                        it.id
-                    }.toSet()
-                    val localIds = transactionDao.getAllIds()
-                    localIds.forEach {
-                        localId ->
-                        if (localId !in remoteIds) {
-                            val entity = transactionDao.getTransactionById(localId) ?: return@forEach
-                            deleteTransactionLocally(entity.enrich(), syncRemote = false)
+                    } }
+                    val remoteIds = list.map { it.id }.toSet()
+                    transactionDao.getAllIds().filter { it !in remoteIds }.forEach { id -> localFence {
+                        if (outboxDatabase?.saleOutboxDao()?.manages(id) != true) {
+                            val local = transactionDao.getTransactionById(id)
+                            if (local?.syncStatus == SyncStatus.SYNCED.name) {
+                                if (outboxDatabase != null) transactionDao.markConflicting(id)
+                                else deleteTransactionLocally(local.enrich(), syncRemote = false)
+                            }
                         }
-                    }
+                    } }
                 }
             }
         }
@@ -150,7 +135,8 @@ class TransactionRepositoryImpl(
             oldPaymentMethodId = null, oldAmount = 0.0, oldWasPaid = false,
             newPaymentMethodId = t.paymentMethodId, newAmount = t.amount, newWasPaid = t.isPaid
         )
-        syncScope.launch {
+        if (outboxDatabase?.inTransaction() != true) syncScope.launch {
+            if (outboxDatabase?.saleOutboxDao()?.manages(id) == true) return@launch
             runCatching { sync.pushTransaction(code(), t.copy(id = id)) }
                 .onSuccess { transactionDao.markSynced(id) }
                 .onFailure { transactionDao.markFailed(id) }
@@ -172,7 +158,8 @@ class TransactionRepositoryImpl(
             newAmount = t.amount,
             newWasPaid = t.isPaid
         )
-        syncScope.launch {
+        if (outboxDatabase?.inTransaction() != true) syncScope.launch {
+            if (outboxDatabase?.saleOutboxDao()?.manages(t.id) == true) return@launch
             runCatching {
                 sync.pushTransaction(code(), t)
                 delay(600)
@@ -186,11 +173,15 @@ class TransactionRepositoryImpl(
         val merchantCode = code()
         if (merchantCode.isEmpty()) return
         transactionDao.getAllOnce()
-            .filter { it.syncStatus == SyncStatus.PENDING.name }
+            .filter { it.syncStatus == SyncStatus.PENDING.name || it.syncStatus == SyncStatus.FAILED.name }
             .forEach { entity ->
+                if (outboxDatabase?.saleOutboxDao()?.manages(entity.id) == true) return@forEach
                 runCatching { sync.pushTransaction(merchantCode, entity.enrich()) }
-                    .onSuccess { transactionDao.markSynced(entity.id) }
-                    .onFailure { transactionDao.markFailed(entity.id) }
+                    .onSuccess { transactionDao.finishUpload(entity, true) }
+                    .onFailure { error ->
+                        if (error is CancellationException) throw error
+                        transactionDao.finishUpload(entity, false)
+                    }
             }
     }
 
@@ -200,18 +191,15 @@ class TransactionRepositoryImpl(
 
     private suspend fun deleteTransactionLocally(t: Transaction, syncRemote: Boolean) {
         val items = invoiceItemRepo.getItemsForTransactionOnce(t.id)
-        if (items.isNotEmpty()) {
-            items.forEach { item ->
-                stockRepo.returnStock(
-                    productId = item.productId,
-                    unitId = item.unitId,
-                    quantity = item.quantity,
-                    transactionId = t.id,
-                    productName = item.productName,
-                    unitLabel = item.unitLabel
-                )
+        val returnedByUnit = returnDao.getReturnedByUnit(t.id).associate { it.unitId to it.total }
+        items.groupBy { it.unitId }.forEach { (unitId, lines) ->
+            val remaining = (lines.sumOf { it.quantity } - (returnedByUnit[unitId] ?: 0.0)).coerceAtLeast(0.0)
+            if (remaining > 0) {
+                val item = lines.first()
+                stockRepo.returnStock(item.productId, unitId, remaining, t.id, item.productName, item.unitLabel)
             }
         }
+        returnDao.deleteForTransaction(t.id)
         invoiceItemRepo.deleteItemsForTransaction(t.id)
         transactionDao.deleteTransaction(TransactionEntity.fromDomain(t))
         cashBoxRepo.applyTransactionEffect(

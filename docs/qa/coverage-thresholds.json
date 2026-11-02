@@ -1,0 +1,10 @@
+{
+  "app": {
+    "BRANCH": 18.9,
+    "LINE": 32.1
+  },
+  "salesmanager": {
+    "BRANCH": 1.7,
+    "LINE": 3.0
+  }
+}

@@ -35,8 +35,10 @@ data class BoxesUiState(
 class BoxesViewModel(
     private val cashBoxRepo: CashBoxRepository,
     paymentMethodRepo: PaymentMethodRepository,
-    private val context: Context
+    context: Context
 ) : ViewModel() {
+
+    private val context = context.applicationContext
 
     private val _uiState = MutableStateFlow(BoxesUiState())
     val uiState: StateFlow<BoxesUiState> = _uiState.asStateFlow()

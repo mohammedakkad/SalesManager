@@ -1,0 +1,6 @@
+{
+  "source_commit": "9197b5045e60cff140e043239ad526522f97c4b7",
+  "schema_version": 22,
+  "sha256": "901fcb5ab2eb90bdc8fcdb77e2389d6aeeb804cd41a955d1bfb49d4ce34e5d79",
+  "origin": "Room 2.6.1 KSP export before entity or migration changes; no hand-authored historical schema"
+}
