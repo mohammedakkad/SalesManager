@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class TransactionsViewModel(private val repo: TransactionRepository) : ViewModel() {
+class TransactionsViewModel(private val repo: TransactionRepository,
+    private val saleCommands: com.trader.salesmanager.sales.SaleCommands,
+    private val saleSync: com.trader.salesmanager.sales.SaleSync,
+    private val merchantId: String) : ViewModel() {
 
     private val _filterPaid = MutableStateFlow<Boolean?>(null)
 
@@ -35,6 +38,9 @@ class TransactionsViewModel(private val repo: TransactionRepository) : ViewModel
     fun setFilter(paid: Boolean?) { _filterPaid.value = paid }
 
     fun deleteTransaction(transaction: Transaction) {
-        viewModelScope.launch { repo.deleteTransaction(transaction) }
+        viewModelScope.launch {
+            saleCommands.delete(java.util.UUID.randomUUID().toString(), merchantId, transaction)
+            saleSync.deleted(merchantId, transaction.id)
+        }
     }
 }

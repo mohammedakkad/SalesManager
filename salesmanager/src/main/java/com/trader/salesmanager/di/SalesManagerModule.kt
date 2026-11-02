@@ -155,6 +155,7 @@ val salesManagerModule = module {
     }
 
     single { com.trader.salesmanager.sales.SaleCommands(get()) }
+    single { com.trader.salesmanager.sales.SaleSync(get(), get(), get()) }
 
     single<CustomerRepository> {
         CustomerRepositoryImpl(get(), get(), get(), get())
@@ -287,10 +288,10 @@ val salesManagerModule = module {
         CustomerDetailsViewModel(get(), get(), params.get())
     }
     viewModel {
-        TransactionsViewModel(get())
+        TransactionsViewModel(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
     }
     viewModel { params ->
-        TransactionDetailsViewModel(params.get(), get(), get(), get(), get(), get())
+        TransactionDetailsViewModel(params.get(), get(), get(), get(), get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
     }
     viewModel {
         AddEditTransactionViewModel(

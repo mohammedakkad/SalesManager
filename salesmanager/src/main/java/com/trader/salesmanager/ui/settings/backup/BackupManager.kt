@@ -99,6 +99,7 @@ class BackupManager(
             val cashBoxDao = database.cashBoxDao()
             val cashBoxMovementDao = database.cashBoxMovementDao()
 
+            database.saleOperationDao().deleteAll()
             cashBoxMovementDao.deleteAll()
             cashBoxDao.deleteAll()
             returnDao.deleteAllInvoices()
@@ -167,6 +168,8 @@ class BackupManager(
                 cashBoxMovementDao.insertAll(it)
             }
 
+            require(payload.saleOperations.orEmpty().all { it.merchantId == merchantId }) { "Backup command receipts belong to another merchant" }
+            payload.saleOperations.orEmpty().forEach { database.saleOperationDao().insert(it) }
             transactionDao.recalculateHasItems()
         }
     }
@@ -186,9 +189,9 @@ class BackupManager(
         }
     }
 
-    private suspend fun collectPayload(): BackupPayload {
+    private suspend fun collectPayload(): BackupPayload = database.withTransaction {
         val productRelations = database.productDao().getAllWithUnitsOnce()
-        return BackupPayload(
+        BackupPayload(
             schemaVersion = BACKUP_FORMAT_VERSION,
             exportedAt = System.currentTimeMillis(),
             customers = database.customerDao().getAllOnce(),
@@ -204,7 +207,8 @@ class BackupManager(
             returnItems = database.returnDao().getAllItemsOnce(),
             employees = database.employeeDao().getAllOnce(merchantId),
             cashBoxes = database.cashBoxDao().getAllOnce(),
-            cashBoxMovements = database.cashBoxMovementDao().getAllOnce()
+            cashBoxMovements = database.cashBoxMovementDao().getAllOnce(),
+            saleOperations = database.saleOperationDao().allForMerchant(merchantId)
         )
     }
 

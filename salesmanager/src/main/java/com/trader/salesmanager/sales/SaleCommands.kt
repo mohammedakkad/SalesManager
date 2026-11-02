@@ -11,12 +11,13 @@ import java.security.MessageDigest
 import java.util.UUID
 
 /** Seller aggregate writer. All collaborators here are local DAOs; no remote repository is used. */
-class SaleCommands(private val db: AppDatabase) {
+class SaleCommands internal constructor(private val db: AppDatabase, private val beforeCommit: suspend () -> Unit = {}) {
     suspend fun create(operationId: String, merchantId: String, sale: Transaction, items: List<InvoiceItem>): Long {
         require(sale.id == 0L)
         val hash = hash(listOf(sale, items))
         return mutation(operationId, merchantId, "CREATE", hash) {
             require(sale.amount.isFinite() && sale.amount > 0)
+            validateLines(items, 0, sale.amount)
             val id = db.transactionDao().insertTransaction(TransactionEntity.fromDomain(
                 sale.copy(hasItems = items.isNotEmpty(), syncStatus = SyncStatus.PENDING)))
             val lines = items.map { it.copy(transactionId = id, merchantId = merchantId, syncStatus = SyncStatus.PENDING).toEntity() }
@@ -39,6 +40,7 @@ class SaleCommands(private val db: AppDatabase) {
         val current = db.transactionDao().getTransactionById(expected.id) ?: error("Sale no longer exists")
         check(sameSale(current.toDomain(), expected)) { "Sale changed; reload before editing" }
         require(sale.id == expected.id && sale.amount.isFinite() && sale.amount >= 0)
+        require(db.saleOperationDao().forTransaction(expected.id).all { it.merchantId == merchant }) { "Wrong sale merchant" }
         val old = current.toDomain()
         val refunds = db.returnDao().getAllInvoicesOnce().filter { it.originalTransactionId == old.id }.sumOf { it.totalRefund }
         require(sale.amount >= refunds) { "Invoice value cannot be less than existing refunds" }
@@ -46,6 +48,7 @@ class SaleCommands(private val db: AppDatabase) {
         require(oldItems.all { it.merchantId == merchant }) { "Wrong invoice merchant" }
         val returned = db.returnDao().getReturnedByUnit(old.id).associate { it.unitId to it.total }
         if (items != null) {
+            validateLines(items, old.id, sale.amount)
             val quantities = items.groupBy { it.unitId }.mapValues { (_, lines) -> lines.sumOf { it.quantity } }
             require(returned.all { (unit, qty) -> (quantities[unit] ?: 0.0) >= qty }) { "Cannot remove already returned quantities" }
             remaining(oldItems, returned).forEach { stock(it, it.quantity, old.id, merchant) }
@@ -54,12 +57,57 @@ class SaleCommands(private val db: AppDatabase) {
             db.invoiceItemDao().insertAll(replacements)
             remaining(replacements, returned).forEach { stock(it, -it.quantity, old.id, merchant) }
         }
+        val finalQuantities = (items?.map { it.toEntity() } ?: oldItems).groupBy { it.unitId }
+            .mapValues { (_, lines) -> lines.sumOf { it.quantity } }
+        val status = when {
+            returned.values.none { it > 0 } -> TransactionReturnStatus.NONE
+            finalQuantities.isNotEmpty() && finalQuantities.all { (unit, quantity) -> (returned[unit] ?: 0.0) >= quantity } -> TransactionReturnStatus.FULLY_RETURNED
+            else -> TransactionReturnStatus.PARTIALLY_RETURNED
+        }
         val new = sale.copy(amount = sale.amount - refunds, originalAmount = sale.amount,
-            returnStatus = old.returnStatus, hasItems = items?.isNotEmpty() ?: oldItems.isNotEmpty(),
+            returnStatus = status, hasItems = items?.isNotEmpty() ?: oldItems.isNotEmpty(),
             syncStatus = SyncStatus.PENDING)
         db.transactionDao().updateTransaction(TransactionEntity.fromDomain(new))
         cash(old, new, merchant)
         return old.id
+    }
+
+    suspend fun delete(operationId: String, merchantId: String, expected: Transaction): Long {
+        require(expected.id > 0)
+        return mutation(operationId, merchantId, "DELETE", hash(expected)) {
+            deleteLocal(merchantId, expected)
+        }
+    }
+
+    private suspend fun deleteLocal(merchant: String, expected: Transaction): Long {
+        val current = db.transactionDao().getTransactionById(expected.id) ?: return expected.id
+        require(db.saleOperationDao().forTransaction(expected.id).all { it.merchantId == merchant }) { "Wrong sale merchant" }
+        val sale = current.toDomain()
+        check(sameSale(sale, expected)) { "Sale changed; reload before deleting" }
+        val lines = db.invoiceItemDao().getForTransactionOnce(sale.id)
+        require(lines.all { it.merchantId == merchant }) { "Wrong invoice merchant" }
+        val returned = db.returnDao().getReturnedByUnit(sale.id).associate { it.unitId to it.total }
+        remaining(lines, returned).forEach { line ->
+            // A physically deleted catalog unit cannot be restocked (same return policy).
+            if (db.productDao().getProductIdForUnit(line.unitId) != null) stock(line, line.quantity, sale.id, merchant)
+        }
+        db.returnDao().deleteForTransaction(sale.id)
+        db.invoiceItemDao().deleteForTransaction(sale.id)
+        db.transactionDao().deleteById(sale.id)
+        cash(sale, null, merchant)
+        return sale.id
+    }
+
+    private suspend fun validateLines(lines: List<InvoiceItem>, transactionId: Long, gross: Double) {
+        require(lines.map { it.id }.distinct().size == lines.size) { "Duplicate invoice line identity" }
+        lines.forEach { line ->
+            require(line.id.isNotBlank() && line.quantity.isFinite() && line.quantity > 0 &&
+                line.pricePerUnit.isFinite() && line.pricePerUnit >= 0 && line.totalPrice.isFinite() &&
+                kotlin.math.abs(line.quantity * line.pricePerUnit - line.totalPrice) <= 0.000001) { "Invalid invoice line" }
+            val existing = db.invoiceItemDao().getById(line.id)
+            require(existing == null || (transactionId > 0 && existing.transactionId == transactionId)) { "Invoice line belongs to another sale" }
+        }
+        require(lines.sumOf { it.totalPrice } <= gross + 0.000001) { "Invoice lines exceed sale value" }
     }
 
     private fun sameSale(left: Transaction, right: Transaction): Boolean {
@@ -84,6 +132,7 @@ class SaleCommands(private val db: AppDatabase) {
             return@withTransaction it.transactionId
         }
         val id = body()
+        beforeCommit()
         currentCoroutineContext().ensureActive()
         db.saleOperationDao().insert(SaleOperationEntity(merchant, op, kind, hash, id))
         id
@@ -120,6 +169,18 @@ class SaleCommands(private val db: AppDatabase) {
         }
     }
 
+    // Versioned primitive tuples avoid R8/reflection field-name changes in durable receipts.
+    private fun canonical(value: Any?): Any? = when (value) {
+        is Transaction -> listOf(value.id, value.customerId, value.amount, value.originalAmount, value.isPaid,
+            value.paymentMethodId, value.note, value.date, value.paidAt, value.paymentType.name, value.hasItems,
+            value.dueDate, value.reminderEnabled, value.returnStatus.name)
+        is InvoiceItem -> listOf(value.id, value.transactionId, value.productId, value.productName, value.unitId,
+            value.unitLabel, value.quantity, value.pricePerUnit, value.totalPrice, value.merchantId)
+        is List<*> -> value.map(::canonical)
+        else -> value
+    }
+
     private fun hash(value: Any): String = MessageDigest.getInstance("SHA-256")
-        .digest(Gson().toJson(value).toByteArray(Charsets.UTF_8)).joinToString("") { "%02x".format(it.toInt() and 255) }
+        .digest(("sale-command-v1:" + Gson().toJson(canonical(value))).toByteArray(Charsets.UTF_8))
+        .joinToString("") { "%02x".format(it.toInt() and 255) }
 }

@@ -16,7 +16,7 @@ import com.trader.core.data.local.entity.ReturnItemEntity
 import com.trader.core.data.local.entity.StockMovementEntity
 import com.trader.core.data.local.entity.TransactionEntity
 
-const val BACKUP_FORMAT_VERSION = 20
+const val BACKUP_FORMAT_VERSION = 21
 const val BACKUP_JSON_ENTRY = "backup.json"
 const val BACKUP_FILE_EXTENSION = "smbk"
 
@@ -37,5 +37,6 @@ data class BackupPayload(
     val returnItems: List<ReturnItemEntity> = emptyList(),
     val employees: List<EmployeeEntity> = emptyList(),
     val cashBoxes: List<CashBoxEntity> = emptyList(),
-    val cashBoxMovements: List<CashBoxMovementEntity> = emptyList()
+    val cashBoxMovements: List<CashBoxMovementEntity> = emptyList(),
+    val saleOperations: List<com.trader.core.data.local.entity.SaleOperationEntity> = emptyList()
 )

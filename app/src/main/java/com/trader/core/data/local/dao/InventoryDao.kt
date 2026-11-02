@@ -27,6 +27,9 @@ data class TopSellingProductProjection(
 
 @Dao
 interface InvoiceItemDao {
+    @Query("SELECT * FROM invoice_items WHERE id = :id")
+    suspend fun getById(id: String): InvoiceItemEntity?
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInvoiceItem(item: InvoiceItemEntity)

@@ -41,6 +41,7 @@ object BackupMigrator {
         17 -> migrateV17ToV18(payload)
         18 -> migrateV18ToV19(payload)
         19 -> migrateV19ToV20(payload)
+        20 -> bump(payload, 21)
         else -> throw BackupException.UnsupportedBackupVersion(payload.schemaVersion)
     }
 
@@ -127,7 +128,8 @@ object BackupMigrator {
     )
 
     private fun migrateV17ToV18(payload: BackupPayload): BackupPayload = bump(
-        payload.copy(cashBoxMovements = payload.cashBoxMovements.orEmpty()),
+        payload.copy(cashBoxMovements = payload.cashBoxMovements.orEmpty(),
+        saleOperations = payload.saleOperations.orEmpty()),
         18
     )
 
@@ -156,7 +158,8 @@ object BackupMigrator {
         returnItems = payload.returnItems.orEmpty(),
         employees = payload.employees.orEmpty(),
         cashBoxes = payload.cashBoxes.orEmpty(),
-        cashBoxMovements = payload.cashBoxMovements.orEmpty()
+        cashBoxMovements = payload.cashBoxMovements.orEmpty(),
+        saleOperations = payload.saleOperations.orEmpty()
     )
 
     // Old backups have no return-state columns. Reconstruct only from their

@@ -4,19 +4,24 @@ Debug JVM tests only. Not device/instrumentation or minified release coverage. C
 
 | Module | Metric | Covered | Missed | Coverage |
 | --- | --- | ---: | ---: | ---: |
-| app | BRANCH | 481 | 2020 | 19.2323% |
-| app | LINE | 3029 | 6263 | 32.5979% |
-| app | METHOD | 743 | 1627 | 31.3502% |
-| app | CLASS | 257 | 477 | 35.0136% |
-| salesmanager | BRANCH | 318 | 13545 | 2.2939% |
-| salesmanager | LINE | 626 | 16756 | 3.6014% |
-| salesmanager | METHOD | 157 | 2922 | 5.0991% |
-| salesmanager | CLASS | 42 | 1197 | 3.3898% |
-| weighted overall | BRANCH | 799 | 15565 | 4.8827% |
-| weighted overall | LINE | 3655 | 23019 | 13.7025% |
-| weighted overall | METHOD | 900 | 4549 | 16.5168% |
-| weighted overall | CLASS | 299 | 1674 | 15.1546% |
+| app | BRANCH | 481 | 2026 | 19.1863% |
+| app | LINE | 3030 | 6359 | 32.2718% |
+| app | METHOD | 744 | 1640 | 31.2081% |
+| app | CLASS | 258 | 481 | 34.9120% |
+| salesmanager | BRANCH | 425 | 13547 | 3.0418% |
+| salesmanager | LINE | 716 | 16743 | 4.1010% |
+| salesmanager | METHOD | 170 | 2923 | 5.4963% |
+| salesmanager | CLASS | 47 | 1197 | 3.7781% |
+| weighted overall | BRANCH | 906 | 15573 | 5.4979% |
+| weighted overall | LINE | 3746 | 23102 | 13.9526% |
+| weighted overall | METHOD | 914 | 4563 | 16.6880% |
+| weighted overall | CLASS | 305 | 1678 | 15.3807% |
 
 Exact class counters: seller-class-coverage-gaps.csv. Exact source line and branch gaps: seller-coverage-gaps.csv (branch counts per line; no true/false labels in JaCoCo XML). HTML and XML: each module build/reports/jacoco/qaCoverage/. No claim of 100% coverage or absence of defects. Initial production baseline had no tests/reports and was unmeasured; no verified numeric baseline was reduced. Reviewed CI floors in coverage-thresholds.json are based on measured module baselines with a small fixed margin for scheduled/generated paths; they are raised explicitly, never rewritten automatically by a test run.
 
 Remaining coverage: repository/DAO/migration faults, activation, sync conflicts/process interruption, cash/stock atomicity, backup restore/PDF, every Compose screen and navigation journey, workers/update behavior and release runtime. Full component inventory and test strategy identify the required continuation.
+
+
+## Stage 10 implementation
+
+[Atomic Seller commands and evidence](stage10-atomic-sales.md) supersede the earlier statement that Seller sale commands are unimplemented. Creation/edit/deletion screen paths now use one Room aggregate transaction, with144 passing JVM tests and unchanged passing coverage gates. Distributed sync/outbox guarantees remain Stage11 work; overall release readiness remains FAIL.
