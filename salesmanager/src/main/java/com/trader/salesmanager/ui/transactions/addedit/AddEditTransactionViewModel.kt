@@ -63,6 +63,8 @@ class AddEditTransactionViewModel(
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
     private val operationId: String = savedState.get<String>("saleOperationId") ?: UUID.randomUUID().toString().also { savedState["saleOperationId"] = it }
     private val commandDate: Long = savedState.get<Long>("saleCommandDate") ?: System.currentTimeMillis().also { savedState["saleCommandDate"] = it }
+    private var loadedSale: Transaction? = null
+    private var loadedItems: List<InvoiceItem> = emptyList()
     private var editingId: Long? = null
     private var isSavingInProgress = false
 
@@ -116,6 +118,7 @@ class AddEditTransactionViewModel(
         editingId = transactionId
         viewModelScope.launch {
             val t = transactionRepo.getTransactionById(transactionId) ?: return@launch
+            if (loadedSale?.id != t.id) loadedSale = t
             val customer = if (t.customerId == WALK_IN_CUSTOMER.id) WALK_IN_CUSTOMER
             else customerRepo.getCustomerById(t.customerId)
 
@@ -138,6 +141,7 @@ class AddEditTransactionViewModel(
             }
 
             val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
+            loadedItems = items
             val lines = items.mapNotNull { item ->
                 val productWithUnits = productRepo.getProductById(item.productId)
                     ?: return@mapNotNull null
@@ -163,7 +167,7 @@ class AddEditTransactionViewModel(
             val itemsTotal = lines.sumOf {
                 it.totalPrice
             }
-            val baseAmount = (t.amount - itemsTotal).coerceAtLeast(0.0)
+            val baseAmount = (t.originalAmount - itemsTotal).coerceAtLeast(0.0)
 
             _uiState.update { state ->
                 if (state.userEditedLines) return@update state
@@ -172,7 +176,7 @@ class AddEditTransactionViewModel(
                     hasItems = lines.isNotEmpty(),
                     amount = String.format(
                         Locale.US, "%.2f",
-                        if (lines.isNotEmpty()) itemsTotal else t.amount
+                        if (lines.isNotEmpty()) itemsTotal + baseAmount else t.originalAmount
                     ),
                     baseAmount = baseAmount
                 )
@@ -295,14 +299,16 @@ class AddEditTransactionViewModel(
 
                 val transaction = Transaction(
                     id = editingId ?: 0,
-                    date = commandDate,
+                    date = loadedSale?.date ?: commandDate,
                     customerId = customer.id,
                     amount = amount, // ✅ المبلغ الصحيح دائماً
                     isPaid = state.isPaid,
                     paymentType = state.paymentType,
                     paymentMethodId = state.selectedPaymentMethod?.id,
                     note = state.note,
-                    paidAt = if (state.isPaid) commandDate else null,
+                    paidAt = if (state.isPaid) loadedSale?.paidAt ?: commandDate else null,
+                    dueDate = loadedSale?.dueDate,
+                    reminderEnabled = loadedSale?.reminderEnabled ?: true,
                     hasItems = state.pendingLines.isNotEmpty()
                 )
 
@@ -315,22 +321,10 @@ class AddEditTransactionViewModel(
                     }
                 } else {
                     val txId = editingId!!
-                    transactionRepo.updateTransaction(transaction)
-
-                    if (state.userEditedLines) {
-                        val oldItems = invoiceRepo.getItemsForTransactionOnce(txId)
-                        oldItems.forEach { old ->
-                            stockRepo.returnStock(
-                                productId = old.productId, unitId = old.unitId,
-                                quantity = old.quantity, transactionId = txId,
-                                productName = old.productName, unitLabel = old.unitLabel
-                            )
-                        }
-                        invoiceRepo.deleteItemsForTransaction(txId)
-                        // ✅ نُمرِّر oldItems لإعادة استخدام نفس UUID للأصناف الموجودة
-                        // يمنع Firebase Sync من إعادة إدراج الصنف القديم (duplicate)
-                        saveItemsAndDeductStock(txId, state.pendingLines, oldItems)
-                    }
+                    val expected = loadedSale ?: error("Sale has not loaded")
+                    saleCommands.edit(operationId, merchantId, expected, transaction,
+                        if (state.userEditedLines) buildItems(txId, state.pendingLines, loadedItems) else null)
+                    syncCoordinator.syncAll()
 
                     _uiState.update {
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = txId)
@@ -363,37 +357,16 @@ class AddEditTransactionViewModel(
         return arr.toString()
     }
 
-    // ── حفظ الأصناف + خصم المخزون + مزامنة ──────────────────────
-    private suspend fun saveItemsAndDeductStock(
-        transactionId: Long,
-        lines: List<InvoiceLineItem>,
-        oldItems: List<InvoiceItem> = emptyList()
-    ) {
-        val items = buildItems(transactionId, lines, oldItems)
-        invoiceRepo.saveItems(items)
-
-        lines.forEach { line ->
-            stockRepo.deductStock(
-                productId = line.product.product.id,
-                unitId = line.selectedUnit.id,
-                quantity = line.quantity,
-                transactionId = transactionId,
-                productName = line.product.product.name,
-                unitLabel = line.selectedUnit.unitLabel
-            )
-        }
-    }
     private fun buildItems(transactionId: Long, lines: List<InvoiceLineItem>, oldItems: List<InvoiceItem> = emptyList()): List<InvoiceItem> {
         // ✅ خريطة productId:unitId → UUID القديم
         // إذا وجد نفس الصنف + الوحدة في العملية القديمة → نُعيد استخدام UUID
         // هذا يجعل Firebase يرى UPDATE بدل DELETE+INSERT → لا تكرار
-        val oldIdMap = oldItems.associate {
-            "${it.productId}:${it.unitId}" to it.id
-        }
+        val oldIds = oldItems.groupBy { "${it.productId}:${it.unitId}" }
+            .mapValues { (_, items) -> java.util.ArrayDeque(items.map { it.id }) }
 
         return lines.mapIndexed { index, line ->
             val key = "${line.product.product.id}:${line.selectedUnit.id}"
-            val itemId = oldIdMap[key] ?: UUID.nameUUIDFromBytes("$operationId:$index:$key".toByteArray()).toString()
+            val itemId = oldIds[key]?.pollFirst() ?: UUID.nameUUIDFromBytes("$operationId:$index:$key".toByteArray()).toString()
 
             val unitLabelDisplay = if (
                 line.selectedUnit.unitType == UnitType.WEIGHT &&

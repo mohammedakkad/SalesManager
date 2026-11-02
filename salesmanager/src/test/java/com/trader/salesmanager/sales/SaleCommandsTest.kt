@@ -82,4 +82,29 @@ class SaleCommandsTest {
         catch (expected: android.database.sqlite.SQLiteException) { }
         db.close(); open(); assertEquals(before, snapshot())
     }
+    private suspend fun original(): Transaction {
+        val id = SaleCommands(db).create("create", merchant, sale, lines)
+        return db.transactionDao().getTransactionById(id)!!.toDomain()
+    }
+    @Test fun successfulEditChangesInvoiceStockCashAndDebtTogether() = runBlocking {
+        val old = original()
+        SaleCommands(db).edit("edit", merchant, old, old.copy(amount = 75.0, isPaid = false),
+            lines.map { it.copy(quantity = 3.0, totalPrice = 75.0) })
+        assertEquals(1.0, db.productDao().getQuantity("unit")!!, 0.0)
+        assertEquals(100.0, db.cashBoxDao().getById("1")!!.currentBalance, 0.0)
+        assertEquals(75.0, db.transactionDao().getUnpaidAmountByCustomer(1), 0.0)
+        assertEquals(3.0, db.invoiceItemDao().getForTransactionOnce(old.id).single().quantity, 0.0)
+    }
+    private suspend fun assertEditRollback(table: String, verb: String = "INSERT") {
+        val old = original(); val before = snapshot(); failWrite(table, verb)
+        try {
+            SaleCommands(db).edit("edit", merchant, old, old.copy(amount = 75.0), lines.map { it.copy(quantity = 3.0, totalPrice = 75.0) })
+            fail("Expected edit failure")
+        } catch (expected: android.database.sqlite.SQLiteException) { }
+        assertEquals(before, snapshot())
+    }
+    @Test fun editInvoiceFailureRollsBackRestoredStock() = runBlocking { assertEditRollback("invoice_items") }
+    @Test fun editCashFailureRollsBackInvoiceStockAndSale() = runBlocking { assertEditRollback("cash_box_movements") }
+    @Test fun editStockFailureRollsBackEverything() = runBlocking { assertEditRollback("stock_movements") }
+
 }

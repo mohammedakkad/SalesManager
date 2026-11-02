@@ -27,6 +27,56 @@ class SaleCommands(private val db: AppDatabase) {
         }
     }
 
+    /** sale.amount is the gross invoice value; recorded refunds remain deducted. Null lines preserve the invoice. */
+    suspend fun edit(operationId: String, merchantId: String, expected: Transaction, sale: Transaction, items: List<InvoiceItem>?): Long {
+        val hash = hash(listOf(expected, sale, items))
+        return mutation(operationId, merchantId, "EDIT", hash) {
+            editLocal(merchantId, expected, sale, items)
+        }
+    }
+
+    private suspend fun editLocal(merchant: String, expected: Transaction, sale: Transaction, items: List<InvoiceItem>?): Long {
+        val current = db.transactionDao().getTransactionById(expected.id) ?: error("Sale no longer exists")
+        check(sameSale(current.toDomain(), expected)) { "Sale changed; reload before editing" }
+        require(sale.id == expected.id && sale.amount.isFinite() && sale.amount >= 0)
+        val old = current.toDomain()
+        val refunds = db.returnDao().getAllInvoicesOnce().filter { it.originalTransactionId == old.id }.sumOf { it.totalRefund }
+        require(sale.amount >= refunds) { "Invoice value cannot be less than existing refunds" }
+        val oldItems = db.invoiceItemDao().getForTransactionOnce(old.id)
+        require(oldItems.all { it.merchantId == merchant }) { "Wrong invoice merchant" }
+        val returned = db.returnDao().getReturnedByUnit(old.id).associate { it.unitId to it.total }
+        if (items != null) {
+            val quantities = items.groupBy { it.unitId }.mapValues { (_, lines) -> lines.sumOf { it.quantity } }
+            require(returned.all { (unit, qty) -> (quantities[unit] ?: 0.0) >= qty }) { "Cannot remove already returned quantities" }
+            remaining(oldItems, returned).forEach { stock(it, it.quantity, old.id, merchant) }
+            db.invoiceItemDao().deleteForTransaction(old.id)
+            val replacements = items.map { it.copy(transactionId = old.id, merchantId = merchant, syncStatus = SyncStatus.PENDING).toEntity() }
+            db.invoiceItemDao().insertAll(replacements)
+            remaining(replacements, returned).forEach { stock(it, -it.quantity, old.id, merchant) }
+        }
+        val new = sale.copy(amount = sale.amount - refunds, originalAmount = sale.amount,
+            returnStatus = old.returnStatus, hasItems = items?.isNotEmpty() ?: oldItems.isNotEmpty(),
+            syncStatus = SyncStatus.PENDING)
+        db.transactionDao().updateTransaction(TransactionEntity.fromDomain(new))
+        cash(old, new, merchant)
+        return old.id
+    }
+
+    private fun sameSale(left: Transaction, right: Transaction): Boolean {
+        fun normalized(t: Transaction) = t.copy(customerName = "", paymentMethodName = "", syncStatus = SyncStatus.SYNCED)
+        return normalized(left) == normalized(right)
+    }
+
+    /** Subtract returns once across all price lines for a unit, not once per line. */
+    private fun remaining(lines: List<InvoiceItemEntity>, returned: Map<String, Double>): List<InvoiceItemEntity> {
+        val toSubtract = returned.toMutableMap()
+        return lines.mapNotNull { line ->
+            val consumed = minOf(line.quantity, toSubtract[line.unitId] ?: 0.0)
+            toSubtract[line.unitId] = (toSubtract[line.unitId] ?: 0.0) - consumed
+            (line.quantity - consumed).takeIf { it > 0.0 }?.let { line.copy(quantity = it) }
+        }
+    }
+
     private suspend fun mutation(op: String, merchant: String, kind: String, hash: String, body: suspend () -> Long): Long = db.withTransaction {
         require(op.isNotBlank() && merchant.isNotBlank())
         db.saleOperationDao().get(merchant, op)?.let {
