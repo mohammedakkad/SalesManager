@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException
@@ -28,7 +29,8 @@ class ReturnRepositoryImpl(
     private val merchantId: String,
     private val activationRepo: ActivationRepository, // ✅ Added for Realtime Sync
     private val sync: FirebaseSyncService,
-    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+    private val outboxJournal: (suspend (ReturnInvoice, List<ReturnItem>, suspend () -> ReturnInvoice) -> ReturnInvoice)? = null
 ) : ReturnRepository {
 
     private val dao = db.returnDao()
@@ -44,17 +46,20 @@ class ReturnRepositoryImpl(
             activationRepo.observeMerchantCode()
                 .distinctUntilChanged()
                 .collectLatest { code ->
-                    if (code.isBlank() || code != merchantId) return@collectLatest
+                    if (code.isBlank() || (outboxJournal == null && code != merchantId)) return@collectLatest
                     sync.observeReturnInvoices(code).collect { remoteReturns ->
                         val remoteIds = remoteReturns.map { it.first.id }.toSet()
 
                         // 1. Upsert remote changes
                         remoteReturns.forEach { (invoice, items) ->
                             try {
+                              db.withTransaction {
+                                if (outboxJournal != null && db.saleOutboxDao().manages(invoice.originalTransactionId)) return@withTransaction
                                 dao.mergeRemoteReturn(
                                     invoice.copy(syncStatus = SyncStatus.SYNCED).toEntity(),
                                     items.map { it.toEntity() }
                                 )
+                              }
                             } catch (e: CancellationException) {
                                 throw e
                             } catch (e: android.database.sqlite.SQLiteConstraintException) {
@@ -64,11 +69,13 @@ class ReturnRepositoryImpl(
 
                         // 2. Cleanup locally deleted remote records
                         val localIds = dao.getAllReturnIds()
-                        localIds.forEach { localId ->
-                            if (localId !in remoteIds) {
-                                dao.deleteReturnInvoiceById(localId)
+                        localIds.forEach { localId -> db.withTransaction {
+                            val aggregateId = dao.getById(localId)?.originalTransactionId
+                            if (outboxJournal == null || aggregateId == null || !db.saleOutboxDao().manages(aggregateId)) {
+                                if (localId !in remoteIds) dao.deleteReturnInvoiceById(localId)
                             }
-                        }
+                        } }
+
                     }
                 }
         }
@@ -92,8 +99,10 @@ class ReturnRepositoryImpl(
             kotlin.math.abs(returnInvoice.totalRefund - items.sumOf { it.totalRefund }) <= 0.000001) {
             "Refund total does not match items"
         }
-        val invoiceWithMerchant = returnInvoice.copy(merchantId = merchantId, syncStatus = SyncStatus.PENDING)
-        val persisted = db.withTransaction {
+        val activeMerchant = if (outboxJournal == null) merchantId else activationRepo.getMerchantCode()
+        require(activeMerchant.isNotBlank()) { "Merchant session ended" }
+        val invoiceWithMerchant = returnInvoice.copy(merchantId = activeMerchant, syncStatus = SyncStatus.PENDING)
+        val persist: suspend () -> ReturnInvoice = { db.withTransaction {
             val existing = dao.getById(returnInvoice.id)
             if (existing != null) {
                 require(existing.toDomain().copy(syncStatus = SyncStatus.PENDING) == invoiceWithMerchant &&
@@ -131,15 +140,18 @@ class ReturnRepositoryImpl(
                 returnStatus = computeReturnStatus(originalTx.id, invoiceItems)
             ))
             invoiceWithMerchant
-        }
+        } }
+        val persisted = outboxJournal?.invoke(invoiceWithMerchant, items, persist) ?: persist()
         // Retry only the durable upload; never replay stock/cash effects.
         syncScope.launch { syncPendingReturns() }
         return persisted
     }
 
     override suspend fun syncPendingReturns() = uploadMutex.withLock {
+        val merchantId = if (outboxJournal == null) this.merchantId else activationRepo.getMerchantCode()
         if (merchantId.isBlank() || activationRepo.getMerchantCode() != merchantId) return@withLock
         dao.getPendingReturns(merchantId).forEach { entity ->
+            if (outboxJournal != null && db.saleOutboxDao().manages(entity.originalTransactionId)) return@forEach
             if (activationRepo.getMerchantCode() != merchantId) return@withLock
             try {
                 sync.pushReturnInvoice(merchantId, entity.toDomain(), dao.getReturnItems(entity.id).map { it.toDomain() })
@@ -209,12 +221,11 @@ class ReturnRepositoryImpl(
     override suspend fun getAlreadyReturnedQty(transactionId: Long, unitId: String): Double =
     dao.totalReturnedForUnit(transactionId, unitId)
 
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     override fun getAllReturns(): Flow<List<ReturnInvoice>> =
-    dao.getAllReturns(merchantId).map {
-        it.map {
-            e -> e.toDomain()
-        }
-    }
+        (if (outboxJournal == null) dao.getAllReturns(merchantId)
+         else activationRepo.observeMerchantCode().flatMapLatest { dao.getAllReturns(it) })
+            .map { rows -> rows.map { it.toDomain() } }
 
     // ── حساب returnStatus الجديد بعد الإرجاع ─────────────────────
     private suspend fun computeReturnStatus(

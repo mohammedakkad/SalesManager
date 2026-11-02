@@ -12,7 +12,11 @@ import org.koin.core.component.get
 import java.util.concurrent.TimeUnit
 
 class SaleOutboxWorker(context:Context,parameters:WorkerParameters):CoroutineWorker(context,parameters),KoinComponent {
-    override suspend fun doWork():Result {
+    override suspend fun doWork():Result = try { performWork() }
+    catch(cancelled:CancellationException) { throw cancelled }
+    catch(error:Exception) { Result.retry() }
+
+    private suspend fun performWork():Result {
         val merchant=get<ActivationRepository>().getMerchantCode()
         if(merchant.isBlank()) return Result.success()
         val dispatcher=get<OutboxDispatcher>()

@@ -52,6 +52,8 @@ class CashBoxRepositoryImpl(
                             sync.observeCashBoxes(merchantCode).collect { list ->
                                 list.forEach { remote ->
                                     boxMutex.withLock {
+                                      database.withTransaction {
+                                        if (database.saleOutboxDao().hasOutstandingFor(merchantCode)) return@withTransaction
                                         val local = dao.getById(remote.id)
                                         if (local == null || local.syncStatus == SyncStatus.SYNCED.name) {
                                             dao.upsert(
@@ -60,6 +62,7 @@ class CashBoxRepositoryImpl(
                                                 )
                                             )
                                         }
+                                      }
                                     }
                                 }
                             }
@@ -194,10 +197,13 @@ class CashBoxRepositoryImpl(
     }
 
     private fun pushBoxAsync(boxId: String) {
+        if (database.inTransaction()) return
         syncScope.launch {
             val merchantCode = code()
+            if (database.saleOutboxDao().hasOutstandingFor(merchantCode)) return@launch
             if (merchantCode.isEmpty()) return@launch
             val entity = dao.getById(boxId) ?: return@launch
+            if (entity.merchantId.isNotBlank() && entity.merchantId != merchantCode) return@launch
             runCatching { sync.pushCashBox(merchantCode, entity.toDomain()) }
                 .onSuccess { dao.markSynced(boxId) }
                 .onFailure { error ->
@@ -208,10 +214,13 @@ class CashBoxRepositoryImpl(
     }
 
     private fun pushMovementAsync(movementId: String) {
+        if (database.inTransaction()) return
         syncScope.launch {
             val merchantCode = code()
+            if (database.saleOutboxDao().hasOutstandingFor(merchantCode)) return@launch
             if (merchantCode.isEmpty()) return@launch
             val entity = movementDao.getById(movementId) ?: return@launch
+            if (entity.merchantId.isNotBlank() && entity.merchantId != merchantCode) return@launch
             runCatching { sync.pushCashBoxMovement(merchantCode, entity.toDomain()) }
                 .onSuccess { movementDao.markSynced(movementId) }
                 .onFailure { error ->
@@ -276,6 +285,7 @@ class CashBoxRepositoryImpl(
         oldPaymentMethodId: Long?, oldAmount: Double, oldWasPaid: Boolean,
         newPaymentMethodId: Long?, newAmount: Double, newWasPaid: Boolean
     ) {
+        val recorded = mutableListOf<Pair<String, String>>()
         val deltas = mutableMapOf<Long, Double>()
         if (oldWasPaid && oldPaymentMethodId != null) {
             deltas.merge(oldPaymentMethodId, -oldAmount, Double::plus)
@@ -291,7 +301,7 @@ class CashBoxRepositoryImpl(
             database.withTransaction {
                 changes.forEach { (paymentMethodId, delta) ->
                     val boxId = paymentMethodId.toString()
-                    recordChange(
+                    val movementId = recordChange(
                         boxId = boxId,
                         delta = delta,
                         absoluteBalance = null,
@@ -299,15 +309,23 @@ class CashBoxRepositoryImpl(
                         note = "",
                         relatedTransactionId = relatedTransactionId
                     )
+                    if (movementId != null) recorded += boxId to movementId
                 }
             }
+        }
+        // A standalone caller owns this commit; an outer sale/return transaction owns its outbox dispatch.
+        if (!database.inTransaction()) recorded.forEach { (boxId, movementId) ->
+            pushBoxAsync(boxId)
+            pushMovementAsync(movementId)
         }
     }
 
     override suspend fun syncPendingBoxes() {
         val merchantCode = code()
+        if (database.saleOutboxDao().hasOutstandingFor(merchantCode)) return
         if (merchantCode.isEmpty()) return
         dao.getPending().forEach { entity ->
+            if (entity.merchantId.isNotBlank() && entity.merchantId != merchantCode) return@forEach
             runCatching { sync.pushCashBox(merchantCode, entity.toDomain()) }
                 .onSuccess { dao.markSynced(entity.id) }
                 .onFailure { error ->
@@ -316,6 +334,7 @@ class CashBoxRepositoryImpl(
                 }
         }
         movementDao.getPending().forEach { entity ->
+            if (entity.merchantId.isNotBlank() && entity.merchantId != merchantCode) return@forEach
             runCatching { sync.pushCashBoxMovement(merchantCode, entity.toDomain()) }
                 .onSuccess { movementDao.markSynced(entity.id) }
                 .onFailure { error ->

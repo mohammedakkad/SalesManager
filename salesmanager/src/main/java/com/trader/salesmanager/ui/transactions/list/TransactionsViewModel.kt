@@ -17,8 +17,7 @@ import kotlinx.coroutines.launch
 
 class TransactionsViewModel(private val repo: TransactionRepository,
     private val saleCommands: com.trader.salesmanager.sales.SaleCommands,
-    private val saleSync: com.trader.salesmanager.sales.SaleSync,
-    private val merchantId: String) : ViewModel() {
+    private val activationRepo: com.trader.core.domain.repository.ActivationRepository) : ViewModel() {
 
     private val _filterPaid = MutableStateFlow<Boolean?>(null)
 
@@ -39,7 +38,7 @@ class TransactionsViewModel(private val repo: TransactionRepository,
 
     fun deleteTransaction(transaction: Transaction) {
         viewModelScope.launch {
-            saleCommands.delete(java.util.UUID.randomUUID().toString(), merchantId, transaction)
+            saleCommands.delete(java.util.UUID.randomUUID().toString(), activationRepo.getMerchantCode(), transaction)
         }
     }
 }

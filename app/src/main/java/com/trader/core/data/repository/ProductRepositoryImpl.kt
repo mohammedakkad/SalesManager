@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.UUID
 import com.trader.core.util.NetworkMonitor
+import androidx.room.withTransaction
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.local.db.upsertProductWithUnitsAndClean
 
@@ -22,7 +23,8 @@ class ProductRepositoryImpl(
     private val database: AppDatabase,
     private val remote: ProductFirestoreService,
     private val activationRepo: ActivationRepository,
-    private val networkMonitor: NetworkMonitor
+    private val networkMonitor: NetworkMonitor,
+    private val useOutboxFence: Boolean = false
 ) : ProductRepository {
 
     private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -68,23 +70,18 @@ class ProductRepositoryImpl(
                             local.product.updatedAt == remoteProduct.updatedAt
                             if (isUnchanged) return@launch
 
+                            val sequenceBefore = if (useOutboxFence) database.saleOutboxDao().latestSequence() else 0
+                            if (useOutboxFence && database.saleOutboxDao().hasOutstandingFor(code)) return@launch
                             val units = try {
                                 remote.fetchUnitsForProduct(code, remoteProduct.id)
                             } catch (_: Exception) {
                                 null
                             }
-                            when {
-                                units != null && units.isNotEmpty() -> {
-                                    database.upsertProductWithUnitsAndClean(
-                                        remoteProduct.toEntity(),
-                                        units.map {
-                                            it.toEntity()
-                                        }
-                                    )
-                                } else -> {
-                                    if (local == null) {
-                                        dao.insertProduct(remoteProduct.toEntity())
-                                    }
+                            database.withTransaction {
+                                if (useOutboxFence && (database.saleOutboxDao().hasOutstandingFor(code) || database.saleOutboxDao().latestSequence() != sequenceBefore)) return@withTransaction
+                                when {
+                                    units != null && units.isNotEmpty() -> database.upsertProductWithUnitsAndClean(remoteProduct.toEntity(), units.map { it.toEntity() })
+                                    local == null -> dao.insertProduct(remoteProduct.toEntity())
                                 }
                             }
                         }
@@ -180,7 +177,7 @@ class ProductRepositoryImpl(
             }
         )
 
-        syncInBackground {
+        syncInBackground(mid) {
             // ✅ markSynced فوراً بعد كل upload منفرد
             // بدلاً من الانتظار حتى نهاية كل العمليات
             // هذا يجعل badge "جاري مزامنة" يختفي بمجرد نجاح كل عملية
@@ -208,7 +205,7 @@ class ProductRepositoryImpl(
         val mid = merchantId()
         val updated = product.copy(updatedAt = System.currentTimeMillis(), syncStatus = SyncStatus.PENDING)
         dao.updateProduct(updated.toEntity())
-        syncInBackground {
+        syncInBackground(mid) {
             remote.uploadProduct(mid, updated.copy(syncStatus = SyncStatus.SYNCED))
             dao.markProductSynced(updated.id)
         }
@@ -217,7 +214,7 @@ class ProductRepositoryImpl(
     override suspend fun deleteProduct(productId: String) {
         val mid = merchantId()
         dao.deleteProduct(productId)
-        syncInBackground {
+        syncInBackground(mid) {
             remote.deleteProduct(mid, productId)
         }
     }
@@ -232,7 +229,7 @@ class ProductRepositoryImpl(
             syncStatus = SyncStatus.PENDING
         )
         dao.insertUnit(toSave.toEntity())
-        syncInBackground {
+        syncInBackground(mid) {
             remote.uploadUnit(mid, toSave.copy(syncStatus = SyncStatus.SYNCED))
             dao.markUnitSynced(toSave.id)
         }
@@ -242,7 +239,7 @@ class ProductRepositoryImpl(
         val mid = merchantId()
         val updated = unit.copy(updatedAt = System.currentTimeMillis(), syncStatus = SyncStatus.PENDING)
         dao.updateUnit(updated.toEntity())
-        syncInBackground {
+        syncInBackground(mid) {
             remote.uploadUnit(mid, updated.copy(syncStatus = SyncStatus.SYNCED))
             dao.markUnitSynced(updated.id)
         }
@@ -255,7 +252,7 @@ class ProductRepositoryImpl(
             return
         }
         dao.deleteUnit(unitId)
-        syncInBackground {
+        syncInBackground(mid) {
             remote.deleteUnit(mid, unitId, productId)
         }
     }
@@ -263,6 +260,7 @@ class ProductRepositoryImpl(
     override suspend fun syncPendingProducts() {
         val mid = merchantId()
         if (mid.isEmpty()) return
+        if (useOutboxFence && database.saleOutboxDao().hasOutstandingFor(mid)) return
 
         dao.getPendingProducts().forEach {
             entity ->
@@ -280,8 +278,9 @@ class ProductRepositoryImpl(
         }
     }
 
-    private fun syncInBackground(block: suspend () -> Unit) {
+    private fun syncInBackground(merchant: String, block: suspend () -> Unit) {
         syncScope.launch {
+            if (useOutboxFence && (merchantId() != merchant || database.saleOutboxDao().hasOutstandingFor(merchant))) return@launch
             try {
                 block()
             } catch (_: Exception) {}

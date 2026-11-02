@@ -33,6 +33,7 @@ class SalesManagerApp : Application(), KoinComponent {
             androidContext(this@SalesManagerApp)
             modules(salesManagerModule)
         }
+        getKoin().get<com.trader.salesmanager.sales.outbox.SaleOutboxLifecycle>().start()
         UnpaidDebtWorker.schedule(this)
         StatusCheckWorker.schedule(this)
         BackgroundUpdateWorker.schedulePeriodic(this)

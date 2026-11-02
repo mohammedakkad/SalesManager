@@ -28,7 +28,9 @@ internal const val BACKUP_LOG_TAG = "BackupRestore"
 class BackupManager(
     private val context: Context,
     private val database: AppDatabase,
-    private val merchantId: String
+    private val merchantId: String,
+    private val afterRestore: () -> Unit = {},
+    private val currentMerchant: (suspend () -> String)? = null
 ) {
 
     suspend fun exportEncryptedBackup(password: CharArray): File = withContext(Dispatchers.IO) {
@@ -86,7 +88,17 @@ class BackupManager(
 
     suspend fun restorePayload(payload: BackupPayload) = withContext(Dispatchers.IO) {
         validatePayload(payload)
+        val merchantId = currentMerchant?.invoke() ?: this@BackupManager.merchantId
+        if (currentMerchant != null) require(merchantId.isNotBlank()) { "Merchant session ended" }
         database.withTransaction {
+            val knownEvents = database.saleOutboxDao().all().associateBy { it.eventId }
+            val restoredEvents = payload.saleOutbox.orEmpty().associateBy { it.eventId }
+            fun identity(event: com.trader.core.data.local.entity.SaleOutboxEntity) = event.copy(state="PENDING",retryCount=0,nextAttemptAt=0,
+                leaseOwner=null,leaseExpiresAt=null,updatedAt=0,acknowledgedAt=null,remoteReceipt=null,lastError=null)
+            require(knownEvents.all { (id,event) -> restoredEvents[id]?.let { identity(it)==identity(event) } == true }) {
+                "Backup would discard or rewrite known sale synchronization history; reconcile before restoring"
+            }
+            val latest = payload.saleOutbox.orEmpty().groupBy { it.merchantId to it.aggregateId }.mapValues { (_,events) -> events.maxOf { it.aggregateRevision } }
             val customerDao = database.customerDao()
             val transactionDao = database.transactionDao()
             val paymentMethodDao = database.paymentMethodDao()
@@ -173,12 +185,30 @@ class BackupManager(
             payload.saleOperations.orEmpty().forEach { database.saleOperationDao().insert(it) }
             require(payload.saleOutbox.orEmpty().all { it.merchantId == merchantId }) { "Outbox belongs to another merchant" }
             payload.saleOutbox.orEmpty().forEach { event ->
-                // Never restore a worker's ownership token. Old completions must fail their CAS.
-                database.saleOutboxDao().insert(event.copy(leaseOwner = null, leaseExpiresAt = null,
-                    state = if (event.state == "PROCESSING") "PENDING" else event.state))
+                val known = knownEvents[event.eventId]
+                val conflict = event.state=="CONFLICTING" || known?.state=="CONFLICTING"
+                val historicalAck = event.aggregateRevision != latest[event.merchantId to event.aggregateId] &&
+                    (event.state=="ACKNOWLEDGED" || known?.state=="ACKNOWLEDGED")
+                val state = when { conflict -> "CONFLICTING"; historicalAck -> "ACKNOWLEDGED"; else -> "PENDING" }
+                database.saleOutboxDao().insert(event.copy(leaseOwner=null,leaseExpiresAt=null,state=state,
+                    retryCount=maxOf(event.retryCount,known?.retryCount ?: 0),nextAttemptAt=0,
+                    acknowledgedAt=if(historicalAck) event.acknowledgedAt ?: known?.acknowledgedAt else null,
+                    remoteReceipt=if(historicalAck) event.remoteReceipt ?: known?.remoteReceipt else null,
+                    lastError=if(conflict) known?.lastError ?: event.lastError else if(historicalAck) null else "RESTORE_REVALIDATION_REQUIRED"))
+            }
+            // Deleted sales still own their IDs through receipts/tombstones, including on a fresh device.
+            val highestId = maxOf(payload.transactions.orEmpty().maxOfOrNull { it.id } ?: 0,
+                payload.saleOperations.orEmpty().maxOfOrNull { it.transactionId } ?: 0,
+                payload.saleOutbox.orEmpty().maxOfOrNull { it.aggregateId } ?: 0)
+            if (highestId > 0) {
+                database.openHelper.writableDatabase.execSQL("INSERT INTO sqlite_sequence(name,seq) SELECT 'transactions',? WHERE NOT EXISTS(SELECT 1 FROM sqlite_sequence WHERE name='transactions')", arrayOf(highestId))
+                database.openHelper.writableDatabase.execSQL("UPDATE sqlite_sequence SET seq=MAX(COALESCE(seq,0),?) WHERE name='transactions'", arrayOf(highestId))
             }
             transactionDao.recalculateHasItems()
         }
+        try { afterRestore() }
+        catch(cancelled:kotlinx.coroutines.CancellationException) { throw cancelled }
+        catch(error:Exception) { Log.e(BACKUP_LOG_TAG,"Outbox wakeup deferred: ${error.javaClass.simpleName}") }
     }
 
     private fun parseJson(json: String): BackupPayload {
@@ -197,6 +227,8 @@ class BackupManager(
     }
 
     private suspend fun collectPayload(): BackupPayload = database.withTransaction {
+        val merchantId = currentMerchant?.invoke() ?: this@BackupManager.merchantId
+        if (currentMerchant != null) require(merchantId.isNotBlank()) { "Merchant session ended" }
         val productRelations = database.productDao().getAllWithUnitsOnce()
         BackupPayload(
             schemaVersion = BACKUP_FORMAT_VERSION,

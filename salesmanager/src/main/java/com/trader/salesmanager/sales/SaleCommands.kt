@@ -11,7 +11,7 @@ import java.security.MessageDigest
 import java.util.UUID
 
 /** Seller aggregate writer. All collaborators here are local DAOs; no remote repository is used. */
-class SaleCommands internal constructor(private val db: AppDatabase, private val beforeCommit: suspend () -> Unit = {}) {
+class SaleCommands internal constructor(private val db: AppDatabase, private val authorizedMerchant: (suspend () -> String)? = null, private val beforeCommit: suspend () -> Unit = {}) {
     suspend fun create(operationId: String, merchantId: String, sale: Transaction, items: List<InvoiceItem>): Long {
         require(sale.id == 0L)
         val hash = hash(listOf(sale, items))
@@ -72,6 +72,17 @@ class SaleCommands internal constructor(private val db: AppDatabase, private val
         return old.id
     }
 
+    internal suspend fun journalReturn(invoice: ReturnInvoice, items: List<ReturnItem>, persist: suspend () -> ReturnInvoice): ReturnInvoice {
+        if (!db.saleOutboxDao().manages(invoice.originalTransactionId)) return persist()
+        var result: ReturnInvoice? = null
+        recordReturn("return:${invoice.id}", invoice.merchantId, invoice.originalTransactionId,
+            listOf(invoice.toEntity(), items.map { it.toEntity() })) { result = persist() }
+        return result ?: db.returnDao().getById(invoice.id)?.toDomain() ?: error("Return was already removed")
+    }
+
+    internal suspend fun recordReturn(operationId: String, merchantId: String, aggregateId: Long, request: Any, body: suspend () -> Unit): Long =
+        mutation(operationId, merchantId, "RETURN", hash(request), aggregateId, emptyList(), null) { body(); aggregateId }
+
     suspend fun delete(operationId: String, merchantId: String, expected: Transaction): Long {
         require(expected.id > 0)
         return mutation(operationId, merchantId, "DELETE", hash(expected), expected.id, emptyList(), expected.paymentMethodId) {
@@ -125,7 +136,9 @@ class SaleCommands internal constructor(private val db: AppDatabase, private val
         }
     }
 
-    private suspend fun mutation(op: String, merchant: String, kind: String, hash: String, aggregateId: Long, items: List<InvoiceItem>, method: Long?, body: suspend () -> Long): Long = db.withTransaction {
+    private suspend fun mutation(op: String, merchant: String, kind: String, hash: String, aggregateId: Long, items: List<InvoiceItem>, method: Long?, body: suspend () -> Long): Long {
+        authorizedMerchant?.let { require(it() == merchant) { "Merchant session changed" } }
+        return db.withTransaction {
         require(op.isNotBlank() && merchant.isNotBlank())
         db.saleOperationDao().get(merchant, op)?.let {
             check(it.kind == kind && it.requestHash == hash) { "Operation ID reused for another request" }
@@ -146,6 +159,7 @@ class SaleCommands internal constructor(private val db: AppDatabase, private val
         currentCoroutineContext().ensureActive()
         db.saleOperationDao().insert(SaleOperationEntity(merchant, op, kind, hash, id))
         id
+    }
     }
 
     private suspend fun stock(line: InvoiceItemEntity, delta: Double, id: Long, merchant: String) {

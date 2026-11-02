@@ -38,8 +38,7 @@ class TransactionDetailsViewModel(
     private val returnRepo: ReturnRepository,
     private val customerRepo: CustomerRepository,
     private val saleCommands: com.trader.salesmanager.sales.SaleCommands,
-    private val saleSync: com.trader.salesmanager.sales.SaleSync,
-    private val merchantId: String
+    private val activationRepo: com.trader.core.domain.repository.ActivationRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TransactionDetailsUiState())
@@ -127,7 +126,7 @@ class TransactionDetailsViewModel(
     fun delete() {
         val t = _state.value.transaction ?: return
         viewModelScope.launch {
-            saleCommands.delete(java.util.UUID.randomUUID().toString(), merchantId, t)
+            saleCommands.delete(java.util.UUID.randomUUID().toString(), activationRepo.getMerchantCode(), t)
             _state.update {
                 it.copy(isDeleted = true)
             }

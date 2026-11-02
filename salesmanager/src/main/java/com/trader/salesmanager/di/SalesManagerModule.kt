@@ -22,6 +22,7 @@ import com.trader.core.data.repository.ProductRepositoryImpl
 import com.trader.core.data.repository.ReportsRepositoryImpl
 import com.trader.core.data.repository.ReturnRepositoryImpl
 import com.trader.core.data.repository.StockRepositoryImpl
+import com.trader.core.data.local.entity.toEntity
 import com.trader.core.data.repository.TransactionRepositoryImpl
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.CashBoxRepository
@@ -143,7 +144,7 @@ val salesManagerModule = module {
     // ── Repositories ─────────────────────────────────────────────
     single<ActivationRepository> {
         ActivationRepositoryImpl(
-            androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()
+            androidContext(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), outboxDatabase = get()
         )
     }
 
@@ -154,14 +155,18 @@ val salesManagerModule = module {
         }
     }
 
-    single { com.trader.salesmanager.sales.SaleCommands(get()) }
-    single { com.trader.salesmanager.sales.SaleSync(get(), get(), get()) }
+    single { val activation = get<ActivationRepository>()
+        com.trader.salesmanager.sales.SaleCommands(get(), authorizedMerchant = { activation.getMerchantCode() }) }
+    single<com.trader.salesmanager.sales.outbox.OutboxTransport> { com.trader.salesmanager.sales.outbox.FirebaseOutboxTransport() }
+    single { val activation = get<ActivationRepository>()
+        com.trader.salesmanager.sales.outbox.OutboxDispatcher(get(), get(), activation.observeMerchantCode(), { activation.getMerchantCode() }) }
+    single { com.trader.salesmanager.sales.outbox.SaleOutboxLifecycle(androidContext(), get(), get()) }
 
     single<CustomerRepository> {
         CustomerRepositoryImpl(get(), get(), get(), get())
     }
     single<TransactionRepository> {
-        TransactionRepositoryImpl(get(), get(), get(), get(), get(), get(), get(), get(), get())
+        TransactionRepositoryImpl(get(), get(), get(), get(), get(), get(), get(), get(), get(), outboxDatabase = get())
     }
     single<PaymentMethodRepository> {
         PaymentMethodRepositoryImpl(get(), get(), get(), get(), get())
@@ -176,7 +181,7 @@ val salesManagerModule = module {
         MerchantStatusRepositoryImpl()
     }
     single<ProductRepository> {
-        ProductRepositoryImpl(get(), get(), get(), get(), get<NetworkMonitor>())
+        ProductRepositoryImpl(get(), get(), get(), get(), get<NetworkMonitor>(), useOutboxFence = true)
     }
     single<LowStockAlertRepository> {
         LowStockAlertRepositoryImpl(get(), get(), get())
@@ -189,7 +194,9 @@ val salesManagerModule = module {
             get(),
             get(),
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+            get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            outboxDatabase = get(),
+            activation = get()
         )
     }
     single<InvoiceItemRepository> {
@@ -197,7 +204,9 @@ val salesManagerModule = module {
             get(),
             get(),
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+            get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            outboxDatabase = get(),
+            activation = get()
         )
     }
     single<InventoryRepository> {
@@ -210,15 +219,9 @@ val salesManagerModule = module {
         )
     }
     single<ReturnRepository> {
-        ReturnRepositoryImpl(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId")),
-            get(),
-            get()
-        )
+        val commands = get<com.trader.salesmanager.sales.SaleCommands>()
+        ReturnRepositoryImpl(get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")), get(), get(),
+            outboxJournal = commands::journalReturn)
     }
     single<ReportsRepository> {
         ReportsRepositoryImpl(get(), get(), get())
@@ -258,7 +261,8 @@ val salesManagerModule = module {
             cashBoxDao = get(),
             cashBoxMovementDao = get(),
             stockMovementDao = get(),
-            invoiceItemDao = get()
+            invoiceItemDao = get(),
+            outboxDao = get<AppDatabase>().saleOutboxDao()
         )
     }
 
@@ -288,10 +292,10 @@ val salesManagerModule = module {
         CustomerDetailsViewModel(get(), get(), params.get())
     }
     viewModel {
-        TransactionsViewModel(get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        TransactionsViewModel(get(), get(), get())
     }
     viewModel { params ->
-        TransactionDetailsViewModel(params.get(), get(), get(), get(), get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")))
+        TransactionDetailsViewModel(params.get(), get(), get(), get(), get(), get(), get(), get())
     }
     viewModel {
         AddEditTransactionViewModel(
@@ -300,8 +304,8 @@ val salesManagerModule = module {
             get(),
             get(),
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId")),
-            get(), get(), get()
+            get<ActivationRepository>(),
+            get(), get()
         )
     }
     viewModel {
@@ -320,7 +324,9 @@ val salesManagerModule = module {
         BackupManager(
             context = androidContext(),
             database = get(),
-            merchantId = get(qualifier = org.koin.core.qualifier.named("merchantId"))
+            merchantId = get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            afterRestore = { com.trader.salesmanager.sales.outbox.SaleOutboxWork.enqueue(androidContext(), true) },
+            currentMerchant = { get<ActivationRepository>().getMerchantCode() }
         )
     }
     viewModel {

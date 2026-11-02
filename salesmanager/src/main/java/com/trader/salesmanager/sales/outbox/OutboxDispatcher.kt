@@ -71,19 +71,23 @@ class OutboxDispatcher(
         val local=Gson().fromJson(event.payload,SalePayload::class.java).local
         local.transaction?.let { expected ->
             val current=db.transactionDao().getTransactionById(expected.id)
-            if(current?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING")) db.transactionDao().markSynced(expected.id)
+            if(current?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING") &&
+                db.saleOperationDao().forTransaction(expected.id).all { it.merchantId==event.merchantId }) db.transactionDao().markSynced(expected.id)
         }
         local.invoices.forEach { expected ->
             if(db.invoiceItemDao().getById(expected.id)?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING")) db.invoiceItemDao().markSynced(expected.id)
         }
         local.units.forEach { expected ->
-            if(db.productDao().getUnitsForProduct(expected.productId).find { it.id==expected.id }?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING")) db.productDao().markUnitSynced(expected.id)
+            if(db.productDao().getById(expected.productId)?.product?.merchantId==event.merchantId && db.productDao().getUnitsForProduct(expected.productId).find { it.id==expected.id }?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING")) db.productDao().markUnitSynced(expected.id)
         }
         local.boxes.forEach { expected ->
             if(db.cashBoxDao().getById(expected.id)?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING")) db.cashBoxDao().markSynced(expected.id)
         }
         val stock=db.stockMovementDao().forTransactionOnce(event.aggregateId).associateBy { it.id }
         local.stock.forEach { expected -> if(stock[expected.id]?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING")) db.stockMovementDao().markSynced(expected.id) }
+        local.returns.orEmpty().forEach { expected ->
+            if(db.returnDao().getById(expected.id)?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING")) db.returnDao().markSynced(expected.id)
+        }
         local.cash.forEach { expected -> if(db.cashBoxMovementDao().getById(expected.id)?.copy(syncStatus="PENDING")==expected.copy(syncStatus="PENDING")) db.cashBoxMovementDao().markSynced(expected.id) }
     }
     private class SessionChanged: CancellationException("Merchant session changed")

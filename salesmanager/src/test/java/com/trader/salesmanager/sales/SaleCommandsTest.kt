@@ -7,6 +7,8 @@ import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.local.entity.*
 import com.trader.core.domain.model.*
 import kotlinx.coroutines.*
+import io.mockk.*
+import kotlinx.coroutines.flow.first
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.runner.RunWith
@@ -293,7 +295,8 @@ class SaleCommandsTest {
         val manager = com.trader.salesmanager.ui.settings.backup.BackupManager(context, db, merchant)
         val corrupt = com.trader.salesmanager.ui.settings.backup.BackupPayload(
             customers = listOf(CustomerEntity(id = 1, name = "fixture", createdAt = 0)),
-            transactions = listOf(TransactionEntity(customerId = 999, amount = 1.0, isPaid = false)))
+            transactions = listOf(TransactionEntity(customerId = 999, amount = 1.0, isPaid = false)),
+            saleOperations = db.saleOperationDao().allForMerchant(merchant), saleOutbox = db.saleOutboxDao().all())
         try { manager.restorePayload(corrupt); fail("Expected orphan restore failure") }
         catch (expected: android.database.sqlite.SQLiteException) { }
         assertEquals(before, snapshot())
@@ -338,6 +341,303 @@ class SaleCommandsTest {
     @Test fun restartKeepsCommittedOutboxPayloadUnchanged() = runBlocking {
         original();val before=db.saleOutboxDao().all();assertEquals(1,before.size)
         db.close();open();assertEquals(before,db.saleOutboxDao().all())
+    }
+
+    private fun outboxDispatcher(remote: com.trader.salesmanager.sales.outbox.OutboxTransport): com.trader.salesmanager.sales.outbox.OutboxDispatcher {
+        val session=kotlinx.coroutines.flow.MutableStateFlow(merchant)
+        return com.trader.salesmanager.sales.outbox.OutboxDispatcher(db,remote,session,{merchant})
+    }
+    @Test fun createThenEditDeliversBothImmutableRevisionsInOrder() = runBlocking {
+        val old=original()
+        SaleCommands(db).edit("edit",merchant,old,old.copy(amount=75.0),lines.map { it.copy(quantity=3.0,totalPrice=75.0) })
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().first())
+        val dispatcher=outboxDispatcher(remote)
+        repeat(2) { assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,dispatcher.once(merchant)) }
+        assertEquals(75.0,(remote.values["RTDB" to "transactions/${old.id}"]!!["amount"] as Number).toDouble(),0.0)
+        assertEquals(1.0,(remote.values["FIRESTORE" to "products/product/units/unit"]!!["quantityInStock"] as Number).toDouble(),0.0)
+        assertTrue(db.saleOutboxDao().all().all { it.state=="ACKNOWLEDGED" })
+        assertEquals("SYNCED",db.transactionDao().getTransactionById(old.id)!!.syncStatus)
+    }
+    @Test fun createThenDeleteDeliversTombstoneAndNetZeroCashAndStock() = runBlocking {
+        val old=original();SaleCommands(db).delete("delete",merchant,old)
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().first())
+        val dispatcher=outboxDispatcher(remote)
+        repeat(2) { assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,dispatcher.once(merchant)) }
+        assertNull(remote.values["RTDB" to "transactions/${old.id}"])
+        assertNull(remote.values["RTDB" to "invoice_items/line"])
+        assertEquals(4.0,(remote.values["FIRESTORE" to "products/product/units/unit"]!!["quantityInStock"] as Number).toDouble(),0.0)
+        assertEquals(100.0,(remote.values["RTDB" to "cash_boxes/1"]!!["currentBalance"] as Number).toDouble(),0.0)
+        assertEquals("DELETE",db.saleOutboxDao().all().last().eventType)
+    }
+    @Test fun relatedReturnAndPartialDeletionAreDurableAndDeliverableInOneSequence() = runBlocking {
+        val old=original();val commands=SaleCommands(db)
+        val request=ReturnInvoice(id="return",originalTransactionId=old.id,merchantId=merchant,totalRefund=25.0)
+        commands.journalReturn(request,emptyList()) {
+            returned(1.0)
+            db.returnDao().getById("return")!!.toDomain()
+        }
+        val updated=db.transactionDao().getTransactionById(old.id)!!.toDomain()
+        commands.delete("delete",merchant,updated)
+        assertEquals(listOf("CREATE","RETURN","DELETE"),db.saleOutboxDao().all().map { it.eventType })
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().first())
+        val dispatcher=outboxDispatcher(remote)
+        repeat(3) { assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,dispatcher.once(merchant)) }
+        assertNull(remote.values["RTDB" to "transactions/${old.id}"])
+        assertNull(remote.values["RTDB" to "return_invoices/return"])
+        assertEquals(4.0,(remote.values["FIRESTORE" to "products/product/units/unit"]!!["quantityInStock"] as Number).toDouble(),0.0)
+        assertEquals(100.0,(remote.values["RTDB" to "cash_boxes/1"]!!["currentBalance"] as Number).toDouble(),0.0)
+    }
+    @Test fun restoreDuringDispatchInvalidatesOldLeaseAndReplaysRemoteReceiptSafely() = runBlocking {
+        original();val event=db.saleOutboxDao().all().single()
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(event)
+        val entered=CompletableDeferred<Unit>();val release=CompletableDeferred<Unit>()
+        remote.pauseAfterCommit={ entered.complete(Unit);release.await() }
+        val first=async(Dispatchers.Default) { outboxDispatcher(remote).once(merchant) }
+        withTimeout(10000) { entered.await() }
+        val manager=com.trader.salesmanager.ui.settings.backup.BackupManager(context,db,merchant)
+        val file=manager.exportEncryptedBackup("fixture-password".toCharArray())
+        try {
+            val payload=manager.parseBackupFromBytes(file.readBytes(),"fixture-password".toCharArray())
+            assertEquals("PROCESSING",payload.saleOutbox.single().state)
+            manager.restorePayload(payload)
+            assertEquals("PENDING",db.saleOutboxDao().all().single().state)
+            assertNull(db.saleOutboxDao().all().single().leaseOwner)
+            remote.pauseAfterCommit=null
+            val writes=remote.writes
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+            assertEquals(writes,remote.writes)
+            release.complete(Unit)
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.STALE,first.await())
+        } finally { release.complete(Unit);file.delete() }
+    }
+    @Test fun committedDeletionConflictRemainsVisibleAndNeverDisappears() = runBlocking {
+        val old=original();SaleCommands(db).delete("delete",merchant,old)
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().first())
+        remote.values["FIRESTORE" to "products/product/units/unit"]=mapOf("quantityInStock" to 999.0)
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.CONFLICT,outboxDispatcher(remote).once(merchant))
+        assertEquals("CONFLICTING",db.saleOutboxDao().all().first().state)
+        assertEquals("PENDING",db.saleOutboxDao().all().last().state)
+        assertNull(db.transactionDao().getTransactionById(old.id))
+        val observer=com.trader.core.sync.SyncStatusObserver(db.transactionDao(),db.cashBoxDao(),db.cashBoxMovementDao(),
+            db.stockMovementDao(),db.invoiceItemDao(),db.saleOutboxDao())
+        val state=withTimeout(10000) { observer.globalSyncState.first { it is com.trader.core.sync.GlobalSyncState.Failed } }
+        assertTrue(state is com.trader.core.sync.GlobalSyncState.Failed)
+    }
+    @Test fun staleUiMerchantCannotCreateAnEventUnderThePreviousSession() = runBlocking {
+        val before=snapshot()
+        try { SaleCommands(db,authorizedMerchant={"other"}).create("create",merchant,sale,lines);fail("Stale merchant accepted") }
+        catch(expected:IllegalArgumentException) {}
+        assertEquals(before,snapshot())
+    }
+
+    private suspend fun realReturnPipeline(injectFailure:Boolean) {
+        val old=original();val before=snapshot();val commands=SaleCommands(db)
+        val scope=CoroutineScope(SupervisorJob()+Dispatchers.Unconfined)
+        val activation=mockk<com.trader.core.domain.repository.ActivationRepository>()
+        coEvery { activation.getMerchantCode() } returns merchant
+        every { activation.observeMerchantCode() } returns kotlinx.coroutines.flow.emptyFlow()
+        val sync=mockk<com.trader.core.data.remote.FirebaseSyncService>(relaxed=true)
+        every { sync.observeInvoiceItems(any()) } returns kotlinx.coroutines.flow.emptyFlow()
+        val productRemote=mockk<com.trader.core.data.remote.ProductFirestoreService>(relaxed=true)
+        val invoiceRepo=com.trader.core.data.repository.InvoiceItemRepositoryImpl(db.invoiceItemDao(),productRemote,sync,merchant,db,activation)
+        val stockRepo=com.trader.core.data.repository.StockRepositoryImpl(db.productDao(),db.stockMovementDao(),productRemote,merchant,db,activation)
+        val cashRepo=com.trader.core.data.repository.CashBoxRepositoryImpl(db,db.cashBoxDao(),db.cashBoxMovementDao(),db.paymentMethodDao(),sync,activation,scope)
+        val txRepo=com.trader.core.data.repository.TransactionRepositoryImpl(db.transactionDao(),db.customerDao(),db.paymentMethodDao(),sync,
+            activation,invoiceRepo,stockRepo,cashRepo,db.returnDao(),scope,db)
+        val returns=com.trader.core.data.repository.ReturnRepositoryImpl(db,stockRepo,txRepo,invoiceRepo,merchant,activation,sync,scope,commands::journalReturn)
+        val request=ReturnInvoice(id="real-return",originalTransactionId=old.id,totalRefund=25.0)
+        val items=listOf(ReturnItem(id="returned-item",returnInvoiceId=request.id,productId="product",unitId="unit",
+            originalQuantity=2.0,returnedQuantity=1.0,pricePerUnit=25.0))
+        try {
+            if(injectFailure) failWrite("sale_outbox")
+            try { returns.processReturn(request,items);if(injectFailure) fail("Expected outbox failure") }
+            catch(expected:android.database.sqlite.SQLiteException) { if(!injectFailure) throw expected }
+            if(injectFailure) assertEquals(before,snapshot())
+            else {
+                assertEquals(listOf("CREATE","RETURN"),db.saleOutboxDao().all().map { it.eventType })
+                assertEquals(3.0,db.productDao().getQuantity("unit")!!,0.0)
+                assertEquals(125.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+                assertEquals(25.0,db.transactionDao().getTransactionById(old.id)!!.amount,0.0)
+                returns.processReturn(request,items)
+                assertEquals(2,db.saleOutboxDao().all().size)
+                txRepo.syncPendingTransactions();stockRepo.syncPendingMovements();cashRepo.syncPendingBoxes();invoiceRepo.syncPendingItems();returns.syncPendingReturns()
+                commands.delete("delete",merchant,db.transactionDao().getTransactionById(old.id)!!.toDomain())
+                val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().first())
+                repeat(3) { assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant)) }
+                assertEquals(100.0,(remote.values["RTDB" to "cash_boxes/1"]!!["currentBalance"] as Number).toDouble(),0.0)
+            }
+            coVerify(exactly=0) { sync.pushTransaction(any(),any()) }
+            coVerify(exactly=0) { sync.pushCashBox(any(),any()) }
+            coVerify(exactly=0) { sync.pushCashBoxMovement(any(),any()) }
+            coVerify(exactly=0) { sync.pushReturnInvoice(any(),any(),any()) }
+            coVerify(exactly=0) { productRemote.uploadMovement(any(),any()) }
+            coVerify(exactly=0) { productRemote.updateRemoteQuantity(any(),any(),any(),any()) }
+        } finally { scope.coroutineContext.job.cancelAndJoin() }
+    }
+    @Test fun actualReturnRepositoryJournalsStockCashAndReturnBeforeLegacyUploads() = runBlocking { realReturnPipeline(false) }
+    @Test fun actualReturnRepositoryRollsBackAllEffectsIfOutboxCannotPersist() = runBlocking { realReturnPipeline(true) }
+    @Test fun oldAcknowledgedRestoreBecomesConflictIfRemoteRevisionHasAdvanced() = runBlocking {
+        val old=original();val first=db.saleOutboxDao().all().single()
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(first)
+        val manager=com.trader.salesmanager.ui.settings.backup.BackupManager(context,db,merchant)
+        val file=manager.exportEncryptedBackup("fixture-password".toCharArray())
+        try {
+            val backup=manager.parseBackupFromBytes(file.readBytes(),"fixture-password".toCharArray())
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+            remote.advanceAggregate(old.id,2)
+            remote.values["RTDB" to "transactions/${old.id}"] = remote.values["RTDB" to "transactions/${old.id}"].orEmpty() + ("amount" to 60.0)
+            manager.restorePayload(backup)
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.CONFLICT,outboxDispatcher(remote).once(merchant))
+            assertEquals("CONFLICTING",db.saleOutboxDao().all().single().state)
+            assertEquals(60.0,(remote.values["RTDB" to "transactions/${old.id}"]!!["amount"] as Number).toDouble(),0.0)
+        } finally { file.delete() }
+    }
+
+    private suspend fun inspectLegacyTransactionStream(managed:Boolean) {
+        val old=if(managed) original() else sale.copy(id=8,syncStatus=SyncStatus.SYNCED).also {
+            db.transactionDao().insertTransaction(TransactionEntity.fromDomain(it))
+            db.invoiceItemDao().insertAll(lines.map { line->line.copy(transactionId=8,merchantId=merchant).toEntity() })
+        }
+        val commands=kotlinx.coroutines.channels.Channel<Pair<List<Transaction>,CompletableDeferred<Unit>>>()
+        val scope=CoroutineScope(SupervisorJob()+Dispatchers.Unconfined)
+        val activation=mockk<com.trader.core.domain.repository.ActivationRepository>()
+        every { activation.observeMerchantCode() } returns kotlinx.coroutines.flow.flowOf(merchant)
+        coEvery { activation.getMerchantCode() } returns merchant
+        val sync=mockk<com.trader.core.data.remote.FirebaseSyncService>(relaxed=true)
+        every { sync.observeTransactions(merchant) } returns kotlinx.coroutines.flow.flow {
+            for((records,finished) in commands) { emit(records);finished.complete(Unit) }
+        }
+        val invoice=mockk<com.trader.core.domain.repository.InvoiceItemRepository>(relaxed=true)
+        val stock=mockk<com.trader.core.domain.repository.StockRepository>(relaxed=true)
+        val cash=mockk<com.trader.core.domain.repository.CashBoxRepository>(relaxed=true)
+        com.trader.core.data.repository.TransactionRepositoryImpl(db.transactionDao(),db.customerDao(),db.paymentMethodDao(),sync,
+            activation,invoice,stock,cash,db.returnDao(),scope,db)
+        suspend fun emit(records:List<Transaction>) {
+            val finished=CompletableDeferred<Unit>();commands.send(records to finished);withTimeout(10000) { finished.await() }
+        }
+        try {
+            if(managed) {
+                emit(listOf(old.copy(amount=999.0)))
+                assertEquals(50.0,db.transactionDao().getTransactionById(old.id)!!.amount,0.0)
+                SaleCommands(db).delete("delete",merchant,old)
+                emit(listOf(old))
+                assertNull(db.transactionDao().getTransactionById(old.id))
+                assertTrue(db.invoiceItemDao().getForTransactionOnce(old.id).isEmpty())
+                assertEquals(4.0,db.productDao().getQuantity("unit")!!,0.0)
+                assertEquals(100.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+            } else {
+                emit(emptyList())
+                assertEquals("CONFLICT",db.transactionDao().getTransactionById(old.id)!!.syncStatus)
+                assertEquals(50.0,db.transactionDao().getTransactionById(old.id)!!.amount,0.0)
+                assertEquals(1,db.invoiceItemDao().getForTransactionOnce(old.id).size)
+                coVerify(exactly=0) { stock.returnStock(any(),any(),any(),any(),any(),any()) }
+                coVerify(exactly=0) { cash.applyTransactionEffect(any(),any(),any(),any(),any(),any(),any()) }
+            }
+        } finally { commands.close();scope.coroutineContext.job.cancelAndJoin() }
+    }
+    @Test fun unversionedTransactionEchoCannotOverwriteOrResurrectManagedSale()=runBlocking { inspectLegacyTransactionStream(true) }
+    @Test fun unversionedRemoteDeletionIsQuarantinedWithoutGuessingFinancialEffects()=runBlocking { inspectLegacyTransactionStream(false) }
+    @Test fun unversionedInvoiceEchoCannotResurrectDeletedManagedLines()=runBlocking {
+        val old=original()
+        val messages=kotlinx.coroutines.channels.Channel<Pair<List<InvoiceItem>,CompletableDeferred<Unit>>>()
+        val activation=mockk<com.trader.core.domain.repository.ActivationRepository>()
+        every { activation.observeMerchantCode() } returns kotlinx.coroutines.flow.flowOf(merchant)
+        coEvery { activation.getMerchantCode() } returns merchant
+        val sync=mockk<com.trader.core.data.remote.FirebaseSyncService>(relaxed=true)
+        every { sync.observeInvoiceItems(merchant) } returns kotlinx.coroutines.flow.flow {
+            for((records,finished) in messages) { emit(records);finished.complete(Unit) }
+        }
+        val remote=mockk<com.trader.core.data.remote.ProductFirestoreService>(relaxed=true)
+        com.trader.core.data.repository.InvoiceItemRepositoryImpl(db.invoiceItemDao(),remote,sync,merchant,db,activation)
+        suspend fun emit() {
+            val done=CompletableDeferred<Unit>()
+            messages.send(lines.map { it.copy(transactionId=old.id,merchantId=merchant,quantity=999.0) } to done)
+            withTimeout(10000) { done.await() }
+        }
+        try {
+            emit();assertEquals(2.0,db.invoiceItemDao().getForTransactionOnce(old.id).single().quantity,0.0)
+            SaleCommands(db).delete("delete",merchant,old)
+            emit();assertTrue(db.invoiceItemDao().getForTransactionOnce(old.id).isEmpty())
+        } finally { messages.close() }
+    }
+
+    @Test fun olderBackupCannotEraseAnUncertainDeletionTombstone()=runBlocking {
+        val old=original();val manager=com.trader.salesmanager.ui.settings.backup.BackupManager(context,db,merchant)
+        val file=manager.exportEncryptedBackup("fixture-password".toCharArray())
+        try {
+            val oldBackup=manager.parseBackupFromBytes(file.readBytes(),"fixture-password".toCharArray())
+            SaleCommands(db).delete("delete",merchant,old)
+            val before=snapshot()
+            try { manager.restorePayload(oldBackup);fail("Restore discarded a committed deletion intent") }
+            catch(expected:IllegalArgumentException) {}
+            assertEquals(before,snapshot())
+            assertEquals("DELETE",db.saleOutboxDao().all().last().eventType)
+        } finally { file.delete() }
+    }
+
+    @Test fun acknowledgedBackupRevalidatesLatestRevisionWithoutReplayingHistoricalEffects()=runBlocking {
+        val old=original();SaleCommands(db).edit("edit",merchant,old,old.copy(amount=60.0),null)
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().first())
+        val dispatcher=outboxDispatcher(remote)
+        repeat(2) { assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,dispatcher.once(merchant)) }
+        val manager=com.trader.salesmanager.ui.settings.backup.BackupManager(context,db,merchant)
+        val file=manager.exportEncryptedBackup("fixture-password".toCharArray())
+        try {
+            val payload=manager.parseBackupFromBytes(file.readBytes(),"fixture-password".toCharArray())
+            manager.restorePayload(payload)
+            assertEquals(listOf("ACKNOWLEDGED","PENDING"),db.saleOutboxDao().all().map { it.state })
+            val writes=remote.writes
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,dispatcher.once(merchant))
+            assertEquals(writes,remote.writes)
+        } finally { file.delete() }
+    }
+    @Test fun restoreCannotRewriteExistingImmutablePayloadUnderTheSameEventId()=runBlocking {
+        original();val manager=com.trader.salesmanager.ui.settings.backup.BackupManager(context,db,merchant)
+        val file=manager.exportEncryptedBackup("fixture-password".toCharArray())
+        try {
+            val payload=manager.parseBackupFromBytes(file.readBytes(),"fixture-password".toCharArray())
+            val before=snapshot()
+            try { manager.restorePayload(payload.copy(saleOutbox=payload.saleOutbox.map { it.copy(payload="{}") }));fail("Immutable event changed") }
+            catch(expected:IllegalArgumentException) {}
+            assertEquals(before,snapshot())
+        } finally { file.delete() }
+    }
+
+    @Test fun freshRestoreDoesNotReuseADeletedAggregateIdentity()=runBlocking {
+        val old=original();SaleCommands(db).delete("delete",merchant,old)
+        val manager=com.trader.salesmanager.ui.settings.backup.BackupManager(context,db,merchant)
+        val file=manager.exportEncryptedBackup("fixture-password".toCharArray())
+        try {
+            val payload=manager.parseBackupFromBytes(file.readBytes(),"fixture-password".toCharArray())
+            db.close();context.deleteDatabase(name);open()
+            com.trader.salesmanager.ui.settings.backup.BackupManager(context,db,merchant).restorePayload(payload)
+            val next=SaleCommands(db).create("new-create",merchant,sale,lines.map { it.copy(id="new-line") })
+            assertTrue("Deleted aggregate identity reused",next>old.id)
+            assertNull(db.transactionDao().getTransactionById(old.id))
+            assertEquals(listOf(1L,2L,1L),db.saleOutboxDao().all().map { it.aggregateRevision })
+        } finally { file.delete() }
+    }
+
+    @Test fun realEditDuringOldUploadKeepsNewFinancialRowsPendingUntilItsOwnReceipt()=runBlocking {
+        val old=original()
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().single())
+        val entered=CompletableDeferred<Unit>();val release=CompletableDeferred<Unit>()
+        remote.pauseAfterCommit={ entered.complete(Unit);release.await() }
+        val first=async(Dispatchers.Default) { outboxDispatcher(remote).once(merchant) }
+        try {
+            withTimeout(10000) { entered.await() }
+            withTimeout(10000) { SaleCommands(db).edit("edit",merchant,old,old.copy(amount=75.0),lines.map { it.copy(quantity=3.0,totalPrice=75.0) }) }
+            remote.pauseAfterCommit=null;release.complete(Unit)
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,first.await())
+            val newer=db.transactionDao().getTransactionById(old.id)!!
+            assertEquals(75.0,newer.amount,0.0);assertEquals("PENDING",newer.syncStatus)
+            assertEquals(1.0,db.productDao().getQuantity("unit")!!,0.0)
+            assertEquals(175.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+            assertEquals("PENDING",db.cashBoxDao().getById("1")!!.syncStatus)
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+            assertEquals("SYNCED",db.transactionDao().getTransactionById(old.id)!!.syncStatus)
+            assertEquals(75.0,(remote.values["RTDB" to "transactions/${old.id}"]!!["amount"] as Number).toDouble(),0.0)
+        } finally { withContext(NonCancellable) { release.complete(Unit);first.cancelAndJoin() } }
     }
 
 }

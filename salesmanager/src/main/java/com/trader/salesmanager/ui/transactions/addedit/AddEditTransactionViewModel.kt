@@ -53,14 +53,14 @@ class AddEditTransactionViewModel(
     private val productRepo: ProductRepository,
     private val stockRepo: StockRepository,
     private val invoiceRepo: InvoiceItemRepository,
-    private val merchantId: String,
+    private val activationRepo: com.trader.core.domain.repository.ActivationRepository,
     private val saleCommands: com.trader.salesmanager.sales.SaleCommands,
-    private val syncCoordinator: com.trader.core.sync.SyncCoordinator,
     private val savedState: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
+    private var commandMerchant: String? = savedState.get<String>("saleCommandMerchant")
     private val operationId: String = savedState.get<String>("saleOperationId") ?: UUID.randomUUID().toString().also { savedState["saleOperationId"] = it }
     private val commandDate: Long = savedState.get<Long>("saleCommandDate") ?: System.currentTimeMillis().also { savedState["saleCommandDate"] = it }
     private var loadedSale: Transaction? = null
@@ -293,6 +293,10 @@ class AddEditTransactionViewModel(
         isSavingInProgress = true
         viewModelScope.launch {
             try {
+                val merchantId = activationRepo.getMerchantCode()
+                require(merchantId.isNotBlank()) { "Merchant is not activated" }
+                if (commandMerchant == null) { commandMerchant = merchantId; savedState["saleCommandMerchant"] = merchantId }
+                check(commandMerchant == merchantId) { "Merchant changed; reopen the sale" }
                 _uiState.update {
                     it.copy(isLoading = true, error = null)
                 }
@@ -384,7 +388,7 @@ class AddEditTransactionViewModel(
                 quantity = line.quantity,
                 pricePerUnit = line.effectivePrice,
                 totalPrice = line.totalPrice,
-                merchantId = merchantId
+                merchantId = commandMerchant.orEmpty()
             )
         }
 

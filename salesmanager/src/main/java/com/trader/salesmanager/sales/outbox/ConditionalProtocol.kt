@@ -11,7 +11,7 @@ object ConditionalProtocol {
         .joinToString("") { "%02x".format(it.toInt() and 255) }
     fun receipt(event:SaleOutboxEntity)=mapOf("eventId" to event.eventId,"revision" to event.aggregateRevision,"digest" to digest(event))
     fun decide(event:SaleOutboxEntity,receipt:Map<String,Any?>?,revision:Long,changes:List<RemoteChange>,current:Map<String,Map<String,Any?>?>):Decision {
-        if(receipt!=null) return if(matches(receipt,receipt(event))) Decision.DUPLICATE else Decision.CONFLICT
+        if(receipt!=null) return if(revision==event.aggregateRevision && matches(receipt,receipt(event))) Decision.DUPLICATE else Decision.CONFLICT
         if(revision!=event.aggregateRevision-1) return Decision.CONFLICT
         if(changes.any { !matches(current[it.path],it.before) }) return Decision.CONFLICT
         return Decision.APPLY
@@ -23,10 +23,18 @@ object ConditionalProtocol {
         else -> actual==expected
     }
     fun payload(event:SaleOutboxEntity):SalePayload {
-        require(event.payloadVersion==1 && event.merchantId.matches(Regex("[A-Za-z0-9_-]+")) && event.aggregateId>0 && event.aggregateRevision>0)
+        require(event.payloadVersion==1 && event.eventId.matches(Regex("[A-Za-z0-9_-]+")) && event.merchantId.matches(Regex("[A-Za-z0-9_-]+")) && event.aggregateId>0 && event.aggregateRevision>0)
         val payload=com.google.gson.GsonBuilder().setObjectToNumberStrategy(com.google.gson.ToNumberPolicy.LONG_OR_DOUBLE).create().fromJson(event.payload,SalePayload::class.java)
-        require(payload.version==1 && payload.changes.size<=400 && event.payload.toByteArray().size<=524288)
+        requireNotNull(payload.local)
+        requireNotNull(payload.changes)
+        require(payload.version==1 && payload.changes.size<=2000 && payload.changes.count { it.backend=="FIRESTORE" }<=450 && event.payload.toByteArray().size<=524288)
+        require(payload.local.invoices.all { it.merchantId==event.merchantId } && payload.local.stock.all { it.merchantId==event.merchantId }
+            && payload.local.boxes.all { it.merchantId==event.merchantId } && payload.local.cash.all { it.merchantId==event.merchantId }
+            && payload.local.returns.orEmpty().all { it.merchantId==event.merchantId })
         payload.changes.forEach { change ->
+            listOfNotNull(change.before,change.after).forEach { fields ->
+                require(fields["merchantId"]==null || fields["merchantId"]==event.merchantId)
+            }
             val parts=change.path.split('/')
             require(parts.all { it.matches(Regex("[A-Za-z0-9_-]+")) })
             require(when(change.backend) {

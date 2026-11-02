@@ -16,12 +16,16 @@ interface SaleOutboxDao {
     suspend fun firstUnacknowledged(merchant: String): SaleOutboxEntity?
     @Query("SELECT COALESCE(MAX(aggregateRevision), 0) FROM sale_outbox WHERE merchantId = :merchant AND aggregateId = :aggregateId")
     suspend fun revision(merchant: String, aggregateId: Long): Long
+    @Query("SELECT EXISTS(SELECT 1 FROM sale_outbox WHERE merchantId = :merchant)")
+    suspend fun hasHistoryFor(merchant: String): Boolean
     @Query("SELECT EXISTS(SELECT 1 FROM sale_outbox WHERE aggregateId = :aggregateId)")
     suspend fun manages(aggregateId: Long): Boolean
     @Query("SELECT EXISTS(SELECT 1 FROM sale_outbox WHERE state != 'ACKNOWLEDGED')")
     suspend fun hasOutstanding(): Boolean
     @Query("SELECT EXISTS(SELECT 1 FROM sale_outbox WHERE merchantId = :merchant AND state != 'ACKNOWLEDGED')")
     suspend fun hasOutstandingFor(merchant: String): Boolean
+    @Query("SELECT COALESCE(MAX(sequence), 0) FROM sale_outbox")
+    suspend fun latestSequence(): Long
     @Query("SELECT COALESCE(MAX(sequence), 0) FROM sale_outbox")
     fun observeLatestSequence(): Flow<Long>
     @Query("SELECT * FROM sale_outbox WHERE state != 'ACKNOWLEDGED' ORDER BY sequence")

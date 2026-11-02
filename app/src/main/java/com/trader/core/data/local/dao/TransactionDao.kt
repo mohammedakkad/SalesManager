@@ -200,6 +200,9 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE syncStatus != 'SYNCED' ORDER BY date DESC")
     fun observeUnsynced(): Flow<List<TransactionEntity>>
 
+    @Query("UPDATE transactions SET syncStatus = 'CONFLICT' WHERE id = :id")
+    suspend fun markConflicting(id: Long)
+
     @Query("UPDATE transactions SET syncStatus = 'FAILED' WHERE id = :id")
     suspend fun markFailed(id: Long)
 

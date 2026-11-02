@@ -1,7 +1,6 @@
 package com.trader.salesmanager.sales.outbox
 
 import androidx.annotation.Keep
-import com.google.gson.Gson
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.local.entity.*
 
@@ -12,7 +11,7 @@ data class SalePayload(val version: Int = 1, val changes: List<RemoteChange>, va
 @Keep
 data class SaleLocalState(val transaction: TransactionEntity?, val invoices: List<InvoiceItemEntity>,
     val units: List<ProductUnitEntity>, val stock: List<StockMovementEntity>, val boxes: List<CashBoxEntity>,
-    val cash: List<CashBoxMovementEntity>)
+    val cash: List<CashBoxMovementEntity>, val returns: List<ReturnInvoiceEntity> = emptyList())
 
 /** Stable legacy projection shapes. Only changed rows are retained in the immutable event. */
 internal class SaleProjection private constructor(private val values: Map<Pair<String,String>,Map<String,Any?>>, val local: SaleLocalState) {
@@ -23,8 +22,8 @@ internal class SaleProjection private constructor(private val values: Map<Pair<S
             unitRefs: Set<Pair<String,String>>, cashMethods: Set<Long>): SaleProjection {
             val units=unitRefs.groupBy { it.first }.flatMap { (product, keys) -> db.productDao().getUnitsForProduct(product).filter { unit -> keys.any { it.second==unit.id } } }
             val local=SaleLocalState(db.transactionDao().getTransactionById(id),db.invoiceItemDao().getForTransactionOnce(id),units,
-                db.stockMovementDao().forTransactionOnce(id),cashMethods.mapNotNull { db.cashBoxDao().getByPaymentMethodId(it) },
-                db.cashBoxMovementDao().forTransactionOnce(id))
+                db.stockMovementDao().forTransactionOnce(id).filter { it.merchantId==merchant },cashMethods.mapNotNull { db.cashBoxDao().getByPaymentMethodId(it) }.filter { it.merchantId==merchant },
+                db.cashBoxMovementDao().forTransactionOnce(id).filter { it.merchantId==merchant }, db.returnDao().forTransactionOnce(id).filter { it.merchantId==merchant })
             val values = linkedMapOf<Pair<String,String>,Map<String,Any?>>()
             fun add(backend:String,path:String,value:Map<String,Any?>) { values[backend to path]=value }
             listOfNotNull(local.transaction).forEach { t -> add("RTDB","transactions/${t.id}",mapOf(
@@ -47,7 +46,7 @@ internal class SaleProjection private constructor(private val values: Map<Pair<S
             local.cash.filter { it.merchantId==merchant }.forEach { m -> add("RTDB","cash_box_movements/${m.id}",mapOf(
                 "id" to m.id,"cashBoxId" to m.cashBoxId,"paymentMethodName" to m.paymentMethodName,"type" to m.type,
                 "amountDelta" to m.amountDelta,"balanceAfter" to m.balanceAfter,"note" to m.note,"relatedTransactionId" to m.relatedTransactionId,"createdAt" to m.createdAt)) }
-            db.returnDao().forTransactionOnce(id).filter { it.merchantId==merchant }.forEach { r ->
+            local.returns.filter { it.merchantId==merchant }.forEach { r ->
                 val items=db.returnDao().getReturnItems(r.id).associate { i -> i.id to mapOf("id" to i.id,"productId" to i.productId,"productName" to i.productName,
                     "unitId" to i.unitId,"unitLabel" to i.unitLabel,"originalQuantity" to i.originalQuantity,"returnedQty" to i.returnedQuantity,
                     "pricePerUnit" to i.pricePerUnit,"costPricePerUnit" to i.costPricePerUnit,"totalRefund" to i.totalRefund,"lostProfit" to i.lostProfit) }

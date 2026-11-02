@@ -62,6 +62,7 @@ class SaleOutboxMigrationTest {
         legacy().use { helper ->
             val db=helper.writableDatabase
             insert(db,"customers",mapOf("id" to 7,"name" to "fixture"))
+            insert(db,"sale_operations",mapOf("merchantId" to "fixture","operationId" to "op","kind" to "CREATE","requestHash" to "digest","transactionId" to 1))
             for((id,amount) in listOf(1 to 75.0,2 to 0.0,3 to 20.0,4 to 0.0,5 to 15.0)) {
                 insert(db,"transactions",mapOf("id" to id,"customerId" to 7,"amount" to amount,"syncStatus" to "PENDING","paymentType" to "DEBT"))
             }
@@ -85,9 +86,10 @@ class SaleOutboxMigrationTest {
         val upgraded=upgraded()
         assertEquals(before,snapshot(upgraded.openHelper.writableDatabase))
         assertTrue(upgraded.saleOutboxDao().all().isEmpty())
+        assertEquals(1L,upgraded.saleOperationDao().get("fixture","op")!!.transactionId)
         upgraded.openHelper.writableDatabase.query("PRAGMA foreign_key_check").use { assertFalse(it.moveToFirst()) }
     }
-    private fun snapshot(db:SupportSQLiteDatabase)=listOf("transactions","invoice_items","return_invoices","return_items","cash_boxes","stock_movements").associateWith { table ->
+    private fun snapshot(db:SupportSQLiteDatabase)=listOf("transactions","invoice_items","return_invoices","return_items","cash_boxes","stock_movements","sale_operations").associateWith { table ->
         db.query("SELECT * FROM $table ORDER BY rowid").use { c ->
             buildList { while(c.moveToNext()) add((0 until c.columnCount).map { if(c.isNull(it)) null else c.getString(it) }) }
         }
