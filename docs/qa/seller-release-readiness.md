@@ -67,3 +67,8 @@ The full aggregate (same commands above) passed in7m33s,227 tasks (64executed,16
 CI recovery: both jobs replace setup-android@v3 with a SHA256-pinned isolated SDK installer that retains stderr, checks license-command status and asserts required tools/packages. Fresh JDK17 install and repeat pass locally. Forced resource linking printed /workspace/setup/stage8-sdk and passed; Debug assembly uses that SDK (incremental). This is not a claim of clean hosted compilation. The exact hosted SDK failure preceding stderr remains inaccessible; user-reported run41275351544 is not reclassified as passing. A legacy tools probe with the new CLI printed missing-package text but returned0, so it is not the hosted16.0 failure reproduction. See stage8-atomicity-and-outbox.md.
 
 Whole-sale atomicity and transactional outbox: **NOT IMPLEMENTED; acceptance FAIL**, not externally blocked. The actual ViewModel/repository write graph, ten-boundary test matrix, durable deletion/revision/tenant requirements and remaining implementation are explicitly recorded in stage8-atomicity-and-outbox.md. Versions1–21 remain BLOCKED in stage8-migration-matrix.md. Device/PDF execution remains BLOCKED (no device/KVM; hosted API denied). Full Stage8 request and release acceptance are incomplete. No exactly-once remote guarantee is claimed.
+
+
+## Stage 9 continuation
+
+See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.

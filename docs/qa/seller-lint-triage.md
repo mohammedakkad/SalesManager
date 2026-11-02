@@ -19,3 +19,8 @@ Compiler deprecations and compileSdk35/AGP8.3.2 compatibility warnings are separ
 Stage7 verified changes: removed all six unused Seller colors and the unused backup subtitle after source/resource/dynamic lookup review; removed the byte-identical drawable-v24 copy while retaining the base icon; switched the scanner cooldown timestamp to mutableLongStateOf. No branding, backup-policy attribute, dependency warning or leak warning was suppressed.
 
 Final stage7-final.log:24 warnings (17 launcher branding/themed-icon,4 incompatible dependency registries,2 Context-typed ViewModel fields,1 intentional API31+ backup attribute). All7 unused resource warnings, the obsolete folder warning and scanner information are gone. The intermediate stage7-verified.log still reports the empty v24 directory; removing that empty directory and re-running lint produced the final24. No lint XML was manually edited.
+
+
+## Stage 9 continuation
+
+See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.

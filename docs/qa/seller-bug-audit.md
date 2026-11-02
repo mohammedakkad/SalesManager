@@ -44,3 +44,8 @@ A real SQLite abort on the second cash-box movement left the first cash balance 
 
 ## Stage8 reconnect completion race
 Both new stale-success and stale-failure tests failed before repair. A newer20-unit amount edit was incorrectly marked SYNCED/FAILED by the10-unit upload completion. Retry now calls TransactionDao.finishUpload, whose real Room transaction compares the complete stored entity to the uploaded snapshot before updating status. Two unchanged-row controls verify normal completion still works. Only reconnect retry is fixed; initial async uploads, ABA, merchant switching and a revisioned outbox remain open. Whole-sale rollback is not repaired by this helper.
+
+
+## Stage 9 continuation
+
+See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.

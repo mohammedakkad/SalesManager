@@ -42,3 +42,8 @@ The supplied failure is run41275351544, both jobs at setup-android@v3, sdkmanage
 Both workflow jobs now call scripts/setup-seller-android.sh: an isolated SDK root, SHA256-verified Google archive16111833, JDK diagnostics, license exit-status preservation and explicit platform35/build-tools34/platform-tools checks. Setup output is retained as an artifact even on failure. Fresh installation and repeat installation passed locally with JDK17. Java17/Gradle8.9/AGP8.3.2 remain unchanged; the existing AGP compileSdk35 warning remains. Hosted job success and emulator/PDF execution remain BLOCKED until actual run logs are available.
 
 Provisioning investigation detail: current setup-android v3 defaults to `tools platform-tools`; the available official repository metadata has no legacy `tools` entry. A disposable SDK probe with the pinned new CLI printed `Package tools not found.` **but exited0**, so it is not a reproduction of the hosted16.0 exit1. Do not present this as the confirmed run root cause. The replacement installs only required packages and asserts real files/executables rather than trusting that CLI exit code alone. Probe log is retained.
+
+
+## Stage 9 continuation
+
+See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.

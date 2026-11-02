@@ -15,3 +15,8 @@ Stage6 additionally cancels customer snapshot listeners on logout and creates in
 Stage7 binds cash listeners to the merchant collector and moves remote box provisioning before the shared balance/ledger write transaction. This prevents network fetches from extending that transaction by construction; no lock-time benchmark is claimed. Cash-box tests measure correctness with synthetic data, not production latency. Scanner cooldown uses primitive Long state without changing its value or timing rule. Device profiling remains NOT TESTED.
 
 Stage8 retry completion adds a bounded single-row read/compare/status write within Room; network I/O remains outside that transaction. No latency/profile measurement or distributed performance claim. Whole-sale/outbox coordination remains unimplemented.
+
+
+## Stage 9 continuation
+
+See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.

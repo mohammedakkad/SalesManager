@@ -83,11 +83,7 @@ jobs:
           arch: x86_64
           profile: pixel_2
           disable-animations: true
-          script: |
-            set -e
-            gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :salesmanager:connectedDebugAndroidTest
-            adb pull /sdcard/Android/data/com.trader.salesmanager.debug/files/qa-pdf /tmp/seller-qa-pdf
-            gradle -p qa/pdf-verifier --no-daemon -PpdfFixtureDir=/tmp/seller-qa-pdf test
+          script: bash scripts/run-seller-device-qa.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -96,5 +92,7 @@ jobs:
             ${{ runner.temp }}/seller-sdk-setup.log
             salesmanager/build/reports/androidTests/
             salesmanager/build/outputs/androidTest-results/
+            /tmp/seller-qa-pdf/
+            /tmp/seller-qa-pdf-recovery/
             qa/pdf-verifier/build/reports/
             qa/pdf-verifier/build/test-results/

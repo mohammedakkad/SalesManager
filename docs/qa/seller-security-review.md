@@ -25,3 +25,8 @@ Stage6 re-ran the tracked-signing/server-credential/token policy:PASS. Scope/mer
 Stage7 keeps cash snapshot listeners scoped to the currently observed merchant and cancels them on logout/switch. This does not cancel/certify every independent in-flight upload, enforce server rules or replace owner signing rotation. No live Firebase calls or production signing keys were used; isolated mock protocol/Room tests and the tracked-secret policy remain the evidence boundaries. The API31+ OS backup attribute was deliberately retained despite its older-API lint warning.
 
 Stage8 SDK provisioning uses TLS and a pinned SHA256 archive, a disposable SDK root and explicit required-package checks; diagnostics/artifacts contain no signing/merchant secrets. Policy scan remains PASS. Snapshot comparison protects local retry status only; it does not enforce tenant ownership or server authorization. No live Firebase, signing material or rotation was used. Hosted access remains denied.
+
+
+## Stage 9 continuation
+
+See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.
