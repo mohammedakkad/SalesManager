@@ -93,12 +93,37 @@ stateDiagram-v2
 
 CONFLICTING requires explicit reconciliation and blocks subsequent merchant financial events. A vanished worker leaves a recoverable expiring lease. Retry identity never changes. Tombstones and receipt history are retained; no retention policy silently drops financial intent.
 
-### Measured coverage
+### Measured coverage (final aggregate rebuild)
 
 | Scope | Lines | Branches |
 | --- | --- | --- |
-| Weighted overall | 4841/27930 =17.3326% | 1306/17331 =7.5356% |
-| Seller only | 1098/17769 =6.1793% | 684/14346 =4.7679% |
-| Shared | 3743/10161 =36.8369% | 622/2985 =20.8375% |
+| Weighted overall | 4840/27930 =17.3290% | 1306/17271 =7.5618% |
+| Seller only | 1099/17769 =6.1849% | 684/14286 =4.7879% |
+| Shared | 3741/10161 =36.8172% | 622/2985 =20.8375% |
 
 Starting Stage10 measured weighted lines3746/26848 =13.9526% and branches906/16479 =5.4979%; Seller lines716/17459 =4.1010% and branches425/13972 =3.0418%. All existing floors pass unchanged; no production exclusions were added. The initial shared-branch gate failure is preserved in shared-gate-before.log, not hidden. Coverage is JVM debug coverage, not device or minified runtime coverage.
+
+## Increment6 — builds, security policy and release decision
+
+The full final packaging run executes Android Lint, Debug assembly, instrumentation APK assembly and actual R8 minification for the unsigned Release. The new test dependency uses the existing WorkManager version via the version catalog; no lint suppression was introduced. Final acceptance logs, lint issue counts and APK SHA256 values are in evidence/continuation/stage11/. Release signature verification intentionally reports missing signature metadata, confirming the QA APK is unsigned. Production signing material and Crashlytics mapping upload were not used.
+
+`python3 scripts/check-seller-secrets.py` passes its targeted tracked-signing/server-credential/token-log policy. This is not a historical secret scan or dependency advisory audit. No Admin files or coverage thresholds were changed. The offline packaging Firebase fixture was restored before committing. Historical schema versions1–21 remain BLOCKED without authentic fixtures; no fabricated schemas or destructive fallback were used.
+
+Git push to the existing audit branch works. GitHub REST Actions and GraphQL PR reads both return Forbidden from the environment. Consequently new hosted `seller` and `compose` conclusions, a new run URL, and the remote PR description update are **BLOCKED**. The updated reviewable description is docs/qa/draft-pr-body.md; branch pushes update the existing PR's diff. No new PR, merge or force push was performed. User-reported starting run [41422131934](https://github.com/mohammedakkad/SalesManager/actions/runs/41422131934) had both jobs SUCCESS; it is historical evidence for Stage10, not the new Stage11 HEAD. Device instrumentation and Android-generated PDFBox verification were not rerun locally: **NOT TESTED/BLOCKED**. Instrumentation APK compilation does not count as runtime success.
+
+### Remaining P0/P1 and readiness
+
+- **P0:** no verified deployed server authorization, immutable event/head enforcement, or fencing of legacy/privileged clients. A client SDK transaction is insufficient to enforce all writers' financial rules.
+- **P0/P1:** Firestore and RTDB cannot commit together; partial completion is explicit and retained, but trusted reconciliation and per-resource enforcement remain server work. No global exactly-once claim.
+- **P1:** universal tenant partitioning/ownership of legacy caches and adoption of manual financial writers remain incomplete; current sale guards do not prove every legacy feature safe after account switching.
+- **P1:** cross-device numeric identity collisions, remote baseline provisioning, versioned pulls, large-account RTDB root transaction behavior and conflict resolution need a deployed reviewed contract.
+- **P1:** authentic migration fixtures1–21, historical signing/security remediation and real signed/minified upgrade/device/backup validation remain unresolved.
+- Hosted new-HEAD/device/PDF and Firebase Emulator/deployed-rule acceptance are unverified, independently of local passing tests.
+
+**Release readiness: FAIL.** Local sale/outbox architecture and tests are implemented; remaining distributed and verification limits are explicit in stage11-server-contract.md. Start SHA:aed0074bce2b1cd5b63765736e6872587a1c23ce. Coherent stages are committed/pushed on codex/seller-full-coverage-audit; use git log for final immutable commit identities.
+
+Final lint result after the version-catalog repair: **0 errors,24 warnings**. See evidence/continuation/stage11/final-lint-summary.json; incompatible dependency lint registries remain among the warnings.
+
+Final aggregate verification: **BUILD SUCCESSFUL in9m6s (227 executed tasks)**, complete JVM suites/JaCoCo/Lint/Debug/instrumentation APK/minified unsigned Release. See final-acceptance.log for the exact measured duration and task outcomes; unchanged gates PASS in final-acceptance-gates.log. APK hashes are in final-apk-hashes.json.
+
+The final full aggregate rebuild regenerates the measured JaCoCo counters above. Earlier checkpoint logs are retained as historical evidence; final-acceptance-gates.log is authoritative for the ending tree. No coverage exclusions or thresholds changed.

@@ -25,3 +25,10 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 ## Stage 10 implementation
 
 [Atomic Seller commands and evidence](stage10-atomic-sales.md) supersede the earlier statement that Seller sale commands are unimplemented. Creation/edit/deletion screen paths now use one Room aggregate transaction, with144 passing JVM tests and unchanged passing coverage gates. Distributed sync/outbox guarantees remain Stage11 work; overall release readiness remains FAIL.
+
+
+## Stage 11 current evidence
+
+Projection capture reads the affected sale, units, payment methods and related ledgers rather than serializing every merchant row. Network work runs after commit with no SQLite transaction held; tests prove a new financial edit can commit while an older upload is blocked. Dispatch is merchant FIFO, batches20 per worker, with periodic recovery, explicit payload limits and bounded retry delay. RTDB currently transacts the merchant root and may be expensive for large accounts. No device benchmark, latency SLO or memory improvement is claimed; server-root scaling and production-sized profiling remain unverified.
+
+[Implementation, test matrix and evidence](stage11-outbox.md).

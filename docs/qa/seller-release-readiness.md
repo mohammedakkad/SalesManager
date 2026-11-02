@@ -77,3 +77,12 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 ## Stage 10 implementation
 
 [Atomic Seller commands and evidence](stage10-atomic-sales.md) supersede the earlier statement that Seller sale commands are unimplemented. Creation/edit/deletion screen paths now use one Room aggregate transaction, with144 passing JVM tests and unchanged passing coverage gates. Distributed sync/outbox guarantees remain Stage11 work; overall release readiness remains FAIL.
+
+
+## Stage 11 current evidence
+
+Seller sale create/edit/delete atomicity and durable transactional outbox are now IMPLEMENTED and locally regression-tested, superseding earlier unimplemented statements. Room24→25 preservation/rollback and backup22 recovery pass;202 JVM tests and unchanged coverage gates pass. Actual conditional Firebase transport and WorkManager worker are wired, but server-runtime/rules enforcement and cross-backend reconciliation remain unverified. Hosted jobs for this HEAD are BLOCKED by GitHub API Forbidden; native instrumentation/PDF runtime was not repeated here. Current readiness remains **FAIL**. The Stage11 report contains the authoritative current counters, packaging results, protocol limitations and blocker list.
+
+[Implementation, test matrix and evidence](stage11-outbox.md).
+
+Final lint result after the version-catalog repair: **0 errors,24 warnings**. See evidence/continuation/stage11/final-lint-summary.json; incompatible dependency lint registries remain among the warnings.

@@ -189,7 +189,7 @@ app,com/trader/core/data/repository/InvoiceItemRepositoryImpl$startRealtimeSync$
 app,com/trader/core/data/repository/EmployeeRepositoryImpl$startRealtimeSync$1$invokeSuspend$$inlined$filter$1,0,3,0,0,0,2,0,1
 app,com/trader/core/data/repository/InventoryRepositoryImpl$updateSessionItem$2,2,7,6,10,1,0,1,0
 app,com/trader/core/data/repository/ProductRepositoryImpl,0,121,0,42,0,21,0,1
-app,com/trader/core/data/repository/InventoryRepositoryImpl,14,6,3,1,6,3,1,0
+app,com/trader/core/data/repository/InventoryRepositoryImpl,14,6,3,1,5,4,1,0
 app,com/trader/core/data/repository/DashboardAnalyticsRepositoryImpl,0,21,0,4,0,6,0,1
 app,com/trader/core/data/repository/ReturnRepositoryImpl$getAllReturns$$inlined$map$1,0,3,0,0,0,2,0,1
 app,com/trader/core/data/repository/PaymentMethodRepositoryImpl$getAllPaymentMethods$$inlined$map$1,0,3,0,0,0,2,0,1
@@ -204,7 +204,7 @@ app,com/trader/core/data/repository/ReportsRepositoryImpl,0,12,0,0,0,5,0,1
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeFinancialReportTotals$$inlined$map$1,0,3,0,0,0,2,0,1
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeDebtAging$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/ReturnRepositoryImpl$getReturnsByTransaction$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
-app,com/trader/core/data/repository/ReturnRepositoryImpl$startRealtimeSync$1$1$1,10,3,0,0,1,0,1,0
+app,com/trader/core/data/repository/ReturnRepositoryImpl$startRealtimeSync$1$1$1,9,4,0,0,1,0,1,0
 app,com/trader/core/data/repository/ReportsRepositoryImpl$observeDailySalesProfit$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/ActivationRepositoryImpl$observeMerchantCode$$inlined$map$1$2$1,0,0,0,0,0,2,0,1
 app,com/trader/core/data/repository/InventoryRepositoryImpl$cancelSession$2,8,0,1,1,1,0,1,0
@@ -1288,7 +1288,7 @@ salesmanager,com/trader/salesmanager/ui/transactions/details/TransactionDetailsV
 salesmanager,com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreenKt$TransactionDetailsScreen$15$1$3$1,0,64,0,16,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreenKt$TransactionDetailsScreen$9$1,0,1,0,0,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/details/ComposableSingletons$TransactionDetailsScreenKt$lambda-7$1,0,6,0,8,0,1,0,1
-salesmanager,com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreenKt,0,175,0,206,0,21,0,1
+salesmanager,com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreenKt,0,175,0,198,0,21,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/details/TransactionDetailsViewModel$2,0,5,0,0,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/details/TransactionDetailsViewModel$1,0,2,0,0,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/details/ComposableSingletons$TransactionDetailsScreenKt$lambda-10$1,0,8,0,8,0,1,0,1
@@ -1686,7 +1686,7 @@ salesmanager,com/trader/salesmanager/sales/outbox/DispatchResult,1,0,0,0,1,1,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/ConditionalProtocol,33,1,64,36,6,0,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/SaleProjection$Companion,35,0,2,2,2,0,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/SaleOutboxLifecycle,0,5,0,0,0,3,0,1
-salesmanager,com/trader/salesmanager/sales/outbox/OutboxDispatcher,56,3,34,28,5,0,1,0
+salesmanager,com/trader/salesmanager/sales/outbox/OutboxDispatcher,57,2,34,28,5,0,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/SaleOutboxLifecycle$start$1$1$1,0,1,0,0,0,1,0,1
 salesmanager,com/trader/salesmanager/sales/outbox/FirebaseOutboxTransport$realtimePhase$2$1,25,0,16,4,3,0,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/SaleOutboxWork,0,11,0,2,0,5,0,1
@@ -1717,7 +1717,7 @@ salesmanager,com/trader/salesmanager/ui/transactions/list/TransactionsUiState,0,
 salesmanager,com/trader/salesmanager/ui/transactions/list/TransactionsScreenKt$TransactionsScreen$2$1$3,0,20,0,6,0,3,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/list/TransactionsScreenKt$TransactionsScreen$2$1$3$2$1$2$2,0,2,0,4,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/list/ComposableSingletons$TransactionsScreenKt$lambda-4$1,0,7,0,6,0,1,0,1
-salesmanager,com/trader/salesmanager/ui/transactions/list/TransactionsScreenKt,0,39,0,92,0,3,0,1
+salesmanager,com/trader/salesmanager/ui/transactions/list/TransactionsScreenKt,0,39,0,90,0,3,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/list/TransactionsViewModel$deleteTransaction$1,0,2,0,0,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/list/TransactionsScreenKt$TransactionsScreen$2$1$1$1$2$1$2,0,2,0,10,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/list/TransactionsScreenKt$TransactionCard$1$1$2$1$1,0,6,0,8,0,1,0,1
@@ -1890,7 +1890,7 @@ salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionS
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/ComposableSingletons$AddEditTransactionScreenKt$lambda-7$1,0,2,0,8,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/ComposableSingletons$AddEditTransactionScreenKt$lambda-9$1,0,2,0,8,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt$AddEditTransactionScreen$4$2$2$4$1$1,0,2,0,8,0,1,0,1
-salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt,0,101,0,140,0,14,0,1
+salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt,0,101,0,90,0,14,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt$AddEditTransactionScreen$4$2$5$1,0,14,0,6,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionViewModel$preselect$1,0,5,0,0,0,1,0,1
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt$AddEditTransactionScreen$4$2$2$4,0,7,0,6,0,2,0,1

@@ -49,3 +49,10 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 ## Stage 10 implementation
 
 [Atomic Seller commands and evidence](stage10-atomic-sales.md) supersede the earlier statement that Seller sale commands are unimplemented. Creation/edit/deletion screen paths now use one Room aggregate transaction, with144 passing JVM tests and unchanged passing coverage gates. Distributed sync/outbox guarantees remain Stage11 work; overall release readiness remains FAIL.
+
+
+## Stage 11 current evidence
+
+202 JVM tests pass (shared85/Seller117), zero failures/errors/skips. Stage11 adds62 test methods, replaces4 obsolete SaleSync methods (net+58). Real Room/SQLite tests use transaction faults, migration from authentic24 and close/reopen recovery; deterministic Firebase SDK transaction fakes exercise the production transport, and4 WorkManager tests execute the actual worker. The Stage11 report maps at least20 requested behaviors to executed cases. Firebase Emulator Suite, actual server rules, native device/instrumentation and PDF extraction for this HEAD remain NOT TESTED/BLOCKED; packaging is not runtime evidence.
+
+[Implementation, test matrix and evidence](stage11-outbox.md).

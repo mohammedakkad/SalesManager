@@ -69,7 +69,7 @@ android {
 }
 
 dependencies {
-    testImplementation("androidx.work:work-testing:2.9.1")
+    testImplementation(libs.test.workmanager)
     testImplementation(libs.test.robolectric)
     testImplementation(libs.test.androidx.core)
     androidTestImplementation(platform(libs.compose.bom))

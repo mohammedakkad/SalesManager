@@ -29,3 +29,12 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 ## Stage 10 implementation
 
 [Atomic Seller commands and evidence](stage10-atomic-sales.md) supersede the earlier statement that Seller sale commands are unimplemented. Creation/edit/deletion screen paths now use one Room aggregate transaction, with144 passing JVM tests and unchanged passing coverage gates. Distributed sync/outbox guarantees remain Stage11 work; overall release readiness remains FAIL.
+
+
+## Stage 11 current evidence
+
+The Stage11 final lint/build evidence is recorded in stage11-outbox.md. An initial run reported25 warnings: the new UseTomlInstead warning came from the work-testing dependency declaration. It was moved to the existing version catalog using the same workmanager version. No suppression or lint gate reduction was added. Existing dependency lint-registry incompatibilities, context warnings and launcher warnings remain; skipped incompatible dependency checks do not establish a clean static analysis of those checks.
+
+[Implementation, test matrix and evidence](stage11-outbox.md).
+
+Final lint result after the version-catalog repair: **0 errors,24 warnings**. See evidence/continuation/stage11/final-lint-summary.json; incompatible dependency lint registries remain among the warnings.

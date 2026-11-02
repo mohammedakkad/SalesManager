@@ -52,3 +52,8 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 ## Stage 10 implementation
 
 [Atomic Seller commands and evidence](stage10-atomic-sales.md) supersede the earlier statement that Seller sale commands are unimplemented. Creation/edit/deletion screen paths now use one Room aggregate transaction, with144 passing JVM tests and unchanged passing coverage gates. Distributed sync/outbox guarantees remain Stage11 work; overall release readiness remains FAIL.
+
+
+## Stage11 superseding implementation
+
+The earlier Stage8 unresolved local-atomicity/outbox findings are now addressed for Seller managed sales by Stage10 SaleCommands and Stage11 durable event storage/dispatch. Transaction row, invoice, inventory/stock ledger, cash, derived debt source, receipt and immutable sync event commit in the same Room withTransaction. Managed returns use a journal hook around their existing local transaction. Network dispatch occurs after commit under an atomic expiring lease; exact revision/token acknowledgment cannot confirm newer revisions. The diagram and executed fault matrix are in [Stage11](stage11-outbox.md). Room24→25 is additive and tested from authentic24; historical1–21 remain BLOCKED. Client conditional Firebase phases are not distributed ACID; server enforcement, legacy-writer compatibility, conflicts and partial completion remain release blockers documented in [server contract](stage11-server-contract.md). No Admin business changes or debt ledger were introduced.

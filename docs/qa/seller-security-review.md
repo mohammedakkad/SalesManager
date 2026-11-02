@@ -35,3 +35,10 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 ## Stage 10 implementation
 
 [Atomic Seller commands and evidence](stage10-atomic-sales.md) supersede the earlier statement that Seller sale commands are unimplemented. Creation/edit/deletion screen paths now use one Room aggregate transaction, with144 passing JVM tests and unchanged passing coverage gates. Distributed sync/outbox guarantees remain Stage11 work; overall release readiness remains FAIL.
+
+
+## Stage 11 current evidence
+
+No production Firebase was accessed. Tests use an offline application plus deterministic SDK fakes; packaging uses the disposable offline Firebase fixture, restored before commit. No signing material or tokens were introduced. Local commands validate dynamic merchant ownership, stale drafts cannot retarget accounts, claims/acknowledgments use merchant and lease guards, and payload validation rejects foreign paths. These checks do not prove Firebase server authorization. Deployed membership/rules, immutable receipt/head enforcement, legacy writers and dependency/historical-secret remediation remain P0/P1 release work. See stage11-server-contract.md; the policy script is a targeted check, not a complete historical secret audit.
+
+[Implementation, test matrix and evidence](stage11-outbox.md).

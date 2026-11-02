@@ -54,3 +54,10 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 ## Stage 10 implementation
 
 [Atomic Seller commands and evidence](stage10-atomic-sales.md) supersede the earlier statement that Seller sale commands are unimplemented. Creation/edit/deletion screen paths now use one Room aggregate transaction, with144 passing JVM tests and unchanged passing coverage gates. Distributed sync/outbox guarantees remain Stage11 work; overall release readiness remains FAIL.
+
+
+## Stage 11 current evidence
+
+Sale create/edit/delete now atomically commit an immutable event and receipt with local financial effects. Fault regressions demonstrate rollback, retry identity, stale acknowledgment/ABA rejection, partial returns, tombstone survival and restore safety. Additional verified repairs preserve unrelated remote fields, classify SDK-wrapped conflicts, reserve deleted IDs on fresh restore and defer standalone cash uploads until after commit. See the Stage11 report and preserved failing-before logs. Remaining P0/P1: deployed server authorization/revision enforcement, legacy-client bypass, partial two-backend reconciliation and universal tenant partitioning of legacy caches. Local outbox completion does not close those blockers.
+
+[Implementation, test matrix and evidence](stage11-outbox.md).
