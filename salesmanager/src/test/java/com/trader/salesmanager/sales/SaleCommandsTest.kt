@@ -640,4 +640,23 @@ class SaleCommandsTest {
         } finally { withContext(NonCancellable) { release.complete(Unit);first.cancelAndJoin() } }
     }
 
+    @Test fun identicalContentRevisionIsNotAcknowledgedByAnOlderEventReceipt()=runBlocking {
+        val old=original()
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().single())
+        val entered=CompletableDeferred<Unit>();val release=CompletableDeferred<Unit>()
+        remote.pauseAfterCommit={ entered.complete(Unit);release.await() }
+        val first=async(Dispatchers.Default) { outboxDispatcher(remote).once(merchant) }
+        try {
+            withTimeout(10000) { entered.await() }
+            SaleCommands(db).edit("identical-edit",merchant,old,old,null)
+            remote.pauseAfterCommit=null;release.complete(Unit)
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,first.await())
+            assertEquals("PENDING",db.transactionDao().getTransactionById(old.id)!!.syncStatus)
+            assertEquals(listOf("ACKNOWLEDGED","PENDING"),db.saleOutboxDao().all().map { it.state })
+            assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+            assertEquals("SYNCED",db.transactionDao().getTransactionById(old.id)!!.syncStatus)
+            assertEquals(150.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+        } finally { withContext(NonCancellable) { release.complete(Unit);first.cancelAndJoin() } }
+    }
+
 }
