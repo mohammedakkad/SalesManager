@@ -1,0 +1,136 @@
+[
+  {
+    "module": "app",
+    "tests": 85,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.trader.core.sync.ReturnRetryCoordinatorTest",
+        "tests": 1
+      },
+      {
+        "name": "com.trader.core.data.local.OutboxLegacyFenceTest",
+        "tests": 6
+      },
+      {
+        "name": "com.trader.core.data.local.SaleReceiptMigrationTest",
+        "tests": 2
+      },
+      {
+        "name": "com.trader.core.data.repository.ReturnRepositoryTest",
+        "tests": 14
+      },
+      {
+        "name": "com.trader.core.data.local.ReturnPersistenceTest",
+        "tests": 2
+      },
+      {
+        "name": "com.trader.core.data.local.RoomIntegrityTest",
+        "tests": 2
+      },
+      {
+        "name": "com.trader.core.data.local.SaleOutboxMigrationTest",
+        "tests": 2
+      },
+      {
+        "name": "com.trader.core.domain.model.ProductStockTest",
+        "tests": 4
+      },
+      {
+        "name": "com.trader.core.domain.model.ReturnItemTest",
+        "tests": 7
+      },
+      {
+        "name": "com.trader.core.data.remote.ReturnPushTest",
+        "tests": 2
+      },
+      {
+        "name": "com.trader.core.data.local.ReturnMigrationTest",
+        "tests": 3
+      },
+      {
+        "name": "com.trader.core.data.repository.CashBoxIntegrityTest",
+        "tests": 12
+      },
+      {
+        "name": "com.trader.core.data.repository.StaleTransactionAckTest",
+        "tests": 4
+      },
+      {
+        "name": "com.trader.core.data.repository.TransactionSyncTest",
+        "tests": 7
+      },
+      {
+        "name": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+        "tests": 4
+      },
+      {
+        "name": "com.trader.core.data.repository.InventoryIntegrityTest",
+        "tests": 8
+      },
+      {
+        "name": "com.trader.core.data.local.SaleOutboxStorageTest",
+        "tests": 5
+      }
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "tests": 124,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+        "tests": 7
+      },
+      {
+        "name": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+        "tests": 11
+      },
+      {
+        "name": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+        "tests": 5
+      },
+      {
+        "name": "com.trader.salesmanager.ui.inventory.session.InventorySessionViewModelTest",
+        "tests": 1
+      },
+      {
+        "name": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+        "tests": 10
+      },
+      {
+        "name": "com.trader.salesmanager.sales.SaleCommandsTest",
+        "tests": 63
+      },
+      {
+        "name": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+        "tests": 4
+      },
+      {
+        "name": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+        "tests": 6
+      },
+      {
+        "name": "com.trader.salesmanager.ui.settings.backup.BackupMigratorTest",
+        "tests": 3
+      },
+      {
+        "name": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+        "tests": 6
+      },
+      {
+        "name": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+        "tests": 6
+      },
+      {
+        "name": "com.trader.salesmanager.sales.SaleSessionViewModelTest",
+        "tests": 2
+      }
+    ]
+  }
+]

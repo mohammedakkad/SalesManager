@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.SaleCommandsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-08T20:15:06" hostname="13302589aed6" time="5.299">
+  <properties/>
+  <testcase name="cancellationDuringDrainRollsBackEarlierStatusesAndCanRetryAfterRestart" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="4.998"/>
+  <testcase name="failedDrainRollsBackAllStatusesAndReceiptThenReusesRemoteCompletion" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.172"/>
+  <testcase name="failedIdleRecoveryRollsBackEarlierStatusesWithoutLosingReceipts" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.129"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -8,12 +8,12 @@ Debug JVM tests only. Not device/instrumentation or minified release coverage. C
 | app | LINE | 3743 | 6485 | 36.5956% |
 | app | METHOD | 861 | 1653 | 34.2482% |
 | app | CLASS | 291 | 492 | 37.1648% |
-| salesmanager | BRANCH | 691 | 13605 | 4.8335% |
-| salesmanager | LINE | 1112 | 16670 | 6.2535% |
+| salesmanager | BRANCH | 693 | 13605 | 4.8468% |
+| salesmanager | LINE | 1113 | 16671 | 6.2584% |
 | salesmanager | METHOD | 268 | 2918 | 8.4118% |
 | salesmanager | CLASS | 78 | 1199 | 6.1081% |
-| weighted overall | BRANCH | 1313 | 15980 | 7.5927% |
-| weighted overall | LINE | 4855 | 23155 | 17.3331% |
+| weighted overall | BRANCH | 1315 | 15980 | 7.6034% |
+| weighted overall | LINE | 4856 | 23156 | 17.3354% |
 | weighted overall | METHOD | 1129 | 4571 | 19.8070% |
 | weighted overall | CLASS | 369 | 1691 | 17.9126% |
 
@@ -22,7 +22,6 @@ Exact class counters: seller-class-coverage-gaps.csv. Exact source line and bran
 Remaining coverage: repository/DAO/migration faults, activation, sync conflicts/process interruption, cash/stock atomicity, backup restore/PDF, every Compose screen and navigation journey, workers/update behavior and release runtime. Full component inventory and test strategy identify the required continuation.
 
 
-Final 2026-11-08 continuation result: Final continuation acceptance:205 JVM tests PASS (shared85/Seller120),0 failures/errors/skips;3 new regression methods. Unchanged coverage gates PASS. Weighted lines4855/28010 =17.3331%, branches1313/17293 =7.5927%; Seller lines1112/17782 =6.2535%, branches691/14296 =4.8335%. Lint0 errors/24 warnings; Debug/instrumentation APK and actual minified unsigned Release builds PASS. Signed/device/PDF/Firebase runtime was not executed. Hosted CI and remote PR metadata remain BLOCKED by api.github.com access policy/Forbidden. Release readiness remains FAIL. Evidence: [Stage11 queue recovery](stage11-outbox.md), evidence/continuation/stage11-drain/.
+## Cancellation-boundary continuation — 2026-11-08
 
-
-Remote publication BLOCKED:Git fetch succeeded, but the normal branch push of verified local commit3607cbc returned HTTP403 Permission denied. This continuation is committed locally and is not confirmed on PR51/the remote branch. Restore repository write authorization through the environment/GitHub integration settings before retrying; do not supply tokens in chat. See evidence/continuation/stage11-drain/push-blocked.log.
+Current cancellation-boundary increment:4 new real Room tests;209 JVM tests PASS (shared85/Seller124),0 failures/errors/skips. A synchronous query callback reproduced cancellation after status writes had started;1 of the initial3 tests failed before the repair, while the2 SQLite fault tests already passed. Explicit coroutine checks now guard both transaction completions and each reconciliation page. The targeted3 and final4 new cases pass, including restart/reuse of completed remote receipts without additional financial effects. Full aggregate build PASS in4m20s (227 tasks:41 executed/186 up-to-date), including Lint, Debug/instrumentation APK and actual minified unsigned Release. Lint0 errors/24 warnings; targeted secret policy PASS. Weighted lines4856/28012 =17.3354%, branches1315/17295 =7.6034%; Seller lines1113/17784 =6.2584%, branches693/14298 =4.8468%. All gates unchanged and passing. Room remains25; no schema, Admin files or financial rules changed. Device/PDF/deployed Firebase runtime remains NOT TESTED/BLOCKED. Release readiness FAIL; prior server/legacy-tenant/historical-migration risks remain. See [current Stage11 evidence](stage11-outbox.md) and evidence/continuation/stage11-cancellation/. Full-history scan latency remains unbenchmarked; page memory is bounded.

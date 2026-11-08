@@ -34,6 +34,7 @@ class OutboxDispatcher(
             // Recover status rows left by an older worker, even when no new sale is submitted.
             db.withTransaction {
                 if(!db.saleOutboxDao().hasOutstandingFor(merchant)) acknowledgeDrainedQueue(merchant)
+                currentCoroutineContext().ensureActive()
             }
             return DispatchResult.IDLE
         }
@@ -55,8 +56,9 @@ class OutboxDispatcher(
                     val changed=db.saleOutboxDao().acknowledge(event.eventId,event.aggregateRevision,token,clock(),result.receipt.take(200))
                     if(changed==1) {
                         if(!db.saleOutboxDao().hasOutstandingFor(merchant)) acknowledgeDrainedQueue(merchant)
-                        DispatchResult.ACKNOWLEDGED
-                    } else DispatchResult.STALE
+                    }
+                    currentCoroutineContext().ensureActive()
+                    if(changed==1) DispatchResult.ACKNOWLEDGED else DispatchResult.STALE
                 }
             }
         } catch (timeout: TimeoutCancellationException) {
@@ -79,6 +81,7 @@ class OutboxDispatcher(
     private suspend fun acknowledgeDrainedQueue(merchant: String) {
         var after=0L
         while(true) {
+            currentCoroutineContext().ensureActive()
             val page=db.saleOutboxDao().latestAcknowledgedPage(merchant,after,64)
             if(page.isEmpty()) return
             page.forEach { acknowledgeMatchingRows(it) }

@@ -25,7 +25,11 @@ class SaleCommandsTest {
     private val sale = Transaction(customerId = 1, amount = 50.0, isPaid = true, paymentMethodId = 1, date = 10)
     private val lines = listOf(InvoiceItem(id = "line", productId = "product", unitId = "unit", quantity = 2.0,
         pricePerUnit = 25.0, totalPrice = 50.0))
-    private fun open() { db = Room.databaseBuilder(context, AppDatabase::class.java, name).allowMainThreadQueries().build() }
+    private fun open(onQuery: ((String) -> Unit)? = null) {
+        val builder=Room.databaseBuilder(context,AppDatabase::class.java,name).allowMainThreadQueries()
+        if(onQuery!=null) builder.setQueryCallback({ sql, _ -> onQuery(sql) },java.util.concurrent.Executor { it.run() })
+        db=builder.build()
+    }
     @Before fun seed() = runBlocking {
         context.deleteDatabase(name); open()
         db.customerDao().upsertCustomer(CustomerEntity(id = 1, name = "fixture", createdAt = 0))
@@ -343,9 +347,9 @@ class SaleCommandsTest {
         db.close();open();assertEquals(before,db.saleOutboxDao().all())
     }
 
-    private fun outboxDispatcher(remote: com.trader.salesmanager.sales.outbox.OutboxTransport): com.trader.salesmanager.sales.outbox.OutboxDispatcher {
+    private fun outboxDispatcher(remote: com.trader.salesmanager.sales.outbox.OutboxTransport, clock: () -> Long = System::currentTimeMillis): com.trader.salesmanager.sales.outbox.OutboxDispatcher {
         val session=kotlinx.coroutines.flow.MutableStateFlow(merchant)
-        return com.trader.salesmanager.sales.outbox.OutboxDispatcher(db,remote,session,{merchant})
+        return com.trader.salesmanager.sales.outbox.OutboxDispatcher(db,remote,session,{merchant},clock=clock)
     }
     @Test fun createThenEditDeliversBothImmutableRevisionsInOrder() = runBlocking {
         val old=original()
@@ -699,6 +703,91 @@ class SaleCommandsTest {
             outboxDispatcher(com.trader.salesmanager.sales.outbox.OutboxTransport { error("Idle recovery must not send network requests") }).once(merchant))
         assertEquals(writes,remote.writes)
         for(id in listOf(first.id,second)) assertEquals("SYNCED",db.transactionDao().getTransactionById(id)!!.syncStatus)
+        assertEquals(200.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+    }
+
+    private suspend fun seedTwoSaleReceipts(): Pair<List<Long>,com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport> {
+        val first=original();val seed=db.saleOutboxDao().all().single()
+        val second=SaleCommands(db).create("second-sale",merchant,sale,lines.map { it.copy(id="second-line") })
+        return listOf(first.id,second) to com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(seed)
+    }
+    private fun financialSnapshot()=snapshot().filterKeys { it!="sale_outbox" }
+    private fun failSecondSaleStatus(second:Long) {
+        db.openHelper.writableDatabase.execSQL("CREATE TRIGGER status_fault BEFORE UPDATE OF syncStatus ON transactions WHEN NEW.id=$second AND NEW.syncStatus='SYNCED' BEGIN SELECT RAISE(ABORT,'status failure'); END")
+    }
+    @Test fun failedDrainRollsBackAllStatusesAndReceiptThenReusesRemoteCompletion()=runBlocking {
+        val (ids,remote)=seedTwoSaleReceipts()
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+        val before=financialSnapshot();failSecondSaleStatus(ids.last())
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.RETRY,outboxDispatcher(remote).once(merchant))
+        assertEquals(before,financialSnapshot())
+        assertEquals(listOf("ACKNOWLEDGED","FAILED"),db.saleOutboxDao().all().map { it.state })
+        assertNull(db.saleOutboxDao().all().last().acknowledgedAt)
+        val retryAt=db.saleOutboxDao().all().last().nextAttemptAt;val writes=remote.writes
+        db.close();open();db.openHelper.writableDatabase.execSQL("DROP TRIGGER status_fault")
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote) { retryAt }.once(merchant))
+        assertEquals(writes,remote.writes)
+        ids.forEach { assertEquals("SYNCED",db.transactionDao().getTransactionById(it)!!.syncStatus) }
+        assertEquals(200.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+    }
+    @Test fun failedIdleRecoveryRollsBackEarlierStatusesWithoutLosingReceipts()=runBlocking {
+        val (ids,remote)=seedTwoSaleReceipts()
+        repeat(2) {
+            val event=db.saleOutboxDao().claim(merchant,"legacy-worker",100,1000)!!
+            val applied=remote.deliver(event) as com.trader.salesmanager.sales.outbox.RemoteDelivery.Applied
+            assertEquals(1,db.saleOutboxDao().acknowledge(event.eventId,event.aggregateRevision,"legacy-worker",100,applied.receipt))
+        }
+        val before=snapshot();failSecondSaleStatus(ids.last())
+        val noNetwork=com.trader.salesmanager.sales.outbox.OutboxTransport { error("Idle recovery must stay local") }
+        try { outboxDispatcher(noNetwork).once(merchant);fail("Status fault ignored") }
+        catch(expected:android.database.sqlite.SQLiteException) {}
+        assertEquals(before,snapshot())
+        db.close();open();db.openHelper.writableDatabase.execSQL("DROP TRIGGER status_fault")
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.IDLE,outboxDispatcher(noNetwork).once(merchant))
+        ids.forEach { assertEquals("SYNCED",db.transactionDao().getTransactionById(it)!!.syncStatus) }
+    }
+    @Test fun cancellationDuringDrainRollsBackEarlierStatusesAndCanRetryAfterRestart()=runBlocking {
+        val (ids,remote)=seedTwoSaleReceipts()
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+        val before=financialSnapshot();var updates=0;var target:Job?=null
+        db.close();open { sql ->
+            if(sql.startsWith("UPDATE transactions SET syncStatus") && ++updates==2) target!!.cancel()
+        }
+        val ready=CompletableDeferred<Unit>()
+        val job=launch(Dispatchers.Default) { ready.await();outboxDispatcher(remote).once(merchant) }
+        target=job;ready.complete(Unit)
+        withTimeout(10000) { job.join() }
+        assertTrue("Cancellation point not reached",updates>=2);assertTrue(job.isCancelled)
+        assertEquals(before,financialSnapshot())
+        assertEquals(listOf("ACKNOWLEDGED","FAILED"),db.saleOutboxDao().all().map { it.state })
+        val retryAt=db.saleOutboxDao().all().last().nextAttemptAt;val writes=remote.writes
+        db.close();open()
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote) { retryAt }.once(merchant))
+        assertEquals(writes,remote.writes)
+        ids.forEach { assertEquals("SYNCED",db.transactionDao().getTransactionById(it)!!.syncStatus) }
+    }
+
+    @Test fun cancelledIdleRecoveryPreservesReceiptsAndEveryLocalStatusUntilRestart()=runBlocking {
+        val (ids,remote)=seedTwoSaleReceipts()
+        repeat(2) {
+            val event=db.saleOutboxDao().claim(merchant,"legacy-worker",100,1000)!!
+            val applied=remote.deliver(event) as com.trader.salesmanager.sales.outbox.RemoteDelivery.Applied
+            assertEquals(1,db.saleOutboxDao().acknowledge(event.eventId,event.aggregateRevision,"legacy-worker",100,applied.receipt))
+        }
+        val before=snapshot();var updates=0;var target:Job?=null
+        val noNetwork=com.trader.salesmanager.sales.outbox.OutboxTransport { error("Idle recovery must stay local") }
+        db.close();open { sql ->
+            if(sql.startsWith("UPDATE transactions SET syncStatus") && ++updates==2) target!!.cancel()
+        }
+        val ready=CompletableDeferred<Unit>()
+        val job=launch(Dispatchers.Default) { ready.await();outboxDispatcher(noNetwork).once(merchant) }
+        target=job;ready.complete(Unit)
+        withTimeout(10000) { job.join() }
+        assertTrue("Cancellation point not reached",updates>=2);assertTrue(job.isCancelled)
+        assertEquals(before,snapshot())
+        db.close();open()
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.IDLE,outboxDispatcher(noNetwork).once(merchant))
+        ids.forEach { assertEquals("SYNCED",db.transactionDao().getTransactionById(it)!!.syncStatus) }
         assertEquals(200.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
     }
 

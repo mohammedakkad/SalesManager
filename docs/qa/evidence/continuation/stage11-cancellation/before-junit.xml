@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.SaleCommandsTest" tests="3" skipped="0" failures="1" errors="0" timestamp="2026-11-08T20:13:27" hostname="13302589aed6" time="5.745">
+  <properties/>
+  <testcase name="cancellationDuringDrainRollsBackEarlierStatusesAndCanRetryAfterRestart" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="5.415">
+    <failure message="java.lang.AssertionError: expected:&lt;{transactions=[[1, 1, 50, 1, 1, , 10, null, DEBT, 1, null, 1, PENDING, 50, NONE], [2, 1, 50, 1, 1, , 10, null, DEBT, 1, null, 1, PENDING, 50, NONE]], invoice_items=[[line, 1, product, , unit, , 2, 25, 50, fixture-merchant, PENDING], [second-line, 2, product, , unit, , 2, 25, 50, fixture-merchant, PENDING]], product_units=[[unit, product, PIECE, piece, 25, 0, 0, null, 0, 1, KG, 0, 1794168812129, PENDING]], stock_movements=[[52466e3d-9da3-4a81-8ea2-ab6d4b94eafc, product, , unit, , SALE_OUT, -2, 4, 2, 1, , fixture-merchant, 1794168812079, PENDING], [852cbd1b-cbbb-490c-847a-62941f1fe693, product, , unit, , SALE_OUT, -2, 2, 0, 2, , fixture-merchant, 1794168812129, PENDING]], cash_boxes=[[1, 1, cash, 200, 0, null, fixture-merchant, 1794168812130, PENDING]], cash_box_movements=[[07974e68-44eb-4a4e-ba1b-1ac02ff47a29, 1, cash, TRANSACTION_EFFECT, 50, 150, , 1, 1794168812080, fixture-merchant, PENDING], [8380ce62-9fdf-49e1-a2f1-665078bf815a, 1, cash, TRANSACTION_EFFECT, 50, 200, , 2, 1794168812130, fixture-merchant, PENDING]], return_invoices=[], return_items=[], sale_operations=[[fixture-merchant, create, CREATE, 23234531981be08d0e4c6c96ebb7d243ac607573d5181747d26d2bcae46ca68c, 1], [fixture-merchant, second-sale, CREATE, 1fec733e94239660fa44dc5792cb4d860ed069d619be75c3d488bab17521ac07, 2]]}&gt; but was:&lt;{transactions=[[1, 1, 50, 1, 1, , 10, null, DEBT, 1, null, 1, SYNCED, 50, NONE], [2, 1, 50, 1, 1, , 10, null, DEBT, 1, null, 1, SYNCED, 50, NONE]], invoice_items=[[line, 1, product, , unit, , 2, 25, 50, fixture-merchant, SYNCED], [second-line, 2, product, , unit, , 2, 25, 50, fixture-merchant, SYNCED]], product_units=[[unit, product, PIECE, piece, 25, 0, 0, null, 0, 1, KG, 0, 1794168812129, SYNCED]], stock_movements=[[52466e3d-9da3-4a81-8ea2-ab6d4b94eafc, product, , unit, , SALE_OUT, -2, 4, 2, 1, , fixture-merchant, 1794168812079, SYNCED], [852cbd1b-cbbb-490c-847a-62941f1fe693, product, , unit, , SALE_OUT, -2, 2, 0, 2, , fixture-merchant, 1794168812129, SYNCED]], cash_boxes=[[1, 1, cash, 200, 0, null, fixture-merchant, 1794168812130, SYNCED]], cash_box_movements=[[07974e68-44eb-4a4e-ba1b-1ac02ff47a29, 1, cash, TRANSACTION_EFFECT, 50, 150, , 1, 1794168812080, fixture-merchant, SYNCED], [8380ce62-9fdf-49e1-a2f1-665078bf815a, 1, cash, TRANSACTION_EFFECT, 50, 200, , 2, 1794168812130, fixture-merchant, SYNCED]], return_invoices=[], return_items=[], sale_operations=[[fixture-merchant, create, CREATE, 23234531981be08d0e4c6c96ebb7d243ac607573d5181747d26d2bcae46ca68c, 1], [fixture-merchant, second-sale, CREATE, 1fec733e94239660fa44dc5792cb4d860ed069d619be75c3d488bab17521ac07, 2]]}&gt;" type="java.lang.AssertionError">java.lang.AssertionError: expected:&lt;{transactions=[[1, 1, 50, 1, 1, , 10, null, DEBT, 1, null, 1, PENDING, 50, NONE], [2, 1, 50, 1, 1, , 10, null, DEBT, 1, null, 1, PENDING, 50, NONE]], invoice_items=[[line, 1, product, , unit, , 2, 25, 50, fixture-merchant, PENDING], [second-line, 2, product, , unit, , 2, 25, 50, fixture-merchant, PENDING]], product_units=[[unit, product, PIECE, piece, 25, 0, 0, null, 0, 1, KG, 0, 1794168812129, PENDING]], stock_movements=[[52466e3d-9da3-4a81-8ea2-ab6d4b94eafc, product, , unit, , SALE_OUT, -2, 4, 2, 1, , fixture-merchant, 1794168812079, PENDING], [852cbd1b-cbbb-490c-847a-62941f1fe693, product, , unit, , SALE_OUT, -2, 2, 0, 2, , fixture-merchant, 1794168812129, PENDING]], cash_boxes=[[1, 1, cash, 200, 0, null, fixture-merchant, 1794168812130, PENDING]], cash_box_movements=[[07974e68-44eb-4a4e-ba1b-1ac02ff47a29, 1, cash, TRANSACTION_EFFECT, 50, 150, , 1, 1794168812080, fixture-merchant, PENDING], [8380ce62-9fdf-49e1-a2f1-665078bf815a, 1, cash, TRANSACTION_EFFECT, 50, 200, , 2, 1794168812130, fixture-merchant, PENDING]], return_invoices=[], return_items=[], sale_operations=[[fixture-merchant, create, CREATE, 23234531981be08d0e4c6c96ebb7d243ac607573d5181747d26d2bcae46ca68c, 1], [fixture-merchant, second-sale, CREATE, 1fec733e94239660fa44dc5792cb4d860ed069d619be75c3d488bab17521ac07, 2]]}&gt; but was:&lt;{transactions=[[1, 1, 50, 1, 1, , 10, null, DEBT, 1, null, 1, SYNCED, 50, NONE], [2, 1, 50, 1, 1, , 10, null, DEBT, 1, null, 1, SYNCED, 50, NONE]], invoice_items=[[line, 1, product, , unit, , 2, 25, 50, fixture-merchant, SYNCED], [second-line, 2, product, , unit, , 2, 25, 50, fixture-merchant, SYNCED]], product_units=[[unit, product, PIECE, piece, 25, 0, 0, null, 0, 1, KG, 0, 1794168812129, SYNCED]], stock_movements=[[52466e3d-9da3-4a81-8ea2-ab6d4b94eafc, product, , unit, , SALE_OUT, -2, 4, 2, 1, , fixture-merchant, 1794168812079, SYNCED], [852cbd1b-cbbb-490c-847a-62941f1fe693, product, , unit, , SALE_OUT, -2, 2, 0, 2, , fixture-merchant, 1794168812129, SYNCED]], cash_boxes=[[1, 1, cash, 200, 0, null, fixture-merchant, 1794168812130, SYNCED]], cash_box_movements=[[07974e68-44eb-4a4e-ba1b-1ac02ff47a29, 1, cash, TRANSACTION_EFFECT, 50, 150, , 1, 1794168812080, fixture-merchant, SYNCED], [8380ce62-9fdf-49e1-a2f1-665078bf815a, 1, cash, TRANSACTION_EFFECT, 50, 200, , 2, 1794168812130, fixture-merchant, SYNCED]], return_invoices=[], return_items=[], sale_operations=[[fixture-merchant, create, CREATE, 23234531981be08d0e4c6c96ebb7d243ac607573d5181747d26d2bcae46ca68c, 1], [fixture-merchant, second-sale, CREATE, 1fec733e94239660fa44dc5792cb4d860ed069d619be75c3d488bab17521ac07, 2]]}&gt;
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:120)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at com.trader.salesmanager.sales.SaleCommandsTest$cancellationDuringDrainRollsBackEarlierStatusesAndCanRetryAfterRestart$1.invokeSuspend(SaleCommandsTest.kt:761)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.internal.ScopeCoroutine.afterResume(Scopes.kt:28)
+	at kotlinx.coroutines.AbstractCoroutine.resumeWith(AbstractCoroutine.kt:100)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:46)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+	at com.trader.salesmanager.sales.SaleCommandsTest.cancellationDuringDrainRollsBackEarlierStatusesAndCanRetryAfterRestart(SaleCommandsTest.kt:749)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:502)
+	at org.robolectric.internal.SandboxTestRunner$2.lambda$evaluate$2(SandboxTestRunner.java:285)
+	at org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:104)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+</failure>
+  </testcase>
+  <testcase name="failedDrainRollsBackAllStatusesAndReceiptThenReusesRemoteCompletion" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.194"/>
+  <testcase name="failedIdleRecoveryRollsBackEarlierStatusesWithoutLosingReceipts" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.136"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
