@@ -24,6 +24,13 @@ interface SaleOutboxDao {
     suspend fun hasOutstanding(): Boolean
     @Query("SELECT EXISTS(SELECT 1 FROM sale_outbox WHERE merchantId = :merchant AND state != 'ACKNOWLEDGED')")
     suspend fun hasOutstandingFor(merchant: String): Boolean
+    /** Latest receipts only; paging bounds payload memory while reconciling a drained queue. */
+    @Query("""SELECT event.* FROM sale_outbox AS event
+        WHERE event.merchantId = :merchant AND event.state = 'ACKNOWLEDGED' AND event.sequence > :after
+        AND NOT EXISTS (SELECT 1 FROM sale_outbox AS newer WHERE newer.merchantId = event.merchantId
+            AND newer.aggregateId = event.aggregateId AND newer.aggregateRevision > event.aggregateRevision)
+        ORDER BY event.sequence LIMIT :limit""")
+    suspend fun latestAcknowledgedPage(merchant: String, after: Long, limit: Int): List<SaleOutboxEntity>
     @Query("SELECT COALESCE(MAX(sequence), 0) FROM sale_outbox")
     suspend fun latestSequence(): Long
     @Query("SELECT COALESCE(MAX(sequence), 0) FROM sale_outbox")

@@ -56,3 +56,11 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 202 JVM tests pass (shared85/Seller117), zero failures/errors/skips. Stage11 adds62 test methods, replaces4 obsolete SaleSync methods (net+58). Real Room/SQLite tests use transaction faults, migration from authentic24 and close/reopen recovery; deterministic Firebase SDK transaction fakes exercise the production transport, and4 WorkManager tests execute the actual worker. The Stage11 report maps at least20 requested behaviors to executed cases. Firebase Emulator Suite, actual server rules, native device/instrumentation and PDF extraction for this HEAD remain NOT TESTED/BLOCKED; packaging is not runtime evidence.
 
 [Implementation, test matrix and evidence](stage11-outbox.md).
+
+
+## Stage11 continuation — 2026-11-08
+
+Current full JVM total204 (shared85/Seller119),0 failures/errors/skips. Two new regressions cover two-sale queue drain and restart between receipts; they assert sale/invoice/stock/cash synchronization status and unchanged cash/stock values. Existing stale-revision/ABA and isolation tests remain passing. See [current implementation evidence](stage11-outbox.md#continuation--2026-11-08-acknowledge-all-sales-when-a-merchant-queue-drains).
+
+
+Final 2026-11-08 continuation result: Final continuation acceptance:205 JVM tests PASS (shared85/Seller120),0 failures/errors/skips;3 new regression methods. Unchanged coverage gates PASS. Weighted lines4855/28010 =17.3331%, branches1313/17293 =7.5927%; Seller lines1112/17782 =6.2535%, branches691/14296 =4.8335%. Lint0 errors/24 warnings; Debug/instrumentation APK and actual minified unsigned Release builds PASS. Signed/device/PDF/Firebase runtime was not executed. Hosted CI and remote PR metadata remain BLOCKED by api.github.com access policy/Forbidden. Release readiness remains FAIL. Evidence: [Stage11 queue recovery](stage11-outbox.md), evidence/continuation/stage11-drain/.

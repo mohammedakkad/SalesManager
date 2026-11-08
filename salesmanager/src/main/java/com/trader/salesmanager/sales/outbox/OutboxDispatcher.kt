@@ -28,7 +28,15 @@ class OutboxDispatcher(
     suspend fun once(merchant: String): DispatchResult {
         if (merchant.isBlank() || currentMerchant()!=merchant) return DispatchResult.PAUSED
         val token=UUID.randomUUID().toString()
-        val event=db.saleOutboxDao().claim(merchant,token,clock(),leaseMillis) ?: return DispatchResult.IDLE
+        val event=db.saleOutboxDao().claim(merchant,token,clock(),leaseMillis)
+        if(event==null) {
+            if(currentMerchant()!=merchant) return DispatchResult.PAUSED
+            // Recover status rows left by an older worker, even when no new sale is submitted.
+            db.withTransaction {
+                if(!db.saleOutboxDao().hasOutstandingFor(merchant)) acknowledgeDrainedQueue(merchant)
+            }
+            return DispatchResult.IDLE
+        }
         try {
             if (currentMerchant()!=merchant) throw SessionChanged()
             val result=coroutineScope {
@@ -46,7 +54,7 @@ class OutboxDispatcher(
                 is RemoteDelivery.Applied -> db.withTransaction {
                     val changed=db.saleOutboxDao().acknowledge(event.eventId,event.aggregateRevision,token,clock(),result.receipt.take(200))
                     if(changed==1) {
-                        if(!db.saleOutboxDao().hasOutstandingFor(merchant)) acknowledgeMatchingRows(event)
+                        if(!db.saleOutboxDao().hasOutstandingFor(merchant)) acknowledgeDrainedQueue(merchant)
                         DispatchResult.ACKNOWLEDGED
                     } else DispatchResult.STALE
                 }
@@ -66,6 +74,16 @@ class OutboxDispatcher(
     private suspend fun retry(event:SaleOutboxEntity,token:String,error:String) {
         val delay=minOf(6*60*60*1000L,1000L shl minOf(16,maxOf(0,event.retryCount-1)))
         db.saleOutboxDao().finishAttempt(event.eventId,event.aggregateRevision,token,"FAILED",clock()+delay,clock(),error)
+    }
+    /** Called inside the receipt transaction: failures roll back the receipt and every status update. */
+    private suspend fun acknowledgeDrainedQueue(merchant: String) {
+        var after=0L
+        while(true) {
+            val page=db.saleOutboxDao().latestAcknowledgedPage(merchant,after,64)
+            if(page.isEmpty()) return
+            page.forEach { acknowledgeMatchingRows(it) }
+            after=page.last().sequence
+        }
     }
     private suspend fun acknowledgeMatchingRows(event:SaleOutboxEntity) {
         val local=Gson().fromJson(event.payload,SalePayload::class.java).local

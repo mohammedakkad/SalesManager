@@ -659,4 +659,47 @@ class SaleCommandsTest {
         } finally { withContext(NonCancellable) { release.complete(Unit);first.cancelAndJoin() } }
     }
 
+    private suspend fun acknowledgeTwoSales(restart: Boolean) {
+        val first=original()
+        val seed=db.saleOutboxDao().all().single()
+        val second=SaleCommands(db).create("second-sale",merchant,sale,lines.map { it.copy(id="second-line") })
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(seed)
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+        assertEquals("PENDING",db.transactionDao().getTransactionById(first.id)!!.syncStatus)
+        if(restart) { db.close();open() }
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+        assertTrue(db.saleOutboxDao().all().all { it.state=="ACKNOWLEDGED" })
+        for(id in listOf(first.id,second)) {
+            assertEquals("Sale $id remains pending after its receipt and queue drain","SYNCED",db.transactionDao().getTransactionById(id)!!.syncStatus)
+            assertTrue(db.invoiceItemDao().getForTransactionOnce(id).all { it.syncStatus=="SYNCED" })
+            assertTrue(db.stockMovementDao().forTransactionOnce(id).all { it.syncStatus=="SYNCED" })
+        }
+        assertTrue(db.cashBoxMovementDao().getAllOnce().all { it.syncStatus=="SYNCED" })
+        assertEquals("SYNCED",db.cashBoxDao().getById("1")!!.syncStatus)
+        assertEquals(200.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+        assertEquals(0.0,db.productDao().getQuantity("unit")!!,0.0)
+    }
+    @Test fun drainingMultipleSalesAcknowledgesEveryMatchingSaleAndLedger()=runBlocking { acknowledgeTwoSales(false) }
+    @Test fun restartBetweenReceiptsDoesNotStrandEarlierSaleAsPending()=runBlocking { acknowledgeTwoSales(true) }
+
+    @Test fun idleRestartRepairsRowsStrandedByPreviouslyAcknowledgedReceipts()=runBlocking {
+        val first=original()
+        val seed=db.saleOutboxDao().all().single()
+        val second=SaleCommands(db).create("second-sale",merchant,sale,lines.map { it.copy(id="second-line") })
+        val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(seed)
+        // Reproduce the old persisted state: real remote receipts, no local status reconciliation.
+        repeat(2) {
+            val event=db.saleOutboxDao().claim(merchant,"old-worker",100,1000)!!
+            val result=remote.deliver(event) as com.trader.salesmanager.sales.outbox.RemoteDelivery.Applied
+            assertEquals(1,db.saleOutboxDao().acknowledge(event.eventId,event.aggregateRevision,"old-worker",100,result.receipt))
+        }
+        db.close();open()
+        val writes=remote.writes
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.IDLE,
+            outboxDispatcher(com.trader.salesmanager.sales.outbox.OutboxTransport { error("Idle recovery must not send network requests") }).once(merchant))
+        assertEquals(writes,remote.writes)
+        for(id in listOf(first.id,second)) assertEquals("SYNCED",db.transactionDao().getTransactionById(id)!!.syncStatus)
+        assertEquals(200.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+    }
+
 }

@@ -61,3 +61,11 @@ See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are upd
 Sale create/edit/delete now atomically commit an immutable event and receipt with local financial effects. Fault regressions demonstrate rollback, retry identity, stale acknowledgment/ABA rejection, partial returns, tombstone survival and restore safety. Additional verified repairs preserve unrelated remote fields, classify SDK-wrapped conflicts, reserve deleted IDs on fresh restore and defer standalone cash uploads until after commit. See the Stage11 report and preserved failing-before logs. Remaining P0/P1: deployed server authorization/revision enforcement, legacy-client bypass, partial two-backend reconciliation and universal tenant partitioning of legacy caches. Local outbox completion does not close those blockers.
 
 [Implementation, test matrix and evidence](stage11-outbox.md).
+
+
+## Stage11 continuation — 2026-11-08
+
+Reproduced and repaired stranded PENDING rows after two acknowledged sale events. Both real Room regressions failed before and pass after the merchant-drain reconciliation; one restarts SQLite between receipts. Only latest per-aggregate snapshots of the current merchant are considered, with existing equality/ownership checks retained. See [current implementation evidence](stage11-outbox.md#continuation--2026-11-08-acknowledge-all-sales-when-a-merchant-queue-drains).
+
+
+Final 2026-11-08 continuation result: Final continuation acceptance:205 JVM tests PASS (shared85/Seller120),0 failures/errors/skips;3 new regression methods. Unchanged coverage gates PASS. Weighted lines4855/28010 =17.3331%, branches1313/17293 =7.5927%; Seller lines1112/17782 =6.2535%, branches691/14296 =4.8335%. Lint0 errors/24 warnings; Debug/instrumentation APK and actual minified unsigned Release builds PASS. Signed/device/PDF/Firebase runtime was not executed. Hosted CI and remote PR metadata remain BLOCKED by api.github.com access policy/Forbidden. Release readiness remains FAIL. Evidence: [Stage11 queue recovery](stage11-outbox.md), evidence/continuation/stage11-drain/.
