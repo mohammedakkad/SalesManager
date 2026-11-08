@@ -791,4 +791,33 @@ class SaleCommandsTest {
         assertEquals(200.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
     }
 
+    private fun auditSyncWrites() {
+        db.openHelper.writableDatabase.execSQL("CREATE TABLE sync_write_audit(table_name TEXT,old_state TEXT,new_state TEXT)")
+        for(table in listOf("transactions","invoice_items","product_units","cash_boxes","stock_movements","cash_box_movements","return_invoices"))
+            db.openHelper.writableDatabase.execSQL("CREATE TRIGGER audit_$table AFTER UPDATE OF syncStatus ON $table BEGIN INSERT INTO sync_write_audit VALUES('$table',OLD.syncStatus,NEW.syncStatus); END")
+    }
+    private fun syncWrites():List<List<String>> = db.openHelper.writableDatabase.query("SELECT * FROM sync_write_audit ORDER BY rowid").use { c ->
+        buildList { while(c.moveToNext()) add((0 until c.columnCount).map { c.getString(it) }) }
+    }
+    @Test fun idleRecoveryDoesNotRewriteAlreadyAcknowledgedRows()=runBlocking {
+        original();val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().single())
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+        val before=snapshot();auditSyncWrites()
+        val noNetwork=com.trader.salesmanager.sales.outbox.OutboxTransport { error("Idle recovery must stay local") }
+        repeat(2) { assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.IDLE,outboxDispatcher(noNetwork).once(merchant)) }
+        assertEquals("Idle recovery rewrote synchronized rows",emptyList<List<String>>(),syncWrites())
+        assertEquals(before,snapshot())
+    }
+    @Test fun idleRecoveryUpdatesOnlyTheMatchingUnsynchronizedRow()=runBlocking {
+        val old=original();val remote=com.trader.salesmanager.sales.outbox.ProtocolMemoryTransport(db.saleOutboxDao().all().single())
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.ACKNOWLEDGED,outboxDispatcher(remote).once(merchant))
+        db.openHelper.writableDatabase.execSQL("UPDATE invoice_items SET syncStatus='FAILED' WHERE transactionId=?",arrayOf(old.id))
+        auditSyncWrites()
+        val noNetwork=com.trader.salesmanager.sales.outbox.OutboxTransport { error("Idle recovery must stay local") }
+        assertEquals(com.trader.salesmanager.sales.outbox.DispatchResult.IDLE,outboxDispatcher(noNetwork).once(merchant))
+        assertEquals(listOf(listOf("invoice_items","FAILED","SYNCED")),syncWrites())
+        assertEquals(150.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+        assertEquals(2.0,db.productDao().getQuantity("unit")!!,0.0)
+    }
+
 }

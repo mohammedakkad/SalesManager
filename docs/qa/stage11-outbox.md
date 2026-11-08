@@ -173,3 +173,17 @@ Authoritative logs:stage11-cancellation/final-acceptance.log and final-coverage-
 
 
 Publication of cancellation increment BLOCKED:normal push of local commitc02ba3f returned HTTP403 Permission denied. The verified source/tests and evidence are local; PR51 and remote hosted execution are not confirmed updated. GitHub integration write authorization must be restored through environment/account settings; no token values are requested in chat. Evidence:stage11-cancellation/push-blocked.log.
+
+
+## Continuation — avoid redundant idle reconciliation writes
+
+Starting local HEAD:20d49e9051418592793b50e0d1651e3c9b867960. Two real SQLite trigger-audit regressions reproduced redundant updates during idle recovery. A fully synchronized sale generated six SYNCED→SYNCED updates on every wakeup (12 across two calls); recovery of one FAILED invoice also rewrote five already-synchronized rows. Both assertions failed before repair; see evidence/continuation/stage11-idle-writes/before.log/XML.
+
+Reconciliation now skips rows already marked SYNCED across transaction, invoice, unit, cash box, stock ledger, return and cash movement snapshots. Unsynchronized rows still require the existing full snapshot/merchant checks. Receipt claim/acknowledgment, cancellation checkpoints, immutable identity and financial values are unchanged. This reduces redundant SQL updates/Room invalidations; no measured battery or latency improvement is claimed. Full-history reads still scale with historical aggregates and remain an unbenchmarked limitation.
+
+The trigger audit verifies zero synchronization writes across repeated settled recovery and exactly one FAILED→SYNCED invoice update for partial local recovery, with unchanged balances/stock and no transport calls. These are production Room/dispatcher tests, not simulated host PDFs or production Firebase operations.
+
+
+## Idle-write continuation acceptance
+
+Two new trigger-audit Room regressions fail before and pass after repair. Current suite:211 JVM tests PASS (shared85/Seller126),0 failures/errors/skips. Repeated settled idle recovery produces zero syncStatus updates; partial recovery updates only the matching FAILED invoice. Existing failure/cancellation/restart/ABA cases pass. Unchanged coverage gates PASS. Weighted lines4866/28022 =17.3649%, branches1327/17309 =7.6665%; Seller lines1123/17794 =6.3111%, branches705/14312 =4.9259%. Lint0 errors/24 warnings, targeted secret policy PASS, Debug/instrumentation APK/minified unsigned Release builds PASS (4m11s). Room remains25; no Admin/schema/financial-rule/coverage-floor changes. Full-history reads remain an unbenchmarked limitation. Device/PDF/Firebase runtime and hosted new-HEAD acceptance remain NOT TESTED/BLOCKED. Release readiness FAIL; existing distributed/server/legacy-tenant risks remain. Evidence:docs/qa/evidence/continuation/stage11-idle-writes/. Previous publication attempts returned403; no current hosted success is established.
