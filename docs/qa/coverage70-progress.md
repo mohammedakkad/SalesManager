@@ -1,0 +1,7 @@
+# Seller and weighted line coverage target 70%
+
+Starting source10f8064684c06de96600f138ebaf6042d9b5eb76:256 passing JVM tests; Seller7668/17795=43.0908%, weighted11525/28062=41.0698%. User requests at least70% lines for both, without exclusions or lower floors.
+
+Wave1:22 offline Seller screen interaction tests (dashboard, customers/debts, employee management, day reports, chat, activation, sync status and sale form);7 chat-command tests and5 Seller employee-command tests;12 real SQLite query contracts covering report date/debt boundaries, catalog valuation, merchant PIN and pending-message isolation, sessions, customers and payment methods. No production/Admin/schema changes or new production repair claim. Seller10781/17795=60.5844%; shared5659/10267=55.1183%; weighted16440/28062=58.5846%. Existing40% line and other gates pass. Source test reports and actual counts are under evidence/continuation/coverage70/wave1/. Target70% not yet reached; continue.
+
+Test-only milestone; no new APK/Lint/device runtime claim. Prior audited source4714821 has successful hosted acceptance42586688384. New-source hosted verification remains pending. Production Firebase is not contacted; packaging uses a temporary offline fixture that is restored before committing. Release readiness remainsFAIL for documented server authorization, distributed reconciliation, tenant isolation and historical schema/upgrade limitations.
