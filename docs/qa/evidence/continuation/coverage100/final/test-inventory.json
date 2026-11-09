@@ -1,14 +1,14 @@
 {
   "summary": {
-    "jvmCases": 400,
+    "jvmCases": 409,
     "result": {
-      "passed": 400
+      "passed": 409
     },
     "primaryCategories": {
       "Room/SQLite on JVM": 188,
       "Room migration": 7,
       "Firebase SDK/protocol fake": 22,
-      "Unit/model with deterministic fakes": 91,
+      "Unit/model with deterministic fakes": 100,
       "Compose UI on JVM": 63,
       "Loopback HTTP": 4,
       "WorkManager lifecycle": 6,
@@ -30,14 +30,14 @@
       "Backup format/crypto": 15,
       "Real XLSX file content": 4
     },
-    "remainingDefinedWorkItems": 70,
+    "remainingDefinedWorkItems": 69,
     "remainingByStatus": {
       "BLOCKED": 32,
-      "NOT TESTED": 38
+      "NOT TESTED": 37
     },
     "remainingByKind": {
       "Historical migration": 21,
-      "Logic boundary": 5,
+      "Logic boundary": 4,
       "SDK failure contract": 8,
       "Firebase/server integration": 8,
       "Android API matrix": 3,
@@ -4288,6 +4288,87 @@
     },
     {
       "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "salesExportDelegatesToRealWorkbookAndPreservesItsPublicFileName",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "exportClaimsLoadingSynchronouslyBeforeAnotherTapCanQueueWork",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "resetDuringWriteCannotResurrectAStaleSuccess",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "ioFailureRetainsCauseAndDismissAllowsSuccessfulRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "timedOutGeneratorRemainsCancellationAndAllowsNewExport",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "invoiceAndMonthlyEntryPointsPreserveGeneratorFailureAndTheirPublicNames",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "memoryFailureDuringCustomerStatementIsVisibleWithoutSuccessOrAFakePdf",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "generatorCancellationRemainsCancellationRatherThanAnError",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "rapidRepeatedRequestsProduceOneRealWorkbookAndTypedSuccess",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
       "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
       "name": "inventoryWorkbookPreservesQuantitiesValuesAndStockStatus",
       "result": "passed",
@@ -4484,13 +4565,6 @@
       "id": "LOG-03",
       "status": "NOT TESTED",
       "scenario": "Nonfinite numeric input through cash/product/return UI boundaries",
-      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
-    },
-    {
-      "kind": "Logic boundary",
-      "id": "LOG-04",
-      "status": "NOT TESTED",
-      "scenario": "Export ViewModel cancellation and timeout without success/error resurrection",
       "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
     },
     {

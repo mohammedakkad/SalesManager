@@ -21,7 +21,6 @@ Historical migration,MIG-19,BLOCKED,"Authentic populated database 19 to current 
 Historical migration,MIG-20,BLOCKED,"Authentic populated database 20 to current version25, preserving monetary/stock/return links",Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture
 Historical migration,MIG-21,BLOCKED,"Authentic populated database 21 to current version25, preserving monetary/stock/return links",Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture
 Logic boundary,LOG-03,NOT TESTED,Nonfinite numeric input through cash/product/return UI boundaries,Add behavioral regression and repair only after actual failing evidence
-Logic boundary,LOG-04,NOT TESTED,Export ViewModel cancellation and timeout without success/error resurrection,Add behavioral regression and repair only after actual failing evidence
 Logic boundary,LOG-05,NOT TESTED,Out-of-order barcode conflict replies after editing a product,Add behavioral regression and repair only after actual failing evidence
 Logic boundary,LOG-07,NOT TESTED,Empty/malformed/obsolete invoice draft JSON has an explicit user-visible recovery policy,Add behavioral regression and repair only after actual failing evidence
 Logic boundary,LOG-08,NOT TESTED,Session revoke rejection preserves local session and reports failure,Add behavioral regression and repair only after actual failing evidence

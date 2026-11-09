@@ -5,6 +5,14 @@ import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.lifecycle.viewModelScope
+import com.trader.salesmanager.util.export.ExportViewModel
+import com.trader.salesmanager.util.export.ExportState
+import com.trader.salesmanager.util.export.ExportType
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.flow.first
 import java.security.MessageDigest
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -74,4 +82,25 @@ class PdfFixtureTest {
         PdfRenderer(ParcelFileDescriptor.open(file,ParcelFileDescriptor.MODE_READ_ONLY)).use { assertTrue("All daily rows must paginate",it.pageCount>1) }
     }
 
+    @Test fun exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification() {
+        val vm=ExportViewModel()
+        try {
+            val sale=Transaction(id=9,customerId=7,amount=75.0,originalAmount=100.0,isPaid=false,
+                date=0,hasItems=true,note="VM-RETURN-END",returnStatus=TransactionReturnStatus.PARTIALLY_RETURNED,dueDate=1)
+            val lines=listOf(InvoiceItem(id="return-fixture",productId="product",unitId="returned-unit",
+                productName="RETURN-ITEM",unitLabel="PIECE",quantity=4.0,pricePerUnit=25.0,totalPrice=100.0))
+            vm.exportInvoicePdf(sale,lines,"RETURN-STORE",Customer(7,"RETURN-CUSTOMER",phone="0500000000"),
+                priorDebtBalance=10.0,currentDebtBalance=85.0,
+                returnSummary=ReturnSummary(TransactionReturnStatus.PARTIALLY_RETURNED,25.0,mapOf("returned-unit" to 1.0)),
+                cacheDir=context.cacheDir)
+            val state=runBlocking { withTimeout(15000) { vm.state.first { it is ExportState.Success || it is ExportState.Error } } }
+            assertTrue("Native export must succeed: $state",state is ExportState.Success)
+            val result=state as ExportState.Success
+            assertEquals(ExportType.PDF,result.type)
+            assertEquals("فاتورة_9.pdf",result.fileName)
+            assertEquals(context.cacheDir.canonicalFile,File(result.filePath).parentFile!!.canonicalFile)
+            val file=export(File(result.filePath),"invoice-return-viewmodel.pdf")
+            PdfRenderer(ParcelFileDescriptor.open(file,ParcelFileDescriptor.MODE_READ_ONLY)).use { assertTrue(it.pageCount>=1) }
+        } finally { vm.viewModelScope.cancel() }
+    }
 }

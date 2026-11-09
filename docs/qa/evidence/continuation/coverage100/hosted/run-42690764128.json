@@ -1,0 +1,106 @@
+{
+  "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42690764128",
+  "source": "e1771fe0e27dd56e31ec77d4acbe547863c9dc3b",
+  "evidenceSource": "Public GitHub annotations created from actual runtime JUnit XML and JaCoCo counters. Raw authenticated artifacts not downloaded.",
+  "runtimeCases": [
+    {
+      "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "generateCustomerStatementForHostBalanceVerification",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "generateSingleInvoiceForHostContentVerification",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+      "result": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+      "result": "PASS",
+      "detail": ""
+    }
+  ],
+  "additionalAndroidJvmCoverage": {
+    "lines": {
+      "app": {
+        "covered": 7612,
+        "missed": 2657,
+        "total": 10269,
+        "percent": 74.12601032232934
+      },
+      "salesmanager": {
+        "covered": 14189,
+        "missed": 3624,
+        "total": 17813,
+        "percent": 79.65530792118116
+      },
+      "weighted overall": {
+        "covered": 21801,
+        "missed": 6281,
+        "total": 28082,
+        "percent": 77.63335944733281
+      }
+    },
+    "nativePdfLines": {
+      "InvoicePdfGenerator.kt": {
+        "covered": 457,
+        "missed": 80
+      },
+      "PdfCanvas.kt": {
+        "covered": 68,
+        "missed": 2
+      },
+      "ReportPdfGenerator.kt": {
+        "covered": 438,
+        "missed": 19
+      }
+    }
+  },
+  "deviceExit": "stage=complete exit=0",
+  "seller": [
+    "completed successfully: "
+  ],
+  "compose": [
+    "completed successfully: "
+  ],
+  "verifiedRuntime": {
+    "instrumentation": 6,
+    "pdfBox": 4,
+    "failures": 0,
+    "skipped": 0
+  }
+}

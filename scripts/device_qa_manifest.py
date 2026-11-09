@@ -6,10 +6,12 @@ INSTRUMENTATION = {
     ('com.trader.salesmanager.qa.PdfFixtureTest', 'generateLongInvoiceForHostPaginationAndContentVerification'),
     ('com.trader.salesmanager.qa.PdfFixtureTest', 'generateCustomerStatementForHostBalanceVerification'),
     ('com.trader.salesmanager.qa.PdfFixtureTest', 'generateMonthlyReportForHostPaginationAndFinancialVerification'),
+    ('com.trader.salesmanager.qa.PdfFixtureTest', 'exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification'),
 }
 PDFBOX = {('com.trader.qa.InvoicePdfContentTest', name) for name in (
     'generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal',
     'longInvoicePaginatesWithoutDroppingFinalItemOrTotal',
     'customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities',
     'monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages',
+    'viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances',
 )}

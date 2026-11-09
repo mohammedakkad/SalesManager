@@ -54,4 +54,16 @@ public class InvoicePdfContentTest {
         }
     }
 
+
+    @Test public void viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances() throws Exception {
+        try (var pdf=Loader.loadPDF(fixture("invoice-return-viewmodel.pdf"))) {
+            assertTrue(pdf.getNumberOfPages()>=1);
+            String text=Normalizer.normalize(new PDFTextStripper().getText(pdf),Normalizer.Form.NFKC);
+            for (String expected:new String[]{"INV-000009","RETURN-ITEM","RETURN-CUSTOMER","VM-RETURN-END","100.00","25.00","75.00","10.00","85.00"})
+                assertTrue("Missing actual partial-return invoice content: "+expected,text.contains(expected));
+            // PDF text extraction can reverse the glyph order of mixed RTL currency/numbers.
+            String refund="(?:-\\h*₪\\h*25\\.00|-\\h*25\\.00\\h*₪|₪\\h*-\\h*25\\.00|₪\\h*25\\.00\\h*-|25\\.00\\h*-\\h*₪|25\\.00\\h*₪\\h*-)";
+            assertTrue("Refund25 must be a currency deduction; extracted text: "+text,Pattern.compile(refund).matcher(text).find());
+        }
+    }
 }

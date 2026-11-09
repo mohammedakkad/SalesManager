@@ -31,6 +31,7 @@ test -s /tmp/seller-qa-pdf/invoice-content.pdf
 test -s /tmp/seller-qa-pdf/invoice-long.pdf
 test -s /tmp/seller-qa-pdf/customer-statement.pdf
 test -s /tmp/seller-qa-pdf/monthly-report.pdf
+test -s /tmp/seller-qa-pdf/invoice-return-viewmodel.pdf
 qa_stage="PDFBox content verification"
 gradle -p qa/pdf-verifier --no-daemon -PpdfFixtureDir=/tmp/seller-qa-pdf test
 python3 scripts/summarize-device-tests.py --check
