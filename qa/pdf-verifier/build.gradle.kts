@@ -5,5 +5,7 @@ dependencies {
     testImplementation(libs.test.pdfbox)
 }
 tasks.test {
-    systemProperty("pdf.fixture.dir", providers.gradleProperty("pdfFixtureDir").getOrElse("build/device-pdfs"))
+    val fixtureDir = providers.gradleProperty("pdfFixtureDir").getOrElse("build/device-pdfs")
+    systemProperty("pdf.fixture.dir", fixtureDir)
+    inputs.dir(fixtureDir)
 }

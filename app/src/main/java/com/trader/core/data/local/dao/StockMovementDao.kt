@@ -36,7 +36,7 @@ interface StockMovementDao {
     """)
     fun getForTransaction(transactionId: Long): Flow<List<StockMovementEntity>>
 
-    @Query("SELECT * FROM stock_movements WHERE syncStatus = 'PENDING' ORDER BY createdAt ASC")
+    @Query("SELECT * FROM stock_movements WHERE syncStatus IN ('PENDING', 'FAILED') ORDER BY createdAt ASC")
     suspend fun getPending(): List<StockMovementEntity>
 
     @Query("UPDATE stock_movements SET syncStatus = 'SYNCED' WHERE id = :id")

@@ -3,12 +3,9 @@
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-expected = {
-    ('com.trader.salesmanager.qa.CustomerJourneyTest', 'createArabicCustomerValidatesFormSavesOnceAndNavigatesBack'),
-    ('com.trader.salesmanager.qa.CustomerJourneyTest', 'editCustomerPreservesIdAndDoesNotCreateDuplicate'),
-    ('com.trader.salesmanager.qa.PdfFixtureTest', 'generateSingleInvoiceForHostContentVerification'),
-    ('com.trader.salesmanager.qa.PdfFixtureTest', 'generateLongInvoiceForHostPaginationAndContentVerification'),
-}
+from device_qa_manifest import INSTRUMENTATION
+expected = INSTRUMENTATION
+
 seen = set()
 for path in Path('salesmanager/build/outputs/androidTest-results').rglob('TEST-*.xml'):
     for case in ET.parse(path).getroot().iter('testcase'):
@@ -19,4 +16,4 @@ for path in Path('salesmanager/build/outputs/androidTest-results').rglob('TEST-*
             seen.add(identity)
 if seen != expected:
     raise SystemExit(f'Missing executed device tests: {sorted(expected - seen)}')
-print('All four required device tests executed and passed in instrumentation XML.')
+print(f'All {len(expected)} required device tests executed and passed in instrumentation XML.')

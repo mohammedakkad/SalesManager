@@ -16,3 +16,22 @@ tasks.withType(Test).configureEach {
     }
     systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
 }
+
+// Device coverage is opt-in. Preserve the original JVM-only metric and its floors.
+android {
+    buildTypes {
+        debug { enableAndroidTestCoverage = providers.gradleProperty('sellerQaDeviceCoverage').map { it.toBoolean() }.getOrElse(false) }
+    }
+    testCoverage { jacocoVersion = '0.8.12' }
+}
+def deviceExecutionData = rootProject.fileTree('salesmanager/build/outputs/code_coverage') { include '**/*.ec' }
+tasks.register('qaCombinedCoverage', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+    executionData.from(file("$buildDir/jacoco/testDebugUnitTest.exec"), deviceExecutionData)
+    classDirectories.from(files("$buildDir/tmp/kotlin-classes/debug", "$buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes"))
+    sourceDirectories.from(files('src/main/java', 'src/main/kotlin'))
+    doFirst {
+        if (!deviceExecutionData.files.any { it.length() > 0 }) throw new GradleException('No actual Android execution data; refusing a combined coverage claim')
+    }
+    reports { xml.required = true; html.required = true }
+}

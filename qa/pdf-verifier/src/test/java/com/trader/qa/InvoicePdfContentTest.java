@@ -36,4 +36,22 @@ public class InvoicePdfContentTest {
             assertTrue(text.contains("100.00"));
         }
     }
+    @Test public void customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities() throws Exception {
+        try (var pdf=Loader.loadPDF(fixture("customer-statement.pdf"))) {
+            assertEquals(1,pdf.getNumberOfPages());
+            String text=Normalizer.normalize(new PDFTextStripper().getText(pdf),Normalizer.Form.NFKC);
+            for (String expected:new String[]{"CUSTOMER-STATEMENT","#201","#202","20.00","30.00","50.00"})
+                assertTrue("Missing statement content: "+expected,text.contains(expected));
+        }
+    }
+    @Test public void monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages() throws Exception {
+        try (var pdf=Loader.loadPDF(fixture("monthly-report.pdf"))) {
+            assertTrue(pdf.getNumberOfPages()>1);
+            String text=Normalizer.normalize(new PDFTextStripper().getText(pdf),Normalizer.Form.NFKC);
+            for (String expected:new String[]{"MONTHLY-STORE","12345.67","2345.67","700.00","900.00","1000.00","777.25","444.50"})
+                assertTrue("Missing monthly report content: "+expected,text.contains(expected));
+            assertTrue("Arabic report headings must survive extraction",Pattern.compile("[\\u0600-\\u06ff]").matcher(text).find());
+        }
+    }
+
 }

@@ -187,6 +187,7 @@ class FirebaseSyncService {
                         TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE")
                     }.getOrDefault(TransactionReturnStatus.NONE),
                     isPaid = m["isPaid"] as? Boolean ?: false,
+                    paymentType = runCatching { PaymentType.valueOf(m["paymentType"] as? String ?: "DEBT") }.getOrDefault(PaymentType.DEBT),
                     paymentMethodId = m["paymentMethodId"].asLong(),
                     note = m["note"] as? String ?: "",
                     date = m["date"].asLong() ?: System.currentTimeMillis(),
@@ -460,6 +461,7 @@ class FirebaseSyncService {
                                 TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE")
                             }.getOrDefault(TransactionReturnStatus.NONE),
                             isPaid = m["isPaid"] as? Boolean ?: false,
+                            paymentType = runCatching { PaymentType.valueOf(m["paymentType"] as? String ?: "DEBT") }.getOrDefault(PaymentType.DEBT),
                             paymentMethodId = m["paymentMethodId"].asLong(),
                             note = m["note"] as? String ?: "",
                             date = m["date"].asLong() ?: System.currentTimeMillis(),
@@ -634,7 +636,7 @@ class FirebaseSyncService {
                 mapOf(
                     "id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
                     "originalAmount" to t.originalAmount, "returnStatus" to t.returnStatus.name,
-                    "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
+                    "isPaid" to t.isPaid, "paymentType" to t.paymentType.name, "paymentMethodId" to t.paymentMethodId,
                     "note" to t.note, "date" to t.date, "paidAt" to t.paidAt,
                     "hasItems" to t.hasItems,
                     "dueDate" to t.dueDate,

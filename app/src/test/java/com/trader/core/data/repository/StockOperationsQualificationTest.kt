@@ -39,13 +39,13 @@ class StockOperationsQualificationTest {
         try{db.withTransaction{repo().deductStock("p","u",2.0,41,"أرز","كيس");throw java.io.IOException("fixture rollback")};fail("Injected failure lost")}catch(expected:java.io.IOException){}
         assertEquals(10.0,db.productDao().getQuantity("u")!!,0.0);assertTrue(db.stockMovementDao().getAllOnce().isEmpty())
     }
-    @Test fun stockRetryFailureKeepsLedgerFailedAndSuccessAcknowledgesPendingQuantity()=runBlocking {
+    @Test fun failedStockLedgerRetriesWithoutRewritingItsPendingState()=runBlocking {
         val movement=StockMovement(id="m",productId="p",productName="أرز",unitId="u",unitLabel="كيس",quantity=-1.0,quantityBefore=11.0,quantityAfter=10.0,merchantId="m1")
         db.stockMovementDao().insert(movement.toEntity());coEvery{remote.uploadMovement(any(),any())} throws java.io.IOException("offline")
         coEvery{remote.updateRemoteQuantity(any(),any(),any(),any())} throws java.io.IOException("offline")
         val repo=repo();repo.syncPendingMovements();assertEquals("FAILED",db.stockMovementDao().getAllOnce().single().syncStatus);assertEquals(1,db.productDao().getPendingUnits().size)
-        // The legacy retry query selects PENDING only; an explicit new PENDING attempt is required.
-        db.stockMovementDao().insert(movement.toEntity());coEvery{remote.uploadMovement(any(),any())} just Runs;coEvery{remote.updateRemoteQuantity(any(),any(),any(),any())} just Runs
+        // Retry the same persisted FAILED record, without resetting it in the fixture.
+        coEvery{remote.uploadMovement(any(),any())} just Runs;coEvery{remote.updateRemoteQuantity(any(),any(),any(),any())} just Runs
         repo.syncPendingMovements();assertEquals("SYNCED",db.stockMovementDao().getAllOnce().single().syncStatus);assertTrue(db.productDao().getPendingUnits().isEmpty())
     }
     @Test fun conflictsAreReportedAndOnlyExplicitChoiceChangesLocalOrRemoteQuantity()=runBlocking {
@@ -56,4 +56,17 @@ class StockOperationsQualificationTest {
         repo.resolveConflictWithServer("u");assertEquals(7.0,db.productDao().getQuantity("u")!!,0.0);assertTrue(repo.detectConflicts().isEmpty())
         repo.resolveConflictWithServer("missing");repo.resolveConflictWithLocal("missing");assertNull(db.productDao().getQuantity("missing"))
     }
+    @Test fun failedStockRetryDoesNotUploadAnotherMerchantsLedger()=runBlocking {
+        val actor=mockk<com.trader.core.domain.repository.ActivationRepository>()
+        coEvery{actor.getMerchantCode()} returns "m1"
+        val own=StockMovement(id="own",productId="p",unitId="u",unitLabel="كيس",quantity=1.0,merchantId="m1",syncStatus=SyncStatus.FAILED)
+        db.stockMovementDao().insertAll(listOf(own.toEntity(),own.copy(id="foreign",merchantId="m2").toEntity()))
+        val guarded=StockRepositoryImpl(db.productDao(),db.stockMovementDao(),remote,"m1",db,actor)
+        guarded.syncPendingMovements()
+        assertEquals("SYNCED",db.stockMovementDao().getAllOnce().first{it.id=="own"}.syncStatus)
+        assertEquals("FAILED",db.stockMovementDao().getAllOnce().first{it.id=="foreign"}.syncStatus)
+        coVerify(exactly=1){remote.uploadMovement("m1",match{it.id=="own"})}
+        coVerify(exactly=0){remote.uploadMovement(any(),match{it.id=="foreign"})}
+    }
+
 }

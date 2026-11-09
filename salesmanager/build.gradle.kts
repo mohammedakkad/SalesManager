@@ -82,6 +82,7 @@ dependencies {
     testImplementation(libs.test.junit)
     testImplementation(libs.test.mockk)
     testImplementation(libs.test.coroutines)
+    testImplementation("com.squareup.okhttp3:mockwebserver:${libs.versions.okhttp.get()}")
     implementation(project(":app"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)

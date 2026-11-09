@@ -31,7 +31,7 @@ class SellerLedgerQueriesTest {
         assertEquals(setOf("first","later"),d.forTransactionOnce(41).map{it.id}.toSet())
         assertEquals(listOf("first","later","other"),d.getAllOnce().map{it.id});assertEquals(3,d.getPending().size)
         d.markFailed("later");d.markSynced("first");assertEquals(2,d.observeUnsyncedCount().first());assertEquals(listOf("other","later"),d.observeUnsynced().first().map{it.id})
-        assertEquals(listOf("other"),d.getPending().map{it.id});d.deleteAll();assertTrue(d.getAllOnce().isEmpty())
+        assertEquals(listOf("later","other"),d.getPending().map{it.id});d.deleteAll();assertTrue(d.getAllOnce().isEmpty())
     }
     @Test fun cashLedgerFailedRowsRemainRetryableAndBoxDeletionIsScoped()=runTest {
         val d=db.cashBoxMovementDao();d.insert(cash("a"));d.insertAll(listOf(cash("b",time=2),cash("c","other",3)))
