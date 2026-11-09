@@ -69,6 +69,8 @@ android {
 }
 
 dependencies {
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.test.compose.junit)
     testImplementation(libs.test.workmanager)
     testImplementation(libs.test.robolectric)
     testImplementation(libs.test.androidx.core)
