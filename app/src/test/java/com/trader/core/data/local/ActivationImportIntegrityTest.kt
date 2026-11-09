@@ -21,6 +21,7 @@ import org.robolectric.annotation.Config
 @Config(sdk=[28],manifest=Config.NONE,application=Application::class)
 class ActivationImportIntegrityTest {
     private lateinit var db:AppDatabase
+    private var queryHook: ((String) -> Unit)? = null
     private lateinit var repo:ActivationRepositoryImpl
     private val sync=mockk<FirebaseSyncService>(relaxed=true)
     private val products=mockk<ProductFirestoreService>(relaxed=true)
@@ -30,7 +31,8 @@ class ActivationImportIntegrityTest {
     @Before fun setup()=runBlocking {
         mockkStatic(FirebaseDatabase::class)
         every { FirebaseDatabase.getInstance() } returns mockk(relaxed=true)
-        db=Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(),AppDatabase::class.java).allowMainThreadQueries().build()
+        db=Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(),AppDatabase::class.java).allowMainThreadQueries()
+            .setQueryCallback({ sql, _ -> queryHook?.invoke(sql) },java.util.concurrent.Executor { it.run() }).build()
         repo=ActivationRepositoryImpl(ApplicationProvider.getApplicationContext(),sync,db.customerDao(),db.transactionDao(),
             db.paymentMethodDao(),db.productDao(),products,db.returnDao(),db.invoiceItemDao(),db.cashBoxDao(),db.cashBoxMovementDao(),db)
         repo.deactivate()
@@ -41,7 +43,7 @@ class ActivationImportIntegrityTest {
         Unit
     }
     @After fun close()=runBlocking { repo.deactivate();db.close();unmockkStatic(FirebaseDatabase::class) }
-    private fun snapshot()=listOf("customers","transactions","cash_boxes","invoice_items","sale_outbox").associateWith { table ->
+    private fun snapshot()=listOf("customers","transactions","cash_boxes","cash_box_movements","invoice_items","sale_outbox","sale_operations","products","product_units","return_invoices","return_items").associateWith { table ->
         db.openHelper.writableDatabase.query("SELECT * FROM $table ORDER BY rowid").use { c ->
             buildList { while(c.moveToNext()) add((0 until c.columnCount).map { if(c.isNull(it)) null else c.getString(it) }) }
         }
@@ -71,4 +73,77 @@ class ActivationImportIntegrityTest {
         assertEquals(50.0,db.transactionDao().getUnpaidAmountByCustomer(1),0.0)
         assertEquals(50.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
     }
+    private val catalogProduct=Product(id="p",name="fixture",merchantId="fixture",createdAt=1,updatedAt=1)
+    private val catalogUnit=ProductUnit(id="u",productId="p",price=25.0,quantityInStock=10.0,createdAt=1,updatedAt=1)
+    private fun catalog() {
+        coEvery { products.fetchAllProducts("fixture") } returns listOf(catalogProduct)
+        coEvery { products.fetchUnitsForProduct("fixture","p") } returns listOf(catalogUnit)
+    }
+    @Test fun failedUnitDownloadLeavesAllLocalRowsUnchanged()=runBlocking {
+        catalog();val before=snapshot()
+        coEvery { products.fetchUnitsForProduct("fixture","p") } throws java.io.IOException("offline fixture")
+        repo.saveActivationStatus(true,"fixture")
+        assertEquals(before,snapshot())
+    }
+    @Test fun unitInsertFailureRollsBackCustomerTransactionAndProductWrites()=runBlocking {
+        catalog();val before=snapshot()
+        db.openHelper.writableDatabase.execSQL("CREATE TRIGGER unit_fault BEFORE INSERT ON product_units BEGIN SELECT RAISE(ABORT,'unit failure'); END")
+        repo.saveActivationStatus(true,"fixture")
+        assertEquals(before,snapshot())
+        assertEquals(75.0,db.transactionDao().getUnpaidAmountByCustomer(1),0.0)
+    }
+    @Test fun successfulCatalogImportDoesNetworkOutsideRoomAndPreservesStock()=runBlocking {
+        coEvery { sync.fetchAllData("fixture") } coAnswers {
+            assertFalse("Merchant download holds a Room transaction",db.inTransaction());remote
+        }
+        coEvery { products.fetchAllProducts("fixture") } coAnswers {
+            assertFalse("Catalog download holds a Room transaction",db.inTransaction());listOf(catalogProduct)
+        }
+        coEvery { products.fetchUnitsForProduct("fixture","p") } coAnswers {
+            assertFalse("Unit download holds a Room transaction",db.inTransaction());listOf(catalogUnit)
+        }
+        repo.saveActivationStatus(true,"fixture")
+        assertEquals(10.0,db.productDao().getQuantity("u")!!,0.0)
+        assertEquals("fixture",db.productDao().getById("p")!!.product.merchantId)
+        assertEquals(50.0,db.transactionDao().getUnpaidAmountByCustomer(1),0.0)
+        assertEquals(50.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0)
+    }
+    @Test fun accountSwitchDuringFetchCannotApplyPreviousMerchantReply()=runBlocking {
+        val entered=CompletableDeferred<Unit>();val release=CompletableDeferred<Unit>()
+        coEvery { sync.fetchAllData("fixture") } coAnswers { entered.complete(Unit);release.await();remote }
+        coEvery { sync.fetchAllData("other") } returns MerchantData(listOf(Customer(2,"other",createdAt=1)),emptyList(),emptyList())
+        val task=async(Dispatchers.Default) { repo.saveActivationStatus(true,"fixture") }
+        try {
+            withTimeout(10000) { entered.await() }
+            repo.saveActivationStatus(true,"other");val before=snapshot()
+            release.complete(Unit);withTimeout(10000) { task.await() }
+            assertEquals("other",repo.getMerchantCode());assertEquals(before,snapshot())
+        } finally { release.complete(Unit);task.cancelAndJoin() }
+    }
+    @Test fun cancelledUnitDownloadDoesNotPersistAnyStagedRows()=runBlocking {
+        catalog();val before=snapshot();val entered=CompletableDeferred<Unit>()
+        coEvery { products.fetchUnitsForProduct("fixture","p") } coAnswers { entered.complete(Unit);awaitCancellation() }
+        val task=launch(Dispatchers.Default) { repo.saveActivationStatus(true,"fixture") }
+        try {
+            withTimeout(10000) { entered.await() };task.cancelAndJoin()
+            assertTrue(task.isCancelled);assertEquals(before,snapshot())
+        } finally { task.cancelAndJoin() }
+    }
+    @Test fun cancellationDuringCashInsertRollsBackEveryImportedRow()=runBlocking {
+        catalog();val before=snapshot();var reached=false;var target:Job?=null
+        queryHook={ sql ->
+            if(sql.contains("cash_boxes",ignoreCase=true) && sql.trimStart().startsWith("INSERT",ignoreCase=true)) {
+                reached=true;target!!.cancel()
+            }
+        }
+        val ready=CompletableDeferred<Unit>()
+        val task=launch(Dispatchers.Default) { ready.await();repo.saveActivationStatus(true,"fixture") }
+        target=task;ready.complete(Unit)
+        try {
+            withTimeout(10000) { task.join() }
+            assertTrue("Cash insert cancellation point not reached",reached);assertTrue(task.isCancelled)
+            assertEquals(before,snapshot())
+        } finally { queryHook=null;task.cancelAndJoin() }
+    }
+
 }
