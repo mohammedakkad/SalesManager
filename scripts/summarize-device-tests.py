@@ -34,6 +34,13 @@ for row in rows:
         lines.append('\nFailure detail: `' + row['details'].replace('`', "'").replace('\n', ' ') + '`\n')
 summary = '\n'.join(lines) + '\n'
 print(summary)
+if '--annotation' in sys.argv and os.environ.get('GITHUB_ACTIONS') == 'true':
+    # Public annotations expose actual XML outcomes when authenticated logs/artifacts
+    # and job summaries are unavailable; never infer success from compilation.
+    notice = json.dumps([{'test': row['test'], 'result': row['status'], 'detail': row['details'][:300]}
+                         for row in rows], ensure_ascii=False)
+    notice = notice.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+    print('::notice title=Seller actual device and PDFBox XML::' + notice)
 if os.environ.get('GITHUB_STEP_SUMMARY'):
     path = Path(os.environ['GITHUB_STEP_SUMMARY'])
     begin, end = '<!-- seller-qa-runtime-start -->', '<!-- seller-qa-runtime-end -->'

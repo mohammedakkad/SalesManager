@@ -238,11 +238,10 @@ class AddEditProductViewModel(
 
     fun save() {
         val s = _state.value
-        if (!s.isValid) return
+        if (!s.isValid || s.isSaving || s.savedSuccessfully) return
+        // Claim submission before launching so consecutive taps cannot enqueue two writes.
+        _state.update { it.copy(isSaving = true, error = null) }
         viewModelScope.launch {
-            _state.update {
-                it.copy(isSaving = true, error = null)
-            }
             try {
                 // ✅ حماية أخيرة: إعادة التحقق قبل الحفظ مباشرة (يمنع race condition)
                 val barcode = s.barcode.ifBlank {

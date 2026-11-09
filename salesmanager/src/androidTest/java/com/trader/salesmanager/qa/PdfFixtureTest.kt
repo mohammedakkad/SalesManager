@@ -58,7 +58,7 @@ class PdfFixtureTest {
         PdfRenderer(ParcelFileDescriptor.open(file,ParcelFileDescriptor.MODE_READ_ONLY)).use { assertTrue(it.pageCount>1) }
     }
     @Test fun generateCustomerStatementForHostBalanceVerification() {
-        val transactions=listOf(Transaction(id=201,customerId=7,amount=20.0,isPaid=true,date=0,paymentMethodName="CASH"),Transaction(id=202,customerId=7,amount=30.0,isPaid=false,date=1))
+        val transactions=listOf(Transaction(id=201,customerId=7,amount=20.25,isPaid=true,date=0,paymentMethodName="CASH"),Transaction(id=202,customerId=7,amount=30.5,isPaid=false,date=1))
         val file=export(ExportManager.generateCustomerStatementPdf(context.cacheDir,Customer(7,"CUSTOMER-STATEMENT",phone="0500000000"),transactions,"STATEMENT-STORE"),"customer-statement.pdf")
         assertEquals("%PDF-",file.readBytes().take(5).toByteArray().toString(Charsets.US_ASCII))
         PdfRenderer(ParcelFileDescriptor.open(file,ParcelFileDescriptor.MODE_READ_ONLY)).use { assertEquals(1,it.pageCount) }

@@ -71,6 +71,10 @@ jobs:
           set -o pipefail
           scripts/setup-seller-gradle.sh 2>&1 | tee "$RUNNER_TEMP/seller-gradle-setup.log"
           python3 scripts/generate-offline-firebase.py
+      - uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: seller-qa-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle/libs.versions.toml') }}
       - name: Enable hosted-runner KVM access
         run: sudo chmod a+rw /dev/kvm
       - uses: reactivecircus/android-emulator-runner@v2

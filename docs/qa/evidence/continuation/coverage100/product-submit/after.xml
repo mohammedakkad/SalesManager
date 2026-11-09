@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.ProductSubmissionTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T15:13:48" hostname="13302589aed6" time="2.598">
+  <properties/>
+  <testcase name="failedSavePreservesDraftAndAllowsOneControlledRetry" classname="com.trader.salesmanager.sales.ProductSubmissionTest" time="2.554"/>
+  <testcase name="rapidSaveAndSaveAfterSuccessSubmitOnlyOnce" classname="com.trader.salesmanager.sales.ProductSubmissionTest" time="0.044"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -184,8 +184,12 @@ class AddEditTransactionViewModel(
 
             // إذا المستخدم لم يعدّل بعد، نُحدِّث baseAmount فقط حتى تستخدمه applyInvoiceLinesFromJson
             if (_uiState.value.userEditedLines) {
-                _uiState.update {
-                    it.copy(baseAmount = baseAmount)
+                _uiState.update { state ->
+                    state.copy(
+                        baseAmount = baseAmount,
+                        amount = String.format(Locale.US, "%.2f",
+                            state.pendingLines.sumOf { it.totalPrice } + baseAmount)
+                    )
                 }
             }
         }

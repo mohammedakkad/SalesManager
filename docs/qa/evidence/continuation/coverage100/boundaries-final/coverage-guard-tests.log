@@ -1,0 +1,16 @@
+test_empty_reports_do_not_claim_target (test_coverage_target.CoverageTargetTest.test_empty_reports_do_not_claim_target) ... ok
+test_exact_seller_boundary_is_accepted_when_both_metrics_pass (test_coverage_target.CoverageTargetTest.test_exact_seller_boundary_is_accepted_when_both_metrics_pass) ... ok
+test_high_shared_coverage_cannot_hide_seller_below_target (test_coverage_target.CoverageTargetTest.test_high_shared_coverage_cannot_hide_seller_below_target) ... ok
+test_seller_above_target_cannot_hide_low_weighted_coverage (test_coverage_target.CoverageTargetTest.test_seller_above_target_cannot_hide_low_weighted_coverage) ... ok
+test_uses_weighted_counters_instead_of_mean_of_module_percentages (test_coverage_target.CoverageTargetTest.test_uses_weighted_counters_instead_of_mean_of_module_percentages) ... ok
+test_class_exclusions_cannot_hide_in_combined_report (test_device_coverage_report.DeviceCoverageReportTest.test_class_exclusions_cannot_hide_in_combined_report) ... ok
+test_combined_report_cannot_lose_unit_test_coverage (test_device_coverage_report.DeviceCoverageReportTest.test_combined_report_cannot_lose_unit_test_coverage) ... ok
+test_missing_real_device_file_is_rejected (test_device_coverage_report.DeviceCoverageReportTest.test_missing_real_device_file_is_rejected) ... ok
+test_preserves_weighted_denominator_and_retains_both_measurements (test_device_coverage_report.DeviceCoverageReportTest.test_preserves_weighted_denominator_and_retains_both_measurements) ... ok
+test_reduced_denominator_cannot_inflate_coverage (test_device_coverage_report.DeviceCoverageReportTest.test_reduced_denominator_cannot_inflate_coverage) ... ok
+test_unrecorded_native_pdf_execution_is_rejected (test_device_coverage_report.DeviceCoverageReportTest.test_unrecorded_native_pdf_execution_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.225s
+
+OK

@@ -1,0 +1,4 @@
+kind,id,status,scenario,blocker_or_next_action
+Logic boundary,LOG-01,PASS,Rapid duplicate product submission and delayed persistence,Failing pre-repair runtime regression and passing post-repair JVM test; see source tests and before/after evidence
+Logic boundary,LOG-02,PASS,Late sale editor load preview agrees with the amount actually committed,Failing pre-repair runtime regression and passing post-repair JVM test; see source tests and before/after evidence
+Logic boundary,LOG-06,PASS,Daily cash report includes 23:59:59.999 and excludes next-day midnight,Failing pre-repair runtime regression and passing post-repair JVM test; see source tests and before/after evidence

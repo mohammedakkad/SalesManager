@@ -65,6 +65,10 @@ def main():
     lines += ['', 'Native PDF line counters: `' + json.dumps(result['nativePdfLines'], sort_keys=True) + '`', '']
     summary = '\n'.join(lines)
     print(summary)
+    if os.environ.get('GITHUB_ACTIONS') == 'true':
+        notice = json.dumps({'lines': {name: c for name, c in scopes},
+                             'nativePdfLines': result['nativePdfLines']}, sort_keys=True)
+        print('::notice title=Seller measured Android plus JVM coverage::' + notice.replace('%', '%25'))
     if os.environ.get('GITHUB_STEP_SUMMARY'):
         with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as f:
             f.write(summary)

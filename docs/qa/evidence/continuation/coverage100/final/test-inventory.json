@@ -1,14 +1,14 @@
 {
   "summary": {
-    "jvmCases": 382,
+    "jvmCases": 394,
     "result": {
-      "passed": 382
+      "passed": 394
     },
     "primaryCategories": {
-      "Room/SQLite on JVM": 185,
+      "Room/SQLite on JVM": 188,
       "Room migration": 7,
       "Firebase SDK/protocol fake": 22,
-      "Unit/model with deterministic fakes": 76,
+      "Unit/model with deterministic fakes": 85,
       "Compose UI on JVM": 63,
       "Loopback HTTP": 4,
       "WorkManager lifecycle": 6,
@@ -18,11 +18,11 @@
       "Real XLSX file content": 4
     },
     "overlappingTags": {
-      "Room/SQLite on JVM": 192,
+      "Room/SQLite on JVM": 195,
       "Firebase SDK/protocol fake": 46,
       "Room migration": 7,
       "Restart/recovery in test harness": 19,
-      "WorkManager lifecycle": 10,
+      "WorkManager lifecycle": 13,
       "Compose UI on JVM": 63,
       "Loopback HTTP": 4,
       "Android notification component on JVM": 3,
@@ -30,14 +30,14 @@
       "Backup format/crypto": 15,
       "Real XLSX file content": 4
     },
-    "remainingDefinedWorkItems": 73,
+    "remainingDefinedWorkItems": 70,
     "remainingByStatus": {
       "BLOCKED": 32,
-      "NOT TESTED": 41
+      "NOT TESTED": 38
     },
     "remainingByKind": {
       "Historical migration": 21,
-      "Logic boundary": 8,
+      "Logic boundary": 5,
       "SDK failure contract": 8,
       "Firebase/server integration": 8,
       "Android API matrix": 3,
@@ -1532,6 +1532,78 @@
     },
     {
       "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "lateInvoiceLoadKeepsPreviewEqualToCommittedGrossAmount",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "unrecognizedLegacyWeightUnitUsesExistingKilogramFallback",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "arabicAmountCustomerPreselectionAndPaymentChangesReachSaleCommand",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "repeatedLoadAndEditedLinesDoNotAccumulateBaseAmountOrReplaceOriginalItemId",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "gramsRoundTripAndPersistAsKilogramsWithStableRetryIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "delayedPaymentMethodsResolvePersistedSelectionAndUnchangedEditPreservesItems",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductSubmissionTest",
+      "name": "failedSavePreservesDraftAndAllowsOneControlledRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductSubmissionTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductSubmissionTest",
+      "name": "rapidSaveAndSaveAfterSuccessSubmitOnlyOnce",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductSubmissionTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
       "class": "com.trader.salesmanager.sales.SaleCommandsTest",
       "name": "invoiceFailureRollsBackEverything",
       "result": "passed",
@@ -2277,6 +2349,15 @@
       "tags": [
         "Room/SQLite on JVM"
       ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.StockReportDayBoundaryTest",
+      "name": "todayIncludesLastMillisecondAndExcludesAdjacentDays",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/StockReportDayBoundaryTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
     },
     {
       "module": "salesmanager",
@@ -3874,6 +3955,42 @@
     },
     {
       "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest",
+      "name": "paidAndRecentTransactionsDoNotProduceDebtNotifications",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UnpaidDebtWorkerRoomTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest",
+      "name": "overdueInvoicesAreGroupedByCustomerWithCorrectTotalAndNavigation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UnpaidDebtWorkerRoomTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest",
+      "name": "repeatExecutionUpdatesExistingNotificationsWithoutChangingDebt",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UnpaidDebtWorkerRoomTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
       "class": "com.trader.salesmanager.ui.qualification.UpdateLifecycleTest",
       "name": "backgroundDownloadSuccessPersistsPathAndPostsReadyNotification",
       "result": "passed",
@@ -4310,20 +4427,6 @@
     },
     {
       "kind": "Logic boundary",
-      "id": "LOG-01",
-      "status": "NOT TESTED",
-      "scenario": "Rapid duplicate product submission and delayed persistence",
-      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
-    },
-    {
-      "kind": "Logic boundary",
-      "id": "LOG-02",
-      "status": "NOT TESTED",
-      "scenario": "Late sale editor load preview agrees with the amount actually committed",
-      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
-    },
-    {
-      "kind": "Logic boundary",
       "id": "LOG-03",
       "status": "NOT TESTED",
       "scenario": "Nonfinite numeric input through cash/product/return UI boundaries",
@@ -4341,13 +4444,6 @@
       "id": "LOG-05",
       "status": "NOT TESTED",
       "scenario": "Out-of-order barcode conflict replies after editing a product",
-      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
-    },
-    {
-      "kind": "Logic boundary",
-      "id": "LOG-06",
-      "status": "NOT TESTED",
-      "scenario": "Daily cash report includes 23:59:59.999 and excludes next-day midnight",
       "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
     },
     {

@@ -40,7 +40,7 @@ public class InvoicePdfContentTest {
         try (var pdf=Loader.loadPDF(fixture("customer-statement.pdf"))) {
             assertEquals(1,pdf.getNumberOfPages());
             String text=Normalizer.normalize(new PDFTextStripper().getText(pdf),Normalizer.Form.NFKC);
-            for (String expected:new String[]{"CUSTOMER-STATEMENT","#201","#202","20.00","30.00","50.00"})
+            for (String expected:new String[]{"CUSTOMER-STATEMENT","#201","#202","20.25","30.50","50.75"})
                 assertTrue("Missing statement content: "+expected,text.contains(expected));
         }
     }
