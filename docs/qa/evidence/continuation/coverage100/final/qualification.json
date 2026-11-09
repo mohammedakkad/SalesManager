@@ -1,0 +1,209 @@
+{
+  "startingSha": "94a2e48fee725e3a717cc133e36b4682ddd05639",
+  "qualifiedSourceSha": "ef1c8999577518e14f1fc799328360eb38721874",
+  "followingCommitScope": "QA documentation and actual evidence only; no production/test-source changes",
+  "newCasesSinceStartingSha": {
+    "appAndSellerJvm": 54,
+    "pythonCoverageGuards": 6,
+    "androidInstrumentation": 3,
+    "hostPdfBox": 3,
+    "total": 66
+  },
+  "qualifiedPassingCases": {
+    "appAndSellerJvm": 409,
+    "pythonCoverageGuards": 11,
+    "androidInstrumentation": 7,
+    "hostPdfBox": 5,
+    "total": 432,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "scope": "Distinct cases across separately identified local and hosted suites; repeated executions and seeded-fault experiments are not new production cases.",
+  "localCounters": {
+    "app": {
+      "tests": 135,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "coverage": {
+        "INSTRUCTION": {
+          "covered": 48519,
+          "missed": 23189
+        },
+        "BRANCH": {
+          "covered": 1377,
+          "missed": 1650
+        },
+        "LINE": {
+          "covered": 7594,
+          "missed": 2675
+        },
+        "COMPLEXITY": {
+          "covered": 2060,
+          "missed": 1976
+        },
+        "METHOD": {
+          "covered": 1719,
+          "missed": 797
+        },
+        "CLASS": {
+          "covered": 548,
+          "missed": 236
+        }
+      }
+    },
+    "salesmanager": {
+      "tests": 274,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "coverage": {
+        "INSTRUCTION": {
+          "covered": 142207,
+          "missed": 51358
+        },
+        "BRANCH": {
+          "covered": 6541,
+          "missed": 7805
+        },
+        "LINE": {
+          "covered": 13291,
+          "missed": 4533
+        },
+        "COMPLEXITY": {
+          "covered": 3505,
+          "missed": 6901
+        },
+        "METHOD": {
+          "covered": 2280,
+          "missed": 908
+        },
+        "CLASS": {
+          "covered": 1039,
+          "missed": 239
+        }
+      }
+    }
+  },
+  "hostedAdditionalAndroidJvmCounters": {
+    "lines": {
+      "app": {
+        "covered": 7611,
+        "missed": 2658,
+        "total": 10269,
+        "percent": 74.11627227578148
+      },
+      "salesmanager": {
+        "covered": 14295,
+        "missed": 3529,
+        "total": 17824,
+        "percent": 80.20085278276481
+      },
+      "weighted overall": {
+        "covered": 21906,
+        "missed": 6187,
+        "total": 28093,
+        "percent": 77.97672017940413
+      }
+    },
+    "nativePdfLines": {
+      "InvoicePdfGenerator.kt": {
+        "covered": 489,
+        "missed": 48
+      },
+      "PdfCanvas.kt": {
+        "covered": 68,
+        "missed": 2
+      },
+      "ReportPdfGenerator.kt": {
+        "covered": 438,
+        "missed": 19
+      }
+    }
+  },
+  "ci": {
+    "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42693672936",
+    "state": {
+      "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+      "conclusion": "WORKFLOW_RUN_CONCLUSION_SUCCESS"
+    },
+    "jobs": {
+      "seller": "SUCCESS",
+      "compose": "SUCCESS"
+    }
+  },
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 24
+  },
+  "builds": {
+    "debug": "PASS",
+    "androidTest": "PASS",
+    "minifiedUnsignedRelease": "PASS",
+    "signedReleaseDeviceUpgrade": "BLOCKED"
+  },
+  "apks": [
+    {
+      "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+      "bytes": 1077131,
+      "sha256": "86ebdc0354f674c6ddd538b55b80742be0057eecf513490fc34d941e63426d05"
+    },
+    {
+      "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+      "bytes": 51525841,
+      "sha256": "5267c515f3b71bab9a9ffbe63a1e547919426266891f423c0aa0f218bfffcdcb"
+    },
+    {
+      "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
+      "bytes": 26702050,
+      "sha256": "502b19068d27d0865135939702e72e444a0f080bba397935554e32063e11003c"
+    }
+  ],
+  "database": {
+    "roomLibrary": "2.6.1",
+    "schemaVersion": 25,
+    "authenticExportedSchemas": [
+      22,
+      23,
+      24,
+      25
+    ],
+    "migrationTestCases": 7,
+    "historicalVersions1Through21": "BLOCKED"
+  },
+  "remainingDefinedWorkItems": 69,
+  "remainingByStatus": {
+    "BLOCKED": 32,
+    "NOT TESTED": 36,
+    "PARTIAL": 1
+  },
+  "seededFaultSample": {
+    "source": "ef1c8999577518e14f1fc799328360eb38721874",
+    "sampleSize": 8,
+    "killed": 8,
+    "survived": 0,
+    "invalid": 0,
+    "baselinePassingCases": 8,
+    "intentionalFailingCaseExecutions": 10,
+    "productionSourceUnchanged": true,
+    "productionCoverageUnchanged": true,
+    "qualification": "Bounded seeded-fault sample only. Comprehensive automated mutation score remains NOT TESTED. These are not new production test cases."
+  },
+  "diagnosticsOutsideQualifiedSuite": {
+    "realPdfNativeRobolectric416": "FAILED: actual PdfDocument.startPage document is closed",
+    "mainActivityJvm": "NOT QUALIFIED: stalled diagnostic approaches; device qualification still unexecuted"
+  },
+  "coverage100Target": "NOT ACHIEVED",
+  "releaseReadiness": "FAIL",
+  "remainingReleaseBlockers": [
+    "Deployed authorization and immutable revision/event fencing across writers",
+    "Firestore/RTDB reconciliation and uncertain cross-backend completion",
+    "Legacy tenant/cache ownership and cross-device identifiers",
+    "Authentic historical1–21 fixtures",
+    "Signed upgrade/APK authenticity and broader security qualification",
+    "Performance, device lifecycle/API matrix and accessibility qualification"
+  ],
+  "limitations": "SDK fakes are not deployed rules tests; database reopen is not OS process kill; compiled APK is not runtime. Actual named Android/PDFBox XML and Context paths/hashes are public CI annotations. Raw authenticated artifacts were not independently downloaded."
+}

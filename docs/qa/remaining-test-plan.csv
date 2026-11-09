@@ -63,7 +63,7 @@ Security qualification,SEC-02,BLOCKED,Backend abuse and privilege-escalation rul
 Security qualification,SEC-03,NOT TESTED,Malicious backup ZIP/JSON fuzz campaign with resource limits,Bounded fuzz corpus plus crash/memory assertions
 Security qualification,SEC-04,NOT TESTED,Sensitive data leakage across logs/backups/account switching,Offline security fixtures and lifecycle audit beyond targeted secret policy
 Security qualification,SEC-05,NOT TESTED,Dependency/static security analysis with triaged actionable findings,Dedicated security scan and reviewed findings; lint/secret policy does not substitute
-Mutation campaign,MUT-SALECOMMANDS,NOT TESTED,Mutation score for high-risk SaleCommands invariants,One campaign can produce many mutants; do not count it as one exhaustive test case
+Mutation campaign,MUT-SALECOMMANDS,PARTIAL,Mutation score for high-risk SaleCommands invariants,Bounded manual sample detects8 of8 preselected faults with real Room tests; original source/coverage unchanged. Comprehensive generated mutation score remains untested; see coverage100/sale-mutation-sample.
 Mutation campaign,MUT-OUTBOXDISPATCHER,NOT TESTED,Mutation score for high-risk OutboxDispatcher invariants,One campaign can produce many mutants; do not count it as one exhaustive test case
 Mutation campaign,MUT-RETURNREPOSITORY,NOT TESTED,Mutation score for high-risk ReturnRepository invariants,One campaign can produce many mutants; do not count it as one exhaustive test case
 Mutation campaign,MUT-CASHBOXREPOSITORY,NOT TESTED,Mutation score for high-risk CashBoxRepository invariants,One campaign can produce many mutants; do not count it as one exhaustive test case

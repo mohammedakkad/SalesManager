@@ -1,0 +1,243 @@
+{
+  "source": "ef1c8999577518e14f1fc799328360eb38721874",
+  "productionSourceSha256": "9220c956b26d27242331c45d50804f95c88bfd0a42348ad6ce49ec9f54dff356",
+  "scope": "Eight preselected local fault injections. No production changes. No comprehensive mutation score or coverage increase is claimed.",
+  "archiveWorkspace": "/workspace/.salesmanager-tools/sale-mutation-ef1c899-1794256658",
+  "mutants": [
+    {
+      "label": "M01",
+      "exitCode": 1,
+      "seconds": 33.41,
+      "selectedTests": [
+        "successfulCreation"
+      ],
+      "counts": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "successfulCreation",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: expected:<1> but was:<0>"
+        }
+      ],
+      "description": "Omit persisted invoice lines",
+      "old": "        db.invoiceItemDao().insertAll(lines)\n",
+      "new": "",
+      "result": "KILLED"
+    },
+    {
+      "label": "M02",
+      "exitCode": 1,
+      "seconds": 33.05,
+      "selectedTests": [
+        "successfulCreation"
+      ],
+      "counts": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "successfulCreation",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: expected:<2.0> but was:<6.0>"
+        }
+      ],
+      "description": "Reverse sale inventory effect",
+      "old": "lines.forEach { stock(it, -it.quantity, id, merchantId) }",
+      "new": "lines.forEach { stock(it, it.quantity, id, merchantId) }",
+      "result": "KILLED"
+    },
+    {
+      "label": "M03",
+      "exitCode": 1,
+      "seconds": 32.84,
+      "selectedTests": [
+        "successfulCreation"
+      ],
+      "counts": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "successfulCreation",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: expected:<150.0> but was:<100.0>"
+        }
+      ],
+      "description": "Omit sale cash effect",
+      "old": "            cash(null, sale.copy(id = id), merchantId)\n",
+      "new": "",
+      "result": "KILLED"
+    },
+    {
+      "label": "M04",
+      "exitCode": 1,
+      "seconds": 36.45,
+      "selectedTests": [
+        "concurrentLastStockAllowsOnlyOneSale"
+      ],
+      "counts": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "concurrentLastStockAllowsOnlyOneSale",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: expected:<1> but was:<2>"
+        }
+      ],
+      "description": "Allow negative remaining stock",
+      "old": "        require(next.isFinite() && next >= 0) { \"Insufficient stock\" }\n",
+      "new": "",
+      "result": "KILLED"
+    },
+    {
+      "label": "M05",
+      "exitCode": 1,
+      "seconds": 32.99,
+      "selectedTests": [
+        "operationIdCannotBeReusedWithDifferentPayload"
+      ],
+      "counts": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "operationIdCannotBeReusedWithDifferentPayload",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: Expected mismatch"
+        }
+      ],
+      "description": "Accept a changed request under an already used operation identifier",
+      "old": "            check(it.kind == kind && it.requestHash == hash) { \"Operation ID reused for another request\" }\n",
+      "new": "",
+      "result": "KILLED"
+    },
+    {
+      "label": "M06",
+      "exitCode": 1,
+      "seconds": 35.64,
+      "selectedTests": [
+        "staleEditIsRejectedAndReplayCannotOverwriteLaterEdit"
+      ],
+      "counts": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "staleEditIsRejectedAndReplayCannotOverwriteLaterEdit",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: Stale edit accepted"
+        }
+      ],
+      "description": "Accept stale editing snapshot",
+      "old": "        check(sameSale(current.toDomain(), expected)) { \"Sale changed; reload before editing\" }\n",
+      "new": "",
+      "result": "KILLED"
+    },
+    {
+      "label": "M07",
+      "exitCode": 1,
+      "seconds": 33.03,
+      "selectedTests": [
+        "partialReturnDeletionRestoresOnlyRemainingStockAndCash",
+        "fullReturnDeletionDoesNotRestoreOrRefundTwice"
+      ],
+      "counts": {
+        "tests": 2,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "fullReturnDeletionDoesNotRestoreOrRefundTwice",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: expected:<0.0> but was:<2.0>"
+        },
+        {
+          "test": "partialReturnDeletionRestoresOnlyRemainingStockAndCash",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: expected:<0.0> but was:<1.0>"
+        }
+      ],
+      "description": "Restore already returned stock again on deletion",
+      "old": "        remaining(lines, returned).forEach { line ->",
+      "new": "        lines.forEach { line ->",
+      "result": "KILLED"
+    },
+    {
+      "label": "M08",
+      "exitCode": 1,
+      "seconds": 34.43,
+      "selectedTests": [
+        "commitCreatesExactlyOneOutboxEventAndReplayDoesNotDuplicateIt",
+        "outboxInsertFailureRollsBackSaleStockCashAndReceipt"
+      ],
+      "counts": {
+        "tests": 2,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "commitCreatesExactlyOneOutboxEventAndReplayDoesNotDuplicateIt",
+          "type": "java.util.NoSuchElementException",
+          "message": "java.util.NoSuchElementException: List is empty."
+        },
+        {
+          "test": "outboxInsertFailureRollsBackSaleStockCashAndReceipt",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: Expected injected write failure"
+        }
+      ],
+      "description": "Omit durable transactional outbox insertion",
+      "old": "        db.saleOutboxDao().insert(SaleOutboxEntity(eventId = UUID.randomUUID().toString(), operationId = op,\n            merchantId = merchant, aggregateId = id, aggregateRevision = db.saleOutboxDao().revision(merchant, id) + 1,\n            eventType = kind, payloadVersion = 1, payload = Gson().toJson(payload), createdAt = now, updatedAt = now))\n",
+      "new": "",
+      "result": "KILLED"
+    }
+  ],
+  "baseline": {
+    "label": "baseline",
+    "exitCode": 0,
+    "seconds": 82.55,
+    "selectedTests": [
+      "commitCreatesExactlyOneOutboxEventAndReplayDoesNotDuplicateIt",
+      "concurrentLastStockAllowsOnlyOneSale",
+      "fullReturnDeletionDoesNotRestoreOrRefundTwice",
+      "operationIdCannotBeReusedWithDifferentPayload",
+      "outboxInsertFailureRollsBackSaleStockCashAndReceipt",
+      "partialReturnDeletionRestoresOnlyRemainingStockAndCash",
+      "staleEditIsRejectedAndReplayCannotOverwriteLaterEdit",
+      "successfulCreation"
+    ],
+    "counts": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": []
+  },
+  "isolatedSourceRestored": true
+}
