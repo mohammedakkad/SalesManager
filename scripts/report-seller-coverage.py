@@ -53,10 +53,11 @@ print(s)
 
 if '--check' in sys.argv:
     thresholds = json.loads((output / 'coverage-thresholds.json').read_text())
+    measured_rows = rows + [('weighted overall', k, c, m) for k, (c, m) in total.items()]
     violations = []
     for module, metrics in thresholds.items():
         for metric, minimum in metrics.items():
-            matches = [(c, m) for mod, kind, c, m in rows if mod == module and kind == metric]
+            matches = [(c, m) for mod, kind, c, m in measured_rows if mod == module and kind == metric]
             if len(matches) != 1:
                 violations.append(f'{module}/{metric}: missing measured counter')
                 continue

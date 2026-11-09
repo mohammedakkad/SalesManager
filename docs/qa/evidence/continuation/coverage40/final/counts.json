@@ -1,0 +1,83 @@
+{
+  "app": {
+    "tests": 95,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 26175,
+        "missed": 45439
+      },
+      "BRANCH": {
+        "covered": 643,
+        "missed": 2374
+      },
+      "LINE": {
+        "covered": 3857,
+        "missed": 6410
+      },
+      "COMPLEXITY": {
+        "covered": 1079,
+        "missed": 2952
+      },
+      "METHOD": {
+        "covered": 908,
+        "missed": 1608
+      },
+      "CLASS": {
+        "covered": 306,
+        "missed": 478
+      }
+    }
+  },
+  "salesmanager": {
+    "tests": 161,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 84477,
+        "missed": 108832
+      },
+      "BRANCH": {
+        "covered": 3703,
+        "missed": 10613
+      },
+      "LINE": {
+        "covered": 7668,
+        "missed": 10127
+      },
+      "COMPLEXITY": {
+        "covered": 1956,
+        "missed": 8433
+      },
+      "METHOD": {
+        "covered": 1306,
+        "missed": 1880
+      },
+      "CLASS": {
+        "covered": 556,
+        "missed": 721
+      }
+    }
+  },
+  "apks": [
+    {
+      "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
+      "bytes": 26702050,
+      "sha256": "14fc5a42374da13b462c40c0988dfc8d63307abc0e125008a8abdf2cb9104b94"
+    },
+    {
+      "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+      "bytes": 51760026,
+      "sha256": "cf0609342bb0c23f2720d453d494933fa0670ca4c204a154639f403be39e1c5a"
+    },
+    {
+      "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+      "bytes": 1056025,
+      "sha256": "f7a379c63f9f8b9d5254380f5db9fdadf255aaf591e9d8153f77d2f6910bfeb1"
+    }
+  ]
+}
