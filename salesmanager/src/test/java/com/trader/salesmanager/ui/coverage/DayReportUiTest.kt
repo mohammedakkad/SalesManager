@@ -1,6 +1,9 @@
 package com.trader.salesmanager.ui.coverage
 
 import androidx.compose.ui.test.*
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import com.trader.core.domain.repository.TransactionRepository
 import com.trader.core.domain.model.Transaction
 import com.trader.salesmanager.ui.reports.*
 import io.mockk.*
@@ -21,12 +24,21 @@ class DayReportUiTest:OfflineSellerUiTest() {
         ui.onNode(hasSetTextAction()).performTextInput("نقدي");verify { vm.setQuery("نقدي") }
     }
     @Test fun activeFiltersCanBeClearedWithoutChangingDayTotals() {
-        state.value=state.value.copy(filterPaid=true,filterPaymentMethod="نقد")
-        show { DayTransactionsScreen(1700000000000,{},{},vm) }
-        // The only header icon after back opens the filter sheet.
-        ui.onAllNodes(hasClickAction()).onLast().assertExists()
+        val repository=mockk<TransactionRepository>(relaxed=true)
+        every { repository.getTransactionsByDate(any(),any()) } returns MutableStateFlow(state.value.all)
+        val actual=owned(DayTransactionsViewModel(repository,1700000000000))
+        show { DayTransactionsScreen(1700000000000,{},{},actual) }
+        ui.onAllNodes(hasClickAction())[1].performClick()
+        ui.onNodeWithText("الفلاتر").assertExists()
+        val chip=SemanticsMatcher.expectValue(SemanticsProperties.Role,Role.Checkbox)
+        ui.onNode(hasText("مدفوع") and chip).performClick()
+        ui.onNode(hasText("نقد") and chip).performClick()
+        ui.onNodeWithText("تطبيق").performClick()
         ui.onNodeWithText("نقدي").assertExists();ui.onNodeWithText("آجل").assertDoesNotExist()
-        ui.runOnIdle { state.value=state.value.copy(filterPaid=false,filterPaymentMethod="") }
-        ui.onNodeWithText("آجل").assertExists();ui.onNodeWithText("نقدي").assertDoesNotExist()
+        ui.onAllNodes(hasClickAction())[1].performClick()
+        ui.onNodeWithText("مسح الكل").performClick();ui.onNodeWithText("تطبيق").performClick()
+        ui.onNode(hasScrollToIndexAction()).performScrollToNode(hasText("آجل"))
+        ui.onNodeWithText("آجل").assertExists()
+        ui.runOnIdle { assertEquals(300.0,actual.uiState.value.totalAmount,0.0);assertNull(actual.uiState.value.filterPaid);assertEquals("",actual.uiState.value.filterPaymentMethod) }
     }
 }

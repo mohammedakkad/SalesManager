@@ -51,7 +51,7 @@ data class ReturnScreenState(
         it.lostProfit
     }
     val isFullReturn: Boolean get() = lines.all {
-        !it.canReturn || it.returnQty == it.maxReturnable
+        !it.canReturn || (it.isSelected && it.returnQty == it.maxReturnable)
     }
     val canConfirm: Boolean get() = selectedLines.isNotEmpty() && processingState == ReturnUiState.Idle
 }

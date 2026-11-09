@@ -247,7 +247,7 @@ class ProductRepositoryImpl(
 
     override suspend fun deleteUnit(unitId: String) {
         val mid = merchantId()
-        val productId = dao.getUnitsForProduct(unitId).firstOrNull()?.productId ?: run {
+        val productId = dao.getProductIdForUnit(unitId) ?: run {
             dao.deleteUnit(unitId)
             return
         }
