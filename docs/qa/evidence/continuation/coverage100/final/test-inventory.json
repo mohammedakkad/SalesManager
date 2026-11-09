@@ -1,14 +1,14 @@
 {
   "summary": {
-    "jvmCases": 394,
+    "jvmCases": 400,
     "result": {
-      "passed": 394
+      "passed": 400
     },
     "primaryCategories": {
       "Room/SQLite on JVM": 188,
       "Room migration": 7,
       "Firebase SDK/protocol fake": 22,
-      "Unit/model with deterministic fakes": 85,
+      "Unit/model with deterministic fakes": 91,
       "Compose UI on JVM": 63,
       "Loopback HTTP": 4,
       "WorkManager lifecycle": 6,
@@ -2356,6 +2356,60 @@
       "name": "todayIncludesLastMillisecondAndExcludesAdjacentDays",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/StockReportDayBoundaryTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "walkInAndMissingTransactionsHaveNoCustomerDebtQueries",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "invoiceSortAndTransientEmptyEmissionPreserveLoadedItemsUntilSaleHasNoItems",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "cancellationWhileDeletingDoesNotSetSuccessFlag",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "deletionReportsSuccessOnlyAfterAggregateCommandCompletes",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "refundStreamAndExplicitRefreshUseFreshRepositorySummary",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "liveTransactionRecomputesDerivedBalancesWithoutChangingDebtFormula",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
       "primary": "Unit/model with deterministic fakes",
       "tags": []
     },

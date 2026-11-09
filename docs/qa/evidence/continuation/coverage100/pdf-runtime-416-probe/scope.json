@@ -1,0 +1,7 @@
+{
+  "scope": "Isolated diagnostic, not a passing production test; no custom shadows/fake PDF. Official Robolectric4.16 plus AndroidX runtime, native graphics API28.",
+  "result": "FAILED",
+  "failure": "PdfDocument.startPage throws IllegalStateException: document is closed!",
+  "qualifiedSuiteExcluded": true,
+  "dependenciesInMainRepositoryUnchanged": true
+}
