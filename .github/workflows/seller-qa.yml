@@ -22,11 +22,8 @@ jobs:
           scripts/setup-seller-android.sh 2>&1 | tee "$RUNNER_TEMP/seller-sdk-setup.log"
       - name: Install verified Gradle
         run: |
-          curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip -o /tmp/gradle.zip
-          curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip.sha256 -o /tmp/gradle.sha256
-          echo "$(cat /tmp/gradle.sha256)  /tmp/gradle.zip" | sha256sum -c -
-          unzip -q /tmp/gradle.zip -d /tmp/qa-gradle
-          echo /tmp/qa-gradle/gradle-8.9/bin >> "$GITHUB_PATH"
+          set -o pipefail
+          scripts/setup-seller-gradle.sh 2>&1 | tee "$RUNNER_TEMP/seller-gradle-setup.log"
       - uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
@@ -47,6 +44,7 @@ jobs:
           name: seller-qa-reports
           path: |
             ${{ runner.temp }}/seller-sdk-setup.log
+            ${{ runner.temp }}/seller-gradle-setup.log
             app/build/reports/
             app/build/test-results/
             salesmanager/build/reports/
@@ -69,11 +67,8 @@ jobs:
           scripts/setup-seller-android.sh 2>&1 | tee "$RUNNER_TEMP/seller-sdk-setup.log"
       - name: Install verified Gradle
         run: |
-          curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip -o /tmp/gradle.zip
-          curl -fsSL https://services.gradle.org/distributions/gradle-8.9-bin.zip.sha256 -o /tmp/gradle.sha256
-          echo "$(cat /tmp/gradle.sha256)  /tmp/gradle.zip" | sha256sum -c -
-          unzip -q /tmp/gradle.zip -d /tmp/qa-gradle
-          echo /tmp/qa-gradle/gradle-8.9/bin >> "$GITHUB_PATH"
+          set -o pipefail
+          scripts/setup-seller-gradle.sh 2>&1 | tee "$RUNNER_TEMP/seller-gradle-setup.log"
           python3 scripts/generate-offline-firebase.py
       - name: Enable hosted-runner KVM access
         run: sudo chmod a+rw /dev/kvm
@@ -90,6 +85,7 @@ jobs:
           name: seller-compose-results
           path: |
             ${{ runner.temp }}/seller-sdk-setup.log
+            ${{ runner.temp }}/seller-gradle-setup.log
             salesmanager/build/reports/androidTests/
             salesmanager/build/outputs/androidTest-results/
             /tmp/seller-qa-pdf/
