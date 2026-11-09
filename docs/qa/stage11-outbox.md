@@ -195,3 +195,33 @@ Publication recovered:normal push succeeded and native git ls-remote confirmed r
 ## Hosted evidence — public GitHub interface
 
 Hosted verification now observed through permitted github.com public HTML:Seller QA run42522749601 (https://github.com/mohammedakkad/SalesManager/actions/runs/42522749601) is SUCCESS at audited HEADb243ec4715167496fcbfe9bd5f33bfde0e919a9c. Both seller (8m51s) and compose (6m30s) completed successfully. The emulator step and artifact upload explicitly report success; the summary lists2 artifact packages. This supersedes earlier claims that hosted job conclusions are inaccessible. REST/GraphQL access and remote PR-description editing remain blocked. Exact raw device/JVM/PDF XML and individual PDFs were not downloaded:public UI requires login for logs and anonymous log/artifact endpoints returned404. The audited fail-closed device script requires all4 named instrumentation cases in successful XML and then pulls both nonempty Android PDFs and runs PDFBox. Thus successful pipeline execution is evidenced, but exact2 PDFBox case counts/content and retained PDF bytes have not been independently inspected. Do not equate local211 JVM results with hosted test counts. Release readiness remainsFAIL for server enforcement, partial cross-backend reconciliation, legacy tenant/cache isolation and historical1–21/security/upgrade blockers. Sanitized source evidence:evidence/continuation/stage11-hosted/public-hosted-evidence.json. No production source or workflow changed in this documentation increment; new documentation-HEAD CI is not yet verified.
+
+
+## Seller activation import: late snapshot and rollback repair
+
+Starting HEAD5a382891b2c5687f50237bc9a431e0e2aed55a91. Repository inspection found no maintained Firebase security-rules/functions configuration. Activation stores a merchant code/activated flag locally; this is not a server membership proof. Server-rule changes cannot be inferred from that code, and no deployment/production access was performed.
+
+A separate local defect was reproduced in four real Room tests:3 failed before repair and1 positive import passed. The old code checked outbox history only before the network request and wrote imported rows through individually swallowed exceptions. A committed event or logout while the fetch waited did not prevent a stale import; an injected cash-box insert failure left earlier customer/transaction writes committed. Genuine before evidence:stage11-activation/before.log and before-junit.xml. An initial JUnit setup-return error was corrected and is NOT counted as a behavioral failure.
+
+Seller bindings supply outboxDatabase. Only that path now stages MerchantData plus catalog/unit network reads before a single Room transaction, rechecks current merchant/activation/history under that transaction, writes the complete snapshot without swallowing individual DAO faults, recalculates hasItems, rechecks activation and checks cancellation before completion. Local exceptions roll back all import rows before a class-only warning is logged. Cancellation propagates. The existing best-effort activation Unit API is retained so an import failure does not become an uncaught UI exception; activation preferences are outside Room and may remain set, as before. No successful financial/debt/return calculation changed. Admin bindings with no outboxDatabase follow the original implementation.
+
+```mermaid
+sequenceDiagram
+    participant Activation
+    participant Remote
+    participant DB as Room
+    Activation->>Remote: fetch merchant snapshot and catalog/units
+    Remote-->>Activation: stage immutable response data locally
+    Activation->>DB: BEGIN
+    Activation->>DB: recheck session and absence of merchant outbox history
+    Activation->>DB: customer / payment / transaction / product / invoice / return / cash rows
+    Activation->>DB: recheck session and cancellation
+    Activation->>DB: COMMIT or rollback all snapshot writes
+```
+
+No network I/O is performed inside the Seller import transaction. Staging catalog data increases in-memory retention; large-account import performance remains unbenchmarked. This repair does not establish universal tenant partitioning, cross-device identity safety, or a versioned server pull protocol. Those and activation identity/authorization remain release blockers. The request for the authoritative server-rule source and identity-to-merchant contract remains open.
+
+
+## Seller activation-import acceptance
+
+Seller activation-import increment:4 real Room tests,3 behavioral failures before repair and all4 passing after. Full JVM suite215 PASS (shared89/Seller126),0 failures/errors/skips. Late replies after managed operation/logout no longer import, and injected local failure rolls back the complete import without an uncaught activation UI error. All unchanged coverage gates PASS. Weighted lines4974/28061 =17.7257%, branches1348/17329 =7.7789%; Seller lines1123/17794 =6.3111%, branches705/14312 =4.9259%. Lint0 errors/24 warnings; targeted secret policy PASS; Debug/instrumentation APK/minified unsigned Release builds PASS in4m59s. Room remains25. No Admin source, exported schemas, coverage floors or production signing changed. Staged catalog memory and large-account latency remain unbenchmarked. Activation preferences remain outside Room and the best-effort activation API is preserved; universal tenant partitioning/server authorization remain unresolved. Prior hosted run42522749601 validates b243ec4 only; hosted acceptance for this new source is pending. Release readiness FAIL. Evidence:evidence/continuation/stage11-activation/.

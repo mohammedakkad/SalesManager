@@ -1,6 +1,10 @@
 package com.trader.core.data.repository
 
 import android.content.Context
+import androidx.room.withTransaction
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import androidx.datastore.preferences.core.*
 import com.trader.core.data.local.appDataStore
 import com.google.firebase.database.DataSnapshot
@@ -11,6 +15,7 @@ import com.trader.core.data.local.dao.*
 import com.trader.core.data.local.entity.*
 import com.trader.core.data.remote.ProductFirestoreService
 import com.trader.core.data.remote.FirebaseSyncService
+import com.trader.core.data.remote.MerchantData
 import com.trader.core.domain.model.MerchantStatus
 import com.trader.core.domain.repository.ActivationRepository
 import kotlinx.coroutines.channels.awaitClose
@@ -113,6 +118,16 @@ class ActivationRepositoryImpl(
             }
 
     private suspend fun fetchAndStoreAllData(code: String) {
+        outboxDatabase?.let {
+            try { importSellerSnapshot(it,code) }
+            catch(cancelled:CancellationException) { throw cancelled }
+            catch(error:Exception) {
+                // Preserve best-effort activation API behavior after the complete cache transaction rolls back.
+                android.util.Log.w("SellerActivation","Snapshot import rolled back: ${error.javaClass.simpleName}")
+            }
+            return
+        }
+
         // Unversioned bulk snapshots cannot supersede managed local sale history or tombstones.
         if (outboxDatabase?.saleOutboxDao()?.hasHistoryFor(code) == true) return
         val data = try {
@@ -198,6 +213,43 @@ class ActivationRepositoryImpl(
         }
 
         runCatching { transactionDao.recalculateHasItems() }
+    }
+
+    /** Seller only: stage network data first, then fence and commit the complete local snapshot. */
+    private suspend fun importSellerSnapshot(db:com.trader.core.data.local.db.AppDatabase,code:String) {
+        if(getMerchantCode()!=code || !isActivated() || db.saleOutboxDao().hasHistoryFor(code)) return
+        val data:MerchantData
+        val catalog:List<Pair<com.trader.core.domain.model.Product,List<com.trader.core.domain.model.ProductUnit>>>
+        try {
+            data=firebaseService.fetchAllData(code)
+            catalog=productFirestoreService.fetchAllProducts(code).map { product ->
+                product to productFirestoreService.fetchUnitsForProduct(code,product.id)
+            }
+        } catch(cancelled:CancellationException) { throw cancelled }
+        catch(error:Exception) { return }
+        db.withTransaction {
+            // A sale, tombstone, logout or account switch may have committed while the network was pending.
+            if(getMerchantCode()!=code || !isActivated() || db.saleOutboxDao().hasHistoryFor(code)) return@withTransaction
+            data.customers.forEach { customerDao.insertCustomer(CustomerEntity.fromDomain(it)) }
+            data.paymentMethods.forEach { paymentMethodDao.insertPaymentMethod(PaymentMethodEntity.fromDomain(it)) }
+            val itemTransactions=data.invoiceItems.map { it.transactionId }.toSet()
+            data.transactions.forEach { transactionDao.insertTransaction(TransactionEntity.fromDomain(it.copy(hasItems=it.id in itemTransactions))) }
+            catalog.forEach { (product,units) ->
+                productDao.insertProduct(product.toEntity());productDao.insertUnits(units.map { it.toEntity() })
+            }
+            data.invoiceItems.forEach { item ->
+                invoiceItemDao.insertInvoiceItem(InvoiceItemEntity(item.id,item.transactionId,item.productId,item.productName,
+                    item.unitId,item.unitLabel,item.quantity,item.pricePerUnit,item.totalPrice,code,"SYNCED"))
+            }
+            data.returns.forEach { (invoice,items) ->
+                returnDao.insertReturnWithItems(invoice.copy(syncStatus=SyncStatus.SYNCED).toEntity(),items.map { it.toEntity() })
+            }
+            data.cashBoxes.forEach { cashBoxDao.upsert(CashBoxEntity.fromDomain(it.copy(merchantId=code,syncStatus=SyncStatus.SYNCED))) }
+            data.cashBoxMovements.forEach { cashBoxMovementDao.insert(CashBoxMovementEntity.fromDomain(it.copy(merchantId=code,syncStatus=SyncStatus.SYNCED))) }
+            transactionDao.recalculateHasItems()
+            check(getMerchantCode()==code && isActivated()) { "Activation changed during local import" }
+            currentCoroutineContext().ensureActive()
+        }
     }
 
     private suspend fun fetchProductsAndUnits(code: String) = runCatching {

@@ -38,3 +38,7 @@ The dispatcher uses the current merchant, captures the target in the event, canc
 Restored worker ownership is invalid. Restore cannot remove/rewrite known outbox history, cannot clear a permanent conflict, and revalidates the latest acknowledged revision per aggregate. Historical acknowledgments retain their audit meaning; unresolved chains can require reconciliation if the server is ahead.
 
 Shared legacy tables/APIs outside sale commands and managed returns do not become universally tenant-partitioned or outbox-backed in this increment. Product/manual-cash/other legacy writers need adoption/fencing, and legacy cache ownership on account switching needs a separate tenant-storage migration. Client-side pending guards reduce bypasses but cannot replace deployed server rules or cancel old accepted requests. These remain release blockers/limitations, not verified distributed guarantees.
+
+## Authoritative rule source still required
+
+Repository inspection found no Firebase rules/functions deployment source. User-provided console links point to production data views, not rule definitions; those data pages were not opened. Required input is rule text from each database’s Rules tab plus the actual identity/membership or Custom Claims contract. Do not infer authorization from locally saved activation codes or invent/deploy permissive rules. Seller import fencing is a local integrity improvement and does not establish server enforcement.
