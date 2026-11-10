@@ -38,11 +38,18 @@ class SessionRevokeRoomUiTest:OfflineSellerUiTest() {
     }
     @After fun close(){ui.runOnIdle {vm.viewModelScope.cancel()};db.close();unmockkStatic(FirebaseDatabase::class)}
     private fun display(expected:Int=1){show {SessionsScreen({},vm)};ui.waitUntil(10000){ui.waitForIdle();vm.activeSessions.value.size==expected};ui.waitForIdle()}
+    private fun awaitFailure(){
+        // Room work finishes outside Compose idling. Wait for the actual failure
+        // and released request, then retain the full displayed-error assertion.
+        ui.waitUntil(10000){ui.waitForIdle();vm.revokeError.value!=null&&vm.revoking.value.isEmpty()}
+        ui.waitForIdle()
+    }
     private fun awaitEmpty(){ui.waitUntil(10000){ui.waitForIdle();vm.activeSessions.value.isEmpty()}}
     @Test fun failedRemoteRevokeKeepsRealLocalSessionAndDisplaysFailure() {
         every { reference.removeValue() } returns Tasks.forException<Void>(java.io.IOException("offline fixture"))
         display()
         ui.onNodeWithContentDescription("إنهاء الجلسة").performClick()
+        awaitFailure()
         ui.onNodeWithText("تعذر إنهاء الجلسة، حاول مجددًا").assertIsDisplayed()
         runBlocking {assertNotNull(db.sessionDao().getById("session-a"))}
     }
@@ -66,6 +73,7 @@ class SessionRevokeRoomUiTest:OfflineSellerUiTest() {
     @Test fun rejectedRevokeCanBeRetriedWithoutDeletingLocalSessionEarly() {
         every { reference.removeValue() } returns Tasks.forException<Void>(SecurityException("offline permission fixture"))
         display();ui.onNodeWithContentDescription("إنهاء الجلسة").performClick()
+        awaitFailure()
         ui.onNodeWithText("تعذر إنهاء الجلسة، حاول مجددًا").assertIsDisplayed()
         ui.onNodeWithContentDescription("إنهاء الجلسة").assertIsEnabled()
         runBlocking {assertNotNull(db.sessionDao().getById("session-a"))}
@@ -98,6 +106,7 @@ class SessionRevokeRoomUiTest:OfflineSellerUiTest() {
         every {reference.removeValue()} returns Tasks.forResult<Void>(null)
         db.openHelper.writableDatabase.execSQL("CREATE TRIGGER injected BEFORE DELETE ON sessions BEGIN SELECT RAISE(ABORT,'offline fault'); END")
         display();ui.onNodeWithContentDescription("إنهاء الجلسة").performClick()
+        awaitFailure()
         ui.onNodeWithText("تعذر إنهاء الجلسة، حاول مجددًا").assertIsDisplayed()
         runBlocking {assertNotNull(db.sessionDao().getById("session-a"))}
         db.openHelper.writableDatabase.execSQL("DROP TRIGGER injected")
