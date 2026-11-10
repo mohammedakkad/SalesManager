@@ -1,0 +1,178 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Configuration on demand is an incubating feature.
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 35
+
+This Android Gradle plugin (8.3.2) was tested up to compileSdk = 34.
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 35.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 35 is available.
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=35
+to this project's gradle.properties.
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:generateDebugRFile UP-TO-DATE
+> Task :app:kspDebugKotlin UP-TO-DATE
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :app:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:writeDebugAarMetadata UP-TO-DATE
+> Task :app:checkDebugUnitTestAarMetadata UP-TO-DATE
+> Task :app:compileDebugLibraryResources UP-TO-DATE
+> Task :app:generateDebugUnitTestResValues UP-TO-DATE
+> Task :app:mapDebugUnitTestSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugUnitTestResources UP-TO-DATE
+> Task :app:mergeDebugUnitTestResources UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugUnitTestManifest UP-TO-DATE
+> Task :app:processDebugUnitTestResources UP-TO-DATE
+> Task :app:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:generateDebugUnitTestAssets UP-TO-DATE
+> Task :app:packageDebugAssets UP-TO-DATE
+> Task :app:mergeDebugUnitTestAssets UP-TO-DATE
+> Task :app:packageDebugUnitTestForUnitTest UP-TO-DATE
+> Task :app:generateDebugUnitTestConfig UP-TO-DATE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :salesmanager:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :salesmanager:preBuild UP-TO-DATE
+> Task :salesmanager:preDebugBuild UP-TO-DATE
+> Task :salesmanager:generateDebugBuildConfig UP-TO-DATE
+> Task :salesmanager:checkDebugAarMetadata UP-TO-DATE
+> Task :salesmanager:generateDebugResValues UP-TO-DATE
+> Task :salesmanager:injectCrashlyticsMappingFileIdDebug UP-TO-DATE
+> Task :salesmanager:processDebugGoogleServices
+> Task :salesmanager:mapDebugSourceSetPaths UP-TO-DATE
+> Task :salesmanager:generateDebugResources UP-TO-DATE
+> Task :salesmanager:packageDebugResources
+> Task :salesmanager:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :salesmanager:extractDeepLinksDebug UP-TO-DATE
+> Task :salesmanager:parseDebugLocalResources
+> Task :salesmanager:processDebugMainManifest UP-TO-DATE
+> Task :salesmanager:processDebugManifest UP-TO-DATE
+> Task :salesmanager:processDebugManifestForPackage UP-TO-DATE
+> Task :salesmanager:javaPreCompileDebug UP-TO-DATE
+> Task :salesmanager:preDebugUnitTestBuild UP-TO-DATE
+> Task :salesmanager:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :salesmanager:mergeDebugShaders UP-TO-DATE
+> Task :salesmanager:compileDebugShaders NO-SOURCE
+> Task :salesmanager:generateDebugAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugResources
+> Task :salesmanager:processDebugResources
+> Task :app:kspDebugUnitTestKotlin
+> Task :salesmanager:packageDebugUnitTestForUnitTest
+> Task :salesmanager:generateDebugUnitTestConfig
+> Task :app:compileDebugUnitTestKotlin
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes UP-TO-DATE
+
+> Task :salesmanager:compileDebugKotlin
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/settings/SettingsScreen.kt:621:34 Condition is always 'true'.
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+> Task :app:testDebugUnitTest
+
+ProductFirestoreContractsTest > uploadUnitPreservesCostAlongsidePriceStockAndWeight FAILED
+    java.lang.AssertionError at ProductFirestoreContractsTest.kt:71
+
+ProductFirestoreContractsTest > cancelledCatalogReadRemainsCancellation FAILED
+    java.lang.AssertionError at ProductFirestoreContractsTest.kt:94
+
+ProductFirestoreContractsTest > integerWireAmountsDoNotSilentlyBecomeZero FAILED
+    java.lang.AssertionError at ProductFirestoreContractsTest.kt:81
+
+ProductFirestoreContractsTest > failedUnitReadCannotMasqueradeAsAProductWithNoUnits FAILED
+    java.lang.AssertionError at ProductFirestoreContractsTest.kt:90
+
+ProductFirestoreContractsTest > productListenerPermissionErrorClosesAndRemovesItsRegistration FAILED
+    java.lang.AssertionError at ProductFirestoreContractsTest.kt:102
+
+ProductFirestoreContractsTest > failedCatalogReadCannotMasqueradeAsAnEmptyCatalog FAILED
+    java.lang.AssertionError at ProductFirestoreContractsTest.kt:86
+
+ProductFirestoreContractsTest > cancelledUnitReadRemainsCancellation FAILED
+    java.lang.AssertionError at ProductFirestoreContractsTest.kt:98
+
+ProductFirestoreContractsTest > fetchedUnitPreservesCostAndAllPhysicalUnitFields FAILED
+    java.lang.AssertionError at ProductFirestoreContractsTest.kt:77
+
+SellerRealtimeRecoveryTest > firestoreUnavailableReadUsesTheBoundedRetryBudget FAILED
+    com.google.firebase.firestore.FirebaseFirestoreException at SellerRealtimeRecoveryTest.kt:72
+
+SellerRealtimeRecoveryTest > firestoreDeniedReadDoesNotRetryOrProduceAnEmptySnapshot FAILED
+    com.google.firebase.firestore.FirebaseFirestoreException at SellerRealtimeRecoveryTest.kt:67
+
+ProductSessionRoomTest > logoutCancelsTheCatalogListenerInsteadOfFilteringOutTheSignal FAILED
+    java.lang.AssertionError at ProductSessionRoomTest.kt:41
+
+ProductSessionRoomTest > failedUnitReadCannotCommitAProductWithoutItsRequestedUnits FAILED
+    java.lang.AssertionError at ProductSessionRoomTest.kt:57
+
+ProductSessionRoomTest > lateNonCooperativeUnitReadCannotWriteAfterLogout FAILED
+    java.lang.AssertionError at ProductSessionRoomTest.kt:45
+
+31 tests completed, 13 failed
+
+> Task :app:testDebugUnitTest FAILED
+> Task :salesmanager:compileDebugJavaWithJavac UP-TO-DATE
+> Task :salesmanager:processDebugJavaRes UP-TO-DATE
+> Task :salesmanager:bundleDebugClassesToRuntimeJar
+> Task :salesmanager:bundleDebugClassesToCompileJar
+> Task :salesmanager:compileDebugUnitTestKotlin
+> Task :salesmanager:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :salesmanager:processDebugUnitTestJavaRes UP-TO-DATE
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+> Task :salesmanager:testDebugUnitTest
+
+ReportsUiFlowTest > calendarMonthActionsAreAccessibleAndInvokeTheirActualCallbacks FAILED
+    java.lang.AssertionError at ReportsUiFlowTest.kt:49
+
+1 test completed, 1 failed
+
+> Task :salesmanager:testDebugUnitTest FAILED
+
+FAILURE: Build completed with 2 failures.
+
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':app:testDebugUnitTest'.
+> There were failing tests. See the report at: file:///workspace/SalesManager/app/build/reports/tests/testDebugUnitTest/index.html
+
+* Try:
+> Run with --scan to get full insights.
+==============================================================================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':salesmanager:testDebugUnitTest'.
+> There were failing tests. See the report at: file:///workspace/SalesManager/salesmanager/build/reports/tests/testDebugUnitTest/index.html
+
+* Try:
+> Run with --scan to get full insights.
+==============================================================================
+
+BUILD FAILED in 56s
+65 actionable tasks: 15 executed, 50 up-to-date

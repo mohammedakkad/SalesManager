@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.inventory.detail.ProductDetailViewModelTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-10T16:59:37" hostname="13302589aed6" time="2.969">
+  <properties/>
+  <testcase name="additionPreservesDecimalQuantityAndNoteThenClearsTheDialog" classname="com.trader.salesmanager.ui.inventory.detail.ProductDetailViewModelTest" time="2.891"/>
+  <testcase name="deductionWaitsForRepositoryCompletionBeforeDismissingDialog" classname="com.trader.salesmanager.ui.inventory.detail.ProductDetailViewModelTest" time="0.051"/>
+  <testcase name="deletingNeverAcknowledgesBeforeRepositoryCompletes" classname="com.trader.salesmanager.ui.inventory.detail.ProductDetailViewModelTest" time="0.018"/>
+  <testcase name="invalidAndNonFiniteQuantitiesNeverReachStockRepository" classname="com.trader.salesmanager.ui.inventory.detail.ProductDetailViewModelTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

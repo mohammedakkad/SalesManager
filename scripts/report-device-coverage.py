@@ -59,17 +59,20 @@ def main():
     Path('/tmp/seller-qa-combined-counts.json').write_text(json.dumps(result, indent=2) + '\n')
     lines = ['## Additional Android + JVM measured coverage', '',
              'Original JVM gates and class denominators remain unchanged. No production exclusions.', '',
-             '| Scope | Covered lines | Total lines | Line coverage |', '| --- | ---: | ---: | ---: |']
-    scopes = [(name, row['combined']['LINE']) for name, row in result['modules'].items()]
-    scopes.append(('weighted overall', result['weighted overall']['LINE']))
-    for name, c in scopes:
-        total = c['covered'] + c['missed']
-        lines.append(f"| {name} | {c['covered']} | {total} | {100*c['covered']/total:.4f}% |")
+             '| Scope | Metric | Covered | Total | Coverage |', '| --- | --- | ---: | ---: | ---: |']
+    published = {}
+    for label, kind in (('lines', 'LINE'), ('methods', 'METHOD'), ('branches', 'BRANCH')):
+        rows = [(name, row['combined'][kind]) for name, row in result['modules'].items()]
+        rows.append(('weighted overall', result['weighted overall'][kind]))
+        published[label] = dict(rows)
+        for name, c in rows:
+            total = c['covered'] + c['missed']
+            lines.append(f"| {name} | {kind} | {c['covered']} | {total} | {100*c['covered']/total:.4f}% |")
     lines += ['', 'Native PDF line counters: `' + json.dumps(result['nativePdfLines'], sort_keys=True) + '`', '']
     summary = '\n'.join(lines)
     print(summary)
     if os.environ.get('GITHUB_ACTIONS') == 'true':
-        notice = json.dumps({'lines': {name: c for name, c in scopes},
+        notice = json.dumps({**published,
                              'nativePdfLines': result['nativePdfLines']}, sort_keys=True)
         print('::notice title=Seller measured Android plus JVM coverage' + api_suffix + '::' + notice.replace('%', '%25'))
     if os.environ.get('GITHUB_STEP_SUMMARY'):

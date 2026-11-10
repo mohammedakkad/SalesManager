@@ -12,6 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.coroutineScope
+import com.trader.core.data.remote.recoverSellerRealtime
 import java.util.UUID
 import com.trader.core.util.NetworkMonitor
 import androidx.room.withTransaction
@@ -24,10 +27,9 @@ class ProductRepositoryImpl(
     private val remote: ProductFirestoreService,
     private val activationRepo: ActivationRepository,
     private val networkMonitor: NetworkMonitor,
-    private val useOutboxFence: Boolean = false
+    private val useOutboxFence: Boolean = false,
+    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) : ProductRepository {
-
-    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
         startRealtimeSync()
@@ -49,14 +51,13 @@ class ProductRepositoryImpl(
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
-            .filter {
-                it.isNotEmpty()
-            }
             .distinctUntilChanged()
             .collectLatest {
                 code ->
-                remote.observeProducts(code).collect {
+                if (code.isBlank()) return@collectLatest
+                remote.observeProducts(code).recoverSellerRealtime().collect {
                     remoteProducts ->
+                  coroutineScope {
                     remoteProducts.forEach {
                         remoteProduct ->
                         launch {
@@ -74,18 +75,22 @@ class ProductRepositoryImpl(
                             if (useOutboxFence && database.saleOutboxDao().hasOutstandingFor(code)) return@launch
                             val units = try {
                                 remote.fetchUnitsForProduct(code, remoteProduct.id)
+                            } catch (cancelled: CancellationException) {
+                                throw cancelled
                             } catch (_: Exception) {
-                                null
+                                return@launch
                             }
                             database.withTransaction {
+                                if (activationRepo.getMerchantCode() != code) return@withTransaction
                                 if (useOutboxFence && (database.saleOutboxDao().hasOutstandingFor(code) || database.saleOutboxDao().latestSequence() != sequenceBefore)) return@withTransaction
                                 when {
-                                    units != null && units.isNotEmpty() -> database.upsertProductWithUnitsAndClean(remoteProduct.toEntity(), units.map { it.toEntity() })
+                                    units.isNotEmpty() -> database.upsertProductWithUnitsAndClean(remoteProduct.toEntity(), units.map { it.toEntity() })
                                     local == null -> dao.insertProduct(remoteProduct.toEntity())
                                 }
                             }
                         }
                     }
+                  }
                 }
             }
         }

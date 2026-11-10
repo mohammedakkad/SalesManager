@@ -1,4 +1,4 @@
-> Current audited state (2026-11-10):514 JVM cases PASS; Seller lines 76.1051%, weighted 75.4753%. Target 100% NOT ACHIEVED; release FAIL. See coverage-recovery-progress.md and the current recovery section below. Earlier figures are historical.
+> Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
 
 # Stage8 — actual boundaries and remaining implementation
 
@@ -212,3 +212,15 @@ sequenceDiagram
 The cash helper validates finite inputs, performs SQL balance arithmetic, verifies the resulting balance and writes its ledger inside one Room transaction. A failed post-arithmetic finite check throws before commit, rolling back the balance and any enclosing transfer. Existing finite negative balances are not clamped. No schema change is required; the authentic migration and backup cases remain in the full JVM suite.
 
 Legacy unmanaged returns/writers, tenant/cache ownership and remote protocols are separate limitations. The diagram describes the managed sale path tested by ReturnRecoveryRoomTest, not a guarantee that every legacy writer now has a durable outbox.
+
+## Verified local 95% continuation — 2026-11-10
+
+Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
+
+|Metric (JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
+|---|---:|---:|---:|---:|
+|LINE|13896/17894|77.6573%|22030/28201|78.1178%|
+|METHOD|2390/3200|74.6875%|4208/5715|73.6308%|
+|BRANCH|7151/14696|48.6595%|8766/17807|49.2278%|
+
+Full JVM/Room/JaCoCo/gates, Lint, Debug/AndroidTest APK and minified unsigned Release builds PASS. Lint 0 errors/24 warnings; 12 Python coverage guards and targeted secret/token-log policy PASS. All 514 starting JVM identities retained; 208 shared and 385 Seller cases, zero failures/errors/skips. Actual source protocol fakes do not qualify deployed Firebase rules, deduplication or distributed rollback. Hosted source verification is pending for this commit; the prior successful run is not reassigned to it. No Admin business, database schema, production exclusions, gates or signing material changes. [Details and exact evidence](coverage95-progress.md).

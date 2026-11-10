@@ -43,4 +43,46 @@ class ReportsUiFlowTest:OfflineSellerUiTest() {
         ui.onNode(hasScrollAction()).performScrollToNode(hasText("زبون مدين"))
         ui.onNodeWithText("زبون مدين").assertExists()
     }
+    @Test fun calendarMonthActionsAreAccessibleAndInvokeTheirActualCallbacks() {
+        state.value=ReportsUiState(isLoading=false,calendarMonth=0,calendarYear=2026)
+        show { ReportsScreen({},viewModel=vm) }
+        ui.onNode(hasScrollAction()).performScrollToNode(hasContentDescription("الشهر السابق"))
+        ui.onNodeWithContentDescription("الشهر السابق").performClick();verify(exactly=1){vm.prevMonth()}
+        ui.onNodeWithContentDescription("الشهر التالي").performClick();verify(exactly=1){vm.nextMonth()}
+    }
+
+    @Test fun selectedEmptyDayExplainsThatNoTransactionsExist() {
+        state.value=ReportsUiState(isLoading=false,calendarMonth=0,calendarYear=2026,selectedDay=3)
+        show { ReportsScreen({},viewModel=vm) }
+        ui.onNode(hasScrollAction()).performScrollToNode(hasText("لا توجد عمليات في هذا اليوم"))
+        ui.onNodeWithText("لا توجد عمليات في هذا اليوم").assertIsDisplayed()
+    }
+    @Test fun selectedBusyDayShowsPaidAndDebtRowsAndNavigatesToItsMidnight() {
+        val rows=(1L..7L).map{Transaction(it,1,if(it==1L)"" else "DAY-$it",it*10.0,isPaid=it%2==0L)}
+        state.value=ReportsUiState(isLoading=false,calendarMonth=0,calendarYear=2026,selectedDay=3,
+            selectedDayTransactions=rows,selectedDaySummary=Triple(280.0,120.0,160.0))
+        var selected:Long?=null
+        show { ReportsScreen({},onViewDayTransactions={selected=it},viewModel=vm) }
+        ui.onNode(hasScrollAction()).performScrollToNode(hasText("+ 2 عمليات أخرى"))
+        ui.onNodeWithText("+ 2 عمليات أخرى").assertExists()
+        ui.onNode(hasScrollAction()).performScrollToNode(hasText("عرض كل العمليات (7)"))
+        ui.onNodeWithText("عرض كل العمليات (7)").performScrollTo().assertIsDisplayed().performClick()
+        val expected=java.util.Calendar.getInstance().apply{clear();set(2026,0,3)}.timeInMillis
+        Assert.assertEquals(expected,selected)
+    }
+    @Test fun periodButtonsDispatchTheirOwnPeriodAndDoNotChangeTheCalendarDirectly() {
+        state.value=ReportsUiState(isLoading=false)
+        show { ReportsScreen({},viewModel=vm) }
+        for((text,period) in listOf("اليوم" to ReportPeriod.TODAY,"الأسبوع" to ReportPeriod.WEEK,"الشهر" to ReportPeriod.MONTH)){
+            ui.onNodeWithText(text).performClick();verify(exactly=1){vm.setPeriod(period)}
+        }
+        verify(exactly=0){vm.prevMonth()};verify(exactly=0){vm.nextMonth()}
+    }
+    @Test fun monthReadinessMismatchKeepsBothFinancialExportActionsDisabled() {
+        state.value=ReportsUiState(isLoading=false,calendarMonth=0,calendarYear=2026,
+            monthlyReportMonth=11,monthlyReportYear=2025,isMonthlyReportLoading=false)
+        show { ReportsScreen({},viewModel=vm) }
+        ui.onNodeWithText("مشاركة PDF").assertIsNotEnabled();ui.onNodeWithText("طباعة").assertIsNotEnabled()
+    }
+
 }

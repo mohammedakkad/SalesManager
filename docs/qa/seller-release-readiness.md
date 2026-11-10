@@ -1,4 +1,4 @@
-> Current audited state (2026-11-10):514 JVM cases PASS; Seller lines 76.1051%, weighted 75.4753%. Target 100% NOT ACHIEVED; release FAIL. See coverage-recovery-progress.md and the current recovery section below. Earlier figures are historical.
+> Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
 
 # Seller release readiness — full acceptance FAIL
 
@@ -265,3 +265,15 @@ All eight Seller SDK listener families now close/unregister on terminal errors w
 Full local JVM/Lint/Debug/AndroidTest/minified unsigned Release aggregate PASS in 5m32s, followed by final514 JVM/JaCoCo PASS in 1m37s and current Lint PASS in 37s. A prior asynchronous Room/Compose failure assertion was synchronized with actual completion; the original displayed-error and rollback/retry assertions remain. Lint: 0 errors/24 warnings; targeted secret policy and11 Python guards PASS. Release is unsigned QA output, not signed device-upgrade qualification. Room 2.6.1/schema 25/authentic22–25 and seven migration cases remain; no new DDL, destructive fallback, Admin business logic, production service access or signing material.
 
 The explicit remaining plan has **56 work items: 23 NOT TESTED, 32 BLOCKED, one PARTIAL**. Nine client/input items close; two discovered follow-ups are added openly. P0/P1 deployed authorization/revision fencing, distributed reconciliation, legacy tenant/cache/writer ownership, authentic historical1–21 fixtures, signed upgrades, and broader security/device/performance work remain. Release readiness **FAIL**. [Arabic details](test-completion-status-ar.md), [structured qualification](evidence/continuation/coverage-recovery/final/qualification.json), [actual per-API runtime](evidence/continuation/coverage-recovery/hosted/run-42836384853.json).
+
+## Verified local 95% continuation — 2026-11-10
+
+Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
+
+|Metric (JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
+|---|---:|---:|---:|---:|
+|LINE|13896/17894|77.6573%|22030/28201|78.1178%|
+|METHOD|2390/3200|74.6875%|4208/5715|73.6308%|
+|BRANCH|7151/14696|48.6595%|8766/17807|49.2278%|
+
+Full JVM/Room/JaCoCo/gates, Lint, Debug/AndroidTest APK and minified unsigned Release builds PASS. Lint 0 errors/24 warnings; 12 Python coverage guards and targeted secret/token-log policy PASS. All 514 starting JVM identities retained; 208 shared and 385 Seller cases, zero failures/errors/skips. Actual source protocol fakes do not qualify deployed Firebase rules, deduplication or distributed rollback. Hosted source verification is pending for this commit; the prior successful run is not reassigned to it. No Admin business, database schema, production exclusions, gates or signing material changes. [Details and exact evidence](coverage95-progress.md).

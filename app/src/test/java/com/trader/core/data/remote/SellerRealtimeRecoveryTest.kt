@@ -64,4 +64,15 @@ class SellerRealtimeRecoveryTest {
         assertEquals(listOf("m1","m2"),attempts);assertEquals(listOf("m2"),values)
         merchant.value="";runCurrent();job.cancelAndJoin()
     }
+    @Test fun firestoreDeniedReadDoesNotRetryOrProduceAnEmptySnapshot()=runTest {
+        var attempts=0
+        val values=flow<List<String>>{attempts++;throw com.google.firebase.firestore.FirebaseFirestoreException("offline denied",com.google.firebase.firestore.FirebaseFirestoreException.Code.PERMISSION_DENIED)}.recoverSellerRealtime().toList()
+        assertEquals(1,attempts);assertTrue(values.isEmpty());assertEquals(0,currentTime)
+    }
+    @Test fun firestoreUnavailableReadUsesTheBoundedRetryBudget()=runTest {
+        var attempts=0
+        flow<Int>{attempts++;throw com.google.firebase.firestore.FirebaseFirestoreException("offline unavailable",com.google.firebase.firestore.FirebaseFirestoreException.Code.UNAVAILABLE)}.recoverSellerRealtime().collect()
+        assertEquals(3,attempts);assertEquals(1500,currentTime)
+    }
+
 }

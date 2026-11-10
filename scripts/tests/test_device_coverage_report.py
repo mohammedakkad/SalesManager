@@ -3,6 +3,11 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+import json
+import io
+import os
+from contextlib import redirect_stdout
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('device_report', Path(__file__).parents[1] / 'report-device-coverage.py')
 report = importlib.util.module_from_spec(spec)
@@ -65,6 +70,26 @@ class DeviceCoverageReportTest(unittest.TestCase):
         self.change('salesmanager', 'covered="1" missed="1"', 'covered="0" missed="2"')
         with self.assertRaisesRegex(ValueError, 'Native PDF'):
             report.measured()
+
+    def test_public_summary_exposes_line_method_and_branch_counters_without_changing_gates(self):
+        actual_path = Path
+        def isolated(value):
+            path = actual_path(value)
+            return report.ROOT / path.name if str(path).startswith('/tmp/seller-qa-') else path
+        (report.ROOT / 'seller-qa-combined-coverage.log').write_text('')
+        output = io.StringIO()
+        with patch.object(report, 'Path', side_effect=isolated), patch.dict(os.environ, {
+            'GITHUB_ACTIONS': 'true', 'SELLER_QA_ANDROID_API_ACTUAL': '28',
+            'GITHUB_STEP_SUMMARY': str(report.ROOT / 'summary.md')
+        }), redirect_stdout(output):
+            report.main()
+        notice = next(line for line in output.getvalue().splitlines()
+                      if line.startswith('::notice title=Seller measured Android plus JVM coverage'))
+        payload = json.loads(notice.split('::', 2)[2])
+        for metric in ('lines', 'methods', 'branches'):
+            self.assertEqual({'covered': 160, 'missed': 40}, payload[metric]['weighted overall'])
+            self.assertEqual({'covered': 80, 'missed': 20}, payload[metric]['salesmanager'])
+        self.assertEqual(70, report.measured()['modules']['salesmanager']['jvm']['LINE']['covered'])
 
 
 if __name__ == '__main__':

@@ -527,7 +527,7 @@ private fun CalendarCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onPrev) {
-                    Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, null)
+                    Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, "الشهر السابق")
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -541,7 +541,7 @@ private fun CalendarCard(
                     )
                 }
                 IconButton(onClick = onNext) {
-                    Icon(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, null)
+                    Icon(Icons.AutoMirrored.Rounded.KeyboardArrowLeft, "الشهر التالي")
                 }
             }
 

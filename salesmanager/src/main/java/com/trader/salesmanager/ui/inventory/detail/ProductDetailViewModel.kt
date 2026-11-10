@@ -80,7 +80,7 @@ class ProductDetailViewModel(
 
     fun applyAdjust() {
         val a = _adjust.value
-        val qty = a.quantity.toDoubleOrNull() ?: return
+        val qty = a.quantity.toDoubleOrNull()?.takeIf { it.isFinite() && it > 0 } ?: return
         viewModelScope.launch {
             _isSaving.value = true
             stockRepo.manualAdjust(

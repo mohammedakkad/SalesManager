@@ -1,4 +1,4 @@
-> Current audited state (2026-11-10):514 JVM cases PASS; Seller lines 76.1051%, weighted 75.4753%. Target 100% NOT ACHIEVED; release FAIL. See coverage-recovery-progress.md and the current recovery section below. Earlier figures are historical.
+> Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
 
 # Stage 11 — durable Seller sale outbox
 
@@ -373,3 +373,15 @@ The explicit remaining plan has **56 work items: 23 NOT TESTED, 32 BLOCKED, one 
 The new typed SDK errors affect the eight Seller realtime read streams. Recovery remains inside each merchant's collectLatest boundary: transient failures receive two delayed retries, denied/expired credentials receive none, and cancellation removes the subscription and cancels backoff. No empty snapshot is synthesized. A terminal warning keeps the outer merchant observer available for a later session; user-visible exhausted-listener status and an explicit same-session retry action are not implemented.
 
 This does not change outbox claim/lease/revision/acknowledgment state or the Firebase write protocol. Managed returns now reuse unchanged client request identities during retries, so the existing transactional operation journal returns the prior committed result. Actual draft edits remain new intents; the pending client request is in memory. No new exactly-once, server authorization, cross-backend atomicity or OS process-restoration guarantee is claimed.
+
+## Verified local 95% continuation — 2026-11-10
+
+Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
+
+|Metric (JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
+|---|---:|---:|---:|---:|
+|LINE|13896/17894|77.6573%|22030/28201|78.1178%|
+|METHOD|2390/3200|74.6875%|4208/5715|73.6308%|
+|BRANCH|7151/14696|48.6595%|8766/17807|49.2278%|
+
+Full JVM/Room/JaCoCo/gates, Lint, Debug/AndroidTest APK and minified unsigned Release builds PASS. Lint 0 errors/24 warnings; 12 Python coverage guards and targeted secret/token-log policy PASS. All 514 starting JVM identities retained; 208 shared and 385 Seller cases, zero failures/errors/skips. Actual source protocol fakes do not qualify deployed Firebase rules, deduplication or distributed rollback. Hosted source verification is pending for this commit; the prior successful run is not reassigned to it. No Admin business, database schema, production exclusions, gates or signing material changes. [Details and exact evidence](coverage95-progress.md).

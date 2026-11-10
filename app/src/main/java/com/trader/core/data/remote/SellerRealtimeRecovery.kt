@@ -2,6 +2,7 @@ package com.trader.core.data.remote
 
 import android.util.Log
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -21,12 +22,19 @@ class SellerRealtimeException(val databaseCode: Int, cause: Throwable? = null) :
 internal fun <T> Flow<T>.recoverSellerRealtime(): Flow<T> = retryWhen { failure, attempt ->
     val code = (failure as? SellerRealtimeException)?.databaseCode
     val transient = code == DatabaseError.DISCONNECTED || code == DatabaseError.NETWORK_ERROR ||
-        code == DatabaseError.UNAVAILABLE
+        code == DatabaseError.UNAVAILABLE || (failure is FirebaseFirestoreException && failure.code in setOf(
+            FirebaseFirestoreException.Code.UNAVAILABLE, FirebaseFirestoreException.Code.DEADLINE_EXCEEDED,
+            FirebaseFirestoreException.Code.RESOURCE_EXHAUSTED, FirebaseFirestoreException.Code.ABORTED))
     if (transient && attempt < 2) {
         delay(500L shl attempt.toInt())
         true
     } else false
 }.catch { failure ->
-    if (failure is CancellationException || failure !is SellerRealtimeException) throw failure
-    Log.w("SellerRealtime", "Realtime listener stopped (code=${failure.databaseCode}); next merchant session can resubscribe")
+    if (failure is CancellationException) throw failure
+    val code = when (failure) {
+        is SellerRealtimeException -> failure.databaseCode.toString()
+        is FirebaseFirestoreException -> failure.code.name
+        else -> throw failure
+    }
+    Log.w("SellerRealtime", "Realtime listener stopped (code=$code); next merchant session can resubscribe")
 }

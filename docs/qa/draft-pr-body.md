@@ -1,7 +1,13 @@
-Seller return retries now preserve immutable invoice/item identities within the unchanged draft. A real Room regression previously committed two refunds after losing the first committed result; retry now keeps one sale/cash/stock/outbox effect. Submission, cancellation, loading failures and numeric boundaries are guarded without changing monetary formulas. Eight Seller read listeners report terminal errors, use bounded transient retries and cancel payment/employee subscriptions on logout. Nonfinite cash inputs and SQL balance overflow roll back before ledger commit.
+Seller audit continuation: catalog integrity, safe navigation and measured coverage
 
-Validation at `59413ed14a306df0fff2d7127cc2ad0c90217971`:514 JVM cases plus11 Python guards PASS;67 JVM cases added sinceb9c978f, all447 starting identities retained.43 distinct pre-repair regression cases are documented. Seller JVM lines13619/17895 = 76.1051%, weighted21278/28192 = 75.4753%; no weakened gate or exclusion. Lint0errors/24warnings; Debug, AndroidTest and minified unsigned Release builds PASS.
+Catalog synchronization previously lost unit cost, treated failed reads as empty data and let merchant child reads survive logout. Seller catalog processing now preserves numeric/cost fields, fails malformed numeric snapshots as a whole and owns reads within the active merchant scope. Notification navigation waits for the graph; URI input round trips once. Manual stock adjustment rejects nonfinite quantities.
 
-[Hosted run 42836384853](https://github.com/mohammedakkad/SalesManager/actions/runs/42836384853) succeeds: seller and compose on API24/28/33/35. Each lane has7 actual Android and5 real PDFBox cases, actual PDF paths/hashes and preserved artifacts. API28 additional Android+JVM lines: Seller14624/17895 = 81.7212%, weighted22300/28192 = 79.1005%. Repeated API executions are not new cases.
+|Metric (JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
+|---|---:|---:|---:|---:|
+|LINE|13896/17894|77.6573%|22030/28201|78.1178%|
+|METHOD|2390/3200|74.6875%|4208/5715|73.6308%|
+|BRANCH|7151/14696|48.6595%|8766/17807|49.2278%|
 
-The100% target remains NOT ACHIEVED; release readinessFAIL.56 work items remain:23 NOT TESTED,32 BLOCKED,one PARTIAL. Deployed authorization/revision fencing, cross-backend reconciliation, legacy tenant/cache ownership, listener status/retry integration, remote snapshot quarantine, authentic historical1–21 fixtures and broader signed/security/device/performance qualification remain unresolved. Room2.6.1/schema25 and seven migration cases retained; no Admin logic, production services, destructive migrations, production signing or merge. Detailed accounting:docs/qa/test-completion-status-ar.md.
+Validation: 593 JVM PASS (79 new), 12 Python guards PASS, unchanged gates, Lint 0 errors/24 warnings, Debug/AndroidTest/minified unsigned Release builds PASS. Hosted verification for this source is pending. No Admin business changes, destructive migration, signing inputs or exactly-once distributed claims.
+
+The 95% target remains unmet. Release readiness FAIL: server authorization/revision fencing, reconciliation, historical migrations1–21 and broader device/security/performance qualification remain open. See docs/qa/coverage95-progress.md. Keep PR51 Draft and unmerged.
