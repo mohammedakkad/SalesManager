@@ -307,7 +307,7 @@ fun AddEditTransactionScreen(
             Button(
                 // 🔴 تعطيل الزر إذا كان التطبيق يحفظ الآن أو إذا تم الحفظ بنجاح
                 onClick = viewModel::save,
-                enabled = !uiState.isLoading && !uiState.isSaved,
+                enabled = !uiState.isLoading && !uiState.isSaved && !uiState.isRestoringLines,
                 modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
@@ -327,7 +327,11 @@ fun AddEditTransactionScreen(
                     Icon(Icons.Rounded.Save, null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = if (uiState.isSaved) "تم الحفظ بنجاح" else "حفظ العملية",
+                        text = when {
+                            uiState.isSaved -> "تم الحفظ بنجاح"
+                            uiState.isRestoringLines -> "جارٍ تجهيز الأصناف"
+                            else -> "حفظ العملية"
+                        },
                         fontWeight = FontWeight.Bold
                     )
                 }

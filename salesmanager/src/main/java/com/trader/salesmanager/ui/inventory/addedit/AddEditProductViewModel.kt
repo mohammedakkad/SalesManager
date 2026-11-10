@@ -21,23 +21,14 @@ import java.util.UUID
  * يُصفّي المدخل للسماح بالأرقام الموجبة فقط (عشرية).
  */
 private fun String.filterPositiveDecimal(): String {
-    val filtered = this
-    .filter {
-        it.isDigit() || it == '.'
-    }
-    .let {
-        s ->
-        val dotIdx = s.indexOf('.')
-        if (dotIdx >= 0) s.substring(0, dotIdx + 1) + s.substring(dotIdx + 1).filter {
-            it.isDigit()
-        } else s
-    }
-    .trimStart('0').let {
-        if (it.startsWith('.') || it.isEmpty()) it else it
-    }
-    return filtered.ifEmpty {
-        ""
-    }
+    val digits = filter { it.isDigit() || it == '.' }
+    val dot = digits.indexOf('.')
+    val normalized = if (dot >= 0) {
+        digits.substring(0, dot + 1) + digits.substring(dot + 1).filter { it.isDigit() }
+    } else digits
+    val trimmed = normalized.trimStart('0')
+    // A typed zero is distinct from clearing an optional field with a nonzero default.
+    return trimmed.ifEmpty { if (normalized.isEmpty()) "" else "0" }
 }
 
 data class UnitDraft(
@@ -71,7 +62,11 @@ data class AddEditProductUiState(
     get() = name.isNotBlank()
     && units.isNotEmpty()
     && units.all {
-        it.unitLabel.isNotBlank() && (it.price.toDoubleOrNull() ?: -1.0) > 0
+        it.unitLabel.isNotBlank() &&
+            it.price.toDoubleOrNull()?.let { price -> price.isFinite() && price > 0 } == true &&
+            listOf(it.costPrice, it.quantityInStock, it.lowStockThreshold).all { raw ->
+                raw.toDoubleOrNull()?.isFinite() != false
+            }
     }
     && barcodeConflict == null
     && !barcodeChecking
@@ -86,6 +81,8 @@ class AddEditProductViewModel(
 
     /** Job لإلغاء التحقق السابق عند كل ضغطة جديدة (debounce يدوي) */
     private var barcodeCheckJob: Job? = null
+    private var barcodeValidationRevision = 0L
+    private var persistedUnitIds: Set<String> = emptySet()
 
     fun initWithBarcode(barcode: String) {
         _state.update {
@@ -97,6 +94,9 @@ class AddEditProductViewModel(
     fun loadProduct(productId: String) {
         viewModelScope.launch {
             val p = productRepo.getProductById(productId) ?: return@launch
+            barcodeCheckJob?.cancel()
+            barcodeValidationRevision += 1
+            persistedUnitIds = p.units.map { it.id }.toSet()
             _state.update {
                 state ->
                 state.copy(
@@ -105,6 +105,8 @@ class AddEditProductViewModel(
                     name = p.product.name,
                     category = p.product.category,
                     isEditing = true,
+                    barcodeChecking = false,
+                    barcodeConflict = null,
                     units = p.units.map {
                         u ->
                         UnitDraft(
@@ -145,25 +147,29 @@ class AddEditProductViewModel(
 
     private fun validateBarcode(barcode: String) {
         barcodeCheckJob?.cancel()
-        if (barcode.isBlank()) {
-            _state.update {
-                it.copy(barcodeConflict = null, barcodeChecking = false)
-            }
-            return
+        val revision = ++barcodeValidationRevision
+        val productId = _state.value.productId
+        fun isCurrent() = revision == barcodeValidationRevision &&
+            _state.value.barcode == barcode && _state.value.productId == productId
+        _state.update {
+            it.copy(barcodeConflict = null, barcodeChecking = barcode.isNotBlank(), error = null)
         }
+        if (barcode.isBlank()) return
         barcodeCheckJob = viewModelScope.launch {
-            _state.update {
-                it.copy(barcodeChecking = true)
-            }
-            delay(350) // debounce — انتظر توقف الكتابة
-            val conflictName = productRepo.getBarcodeConflict(barcode, _state.value.productId)
-            _state.update {
-                it.copy(
-                    barcodeChecking = false,
-                    barcodeConflict = conflictName?.let {
-                        name -> "مستخدم للصنف: $name"
-                    }
-                )
+            try {
+                delay(350)
+                val conflictName = productRepo.getBarcodeConflict(barcode, productId)
+                if (isCurrent()) {
+                    _state.update { state -> state.copy(
+                        barcodeConflict = conflictName?.let { "مستخدم للصنف: $it" }
+                    ) }
+                }
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                if (isCurrent()) _state.update { it.copy(error = "تعذر التحقق من الباركود، حاول مجددًا") }
+            } finally {
+                if (isCurrent()) _state.update { it.copy(barcodeChecking = false) }
             }
         }
     }
@@ -190,9 +196,8 @@ class AddEditProductViewModel(
                 i, u -> if (i == 0) u.copy(isDefault = true) else u
             } else list
 
-            // ✅ نتتبع ID الوحدة المحذوفة فقط إذا كانت موجودة في DB (id غير فارغ)
-            // الوحدات الجديدة (لم تُحفظ بعد) لا نحتاج حذفها من Firestore
-            val newDeleted = if (removed.id.isNotEmpty())
+            // Only persisted identities belong in the deletion request. New drafts also have UUIDs.
+            val newDeleted = if (removed.id in persistedUnitIds)
                 s.deletedUnitIds + removed.id
             else s.deletedUnitIds
 

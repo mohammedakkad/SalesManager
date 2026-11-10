@@ -44,7 +44,8 @@ data class AddEditTransactionUiState(
     val userEditedLines: Boolean = false,
     val baseAmount: Double = 0.0,
     // ✅ مشكلة 3: نحفظ ID طريقة الدفع هنا حتى يتم ربطها بعد تحميل القائمة
-    val pendingPaymentMethodId: Long? = null
+    val pendingPaymentMethodId: Long? = null,
+    val isRestoringLines: Boolean = false
 )
 
 class AddEditTransactionViewModel(
@@ -67,6 +68,8 @@ class AddEditTransactionViewModel(
     private var loadedItems: List<InvoiceItem> = emptyList()
     private var editingId: Long? = null
     private var isSavingInProgress = false
+    private var invoiceDraftRevision = 0L
+    private var invoiceDraftJob: kotlinx.coroutines.Job? = null
 
     init {
         viewModelScope.launch {
@@ -196,18 +199,15 @@ class AddEditTransactionViewModel(
     }
 
     fun applyInvoiceLinesFromJson(json: String) {
-        // ✅ حل race condition:
-        // نُعيِّن userEditedLines=true و hasItems=true فوراً (synchronously) قبل الـ coroutine.
-        // هكذا إذا انتهى loadTransaction بعدنا، يرى userEditedLines=true ولا يمسح شيئاً.
-        _uiState.update {
-            it.copy(userEditedLines = true, hasItems = true)
-        }
-
-        viewModelScope.launch {
+        val revision = ++invoiceDraftRevision
+        invoiceDraftJob?.cancel()
+        _uiState.update { it.copy(isRestoringLines = true) }
+        invoiceDraftJob = viewModelScope.launch {
             try {
                 val arr = org.json.JSONArray(json)
-                if (arr.length() == 0) return@launch
-
+                // The item editor cannot confirm an empty selection. Preserve the current
+                // invoice when a missing/obsolete navigation draft cannot be restored.
+                require(arr.length() > 0) { "Empty invoice draft" }
                 val rebuilt = mutableListOf<InvoiceLineItem>()
                 for (i in 0 until arr.length()) {
                     val obj = arr.getJSONObject(i)
@@ -218,34 +218,40 @@ class AddEditTransactionViewModel(
                     val weightUnit = runCatching {
                         SaleWeightUnit.valueOf(obj.optString("displayWeightUnit", "KG"))
                     }.getOrDefault(SaleWeightUnit.KG)
-                    val productWithUnits = productRepo.getProductById(productId) ?: continue
-                    val unit = productWithUnits.units.firstOrNull {
-                        it.id == unitId
-                    } ?: continue
-                    rebuilt += InvoiceLineItem(
-                        product = productWithUnits,
+                    val product = productRepo.getProductById(productId) ?: error("Draft product is unavailable")
+                    val unit = product.units.firstOrNull { it.id == unitId } ?: error("Draft unit is unavailable")
+                    val line = InvoiceLineItem(
+                        product = product,
                         selectedUnit = unit,
                         displayQty = displayQty,
                         displayWeightUnit = weightUnit,
                         customPrice = if (price != unit.price) price else null
                     )
+                    require(price.isFinite() && price >= 0 && displayQty.isFinite() && displayQty > 0 &&
+                        line.quantity.isFinite() && line.quantity > 0 && line.totalPrice.isFinite())
+                    rebuilt += line
                 }
-
-                // ✅ المبلغ = الأصناف + المبلغ الأصلي (إذا كانت العملية بدون أصناف في الأصل)
-                val newTotal = rebuilt.sumOf {
-                    it.totalPrice
-                } + _uiState.value.baseAmount
-                _uiState.update {
-                    it.copy(
+                if (revision != invoiceDraftRevision) return@launch
+                _uiState.update { state ->
+                    if (revision != invoiceDraftRevision) return@update state
+                    val total = rebuilt.sumOf { it.totalPrice } + state.baseAmount
+                    require(total.isFinite())
+                    state.copy(
                         pendingLines = rebuilt,
                         hasItems = rebuilt.isNotEmpty(),
-                        amount = String.format(Locale.US, "%.2f", newTotal)
+                        userEditedLines = true,
+                        amount = String.format(Locale.US, "%.2f", total),
+                        error = null
                     )
                 }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(error = "فشل استعادة البيانات: ${e.message}")
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                if (revision == invoiceDraftRevision) {
+                    _uiState.update { it.copy(error = "تعذر استعادة أصناف الفاتورة، أعد اختيار الأصناف") }
                 }
+            } finally {
+                if (revision == invoiceDraftRevision) _uiState.update { it.copy(isRestoringLines = false) }
             }
         }
     }
@@ -275,7 +281,7 @@ class AddEditTransactionViewModel(
     }
 
     fun save() {
-        if (isSavingInProgress || _uiState.value.isLoading || _uiState.value.isSaved) return
+        if (isSavingInProgress || _uiState.value.isLoading || _uiState.value.isSaved || _uiState.value.isRestoringLines) return
         val state = _uiState.value
         val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
 

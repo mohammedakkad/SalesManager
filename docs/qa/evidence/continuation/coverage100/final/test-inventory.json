@@ -1,15 +1,15 @@
 {
   "summary": {
-    "jvmCases": 409,
+    "jvmCases": 441,
     "result": {
-      "passed": 409
+      "passed": 441
     },
     "primaryCategories": {
       "Room/SQLite on JVM": 188,
       "Room migration": 7,
       "Firebase SDK/protocol fake": 22,
-      "Unit/model with deterministic fakes": 100,
-      "Compose UI on JVM": 63,
+      "Unit/model with deterministic fakes": 123,
+      "Compose UI on JVM": 72,
       "Loopback HTTP": 4,
       "WorkManager lifecycle": 6,
       "Android notification component on JVM": 3,
@@ -18,27 +18,27 @@
       "Real XLSX file content": 4
     },
     "overlappingTags": {
-      "Room/SQLite on JVM": 195,
-      "Firebase SDK/protocol fake": 46,
+      "Room/SQLite on JVM": 203,
+      "Firebase SDK/protocol fake": 54,
       "Room migration": 7,
       "Restart/recovery in test harness": 19,
       "WorkManager lifecycle": 13,
-      "Compose UI on JVM": 63,
+      "Compose UI on JVM": 72,
       "Loopback HTTP": 4,
       "Android notification component on JVM": 3,
       "Native bitmap graphics": 2,
       "Backup format/crypto": 15,
       "Real XLSX file content": 4
     },
-    "remainingDefinedWorkItems": 69,
+    "remainingDefinedWorkItems": 66,
     "remainingByStatus": {
       "BLOCKED": 32,
-      "NOT TESTED": 36,
-      "PARTIAL": 1
+      "PARTIAL": 2,
+      "NOT TESTED": 32
     },
     "remainingByKind": {
       "Historical migration": 21,
-      "Logic boundary": 4,
+      "Logic boundary": 1,
       "SDK failure contract": 8,
       "Firebase/server integration": 8,
       "Android API matrix": 3,
@@ -1552,7 +1552,43 @@
     {
       "module": "salesmanager",
       "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "cancelledDraftLookupDoesNotChangeInvoiceOrReportAFalseFailure",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
       "name": "arabicAmountCustomerPreselectionAndPaymentChangesReachSaleCommand",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "missingProductRejectsWholeDraftInsteadOfDroppingOnlyOneLine",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "saveWaitsForTheSelectedDraftInsteadOfCommittingTheOldInvoice",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "emptyDraftIsReportedWithoutReplacingTheInvoice",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
       "primary": "Unit/model with deterministic fakes",
@@ -1570,7 +1606,34 @@
     {
       "module": "salesmanager",
       "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "malformedDraftPreservesPreviouslyLoadedInvoiceAndEditIntent",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
       "name": "gramsRoundTripAndPersistAsKilogramsWithStableRetryIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "missingUnitRejectsWholeDraftInsteadOfPartiallyApplyingIt",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "olderDraftLookupCannotReplaceANewerSelection",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
       "primary": "Unit/model with deterministic fakes",
@@ -1582,6 +1645,150 @@
       "name": "delayedPaymentMethodsResolvePersistedSelectionAndUnchangedEditPreservesItems",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductBarcodeContractsTest",
+      "name": "nonCooperativeOldReplyCannotOverwriteNewBarcodeResult",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductBarcodeContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductBarcodeContractsTest",
+      "name": "failedCheckCanBeRetriedAndConflictClearsWhenBarcodeIsRemoved",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductBarcodeContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductBarcodeContractsTest",
+      "name": "queryFailureEndsCheckingAndSurfacesAnExplicitRetryableError",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductBarcodeContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductBarcodeContractsTest",
+      "name": "loadingExistingProductInvalidatesAnEarlierCheckOfTheSameBarcode",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductBarcodeContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductBarcodeContractsTest",
+      "name": "editingExcludesThePersistedProductFromItsOwnBarcodeCheck",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductBarcodeContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductBarcodeContractsTest",
+      "name": "typingDebouncesToLatestValueAndClearingCancelsPendingCheck",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductBarcodeContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductBarcodeContractsTest",
+      "name": "barcodeCheckingIsClaimedBeforeDebounceSoDraftCannotSubmitPrematurely",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductBarcodeContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "typedZeroThresholdRemainsZeroRatherThanDefaultFive",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "overflowingCostPriceCannotBeSaved",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "removingPersistedDefaultPromotesRemainingUnitAndDeletesOnlyPersistedIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "overflowingStockQuantityCannotBeSaved",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "overflowingSalePriceCannotBeSaved",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "overflowingLowStockThresholdCannotBeSaved",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "numericEditingPreservesFiniteValuesAndBlankOptionalDefaults",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "removingAnUnsavedDraftDoesNotRequestRemoteUnitDeletion",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductDraftContractsTest",
+      "name": "loadedProductPreservesEditableUnitTypesDefaultsAndWeights",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductDraftContractsTest.kt",
       "primary": "Unit/model with deterministic fakes",
       "tags": []
     },
@@ -3360,6 +3567,17 @@
     {
       "module": "salesmanager",
       "class": "com.trader.salesmanager.ui.coverage.SaleFormUiTest",
+      "name": "restoringInvoiceDisablesSubmissionUntilSelectionIsReady",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SaleFormUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SaleFormUiTest",
       "name": "amountNoteAndDebtSelectionReachApplicationModelBeforeSave",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SaleFormUiTest.kt",
@@ -3377,6 +3595,110 @@
       "primary": "Compose UI on JVM",
       "tags": [
         "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest",
+      "name": "duplicateDirectCallsShareOneInFlightRemoval",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SessionRevokeRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest",
+      "name": "blankIdentityOrMerchantCannotIssueRemoval",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SessionRevokeRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest",
+      "name": "rejectedRevokeCanBeRetriedWithoutDeletingLocalSessionEarly",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SessionRevokeRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest",
+      "name": "localDeleteFailureAfterRemoteAcknowledgmentIsVisibleAndRetryable",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SessionRevokeRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest",
+      "name": "pendingRevokeDisablesAnotherSubmissionUntilAcknowledged",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SessionRevokeRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest",
+      "name": "failedRemoteRevokeKeepsRealLocalSessionAndDisplaysFailure",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SessionRevokeRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest",
+      "name": "realSessionStreamSortsActivityAndDisplaysUnknownDeviceFallback",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SessionRevokeRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest",
+      "name": "cancellationBeforeRemoteCompletionKeepsLocalRecordWithoutFalseError",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SessionRevokeRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
       ]
     },
     {
@@ -4564,30 +4886,9 @@
     {
       "kind": "Logic boundary",
       "id": "LOG-03",
-      "status": "NOT TESTED",
+      "status": "PARTIAL",
       "scenario": "Nonfinite numeric input through cash/product/return UI boundaries",
-      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
-    },
-    {
-      "kind": "Logic boundary",
-      "id": "LOG-05",
-      "status": "NOT TESTED",
-      "scenario": "Out-of-order barcode conflict replies after editing a product",
-      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
-    },
-    {
-      "kind": "Logic boundary",
-      "id": "LOG-07",
-      "status": "NOT TESTED",
-      "scenario": "Empty/malformed/obsolete invoice draft JSON has an explicit user-visible recovery policy",
-      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
-    },
-    {
-      "kind": "Logic boundary",
-      "id": "LOG-08",
-      "status": "NOT TESTED",
-      "scenario": "Session revoke rejection preserves local session and reports failure",
-      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
+      "blocker_or_next_action": "Product UI overflow in price/cost/stock/threshold is rejected before save, with typed-zero/default semantics preserved; cash and return UI boundaries remain unqualified."
     },
     {
       "kind": "SDK failure contract",
@@ -4705,21 +5006,21 @@
       "kind": "Android API matrix",
       "id": "API-24",
       "status": "NOT TESTED",
-      "scenario": "Run the full six instrumentation cases and four Android-PDF verifications on API24",
+      "scenario": "Run the full seven instrumentation cases and five Android-PDF verifications on API24",
       "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
     },
     {
       "kind": "Android API matrix",
       "id": "API-33",
       "status": "NOT TESTED",
-      "scenario": "Run the full six instrumentation cases and four Android-PDF verifications on API33",
+      "scenario": "Run the full seven instrumentation cases and five Android-PDF verifications on API33",
       "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
     },
     {
       "kind": "Android API matrix",
       "id": "API-35",
       "status": "NOT TESTED",
-      "scenario": "Run the full six instrumentation cases and four Android-PDF verifications on API35",
+      "scenario": "Run the full seven instrumentation cases and five Android-PDF verifications on API35",
       "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
     },
     {

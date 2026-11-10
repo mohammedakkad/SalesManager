@@ -10,6 +10,9 @@ import io.mockk.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.runner.RunWith
@@ -135,5 +138,63 @@ class InvoiceEditorContractsTest {
         coVerify { commands.create(any(), "merchant", match { it.customerId==1L && it.amount==123.0 && !it.isPaid && it.paidAt==null && it.paymentType==PaymentType.CASH && it.paymentMethodId==2L && it.note=="fixture" }, emptyList()) }
         assertEquals(9L, vm.uiState.value.savedTransactionId)
         assertNull(vm.serializePendingLines())
+    }
+
+    private suspend fun TestScope.rejectDraft(input:String) {
+        val vm=vm();vm.loadTransaction(7);advanceUntilIdle()
+        val before=vm.uiState.value
+        vm.applyInvoiceLinesFromJson(input);advanceUntilIdle()
+        val after=vm.uiState.value
+        assertNotNull("Invalid or incomplete drafts must be reported",after.error)
+        assertEquals(before.pendingLines,after.pendingLines)
+        assertEquals(before.amount,after.amount)
+        assertEquals(before.hasItems,after.hasItems)
+        assertEquals(before.userEditedLines,after.userEditedLines)
+        vm.save();advanceUntilIdle()
+        coVerify {commands.edit(any(),"merchant",sale,match{it.amount==110.0},null)}
+    }
+    @Test fun malformedDraftPreservesPreviouslyLoadedInvoiceAndEditIntent()=runTest {rejectDraft("{not-json")}
+    @Test fun emptyDraftIsReportedWithoutReplacingTheInvoice()=runTest {rejectDraft("[]")}
+    @Test fun missingProductRejectsWholeDraftInsteadOfDroppingOnlyOneLine()=runTest {
+        coEvery {products.getProductById("missing")} returns null
+        rejectDraft(json().dropLast(1)+",{\"productId\":\"missing\",\"unitId\":\"unit\",\"price\":50,\"displayQty\":1}]")
+    }
+    @Test fun missingUnitRejectsWholeDraftInsteadOfPartiallyApplyingIt()=runTest {
+        rejectDraft(json().dropLast(1)+",{\"productId\":\"product\",\"unitId\":\"missing\",\"price\":50,\"displayQty\":1}]")
+    }
+    @Test fun olderDraftLookupCannotReplaceANewerSelection()=runTest {
+        val vm=vm();vm.loadTransaction(7);advanceUntilIdle()
+        lateinit var old:Continuation<ProductWithUnits?>
+        var lookups=0
+        coEvery {products.getProductById("product")} coAnswers {
+            if(lookups++==0) suspendCoroutine {old=it} else product
+        }
+        vm.applyInvoiceLinesFromJson(json(3.0));runCurrent()
+        vm.applyInvoiceLinesFromJson(json(4.0));runCurrent()
+        assertEquals("210.00",vm.uiState.value.amount)
+        old.resume(product);runCurrent()
+        assertEquals("210.00",vm.uiState.value.amount)
+        assertEquals(4.0,vm.uiState.value.pendingLines.single().quantity,0.0)
+    }
+    @Test fun cancelledDraftLookupDoesNotChangeInvoiceOrReportAFalseFailure()=runTest {
+        val vm=vm();vm.loadTransaction(7);advanceUntilIdle()
+        val before=vm.uiState.value
+        coEvery {products.getProductById("product")} coAnswers {awaitCancellation()}
+        vm.applyInvoiceLinesFromJson(json());runCurrent();vm.viewModelScope.cancel();runCurrent()
+        assertNull(vm.uiState.value.error)
+        assertEquals(before.pendingLines,vm.uiState.value.pendingLines)
+        assertEquals(before.userEditedLines,vm.uiState.value.userEditedLines)
+        coVerify(exactly=0){commands.create(any(),any(),any(),any());commands.edit(any(),any(),any(),any(),any())}
+    }
+
+    @Test fun saveWaitsForTheSelectedDraftInsteadOfCommittingTheOldInvoice()=runTest {
+        val vm=vm();vm.loadTransaction(7);advanceUntilIdle()
+        val lookup=CompletableDeferred<ProductWithUnits?>()
+        coEvery {products.getProductById("product")} coAnswers {lookup.await()}
+        vm.applyInvoiceLinesFromJson(json(3.0));runCurrent()
+        vm.save();runCurrent()
+        coVerify(exactly=0){commands.edit(any(),any(),any(),any(),any())}
+        lookup.complete(product);runCurrent();vm.save();advanceUntilIdle()
+        coVerify(exactly=1){commands.edit(any(),"merchant",sale,match{it.amount==160.0},match{it?.single()?.quantity==3.0})}
     }
 }

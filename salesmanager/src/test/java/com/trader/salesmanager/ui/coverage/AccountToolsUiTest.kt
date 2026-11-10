@@ -23,6 +23,8 @@ class AccountToolsUiTest:OfflineSellerUiTest() {
     }
     @Test fun activeDeviceRevokeUsesSessionIdAndBackIsPreserved() {
         val vm=mockk<SessionsViewModel>(relaxed=true);every{vm.activeSessions} returns MutableStateFlow(listOf(Session("stable","device","جهاز تجريبي","model",1,2)))
+        every { vm.revoking } returns MutableStateFlow(emptySet())
+        every { vm.revokeError } returns MutableStateFlow(null)
         var back=0;show{SessionsScreen({back++},vm)}
         ui.onNodeWithText("جهاز تجريبي").assertExists();ui.onNodeWithContentDescription("إنهاء الجلسة").performClick();verify{vm.revokeSession("stable")}
         ui.onNodeWithContentDescription("رجوع").performClick();assertEquals(1,back)

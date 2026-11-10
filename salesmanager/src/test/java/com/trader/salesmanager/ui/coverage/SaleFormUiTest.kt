@@ -42,4 +42,15 @@ class SaleFormUiTest:OfflineSellerUiTest() {
         ui.onNodeWithText("إضافة أصناف من المخزن (اختياري)").performClick()
         assertEquals("زبون معروف",name);assertEquals("[]",lines)
     }
+
+    @Test fun restoringInvoiceDisablesSubmissionUntilSelectionIsReady() {
+        state.value=state.value.copy(isRestoringLines=true)
+        show {AddEditTransactionScreen(null,7,{},viewModel=vm)}
+        ui.onNode(hasScrollAction()).performScrollToNode(hasText("جارٍ تجهيز الأصناف"))
+        ui.onNodeWithText("جارٍ تجهيز الأصناف").assertIsNotEnabled()
+        verify(exactly=0){vm.save()}
+        ui.runOnIdle {state.value=state.value.copy(isRestoringLines=false)}
+        ui.onNodeWithText("حفظ العملية").assertIsEnabled().performClick()
+        verify(exactly=1){vm.save()}
+    }
 }
