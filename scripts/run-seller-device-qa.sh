@@ -10,6 +10,27 @@ finish_device_qa() {
   adb logcat -d -s SellerQaPdf:I > /tmp/seller-qa-pdf/device-paths.log || true
   if [[ "$result" -ne 0 ]]; then
     adb logcat -b crash -d > /tmp/seller-qa-pdf/device-crash.log || true
+    adb logcat -d -s PackageManager:I PackageInstaller:I installd:V > /tmp/seller-qa-pdf/device-installer.log || true
+    adb shell df -k /data /data/local/tmp > /tmp/seller-qa-pdf/device-storage.log || true
+    if [[ "$qa_stage" == "Android instrumentation" && "${SELLER_QA_ANDROID_API_ACTUAL:-}" == "24" ]]; then
+      seller_probe_apk="$(python3 - <<'PYAPK'
+import json
+from pathlib import Path
+path=Path('salesmanager/build/outputs/apk/debug/output-metadata.json')
+if path.exists():
+    data=json.loads(path.read_text())
+    rows=data.get('elements',[])
+    if len(rows)==1:
+        apk=(path.parent/rows[0]['outputFile']).resolve()
+        if apk.is_file(): print(apk)
+PYAPK
+)"
+      if [[ -n "$seller_probe_apk" ]]; then
+        # Diagnostic only, after preserving the original failure. Installing an offline
+        # QA APK is not a passing instrumentation result and never changes result/$?.
+        timeout 45s adb install --no-streaming -r -t "$seller_probe_apk" > /tmp/seller-qa-pdf/install-probe.log 2>&1 || true
+      fi
+    fi
   fi
   adb pull /data/local/tmp/seller-qa-pdf/. /tmp/seller-qa-pdf-recovery || true
   SELLER_QA_EXIT_CODE="$result" python3 scripts/summarize-device-tests.py --annotation || true

@@ -1313,7 +1313,7 @@ salesmanager,com/trader/salesmanager/sales/outbox/DispatchResult,1,0,0,0,1,1,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/ConditionalProtocol,33,1,64,36,6,0,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/SaleProjection$Companion,35,0,2,2,2,0,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/SaleOutboxLifecycle,0,5,0,0,0,3,0,1
-salesmanager,com/trader/salesmanager/sales/outbox/OutboxDispatcher,77,4,51,29,6,0,1,0
+salesmanager,com/trader/salesmanager/sales/outbox/OutboxDispatcher,78,3,51,29,6,0,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/SaleOutboxLifecycle$start$1$1$1,0,1,0,0,0,1,0,1
 salesmanager,com/trader/salesmanager/sales/outbox/FirebaseOutboxTransport$realtimePhase$2$1,25,0,16,4,3,0,1,0
 salesmanager,com/trader/salesmanager/sales/outbox/SaleOutboxWork,0,11,0,2,0,5,0,1
@@ -1488,7 +1488,7 @@ salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionS
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt$AddEditTransactionScreen$4$2$2$2,2,0,3,5,1,0,1,0
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionViewModel$loadPaymentMethods$1,1,1,0,0,1,0,1,0
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/ComposableSingletons$AddEditTransactionScreenKt$lambda-11$1,2,0,3,5,1,0,1,0
-salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionViewModel$applyInvoiceLinesFromJson$2,44,0,43,25,1,0,1,0
+salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionViewModel$applyInvoiceLinesFromJson$2,44,0,56,12,1,0,1,0
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt$AddEditTransactionScreen$4$2$2,9,2,9,9,1,2,1,0
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt$AddEditTransactionScreen$4$2$4,9,1,7,9,1,0,1,0
 salesmanager,com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreenKt$AddEditTransactionScreen$4$2$5,0,3,0,4,0,1,0,1

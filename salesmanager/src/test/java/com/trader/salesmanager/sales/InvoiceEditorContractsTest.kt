@@ -197,4 +197,30 @@ class InvoiceEditorContractsTest {
         lookup.complete(product);runCurrent();vm.save();advanceUntilIdle()
         coVerify(exactly=1){commands.edit(any(),"merchant",sale,match{it.amount==160.0},match{it?.single()?.quantity==3.0})}
     }
+
+    @Test fun nanPriceDraftCannotReplaceAFiniteInvoice()=runTest {
+        rejectDraft(json().replace("\"price\":50","\"price\":\"NaN\""))
+    }
+    @Test fun nanQuantityDraftCannotReplaceAFiniteInvoice()=runTest {
+        rejectDraft(json().replace("\"displayQty\":3.0","\"displayQty\":\"NaN\""))
+    }
+    @Test fun lineTotalOverflowRejectsTheCompleteDraft()=runTest {
+        rejectDraft(json(2.0).replace("\"price\":50","\"price\":1e308"))
+    }
+    @Test fun weightConversionOverflowRejectsTheCompleteDraft()=runTest {
+        coEvery {products.getProductById("product")} returns product.copy(units=listOf(unit.copy(unitType=UnitType.WEIGHT)))
+        rejectDraft(json(1e308,"POUND").replace("\"price\":50","\"price\":0"))
+    }
+    @Test fun finiteLinesWhoseSumOverflowsCannotReplaceAFiniteInvoice()=runTest {
+        val row=json(1.0).removePrefix("[").removeSuffix("]").replace("\"price\":50","\"price\":1e308")
+        rejectDraft("[$row,$row]")
+    }
+    @Test fun zeroPriceLineRetainsTheExistingPositiveManualBaseAmount()=runTest {
+        val vm=vm();vm.loadTransaction(7);advanceUntilIdle()
+        vm.applyInvoiceLinesFromJson(json(1.0).replace("\"price\":50","\"price\":0"));advanceUntilIdle()
+        assertNull(vm.uiState.value.error)
+        assertEquals("10.00",vm.uiState.value.amount)
+        vm.save();advanceUntilIdle()
+        coVerify {commands.edit(any(),"merchant",sale,match{it.amount==10.0},match{it?.single()?.let{row->row.pricePerUnit==0.0&&row.totalPrice==0.0&&row.quantity==1.0}==true})}
+    }
 }
