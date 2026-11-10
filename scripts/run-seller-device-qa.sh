@@ -4,15 +4,28 @@ cd "$(dirname "$0")/.."
 set -e
 mkdir -p /tmp/seller-qa-pdf
 qa_stage="initialization"
+qa_api_suffix=""
 finish_device_qa() {
   result=$?
   adb logcat -d -s SellerQaPdf:I > /tmp/seller-qa-pdf/device-paths.log || true
   adb pull /data/local/tmp/seller-qa-pdf/. /tmp/seller-qa-pdf-recovery || true
   python3 scripts/summarize-device-tests.py --annotation || true
-  echo "::notice title=Seller device QA exit::stage=$qa_stage exit=$result"
+  echo "::notice title=Seller device QA exit$qa_api_suffix::stage=$qa_stage exit=$result"
   return "$result"
 }
 trap finish_device_qa EXIT
+qa_stage="device SDK identity"
+seller_device_api="$(adb shell getprop ro.build.version.sdk | tr -d '\r\n')"
+if ! [[ "$seller_device_api" =~ ^[0-9]+$ ]]; then
+  echo "::error title=Seller device identity::Missing actual Android SDK identity"
+  exit 1
+fi
+if [[ -n "${SELLER_QA_ANDROID_API:-}" && "$seller_device_api" != "$SELLER_QA_ANDROID_API" ]]; then
+  echo "::error title=Seller device identity::Expected API $SELLER_QA_ANDROID_API but device reports $seller_device_api"
+  exit 1
+fi
+export SELLER_QA_ANDROID_API_ACTUAL="$seller_device_api"
+qa_api_suffix=" [API $seller_device_api]"
 adb shell rm -rf /data/local/tmp/seller-qa-pdf
 qa_stage="JVM coverage"
 gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :app:qaCoverage :salesmanager:qaCoverage

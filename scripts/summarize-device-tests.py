@@ -32,10 +32,12 @@ if device_log.exists():
     for match in re.finditer(r'package=(\S+) source=(\S+) exported=(\S+) sha256=([a-f0-9]{64})', device_log.read_text()):
         package, source, exported, digest = match.groups()
         pdf_paths[exported] = {'package': package, 'source': source, 'exported': exported, 'sha256': digest}
-result = {'source': os.environ.get('GITHUB_SHA', 'local'), 'scope': 'Actual JUnit XML; missing/skipped/duplicate is never success',
+actual_api = os.environ.get('SELLER_QA_ANDROID_API_ACTUAL')
+api_suffix = f' [API {actual_api}]' if actual_api else ''
+result = {'androidApi': int(actual_api) if actual_api else None, 'source': os.environ.get('GITHUB_SHA', 'local'), 'scope': 'Actual JUnit XML; missing/skipped/duplicate is never success',
           'cases': rows, 'actualDevicePdfPaths': sorted(pdf_paths.values(), key=lambda row: row['exported'])}
 Path('/tmp/seller-qa-device-test-summary.json').write_text(json.dumps(result, indent=2) + '\n')
-lines = ['## Seller actual device and PDFBox runtime cases', '', '| Group | Test | Result |', '| --- | --- | --- |']
+lines = ['## Seller actual device and PDFBox runtime cases' + api_suffix, '', '| Group | Test | Result |', '| --- | --- | --- |']
 for row in rows:
     lines.append(f"| {row['group']} | {row['test']} | {row['status']} |")
     if row['details']:
@@ -48,9 +50,9 @@ if '--annotation' in sys.argv and os.environ.get('GITHUB_ACTIONS') == 'true':
     notice = json.dumps([{'test': row['test'], 'result': row['status'], 'detail': row['details'][:300]}
                          for row in rows], ensure_ascii=False)
     notice = notice.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-    print('::notice title=Seller actual device and PDFBox XML::' + notice)
+    print('::notice title=Seller actual device and PDFBox XML' + api_suffix + '::' + notice)
     paths_notice = json.dumps(result['actualDevicePdfPaths'], ensure_ascii=False)
-    print('::notice title=Seller actual Android PDF paths::' + paths_notice.replace('%', '%25'))
+    print('::notice title=Seller actual Android PDF paths' + api_suffix + '::' + paths_notice.replace('%', '%25'))
 if os.environ.get('GITHUB_STEP_SUMMARY'):
     path = Path(os.environ['GITHUB_STEP_SUMMARY'])
     begin, end = '<!-- seller-qa-runtime-start -->', '<!-- seller-qa-runtime-end -->'

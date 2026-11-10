@@ -53,6 +53,9 @@ def main():
     if re.search(r'execution data for class [^\n]*does not match|classes in bundle[^\n]*do not match', log, re.I):
         raise ValueError('Class identity mismatch; refusing combined coverage')
     result = measured()
+    actual_api = os.environ.get('SELLER_QA_ANDROID_API_ACTUAL')
+    api_suffix = f' [API {actual_api}]' if actual_api else ''
+    result['androidApi'] = int(actual_api) if actual_api else None
     Path('/tmp/seller-qa-combined-counts.json').write_text(json.dumps(result, indent=2) + '\n')
     lines = ['## Additional Android + JVM measured coverage', '',
              'Original JVM gates and class denominators remain unchanged. No production exclusions.', '',
@@ -68,7 +71,7 @@ def main():
     if os.environ.get('GITHUB_ACTIONS') == 'true':
         notice = json.dumps({'lines': {name: c for name, c in scopes},
                              'nativePdfLines': result['nativePdfLines']}, sort_keys=True)
-        print('::notice title=Seller measured Android plus JVM coverage::' + notice.replace('%', '%25'))
+        print('::notice title=Seller measured Android plus JVM coverage' + api_suffix + '::' + notice.replace('%', '%25'))
     if os.environ.get('GITHUB_STEP_SUMMARY'):
         with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as f:
             f.write(summary)
