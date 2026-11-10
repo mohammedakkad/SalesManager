@@ -53,6 +53,20 @@ if '--annotation' in sys.argv and os.environ.get('GITHUB_ACTIONS') == 'true':
     print('::notice title=Seller actual device and PDFBox XML' + api_suffix + '::' + notice)
     paths_notice = json.dumps(result['actualDevicePdfPaths'], ensure_ascii=False)
     print('::notice title=Seller actual Android PDF paths' + api_suffix + '::' + paths_notice.replace('%', '%25'))
+    if os.environ.get('SELLER_QA_EXIT_CODE', '0') != '0':
+        diagnostics = {}
+        for key, location, limit in (
+            ('instrumentationGradleTail', '/tmp/seller-qa-instrumentation.log', 8000),
+            ('isolatedDeviceCrashBuffer', '/tmp/seller-qa-pdf/device-crash.log', 8000),
+        ):
+            path = Path(location)
+            if path.exists():
+                diagnostics[key] = '\n'.join(path.read_text(errors='replace').splitlines()[-100:])[-limit:]
+        # Only isolated offline QA packages run here. Publish bounded failure evidence;
+        # missing XML remains NOT EXECUTED and the original failing exit is preserved.
+        detail = json.dumps(diagnostics, ensure_ascii=False).replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+        print('::notice title=Seller Android execution diagnostics' + api_suffix + '::' + detail)
+
 if os.environ.get('GITHUB_STEP_SUMMARY'):
     path = Path(os.environ['GITHUB_STEP_SUMMARY'])
     begin, end = '<!-- seller-qa-runtime-start -->', '<!-- seller-qa-runtime-end -->'

@@ -1,0 +1,5 @@
+# First four-API runtime attempt
+
+Source43b85f270053367462498c4082aae03ffcebda0d, runhttps://github.com/mohammedakkad/SalesManager/actions/runs/42757328279 . SellerSUCCESS. API28/33/35 each have actual7 instrumentation and5 PDFBox PASS plus preserved native paths/hashes. API24 reached the Android instrumentation stage but exited1 without any named XML cases; all12 required runtime cases remain NOT EXECUTED there. No root cause can be inferred from absent XML; raw authenticated logs were unavailable. WorkflowFAILURE. All five artifact packages were published.
+
+The source repair stage6256d32 has both seller/composeSUCCESS inhttps://github.com/mohammedakkad/SalesManager/actions/runs/42756461157 . The four-API expansion is still unqualified until API24 failure is diagnosed and repaired. A follow-up preserves the actual instrumentation Gradle log and isolated device crash buffer and publishes bounded failure diagnostics without changing content assertions, gates or exit status. YAML/shell/Python checks and11 coverage guards pass; new runtime remains pending.
