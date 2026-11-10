@@ -30,18 +30,17 @@
       "Backup format/crypto": 15,
       "Real XLSX file content": 4
     },
-    "remainingDefinedWorkItems": 66,
+    "remainingDefinedWorkItems": 63,
     "remainingByStatus": {
       "BLOCKED": 32,
       "PARTIAL": 2,
-      "NOT TESTED": 32
+      "NOT TESTED": 29
     },
     "remainingByKind": {
       "Historical migration": 21,
       "Logic boundary": 1,
       "SDK failure contract": 8,
       "Firebase/server integration": 8,
-      "Android API matrix": 3,
       "Device/end-to-end": 10,
       "Performance benchmark": 5,
       "Security qualification": 5,
@@ -4942,7 +4941,7 @@
       "id": "LOG-03",
       "status": "PARTIAL",
       "scenario": "Nonfinite numeric input through cash/product/return UI boundaries",
-      "blocker_or_next_action": "Product UI overflow in price/cost/stock/threshold is rejected before save, with typed-zero/default semantics preserved; cash and return UI boundaries remain unqualified."
+      "blocker_or_next_action": "Product UI overflow and invoice draft NaN/quantity/weight/line/sum overflow are rejected before save; typed-zero/default and permitted zero-price invoice semantics are preserved. Cash and return UI boundaries remain unqualified."
     },
     {
       "kind": "SDK failure contract",
@@ -5055,27 +5054,6 @@
       "status": "BLOCKED",
       "scenario": "Legacy manual stock/cash writers cannot overwrite managed sale revisions",
       "blocker_or_next_action": "Complete tenant/aggregate ownership protocol across all writers"
-    },
-    {
-      "kind": "Android API matrix",
-      "id": "API-24",
-      "status": "NOT TESTED",
-      "scenario": "Run the full seven instrumentation cases and five Android-PDF verifications on API24",
-      "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
-    },
-    {
-      "kind": "Android API matrix",
-      "id": "API-33",
-      "status": "NOT TESTED",
-      "scenario": "Run the full seven instrumentation cases and five Android-PDF verifications on API33",
-      "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
-    },
-    {
-      "kind": "Android API matrix",
-      "id": "API-35",
-      "status": "NOT TESTED",
-      "scenario": "Run the full seven instrumentation cases and five Android-PDF verifications on API35",
-      "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
     },
     {
       "kind": "Device/end-to-end",

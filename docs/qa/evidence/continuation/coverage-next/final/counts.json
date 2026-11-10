@@ -32,26 +32,26 @@
     }
   },
   "salesmanager": {
-    "tests": 306,
+    "tests": 312,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
     "coverage": {
       "INSTRUCTION": {
-        "covered": 143624,
-        "missed": 50577
+        "covered": 143652,
+        "missed": 50549
       },
       "BRANCH": {
-        "covered": 6676,
-        "missed": 7770
+        "covered": 6689,
+        "missed": 7757
       },
       "LINE": {
-        "covered": 13439,
-        "missed": 4423
+        "covered": 13440,
+        "missed": 4422
       },
       "COMPLEXITY": {
-        "covered": 3593,
-        "missed": 6869
+        "covered": 3606,
+        "missed": 6856
       },
       "METHOD": {
         "covered": 2302,
@@ -85,5 +85,5 @@
       "sha256": "c28a79f372e587ae7570c95bc10e9107436dacb558bc7ec29c7aefe179762b90"
     }
   ],
-  "scope": "441 module JVM cases: unchanged app135 previously executed/cached, Seller306 executed in current acceptance. New source/device CI pending; no runtime inference from APK compilation."
+  "scope": "447 module JVM cases; shared app135 cached previously executed, Seller312 executed in numeric acceptance. APK hashes and full 5m9s build acceptance are from6256d32; production sources unchanged since that verified build. New matrix runtime tracked separately."
 }

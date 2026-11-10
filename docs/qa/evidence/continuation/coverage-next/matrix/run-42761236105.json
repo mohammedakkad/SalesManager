@@ -1,0 +1,505 @@
+{
+  "source": "4575cea07ef112ee0ecfbfcc234c76beb9ee0199",
+  "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42761236105",
+  "workflowState": {
+    "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+    "conclusion": "WORKFLOW_RUN_CONCLUSION_FAILURE"
+  },
+  "scope": "Actual API-specific public notices from XML, measured EC counters, ADB SDK identity and Android-generated path hashes. Raw authenticated artifacts not downloaded.",
+  "apis": {
+    "24": {
+      "cases": [
+        {
+          "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+          "result": "FAILURE",
+          "detail": ""
+        },
+        {
+          "test": "generateCustomerStatementForHostBalanceVerification",
+          "result": "NOT EXECUTED",
+          "detail": ""
+        },
+        {
+          "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+          "result": "NOT EXECUTED",
+          "detail": ""
+        },
+        {
+          "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+          "result": "NOT EXECUTED",
+          "detail": ""
+        },
+        {
+          "test": "generateSingleInvoiceForHostContentVerification",
+          "result": "FAILURE",
+          "detail": ""
+        },
+        {
+          "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+          "result": "NOT EXECUTED",
+          "detail": ""
+        },
+        {
+          "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+          "result": "NOT EXECUTED",
+          "detail": ""
+        },
+        {
+          "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+          "result": "NOT EXECUTED",
+          "detail": ""
+        },
+        {
+          "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+          "result": "NOT EXECUTED",
+          "detail": ""
+        },
+        {
+          "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+          "result": "NOT EXECUTED",
+          "detail": ""
+        }
+      ],
+      "exit": "stage=Android instrumentation exit=1",
+      "paths": [],
+      "gradleTail": "manager:packageDebug\n> Task :salesmanager:createDebugApkListingFileRedirect\n> Task :salesmanager:mergeLibDexDebugAndroidTest\n> Task :salesmanager:mergeExtDexDebugAndroidTest\n> Task :salesmanager:dexBuilderDebugAndroidTest\n> Task :salesmanager:mergeDebugAndroidTestJniLibFolders\n> Task :salesmanager:mergeDebugAndroidTestNativeLibs NO-SOURCE\n> Task :salesmanager:mergeProjectDexDebugAndroidTest\n> Task :salesmanager:stripDebugAndroidTestDebugSymbols NO-SOURCE\n> Task :salesmanager:validateSigningDebugAndroidTest\n> Task :salesmanager:writeDebugAndroidTestSigningConfigVersions\n> Task :salesmanager:packageDebugAndroidTest\n> Task :salesmanager:createDebugAndroidTestApkListingFileRedirect\n[EmulatorConsole]: Failed to start Emulator console for 5554\n\n> Task :salesmanager:connectedDebugAndroidTest\nadditionalTestOutput is not supported on this device running API level 24 because the additional test output directory could not be found\nStarting 7 tests on emulator-5554 - 7.0\n\ncom.trader.salesmanager.qa.PdfFixtureTest > generateSingleInvoiceForHostContentVerification[emulator-5554 - 7.0] \u001b[31mFAILED \u001b[0m\n\torg.junit.ComparisonFailure: Shell export failed:  expected:<[49e2e853079ce2ca68912502f5fdb551a8c9fcf992c847073d6f024c0c64e6ab]> but was:<[]>\n\tat org.junit.Assert.assertEquals(Assert.java:117)\n\ncom.trader.salesmanager.qa.PdfFixtureTest > exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification[emulator-5554 - 7.0] \u001b[31mFAILED \u001b[0m\n\nTests on emulator-5554 - 7.0 failed: There was 2 failure(s).\nTest run failed to complete. Expected 7 tests, received 3\n\n> Task :salesmanager:connectedDebugAndroidTest FAILED\n\nFAILURE: Build failed with an exception.\n\n* What went wrong:\nExecution failed for task ':salesmanager:connectedDebugAndroidTest'.\n> There were failing tests. See the report at: file:///home/runner/work/SalesManager/SalesManager/salesmanager/build/reports/androidTests/connected/debug/index.html\n\n* Try:\n> Run with --stacktrace option to get the stack trace.\n> Run with --info or --debug option to get more log output.\n> Run with --scan to get full insights.\n> Get more help at https://help.gradle.org.\n\nBUILD FAILED in 3m 50s\n90 actionable tasks: 50 executed, 40 up-to-date\n",
+      "crashBuffer": " denied\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat java.lang.ProcessBuilder.start(ProcessBuilder.java:983)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat java.lang.Runtime.exec(Runtime.java:691)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat java.lang.Runtime.exec(Runtime.java:524)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat java.lang.Runtime.exec(Runtime.java:421)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat android.app.UiAutomationConnection$1.run(UiAutomationConnection.java:286)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: Caused by: java.io.IOException: error=13, Permission denied\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat java.lang.UNIXProcess.forkAndExec(Native Method)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat java.lang.UNIXProcess.<init>(UNIXProcess.java:133)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat java.lang.ProcessImpl.start(ProcessImpl.java:128)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \tat java.lang.ProcessBuilder.start(ProcessBuilder.java:964)\n11-10 05:27:17.274  2858  2957 E AndroidRuntime: \t... 4 more\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: FATAL EXCEPTION: Instr: com.trader.salesmanager.qa.OfflineQaRunner\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: Process: com.trader.salesmanager.debug, PID: 2867\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: java.lang.IllegalStateException: UiAutomation not connected!\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: \tat android.app.UiAutomation.throwIfNotConnectedLocked(UiAutomation.java:1034)\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: \tat android.app.UiAutomation.disconnect(UiAutomation.java:275)\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: \tat android.app.Instrumentation.finish(Instrumentation.java:210)\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: \tat androidx.test.runner.MonitoringInstrumentation.finish(MonitoringInstrumentation.java:409)\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: \tat androidx.test.runner.AndroidJUnitRunner.onStart(AndroidJUnitRunner.java:474)\n11-10 05:27:17.761  2867  2912 E AndroidRuntime: \tat android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:1932)\n",
+      "installerLog": " preferred activity com.android.messaging/.ui.conversation.LaunchConversationActivity for user 0:\n11-10 05:19:10.570  1615  2086 I PackageManager:   Action: \"android.intent.action.SENDTO\"\n11-10 05:19:10.570  1615  2086 I PackageManager:   Category: \"android.intent.category.DEFAULT\"\n11-10 05:19:10.570  1615  2086 I PackageManager:   Scheme: \"mmsto\"\n11-10 05:19:10.570  1615  2086 I PackageManager:   AutoVerify=false\n--------- beginning of crash\n11-10 05:26:52.765  1615  1641 W PackageManager: Package com.trader.salesmanager.debug desires unavailable shared library android.ext.adservices; ignoring!\n11-10 05:27:10.322  1615  1641 W PackageManager: Package com.trader.salesmanager.debug desires unavailable shared library android.ext.adservices; ignoring!\n11-10 05:27:10.334  1615  1641 W PackageManager: Unknown permission android.permission.POST_NOTIFICATIONS in package com.trader.salesmanager.debug\n11-10 05:27:10.334  1615  1641 W PackageManager: Unknown permission android.permission.FOREGROUND_SERVICE in package com.trader.salesmanager.debug\n11-10 05:27:10.334  1615  1641 W PackageManager: Unknown permission com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE in package com.trader.salesmanager.debug\n11-10 05:27:10.334  1615  1641 W PackageManager: Unknown permission com.google.android.gms.permission.AD_ID in package com.trader.salesmanager.debug\n11-10 05:27:10.334  1615  1641 W PackageManager: Unknown permission com.google.android.c2dm.permission.RECEIVE in package com.trader.salesmanager.debug\n11-10 05:27:10.334  1615  1641 W PackageManager: Unknown permission com.google.android.providers.gsf.permission.READ_GSERVICES in package com.trader.salesmanager.debug\n11-10 05:27:10.335  1615  1641 W PackageManager: Unknown permission android.permission.ACCESS_ADSERVICES_ATTRIBUTION in package com.trader.salesmanager.debug\n11-10 05:27:10.335  1615  1641 W PackageManager: Unknown permission android.permission.ACCESS_ADSERVICES_AD_ID in package com.trader.salesmanager.debug\n11-10 05:27:17.933  1615  1641 I PackageManager: Removing old permission: com.trader.salesmanager.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION from package com.trader.salesmanager.debug\n",
+      "storage": "Filesystem     1K-blocks  Used Available Use% Mounted on\n/dev/block/vdc  10335448 82588  10236476   1% /data\n/dev/block/vdc  10335448 82588  10236476   1% /data\n",
+      "installProbe": "/home/runner/work/SalesManager/SalesManager/salesmanager/build/outputs/apk/debug/salesmanager-debug.apk: 1 file pushed, 0 skipped. 245.7 MB/s (60463780 bytes in 0.235s)\nPerforming Push Install\nSuccess\n",
+      "status": "FAILED OR INCOMPLETE",
+      "actualApi": 24
+    },
+    "28": {
+      "cases": [
+        {
+          "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateCustomerStatementForHostBalanceVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateSingleInvoiceForHostContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+          "result": "PASS",
+          "detail": ""
+        }
+      ],
+      "coverage": {
+        "lines": {
+          "app": {
+            "covered": 7611,
+            "missed": 2658,
+            "total": 10269,
+            "percent": 74.11627227578148
+          },
+          "salesmanager": {
+            "covered": 14444,
+            "missed": 3418,
+            "total": 17862,
+            "percent": 80.86440488187213
+          },
+          "weighted overall": {
+            "covered": 22055,
+            "missed": 6076,
+            "total": 28131,
+            "percent": 78.40105221997085
+          }
+        },
+        "nativePdfLines": {
+          "InvoicePdfGenerator.kt": {
+            "covered": 489,
+            "missed": 48
+          },
+          "PdfCanvas.kt": {
+            "covered": 68,
+            "missed": 2
+          },
+          "ReportPdfGenerator.kt": {
+            "covered": 438,
+            "missed": 19
+          }
+        }
+      },
+      "exit": "stage=complete exit=0",
+      "paths": [
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+          "sha256": "00d9e95f3dae8cef08976d281553f99c06fa4f6efe3a28b8b27f8b74dea539dd"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+          "sha256": "9d3ac8b727c5f6877ec453b6ccd8f27b365e1e36876f181a942fbd479821d0c0"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+          "sha256": "ed6b582174dc05d0e4032b10b652ff4c62b897f83e2be9a8cfd8166219860589"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+          "sha256": "a03e57557b6d6fc0d7d263a8eb7588eb4567c57bc510c98fc832e85cbebcd814"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+          "sha256": "e891ac1b978ba6c8f524836c5f7db98889bd7cec74793cba2ba186431e4342d2"
+        }
+      ],
+      "status": "PASS",
+      "instrumentationPass": 7,
+      "pdfBoxPass": 5,
+      "actualApi": 28
+    },
+    "33": {
+      "cases": [
+        {
+          "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateCustomerStatementForHostBalanceVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateSingleInvoiceForHostContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+          "result": "PASS",
+          "detail": ""
+        }
+      ],
+      "coverage": {
+        "lines": {
+          "app": {
+            "covered": 7611,
+            "missed": 2658,
+            "total": 10269,
+            "percent": 74.11627227578148
+          },
+          "salesmanager": {
+            "covered": 14444,
+            "missed": 3418,
+            "total": 17862,
+            "percent": 80.86440488187213
+          },
+          "weighted overall": {
+            "covered": 22055,
+            "missed": 6076,
+            "total": 28131,
+            "percent": 78.40105221997085
+          }
+        },
+        "nativePdfLines": {
+          "InvoicePdfGenerator.kt": {
+            "covered": 489,
+            "missed": 48
+          },
+          "PdfCanvas.kt": {
+            "covered": 68,
+            "missed": 2
+          },
+          "ReportPdfGenerator.kt": {
+            "covered": 438,
+            "missed": 19
+          }
+        }
+      },
+      "exit": "stage=complete exit=0",
+      "paths": [
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+          "sha256": "2221e06be33c4025008b1fc1f9c101aa38414efd41836ce96c7a8e3bbf855c1e"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+          "sha256": "042555da49ff06518baba638b4d8b2d3c459bc18b5da63b700e6bd55192f6dcb"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+          "sha256": "d6837d3e5ce3533c0b01e4ff6daf044909eabe75e651a86c01712c5845d435b5"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+          "sha256": "3129d467ee17136e2b61375d967f223cb04c11c79a027958bbb0133c12986c87"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+          "sha256": "3a39efa8ff8bf5d17e5bd6c71b763e2b522099541759c5a962fe98eeef5795fa"
+        }
+      ],
+      "status": "PASS",
+      "instrumentationPass": 7,
+      "pdfBoxPass": 5,
+      "actualApi": 33
+    },
+    "35": {
+      "cases": [
+        {
+          "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateCustomerStatementForHostBalanceVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateSingleInvoiceForHostContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+          "result": "PASS",
+          "detail": ""
+        }
+      ],
+      "coverage": {
+        "lines": {
+          "app": {
+            "covered": 7611,
+            "missed": 2658,
+            "total": 10269,
+            "percent": 74.11627227578148
+          },
+          "salesmanager": {
+            "covered": 14444,
+            "missed": 3418,
+            "total": 17862,
+            "percent": 80.86440488187213
+          },
+          "weighted overall": {
+            "covered": 22055,
+            "missed": 6076,
+            "total": 28131,
+            "percent": 78.40105221997085
+          }
+        },
+        "nativePdfLines": {
+          "InvoicePdfGenerator.kt": {
+            "covered": 489,
+            "missed": 48
+          },
+          "PdfCanvas.kt": {
+            "covered": 68,
+            "missed": 2
+          },
+          "ReportPdfGenerator.kt": {
+            "covered": 438,
+            "missed": 19
+          }
+        }
+      },
+      "exit": "stage=complete exit=0",
+      "paths": [
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+          "sha256": "a31e5e86a50837a129cfdea58197d970c4b19a6aa9ee43e44b506bfdd45877f4"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+          "sha256": "a50784f7fe6189cd31d0b58f19a3bcde52e9b1a99d6820623d08956e800a8b6a"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+          "sha256": "66b03a12036433120af63b12a1b605678028ec3435580064c1ce1247ef7b0ca7"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+          "sha256": "b260cc3df1baf3a03e7621ec61bf948b7e59851aac13f217b34f4541906a0dfc"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+          "sha256": "34a7e9d120d1134fa375f56f40186c63c9eacf77038d5bf8a3270cc0b904fb32"
+        }
+      ],
+      "status": "PASS",
+      "instrumentationPass": 7,
+      "pdfBoxPass": 5,
+      "actualApi": 35
+    }
+  },
+  "seller": [
+    "completed successfully: "
+  ],
+  "artifactNamesObserved": [
+    "seller-qa-reports",
+    "seller-compose-results-api-24",
+    "seller-compose-results-api-28",
+    "seller-compose-results-api-33",
+    "seller-compose-results-api-35"
+  ]
+}

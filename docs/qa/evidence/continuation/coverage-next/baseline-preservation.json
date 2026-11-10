@@ -1,8 +1,8 @@
 {
   "startingSha": "78bc60543d490cf47317afb832f3d5bf1df6d43e",
   "priorCases": 409,
-  "currentCases": 441,
-  "newCases": 32,
+  "currentCases": 447,
+  "newCases": 38,
   "missingCases": [],
   "newIdentities": [
     [
@@ -14,6 +14,16 @@
       "salesmanager",
       "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
       "emptyDraftIsReportedWithoutReplacingTheInvoice"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "finiteLinesWhoseSumOverflowsCannotReplaceAFiniteInvoice"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "lineTotalOverflowRejectsTheCompleteDraft"
     ],
     [
       "salesmanager",
@@ -33,12 +43,32 @@
     [
       "salesmanager",
       "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "nanPriceDraftCannotReplaceAFiniteInvoice"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "nanQuantityDraftCannotReplaceAFiniteInvoice"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
       "olderDraftLookupCannotReplaceANewerSelection"
     ],
     [
       "salesmanager",
       "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
       "saveWaitsForTheSelectedDraftInsteadOfCommittingTheOldInvoice"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "weightConversionOverflowRejectsTheCompleteDraft"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "zeroPriceLineRetainsTheExistingPositiveManualBaseAmount"
     ],
     [
       "salesmanager",
