@@ -10,6 +10,7 @@ import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.repository.CashBoxRepository
 import com.trader.core.domain.repository.PaymentMethodRepository
 import com.trader.salesmanager.R
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -77,7 +78,7 @@ class BoxesViewModel(
 
     fun setInitialBalance(boxId: String, amountText: String) {
         val amount = amountText.toLatinDigits().toDoubleOrNull()
-        if (amount == null || amount < 0) {
+        if (amount == null || !amount.isFinite() || amount < 0) {
             _uiState.update {
                 it.copy(error = context.getString(R.string.boxes_error_invalid_amount))
             }
@@ -87,6 +88,8 @@ class BoxesViewModel(
             try {
                 cashBoxRepo.setInitialBalance(boxId, amount)
                 _uiState.update { it.copy(error = null) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(error = context.getString(R.string.boxes_error_generic, e.message ?: ""))
@@ -102,7 +105,7 @@ class BoxesViewModel(
         reason: AdjustmentReason
     ) {
         val amount = amountText.toLatinDigits().toDoubleOrNull()
-        if (amount == null || amount < 0) {
+        if (amount == null || !amount.isFinite() || amount < 0) {
             _uiState.update {
                 it.copy(error = context.getString(R.string.boxes_error_invalid_amount))
             }
@@ -120,6 +123,8 @@ class BoxesViewModel(
             try {
                 cashBoxRepo.adjustBalance(boxId, amount, fullNote, reason)
                 _uiState.update { it.copy(error = null) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(error = context.getString(R.string.boxes_error_generic, e.message ?: ""))

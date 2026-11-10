@@ -719,6 +719,9 @@ suspend fun AppDatabase.recordCashBoxBalanceChange(
     markAsInitial: Boolean = false
 ) {
     withTransaction {
+        require(delta.isFinite() && absoluteBalance?.isFinite() != false && movement.amountDelta.isFinite()) {
+            "Cash change must be finite"
+        }
         when {
             markAsInitial && absoluteBalance != null ->
                 cashBoxDao().setInitialBalanceFields(boxId, absoluteBalance, updatedAt, updatedAt)
@@ -728,6 +731,9 @@ suspend fun AppDatabase.recordCashBoxBalanceChange(
                 cashBoxDao().applyDelta(boxId, delta, updatedAt)
         }
         val box = cashBoxDao().getById(boxId) ?: return@withTransaction
+        // Validate after SQL arithmetic, within the same transaction, so overflow
+        // rolls back the balance and every enclosing transfer/ledger mutation.
+        require(box.currentBalance.isFinite()) { "Cash balance overflow" }
         cashBoxMovementDao().insert(
             movement.copy(balanceAfter = box.currentBalance)
         )

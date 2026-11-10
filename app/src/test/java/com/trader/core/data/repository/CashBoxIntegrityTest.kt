@@ -168,4 +168,31 @@ class CashBoxIntegrityTest {
         coVerify(exactly = 1) { sync.pushCashBox("m", match { it.id == "2" }) }
         coVerify(exactly = 1) { sync.pushCashBoxMovement("m", match { it.id == "movement" }) }
     }
+    @Test fun infiniteInitialBalanceIsRejectedBeforeAnyRoomWrite()=runTest {
+        db.cashBoxDao().upsert(CashBoxEntity("1",1,"fixture",merchantId="m"));val r=repo()
+        try{r.setInitialBalance("1",Double.POSITIVE_INFINITY);fail("Infinite initial balance accepted")}catch(expected:IllegalArgumentException){}
+        assertEquals(0.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0);assertNull(db.cashBoxDao().getById("1")!!.initialBalanceSetAt)
+        assertTrue(db.cashBoxMovementDao().getAllOnce().isEmpty())
+    }
+    @Test fun nanInitialBalanceIsRejectedAsInputRatherThanASqlConstraintFailure()=runTest {
+        db.cashBoxDao().upsert(CashBoxEntity("1",1,"fixture",merchantId="m"));val r=repo()
+        try{r.setInitialBalance("1",Double.NaN);fail("NaN accepted")}catch(expected:IllegalArgumentException){}
+        assertEquals(0.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0);assertTrue(db.cashBoxMovementDao().getAllOnce().isEmpty())
+    }
+    @Test fun infiniteCorrectionCannotCorruptACashBoxOrItsLedger()=runTest {
+        db.cashBoxDao().upsert(CashBoxEntity("1",1,"fixture",currentBalance=100.0,initialBalanceSetAt=1,merchantId="m"));val r=repo()
+        try{r.adjustBalance("1",Double.POSITIVE_INFINITY,"fixture",AdjustmentReason.COUNT);fail("Infinite correction accepted")}catch(expected:IllegalArgumentException){}
+        assertEquals(100.0,db.cashBoxDao().getById("1")!!.currentBalance,0.0);assertTrue(db.cashBoxMovementDao().getAllOnce().isEmpty())
+    }
+    @Test fun overflowingCorrectionDeltaCannotMutateAFiniteExistingBalance()=runTest {
+        db.cashBoxDao().upsert(CashBoxEntity("1",1,"fixture",currentBalance=-1e308,initialBalanceSetAt=1,merchantId="m"));val r=repo()
+        try{r.adjustBalance("1",1e308,"fixture",AdjustmentReason.COUNT);fail("Overflowing correction accepted")}catch(expected:IllegalArgumentException){}
+        assertEquals(-1e308,db.cashBoxDao().getById("1")!!.currentBalance,0.0);assertTrue(db.cashBoxMovementDao().getAllOnce().isEmpty())
+    }
+    @Test fun overflowingCashEffectRollsBackItsBalanceAndLedger()=runTest {
+        db.cashBoxDao().upsert(CashBoxEntity("1",1,"fixture",currentBalance=1e308,initialBalanceSetAt=1,merchantId="m"));val r=repo()
+        try{r.applyTransactionEffect(42,null,0.0,false,1,1e308,true);fail("Overflowing cash effect accepted")}catch(expected:IllegalArgumentException){}
+        assertEquals(1e308,db.cashBoxDao().getById("1")!!.currentBalance,0.0);assertTrue(db.cashBoxMovementDao().getAllOnce().isEmpty())
+    }
+
 }

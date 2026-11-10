@@ -244,6 +244,7 @@ class CashBoxRepositoryImpl(
         dao.getByPaymentMethodId(paymentMethodId)?.toDomain()
 
     override suspend fun setInitialBalance(boxId: String, amount: Double) {
+        require(amount.isFinite() && amount >= 0) { "Initial balance must be finite and nonnegative" }
         boxMutex.withLock {
             val existing = dao.getById(boxId) ?: return
             if (existing.initialBalanceSetAt != null) return
@@ -265,6 +266,7 @@ class CashBoxRepositoryImpl(
         note: String?,
         reason: AdjustmentReason
     ) {
+        require(newAmount.isFinite() && newAmount >= 0) { "Correction amount must be finite and nonnegative" }
         boxMutex.withLock {
             val existing = dao.getById(boxId) ?: return
             if (existing.initialBalanceSetAt == null) return
