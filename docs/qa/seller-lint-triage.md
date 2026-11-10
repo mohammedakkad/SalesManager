@@ -1,4 +1,4 @@
-> Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
+> Current 95% continuation (2026-11-10):601 JVM PASS (87 new); Seller JVM lines 77.7796%, weighted 78.1954%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
 
 # Seller lint triage
 
@@ -229,3 +229,17 @@ Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77
 |BRANCH|7151/14696|48.6595%|8766/17807|49.2278%|
 
 Full JVM/Room/JaCoCo/gates, Lint, Debug/AndroidTest APK and minified unsigned Release builds PASS. Lint 0 errors/24 warnings; 12 Python coverage guards and targeted secret/token-log policy PASS. All 514 starting JVM identities retained; 208 shared and 385 Seller cases, zero failures/errors/skips. Actual source protocol fakes do not qualify deployed Firebase rules, deduplication or distributed rollback. Hosted source verification is pending for this commit; the prior successful run is not reassigned to it. No Admin business, database schema, production exclusions, gates or signing material changes. [Details and exact evidence](coverage95-progress.md).
+
+## Final local download follow-up — 2026-11-10
+
+|Metric (local JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
+|---|---:|---:|---:|---:|
+|LINE|13921/17898|77.7796%|22055/28205|78.1954%|
+|METHOD|2391/3200|74.7188%|4209/5715|73.6483%|
+|BRANCH|7148/14684|48.6788%|8763/17795|49.2442%|
+
+Source `fda922fb865dabf5633115268d3b4e72ccbb8e4f`:601 JVM PASS (208 shared/393 Seller, zero failures/errors/skips);87 new cases and all514 starting identities retained. Full current JVM/Room/JaCoCo/gates/Lint/Debug/AndroidTest/minified unsigned Release aggregate PASS in5m36s; Lint0 errors/24 warnings;12 Python guards and targeted secret policy PASS. Five additional failing-before resolver regressions now pass; incomplete downloads return false and attempt pending-row cleanup. Real XLSX source bytes are verified on SDK-fake API33 and real legacy filesystem API28. This does not qualify device MediaStore permission/provider behavior. No Admin, schema, threshold, exclusion, production network or signing changes. [Current hosted status and detailed results](coverage95-progress.md).
+
+Hosted source qualification: [42863854908](https://github.com/mohammedakkad/SalesManager/actions/runs/42863854908) SUCCESS (seller and compose API24/28/33/35);7Android and5PDFBox cases pass per lane with5path/hash records and preserved artifacts. Clean JVM denominators reconcile with hosted compilation; clean601casesPASS. Additional Android+JVM line coverage83.3948% Seller/81.8188% weighted; target95% NOT ACHIEVED and releaseFAIL. See coverage95-progress.md for all Line/Method/Branch counters and their exact denominators.
+
+Final clean packaging PASS in4m44s after the clean601JVM/JaCoCo run (2m34s): Lint0errors/24warnings, Debug APK, AndroidTest APK and actual R8 unsigned Release. Current SHA256/size records and preserved local APK paths are in final/qualification.json. The hosted source remains fda922fb865dabf5633115268d3b4e72ccbb8e4f; the final documentation-only commit does not change production/test sources. No PR merge or PR-description publication is claimed.

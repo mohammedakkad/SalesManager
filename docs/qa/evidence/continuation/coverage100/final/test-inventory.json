@@ -1,14 +1,14 @@
 {
   "summary": {
-    "jvmCases": 593,
+    "jvmCases": 601,
     "result": {
-      "passed": 593
+      "passed": 601
     },
     "primaryCategories": {
       "Room/SQLite on JVM": 214,
       "Room migration": 7,
       "Firebase SDK/protocol fake": 65,
-      "Unit/model with deterministic fakes": 176,
+      "Unit/model with deterministic fakes": 184,
       "Compose UI on JVM": 102,
       "Loopback HTTP": 4,
       "WorkManager lifecycle": 6,
@@ -6185,6 +6185,60 @@
     },
     {
       "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.DownloadExportContractsTest",
+      "name": "failedCopyDoesNotPublishAnIncompleteFileAndCleansUpItsEntry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/DownloadExportContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.DownloadExportContractsTest",
+      "name": "cleanupFailureCannotEscapeOrChangeTheFailedDownloadResult",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/DownloadExportContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.DownloadExportContractsTest",
+      "name": "successCopiesActualWorkbookBeforePublishingItsMediaStoreEntry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/DownloadExportContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.DownloadExportContractsTest",
+      "name": "failedPublicationCannotBeReportedAsSuccess",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/DownloadExportContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.DownloadExportContractsTest",
+      "name": "deniedInsertCannotBeReportedAsASuccessfulDownload",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/DownloadExportContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.DownloadExportContractsTest",
+      "name": "absentOutputStreamFailsAndRemovesTheUnpublishedEntry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/DownloadExportContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
       "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
       "name": "salesExportDelegatesToRealWorkbookAndPreservesItsPublicFileName",
       "result": "passed",
@@ -6261,6 +6315,24 @@
       "name": "rapidRepeatedRequestsProduceOneRealWorkbookAndTypedSuccess",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.LegacyDownloadExportContractsTest",
+      "name": "legacyDownloadCopiesRealWorkbookAndReplacesAnOlderExport",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/LegacyDownloadExportContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.LegacyDownloadExportContractsTest",
+      "name": "missingLegacySourceReturnsFailureWithoutInventingAFile",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/LegacyDownloadExportContractsTest.kt",
       "primary": "Unit/model with deterministic fakes",
       "tags": []
     },

@@ -12,6 +12,6 @@ test_reduced_denominator_cannot_inflate_coverage (test_device_coverage_report.De
 test_unrecorded_native_pdf_execution_is_rejected (test_device_coverage_report.DeviceCoverageReportTest.test_unrecorded_native_pdf_execution_is_rejected) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 0.143s
+Ran 12 tests in 0.149s
 
 OK

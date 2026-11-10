@@ -1,0 +1,307 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Configuration on demand is an incubating feature.
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 35
+
+This Android Gradle plugin (8.3.2) was tested up to compileSdk = 34.
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 35.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 35 is available.
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=35
+to this project's gradle.properties.
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:generateDebugRFile UP-TO-DATE
+> Task :app:kspDebugKotlin UP-TO-DATE
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:extractDebugAnnotations UP-TO-DATE
+> Task :app:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :app:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:packageDebugAssets UP-TO-DATE
+> Task :app:prepareDebugArtProfile UP-TO-DATE
+> Task :app:prepareLintJarForPublish UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:syncDebugLibJars UP-TO-DATE
+> Task :app:writeDebugAarMetadata UP-TO-DATE
+> Task :app:bundleDebugLocalLintAar UP-TO-DATE
+> Task :app:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :app:createFullJarDebug UP-TO-DATE
+> Task :app:preDebugAndroidTestBuild UP-TO-DATE
+> Task :app:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :app:writeDebugLintModelMetadata UP-TO-DATE
+> Task :app:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :app:generateDebugLintModel UP-TO-DATE
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :app:lintAnalyzeDebug UP-TO-DATE
+> Task :app:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :app:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :app:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :salesmanager:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :salesmanager:preBuild UP-TO-DATE
+> Task :salesmanager:preDebugBuild UP-TO-DATE
+> Task :salesmanager:generateDebugBuildConfig UP-TO-DATE
+> Task :app:compileDebugLibraryResources UP-TO-DATE
+> Task :salesmanager:checkDebugAarMetadata UP-TO-DATE
+> Task :salesmanager:generateDebugResValues UP-TO-DATE
+> Task :salesmanager:injectCrashlyticsMappingFileIdDebug UP-TO-DATE
+> Task :salesmanager:processDebugGoogleServices UP-TO-DATE
+> Task :salesmanager:mapDebugSourceSetPaths UP-TO-DATE
+> Task :salesmanager:generateDebugResources UP-TO-DATE
+> Task :salesmanager:mergeDebugResources UP-TO-DATE
+> Task :salesmanager:packageDebugResources UP-TO-DATE
+> Task :salesmanager:parseDebugLocalResources UP-TO-DATE
+> Task :salesmanager:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :salesmanager:extractDeepLinksDebug UP-TO-DATE
+> Task :salesmanager:processDebugMainManifest UP-TO-DATE
+> Task :salesmanager:processDebugManifest UP-TO-DATE
+> Task :salesmanager:processDebugManifestForPackage UP-TO-DATE
+> Task :salesmanager:processDebugResources UP-TO-DATE
+> Task :salesmanager:compileDebugKotlin UP-TO-DATE
+> Task :salesmanager:javaPreCompileDebug UP-TO-DATE
+> Task :salesmanager:compileDebugJavaWithJavac UP-TO-DATE
+> Task :salesmanager:bundleDebugClassesToCompileJar UP-TO-DATE
+> Task :salesmanager:preDebugAndroidTestBuild SKIPPED
+> Task :salesmanager:generateDebugAndroidTestResValues
+> Task :salesmanager:generateDebugAndroidTestLintModel
+> Task :salesmanager:extractProguardFiles
+> Task :salesmanager:generateDebugLintReportModel
+> Task :salesmanager:preDebugUnitTestBuild UP-TO-DATE
+> Task :salesmanager:generateDebugUnitTestLintModel
+> Task :salesmanager:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :salesmanager:mergeDebugShaders UP-TO-DATE
+> Task :salesmanager:compileDebugShaders NO-SOURCE
+> Task :salesmanager:generateDebugAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugAssets UP-TO-DATE
+> Task :salesmanager:compressDebugAssets
+> Task :salesmanager:processDebugJavaRes UP-TO-DATE
+> Task :salesmanager:mergeDebugJavaResource
+> Task :salesmanager:checkDebugDuplicateClasses
+> Task :salesmanager:desugarDebugFileDependencies
+> Task :salesmanager:lintAnalyzeDebugAndroidTest
+> Task :app:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :salesmanager:mergeExtDexDebug
+> Task :salesmanager:lintAnalyzeDebug
+> Task :salesmanager:lintAnalyzeDebugUnitTest
+> Task :salesmanager:mergeLibDexDebug
+> Task :salesmanager:dexBuilderDebug
+> Task :app:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :salesmanager:mergeDebugJniLibFolders
+> Task :salesmanager:mergeProjectDexDebug
+> Task :salesmanager:validateSigningDebug
+> Task :salesmanager:writeDebugAppMetadata
+> Task :salesmanager:writeDebugSigningConfigVersions
+> Task :salesmanager:mergeDebugNativeLibs
+> Task :salesmanager:processDebugAndroidTestManifest
+> Task :salesmanager:generateDebugAndroidTestBuildConfig
+> Task :salesmanager:checkDebugAndroidTestAarMetadata
+
+> Task :salesmanager:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libbarhopper_v3.so, libdatastore_shared_counter.so, libimage_processing_util_jni.so.
+
+> Task :salesmanager:mapDebugAndroidTestSourceSetPaths
+> Task :salesmanager:generateDebugAndroidTestResources
+> Task :salesmanager:mergeDebugAndroidTestResources
+> Task :salesmanager:packageDebug
+> Task :salesmanager:createDebugApkListingFileRedirect
+> Task :salesmanager:assembleDebug
+> Task :salesmanager:javaPreCompileDebugAndroidTest
+> Task :salesmanager:mergeDebugAndroidTestShaders
+> Task :salesmanager:compileDebugAndroidTestShaders NO-SOURCE
+> Task :salesmanager:generateDebugAndroidTestAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestAssets
+> Task :salesmanager:compressDebugAndroidTestAssets
+> Task :salesmanager:checkDebugAndroidTestDuplicateClasses
+> Task :salesmanager:desugarDebugAndroidTestFileDependencies
+> Task :salesmanager:processDebugAndroidTestResources
+> Task :salesmanager:mergeExtDexDebugAndroidTest
+> Task :salesmanager:mergeLibDexDebugAndroidTest
+> Task :salesmanager:mergeDebugAndroidTestJniLibFolders
+> Task :salesmanager:mergeDebugAndroidTestNativeLibs NO-SOURCE
+> Task :salesmanager:stripDebugAndroidTestDebugSymbols NO-SOURCE
+> Task :salesmanager:validateSigningDebugAndroidTest
+> Task :salesmanager:writeDebugAndroidTestSigningConfigVersions
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:generateReleaseBuildConfig UP-TO-DATE
+> Task :app:generateReleaseResValues UP-TO-DATE
+> Task :app:generateReleaseResources UP-TO-DATE
+> Task :app:packageReleaseResources UP-TO-DATE
+> Task :app:parseReleaseLocalResources UP-TO-DATE
+> Task :app:generateReleaseRFile UP-TO-DATE
+> Task :app:kspReleaseKotlin UP-TO-DATE
+> Task :app:compileReleaseKotlin UP-TO-DATE
+> Task :app:javaPreCompileRelease UP-TO-DATE
+> Task :app:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :app:processReleaseManifest UP-TO-DATE
+> Task :app:generateReleaseLintVitalModel UP-TO-DATE
+> Task :app:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :app:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :app:processReleaseJavaRes UP-TO-DATE
+> Task :app:createFullJarRelease UP-TO-DATE
+> Task :app:generateReleaseLintModel UP-TO-DATE
+> Task :salesmanager:buildKotlinToolingMetadata
+> Task :app:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :salesmanager:preReleaseBuild UP-TO-DATE
+> Task :salesmanager:generateReleaseBuildConfig
+> Task :app:writeReleaseAarMetadata UP-TO-DATE
+> Task :salesmanager:checkReleaseAarMetadata
+> Task :salesmanager:generateReleaseResValues
+> Task :salesmanager:injectCrashlyticsMappingFileIdRelease
+> Task :salesmanager:processReleaseGoogleServices
+> Task :salesmanager:mapReleaseSourceSetPaths
+> Task :salesmanager:generateReleaseResources
+> Task :salesmanager:mergeReleaseResources
+> Task :salesmanager:packageReleaseResources
+> Task :salesmanager:parseReleaseLocalResources
+> Task :salesmanager:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease UP-TO-DATE
+> Task :salesmanager:extractDeepLinksRelease
+> Task :salesmanager:processReleaseMainManifest
+> Task :salesmanager:processReleaseManifest
+> Task :salesmanager:processReleaseManifestForPackage
+> Task :salesmanager:processReleaseResources
+> Task :salesmanager:javaPreCompileRelease
+> Task :app:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :app:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :app:extractReleaseAnnotations UP-TO-DATE
+> Task :app:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :app:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :app:mergeReleaseShaders UP-TO-DATE
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:packageReleaseAssets UP-TO-DATE
+> Task :app:prepareReleaseArtProfile UP-TO-DATE
+> Task :app:mergeReleaseJavaResource UP-TO-DATE
+> Task :app:syncReleaseLibJars UP-TO-DATE
+> Task :app:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :app:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :app:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :salesmanager:mergeReleaseJniLibFolders
+> Task :salesmanager:mergeReleaseNativeLibs
+
+> Task :salesmanager:stripReleaseDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libbarhopper_v3.so, libdatastore_shared_counter.so, libimage_processing_util_jni.so.
+
+> Task :salesmanager:extractReleaseNativeSymbolTables
+> Task :salesmanager:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :salesmanager:compileDebugAndroidTestKotlin
+> Task :salesmanager:checkReleaseDuplicateClasses
+> Task :salesmanager:compileDebugAndroidTestJavaWithJavac
+> Task :salesmanager:processDebugAndroidTestJavaRes
+> Task :salesmanager:mergeDebugAndroidTestJavaResource
+> Task :salesmanager:dexBuilderDebugAndroidTest
+> Task :salesmanager:mergeProjectDexDebugAndroidTest
+> Task :salesmanager:mergeReleaseArtProfile
+> Task :salesmanager:mergeReleaseShaders
+> Task :salesmanager:compileReleaseShaders NO-SOURCE
+> Task :salesmanager:generateReleaseAssets UP-TO-DATE
+> Task :salesmanager:mergeReleaseAssets
+> Task :salesmanager:compressReleaseAssets
+> Task :salesmanager:extractReleaseVersionControlInfo
+> Task :salesmanager:processApplicationManifestReleaseForBundle
+> Task :salesmanager:packageDebugAndroidTest
+> Task :salesmanager:createDebugAndroidTestApkListingFileRedirect
+> Task :salesmanager:assembleDebugAndroidTest
+> Task :salesmanager:collectReleaseDependencies
+> Task :salesmanager:bundleReleaseResources
+> Task :salesmanager:sdkReleaseDependencyData
+> Task :salesmanager:writeReleaseAppMetadata
+> Task :salesmanager:writeReleaseSigningConfigVersions
+> Task :salesmanager:compileReleaseKotlin
+
+> Task :salesmanager:lintReportDebug
+Wrote HTML report to file:///workspace/SalesManager/salesmanager/build/reports/lint-results-debug.html
+
+> Task :salesmanager:lintDebug
+
+> Task :salesmanager:compileReleaseKotlin
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/activation/ActivationScreen.kt:121:39 'val Icons.Rounded.TrendingUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.TrendingUp.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatScreen.kt:251:36 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatScreen.kt:616:95 'val Icons.Rounded.Send: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Send.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/components/SharedComponents.kt:273:40 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/customers/details/CustomerDetailsScreen.kt:463:20 'val Icons.Rounded.Chat: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Chat.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/customers/list/CustomersScreen.kt:176:52 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/customers/list/CustomersViewModel.kt:32:10 This declaration is in a preview state and can be changed in a backwards-incompatible manner with a best-effort migration. Its usage should be marked with '@kotlinx.coroutines.FlowPreview' or '@OptIn(kotlinx.coroutines.FlowPreview::class)' if you accept the drawback of relying on preview API
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/debts/DebtsScreen.kt:77:48 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/detail/ProductDetailScreen.kt:458:49 'val Icons.Rounded.Undo: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Undo.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsScreen.kt:694:56 'val Icons.Rounded.TrendingUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.TrendingUp.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/session/InventorySessionViewModel.kt:55:42 This declaration needs opt-in. Its usage should be marked with '@kotlinx.coroutines.ExperimentalCoroutinesApi' or '@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)'
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/navigation/SplashAndBlocked.kt:73:36 'val Icons.Rounded.TrendingUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.TrendingUp.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/payments/PaymentMethodsScreen.kt:66:92 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/reports/ReportsScreen.kt:789:40 'val Icons.Rounded.OpenInNew: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.OpenInNew.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/reports/ReportsScreen.kt:1001:61 'val Icons.Rounded.TrendingUp: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.TrendingUp.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt:127:48 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt:147:43 'val Icons.Rounded.Undo: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Undo.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt:152:47 'val Icons.Rounded.TrendingDown: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.TrendingDown.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt:216:48 'val Icons.Rounded.Notes: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Notes.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt:255:44 'val Icons.Rounded.Undo: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Undo.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt:362:86 'val Icons.Rounded.Undo: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Undo.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt:433:56 'val Icons.Rounded.TrendingDown: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.TrendingDown.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt:590:36 'val Icons.Rounded.Undo: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Undo.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/scanner/BarcodeScannerScreen.kt:78:26 'val LocalLifecycleOwner: ProvidableCompositionLocal<LifecycleOwner>' is deprecated. Moved to lifecycle-runtime-compose library in androidx.lifecycle.compose package.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/scanner/BarcodeScannerScreen.kt:136:34 'fun setTargetResolution(p0: Size): ImageAnalysis.Builder' is deprecated. Deprecated in Java.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/settings/SettingsScreen.kt:621:34 Condition is always 'true'.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/settings/sessions/SessionsScreen.kt:158:49 'val Icons.Rounded.Logout: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Logout.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreen.kt:132:56 'fun Modifier.menuAnchor(): Modifier' is deprecated. Use overload that takes MenuAnchorType and enabled parameters.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreen.kt:271:56 'fun Modifier.menuAnchor(): Modifier' is deprecated. Use overload that takes MenuAnchorType and enabled parameters.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreen.kt:299:40 'val Icons.Rounded.Notes: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Notes.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt:263:48 'val Icons.Rounded.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowBack.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt:280:51 'val Icons.Rounded.AssignmentReturn: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.AssignmentReturn.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt:378:45 'val Icons.Rounded.Notes: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Notes.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt:450:60 'val Icons.Rounded.Undo: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Undo.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt:564:44 'val Icons.Rounded.Chat: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Chat.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt:641:44 'val Icons.Rounded.ArrowForward: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.ArrowForward.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/list/TransactionsScreen.kt:229:39 'val Icons.Rounded.Undo: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Undo.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/transactions/list/TransactionsScreen.kt:230:39 'val Icons.Rounded.AssignmentReturn: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.AssignmentReturn.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/util/export/ExportActionButton.kt:217:39 'val Icons.Rounded.Chat: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Chat.
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/util/export/ExportActionButton.kt:311:39 'val Icons.Rounded.Chat: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Rounded.Chat.
+
+> Task :salesmanager:compileReleaseJavaWithJavac
+> Task :salesmanager:generateReleaseLintVitalReportModel
+> Task :salesmanager:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :salesmanager:processReleaseJavaRes
+> Task :salesmanager:mergeReleaseJavaResource
+> Task :salesmanager:expandReleaseArtProfileWildcards
+> Task :salesmanager:lintVitalAnalyzeRelease
+> Task :salesmanager:lintVitalReportRelease
+> Task :salesmanager:lintVitalRelease
+> Task :salesmanager:minifyReleaseWithR8
+> Task :salesmanager:compileReleaseArtProfile
+> Task :salesmanager:shrinkReleaseRes
+> Task :salesmanager:optimizeReleaseResources
+> Task :salesmanager:packageRelease
+> Task :salesmanager:createReleaseApkListingFileRedirect
+> Task :salesmanager:assembleRelease
+
+BUILD SUCCESSFUL in 4m 44s
+202 actionable tasks: 101 executed, 101 up-to-date

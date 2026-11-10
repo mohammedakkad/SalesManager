@@ -44,3 +44,44 @@ The remaining defined plan has **56 items: 22 NOT TESTED, 32 BLOCKED, two PARTIA
 Six Android33 resolver-contract cases execute; five fail against the original code and all six pass after repair. Download success now requires creation of the MediaStore row, a non-null output stream, completion/closure of the actual workbook copy and successful publication. Any unsuccessful copy/publication removes the pending row where deletion is permitted; cleanup failure cannot escape as a second error or turn the result into success. The input stream is closed. Two additional Android28 JVM contracts verify real legacy workbook copy/overwrite and failure for an absent source. These are real XLSX files with SDK task/resolver fakes, not device MediaStore runtime qualification and not fake PDFs.
 
 The complete updated JVM suite executes **601 cases: 208 shared/393 Seller, zero failures/errors/skips**, with unchanged passing coverage gates and current Lint. That is **87 new JVM cases** from the 514-case starting inventory, and **38 genuine failing-before JVM regressions** across this continuation (plus the public-metrics Python regression). A full packaging invocation is still in progress for this source. The earlier 593-case full build and hosted run must not be reassigned to this follow-up before verification. Source-specific hosted evidence and final APK hashes will follow execution.
+
+## Final local source qualification — download follow-up
+
+Qualified production/test source: `fda922fb865dabf5633115268d3b4e72ccbb8e4f` (the existing branch/PR). This supersedes the pending local packaging statement above. Full current aggregate **PASS in5m36s**, including601 JVM, unchanged JaCoCo gates, current Lint, Debug APK, AndroidTest APK and actual R8 minified unsigned Release. Lint0errors/24warnings;12Python guards and targeted secret policyPASS. APK SHA256/size and unsigned verification are recorded in final/qualification.json and unsigned-release-verification.log.
+
+|Metric (local JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
+|---|---:|---:|---:|---:|
+|LINE|13921/17898|77.7796%|22055/28205|78.1954%|
+|METHOD|2391/3200|74.7188%|4209/5715|73.6483%|
+|BRANCH|7148/14684|48.6788%|8763/17795|49.2442%|
+
+At current JVM denominators, 95% requires **3083 more covered Seller lines** and **4740 more weighted lines**. These are not test counts. The source and compiler-generated code remain included. Coverage of native PDF requires real Android; no fake PDF, host stand-in, exclusion or weakened assertion was introduced.
+
+The38 distinct JVM regressions and one Python regression are preserved as failing-before evidence. The final inventory has601pass/0fail/0error/0skip,87newJVM, and514retained starting identities. Previous catalog/navigation qualification and build logs are preserved separately as catalog-*.json/log. SDK fakes are not Firebase Emulator Suite or production qualification.
+
+Hosted source run: [42863854908](https://github.com/mohammedakkad/SalesManager/actions/runs/42863854908); status will be recorded after execution. Prior catalog/navigation source run: [42862239864](https://github.com/mohammedakkad/SalesManager/actions/runs/42862239864). Do not transfer the earlier source results to the final source. Public annotations expose XML-derived case results/path hashes and measured EC counts; raw authenticated archives cannot be downloaded through current GitHub API access. A branch update changes the existing PR diff; editing the PR description via the blocked API is not claimed. Prepared current body: draft-pr-body.md.
+
+## Hosted qualification and clean counter reconciliation — 2026-11-10
+
+[Run42863854908](https://github.com/mohammedakkad/SalesManager/actions/runs/42863854908) for source `fda922fb865dabf5633115268d3b4e72ccbb8e4f`: **workflowSUCCESS; sellerSUCCESS; all four compose jobsSUCCESS**. Prior source `e710614f6619b8ac14cf6dd0c97fc6110d9be0f6` also qualifies in [run42862239864](https://github.com/mohammedakkad/SalesManager/actions/runs/42862239864).
+
+|API|Compose|Android runtime cases|PDFBox content cases|Path/hash records|
+|---|---|---:|---:|---:|
+|24|SUCCESS|7|5|5|
+|28|SUCCESS|7|5|5|
+|33|SUCCESS|7|5|5|
+|35|SUCCESS|7|5|5|
+
+|Metric (hosted API28 Android+JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
+|---|---:|---:|---:|---:|
+|LINE|14927/17898|83.4004%|23078/28205|81.8224%|
+|METHOD|2461/3200|76.9062%|4297/5715|75.1881%|
+|BRANCH|7313/14684|49.8025%|8928/17795|50.1714%|
+
+All lanes record actual Android Context/export paths and SHA256 hashes for five generated PDF files, execute all7Android/5PDFBox cases, complete with `stage=complete exit=0`, and preserve the expected artifacts. There are12independent device/PDFBox cases, repeated four times (28Android executions/20PDFBox executions), not48new test identities. With601JVM and12Python guards,625distinct cases pass across different suites. Raw authenticated hosted archives are not downloaded; evidence is public XML-derived annotations and measured EC-counter/path-hash records.
+
+An incremental local Seller compilation measured14702branches; a complete Seller clean/recompile measured14684, matching every hosted lane. Both have the same1317production classes,17898lines and3200methods. The actual differing Compose-class counters are preserved in final/clean-counter-comparison.json; incremental reports remain available separately. No source/exclusion/threshold changes were made to reconcile the counters. Final JVM branch coverage is **7148/14684=48.6788% Seller**, **8763/17795=49.2442% weighted**. Clean601JVM PASS in2m34s. Additional Android+JVM and JVM are separate measurements; do not combine counters from different class compilations.
+
+At the additional Android+JVM line denominators,95% still requires2078more covered Seller lines and3718more weighted lines. These are line gaps, not a number of remaining tests. Goal95% NOT ACHIEVED; releaseFAIL. The56-item remaining qualification plan (22NOT TESTED/32BLOCKED/2PARTIAL) and P0/P1 server/legacy ownership/historical migration/security/device limitations remain open.
+
+Final clean packaging PASS in4m44s after the clean601JVM/JaCoCo run (2m34s): Lint0errors/24warnings, Debug APK, AndroidTest APK and actual R8 unsigned Release. Current SHA256/size records and preserved local APK paths are in final/qualification.json. The hosted source remains fda922fb865dabf5633115268d3b4e72ccbb8e4f; the final documentation-only commit does not change production/test sources. No PR merge or PR-description publication is claimed.
