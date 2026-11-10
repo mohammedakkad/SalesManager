@@ -3,6 +3,7 @@ package com.trader.core.data.repository
 import androidx.room.withTransaction
 import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.local.entity.*
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.*
 import com.trader.core.domain.repository.*
@@ -47,7 +48,7 @@ class ReturnRepositoryImpl(
                 .distinctUntilChanged()
                 .collectLatest { code ->
                     if (code.isBlank() || (outboxJournal == null && code != merchantId)) return@collectLatest
-                    sync.observeReturnInvoices(code).collect { remoteReturns ->
+                    sync.observeReturnInvoices(code).recoverSellerRealtime().collect { remoteReturns ->
                         val remoteIds = remoteReturns.map { it.first.id }.toSet()
 
                         // 1. Upsert remote changes

@@ -8,6 +8,7 @@ import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.local.db.recordCashBoxBalanceChange
 import com.trader.core.data.local.entity.CashBoxEntity
 import com.trader.core.data.local.entity.CashBoxMovementEntity
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.AdjustmentReason
 import com.trader.core.domain.model.CashBox
@@ -49,7 +50,7 @@ class CashBoxRepositoryImpl(
                     if (merchantCode.isBlank()) return@collectLatest
                     coroutineScope {
                         launch {
-                            sync.observeCashBoxes(merchantCode).collect { list ->
+                            sync.observeCashBoxes(merchantCode).recoverSellerRealtime().collect { list ->
                                 list.forEach { remote ->
                                     boxMutex.withLock {
                                       database.withTransaction {
@@ -68,7 +69,7 @@ class CashBoxRepositoryImpl(
                             }
                         }
                         launch {
-                            sync.observeCashBoxMovements(merchantCode).collect { list ->
+                            sync.observeCashBoxMovements(merchantCode).recoverSellerRealtime().collect { list ->
                                 list.forEach { remote ->
                                     val local = movementDao.getById(remote.id)
                                     if (local == null || local.syncStatus == SyncStatus.SYNCED.name) {

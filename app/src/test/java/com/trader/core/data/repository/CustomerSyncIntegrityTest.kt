@@ -53,4 +53,39 @@ class CustomerSyncIntegrityTest {
   remote.emit(listOf(Customer(id=-1,name="bad"),Customer(id=99,name="sentinel")));awaitSentinel()
   assertEquals("visitor",db.customerDao().getCustomerById(-1)!!.name)
  }
+ @Test fun permissionFailurePreservesRealCustomerDebtAndNextMerchantCanSubscribe()=runTest {
+  val attempts=mutableListOf<String>()
+  every{sync.observeCustomers(any())} answers {
+   val merchant=firstArg<String>();attempts+=merchant
+   if(merchant=="m") flow{throw com.trader.core.data.remote.SellerRealtimeException(com.google.firebase.database.DatabaseError.PERMISSION_DENIED)} else remote
+  }
+  db.customerDao().upsertCustomer(CustomerEntity(id=7,name="local",createdAt=0,syncStatus="PENDING"))
+  db.transactionDao().insertTransaction(TransactionEntity(id=8,customerId=7,amount=35.0,isPaid=false))
+  repo();runCurrent();advanceTimeBy(2000);runCurrent()
+  assertEquals(listOf("m"),attempts);assertEquals("local",db.customerDao().getCustomerById(7)!!.name)
+  assertEquals(35.0,db.transactionDao().getUnpaidAmountByCustomer(7),0.0)
+  code.value="other";runCurrent();assertEquals(1,remote.subscriptionCount.value)
+  remote.emit(listOf(Customer(id=99,name="sentinel")));awaitSentinel()
+  assertEquals(listOf("m","other"),attempts);assertEquals(35.0,db.transactionDao().getUnpaidAmountByCustomer(7),0.0)
+ }
+ @Test fun networkRetryUsesFreshSubscriptionAndMergesOnlyAnActualRoomSnapshot()=runTest {
+  var attempts=0
+  every{sync.observeCustomers(any())} returns flow {
+   attempts++
+   if(attempts<=2) throw com.trader.core.data.remote.SellerRealtimeException(com.google.firebase.database.DatabaseError.NETWORK_ERROR)
+   emit(listOf(Customer(id=99,name="sentinel")))
+  }
+  repo();runCurrent();advanceTimeBy(1500);runCurrent();awaitSentinel()
+  assertEquals(3,attempts);assertEquals("sentinel",db.customerDao().getCustomerById(99)!!.name)
+ }
+ @Test fun logoutDuringBackoffPreventsTheOldCustomerAccountFromRetrying()=runTest {
+  var attempts=0
+  every{sync.observeCustomers(any())} returns flow {
+   attempts++;throw com.trader.core.data.remote.SellerRealtimeException(com.google.firebase.database.DatabaseError.NETWORK_ERROR)
+  }
+  repo();runCurrent();assertEquals(1,attempts)
+  code.value="";runCurrent();advanceTimeBy(10000);runCurrent()
+  assertEquals(1,attempts)
+ }
+
 }

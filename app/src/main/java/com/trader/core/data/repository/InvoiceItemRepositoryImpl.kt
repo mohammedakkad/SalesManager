@@ -4,6 +4,7 @@ import androidx.room.withTransaction
 import com.trader.core.data.local.dao.InvoiceItemDao
 import com.trader.core.data.local.entity.toEntity
 import com.trader.core.data.remote.ProductFirestoreService
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.repository.InvoiceItemRepository
@@ -38,7 +39,7 @@ class InvoiceItemRepositoryImpl(
             (activation?.observeMerchantCode() ?: kotlinx.coroutines.flow.flowOf(merchantId))
                 .collectLatest { code ->
                     if (code.isBlank() || (activation == null && code != merchantId)) return@collectLatest
-                    sync.observeInvoiceItems(code).collect { items ->
+                    sync.observeInvoiceItems(code).recoverSellerRealtime().collect { items ->
                         items.forEach { item ->
                             if (activation != null && activation.getMerchantCode() != code) return@forEach
                             if (outboxDatabase == null) dao.insertAll(listOf(item.toEntity()))

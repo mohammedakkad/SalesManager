@@ -2,6 +2,7 @@ package com.trader.core.data.repository
 
 import com.trader.core.data.local.dao.EmployeeDao
 import com.trader.core.data.local.entity.EmployeeEntity
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Employee
 import com.trader.core.domain.model.EmployeeRole
@@ -87,10 +88,10 @@ class EmployeeRepositoryImpl(
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
-                .filter { it.isNotEmpty() }
                 .distinctUntilChanged()
                 .collectLatest { code ->
-                    sync.observeEmployees(code).collect { remoteEmployees ->
+                    if (code.isBlank()) return@collectLatest
+                    sync.observeEmployees(code).recoverSellerRealtime().collect { remoteEmployees ->
                         val remoteIds = remoteEmployees.map { it.id }.toSet()
 
                         remoteEmployees.forEach { employee ->

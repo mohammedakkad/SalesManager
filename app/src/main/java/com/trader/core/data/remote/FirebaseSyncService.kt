@@ -345,7 +345,9 @@ class FirebaseSyncService {
                     runCatching { child.toCashBox(merchantCode) }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -389,7 +391,9 @@ class FirebaseSyncService {
                     runCatching { child.toCashBoxMovement(merchantCode) }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -437,7 +441,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -473,7 +479,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -498,7 +506,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -528,7 +538,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -613,7 +625,9 @@ class FirebaseSyncService {
                     trySend(returns)
                 }
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
@@ -745,7 +759,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }

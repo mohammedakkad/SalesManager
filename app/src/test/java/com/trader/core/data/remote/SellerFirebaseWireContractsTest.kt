@@ -135,4 +135,53 @@ class SellerFirebaseWireContractsTest {
         assertEquals(PaymentType.DEBT,observe(service.observeTransactions("m1"),"$root/transactions",mapOf("41" to legacy)).single().paymentType)
     }
 
+    private fun <T> TestScope.assertPermissionFailure(flow:Flow<T>,path:String) {
+        val errors=mutableListOf<Throwable>();val values=mutableListOf<T>()
+        val job=flow.onEach{values+=it}.catch{errors+=it}.launchIn(backgroundScope);runCurrent()
+        val listener=requireNotNull(listeners[path]);listener.onCancelled(DatabaseError.fromCode(DatabaseError.PERMISSION_DENIED));runCurrent()
+        assertEquals("Terminal SDK errors must close this stream explicitly",1,errors.size)
+        assertTrue("An error must never masquerade as an empty remote snapshot",values.isEmpty())
+        assertTrue(job.isCompleted);verify(exactly=1){ref(path).removeEventListener(listener)}
+    }
+    @Test fun customersPermissionFailureClosesAndUnregisters()=runTest {
+        assertPermissionFailure(FirebaseSyncService().observeCustomers("m1"),"$root/customers")
+    }
+    @Test fun transactionsPermissionFailureClosesWithoutAnEmptySnapshot()=runTest {
+        assertPermissionFailure(FirebaseSyncService().observeTransactions("m1"),"$root/transactions")
+    }
+    @Test fun paymentMethodsPermissionFailureClosesAndUnregisters()=runTest {
+        assertPermissionFailure(FirebaseSyncService().observePaymentMethods("m1"),"$root/payment_methods")
+    }
+    @Test fun cashBoxesPermissionFailureClosesWithoutChangingBalances()=runTest {
+        assertPermissionFailure(FirebaseSyncService().observeCashBoxes("m1"),"$root/cash_boxes")
+    }
+    @Test fun cashMovementsPermissionFailureClosesWithoutAnEmptyLedger()=runTest {
+        assertPermissionFailure(FirebaseSyncService().observeCashBoxMovements("m1"),"$root/cash_box_movements")
+    }
+    @Test fun invoiceItemsPermissionFailureClosesWithoutDroppingInvoiceLines()=runTest {
+        assertPermissionFailure(FirebaseSyncService().observeInvoiceItems("m1"),"$root/invoice_items")
+    }
+    @Test fun returnInvoicesPermissionFailureClosesWithoutDeletingReturns()=runTest {
+        assertPermissionFailure(FirebaseSyncService().observeReturnInvoices("m1"),"$root/return_invoices")
+    }
+    @Test fun employeesPermissionFailureClosesAndUnregisters()=runTest {
+        assertPermissionFailure(FirebaseSyncService().observeEmployees("m1"),"$root/employees")
+    }
+
+    @Test fun cancellingEverySellerListenerRemovesItAndLateCallbacksCannotEmit()=runTest {
+        val service=FirebaseSyncService()
+        val families=listOf("customers" to service.observeCustomers("m1"),"transactions" to service.observeTransactions("m1"),
+            "payment_methods" to service.observePaymentMethods("m1"),"cash_boxes" to service.observeCashBoxes("m1"),
+            "cash_box_movements" to service.observeCashBoxMovements("m1"),"invoice_items" to service.observeInvoiceItems("m1"),
+            "return_invoices" to service.observeReturnInvoices("m1"),"employees" to service.observeEmployees("m1"))
+        for((family,flow) in families) {
+            val values=mutableListOf<Any?>();val path="$root/$family"
+            val job=flow.onEach{values.add(it)}.launchIn(backgroundScope);runCurrent()
+            val listener=requireNotNull(listeners[path]);job.cancelAndJoin()
+            verify(exactly=1){ref(path).removeEventListener(listener)}
+            listener.onDataChange(snapshot(family,emptyMap<String,Any>(),path));runCurrent()
+            assertTrue("Late $family callbacks must not reach cancelled collectors",values.isEmpty())
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package com.trader.core.data.repository
 import androidx.room.withTransaction
 import com.trader.core.data.local.dao.*
 import com.trader.core.data.local.entity.TransactionEntity
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.repository.ActivationRepository
@@ -50,7 +51,7 @@ class TransactionRepositoryImpl(
         syncScope.launch {
             activationRepo.observeMerchantCode().distinctUntilChanged().collectLatest { merchant ->
                 if (merchant.isBlank()) return@collectLatest
-                sync.observeTransactions(merchant).collect { list ->
+                sync.observeTransactions(merchant).recoverSellerRealtime().collect { list ->
                     list.forEach { remote -> localFence {
                         if (outboxDatabase?.saleOutboxDao()?.manages(remote.id) != true) {
                             val existing = transactionDao.getTransactionById(remote.id)

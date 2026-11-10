@@ -3,6 +3,7 @@ package com.trader.core.data.repository
 import com.trader.core.data.local.dao.CustomerDao
 import com.trader.core.data.local.dao.TransactionDao
 import com.trader.core.data.local.entity.CustomerEntity
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.repository.ActivationRepository
@@ -35,7 +36,7 @@ class CustomerRepositoryImpl(
                 code ->
                 // collectLatest cancels the previous merchant listener even on logout.
                 if (code.isBlank()) return@collectLatest
-                sync.observeCustomers(code).collect {
+                sync.observeCustomers(code).recoverSellerRealtime().collect {
                     list ->
                     list.forEach {
                         if (it.id != -1L) dao.mergeSyncedCustomer(CustomerEntity.fromDomain(it))
