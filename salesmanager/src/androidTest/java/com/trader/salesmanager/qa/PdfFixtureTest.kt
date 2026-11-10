@@ -41,17 +41,23 @@ class PdfFixtureTest {
             // Export before connectedAndroidTest can uninstall the target APK and remove
             // its app-specific external storage. Shell owns this independent directory.
             val destination = "/data/local/tmp/seller-qa-pdf/$name"
-            fun shell(command: String): String = ParcelFileDescriptor.AutoCloseInputStream(
+            fun shell(command: String): ByteArray = ParcelFileDescriptor.AutoCloseInputStream(
                 InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
-            ).bufferedReader().use { it.readText() }
+            ).use { it.readBytes() }
             // executeShellCommand tokenizes arguments; it is not a shell interpreter.
             check(exported.absolutePath.matches(Regex("[A-Za-z0-9_./-]+")))
-            shell("mkdir -p /data/local/tmp/seller-qa-pdf")
-            shell("cp ${exported.absolutePath} $destination")
-            val result = shell("sha256sum $destination")
-            val digest = MessageDigest.getInstance("SHA-256").digest(exported.readBytes())
+            shell("/system/bin/mkdir -p /data/local/tmp/seller-qa-pdf")
+            shell("/system/bin/cp ${exported.absolutePath} $destination")
+            // Android24 cannot reliably execute the newer shell hash utility. Read
+            // the actual shell-owned copy as binary and verify all bytes instead.
+            val sourceBytes = exported.readBytes()
+            val destinationBytes = shell("/system/bin/cat $destination")
+            assertArrayEquals("Shell export changed PDF bytes: $destination", sourceBytes, destinationBytes)
+            val digest = MessageDigest.getInstance("SHA-256").digest(sourceBytes)
                 .joinToString("") { "%02x".format(it.toInt() and 255) }
-            assertEquals("Shell export failed: $result", digest, result.trim().substringBefore(' '))
+            val destinationDigest = MessageDigest.getInstance("SHA-256").digest(destinationBytes)
+                .joinToString("") { "%02x".format(it.toInt() and 255) }
+            assertEquals("Shell export hash mismatch: $destination", digest, destinationDigest)
             Log.i("SellerQaPdf", "package=${context.packageName} source=${exported.absolutePath} exported=$destination sha256=$digest")
             generated.delete()
         }
