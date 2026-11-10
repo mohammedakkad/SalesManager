@@ -163,6 +163,16 @@ fun ReturnProcessScreen(
                 return@Scaffold
             }
 
+            val returnError = state.processingState as? com.trader.core.domain.model.ReturnUiState.Error
+            if (returnError != null) {
+                Text(returnError.message, color = DebtRed, modifier = Modifier.padding(16.dp))
+                OutlinedButton(onClick = {
+                    if (state.loadError != null) viewModel.retryLoad() else viewModel.dismissConfirmSheet()
+                }, modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Text("إعادة المحاولة")
+                }
+            }
+
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(16.dp),
@@ -183,6 +193,7 @@ fun ReturnProcessScreen(
                     index, line ->
                     ReturnLineCard(
                         line = line,
+                        interactionEnabled = state.processingState == com.trader.core.domain.model.ReturnUiState.Idle,
                         onToggle = {
                             viewModel.toggleLine(index)
                         },
@@ -196,6 +207,7 @@ fun ReturnProcessScreen(
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(
                         value = state.note,
+                        enabled = state.processingState == com.trader.core.domain.model.ReturnUiState.Idle,
                         onValueChange = viewModel::updateNote,
                         label = {
                             Text("سبب الإرجاع (اختياري)")
@@ -266,10 +278,11 @@ fun ReturnProcessScreen(
 @Composable
 private fun ReturnLineCard(
     line: ReturnLineState,
+    interactionEnabled: Boolean = true,
     onToggle: () -> Unit,
     onQtyChange: (Double) -> Unit
 ) {
-    val isEnabled = line.canReturn
+    val isEnabled = interactionEnabled && line.canReturn
     val isSelected = line.isSelected
 
     val animatedElevation by animateDpAsState(
@@ -459,7 +472,7 @@ private fun ReturnLineCard(
                             ) {
                                 StepperButton(
                                     icon = Icons.Rounded.Remove,
-                                    enabled = line.returnQty > 0.0, // ✅ تعديل لمنع القفل للكسور
+                                    enabled = isEnabled && line.returnQty > 0.0,
                                     onClick = {
                                         onQtyChange(line.returnQty - 1)
                                     }
@@ -485,7 +498,7 @@ private fun ReturnLineCard(
                                 }
                                 StepperButton(
                                     icon = Icons.Rounded.Add,
-                                    enabled = line.returnQty < line.maxReturnable,
+                                    enabled = isEnabled && line.returnQty < line.maxReturnable,
                                     onClick = {
                                         onQtyChange(line.returnQty + 1)
                                     }
@@ -495,7 +508,7 @@ private fun ReturnLineCard(
                     }
                 }
 
-                if (!isEnabled) {
+                if (!line.canReturn) {
                     Spacer(Modifier.height(10.dp))
                     Row(
                         modifier = Modifier
@@ -647,6 +660,7 @@ private fun ConfirmReturnBottomSheet(
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
                     onClick = onDismiss,
+                    enabled = state.processingState !is com.trader.core.domain.model.ReturnUiState.Loading,
                     modifier = Modifier
                     .weight(1f)
                     .height(52.dp),

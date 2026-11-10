@@ -31,4 +31,25 @@ class ReturnsUiFlowTest:OfflineSellerUiTest() {
         ui.onNodeWithText("تم إرجاع كامل الكمية مسبقاً").assertExists()
         Assert.assertFalse(state.value.canConfirm)
     }
+    @Test fun returnFailureIsVisibleInsteadOfSilentlyRemovingConfirmation() {
+        state.value=ReturnScreenState(isLoading=false,processingState=ReturnUiState.Error("تعذر تنفيذ الإرجاع"))
+        show { ReturnProcessScreen(1,{}, {},viewModel=vm) }
+        ui.onNodeWithText("تعذر تنفيذ الإرجاع").assertIsDisplayed()
+    }
+
+    @Test fun failedLoadOffersTheRealReloadAction() {
+        state.value=ReturnScreenState(isLoading=false,loadError="قراءة غير مكتملة",processingState=ReturnUiState.Error("قراءة غير مكتملة"))
+        show { ReturnProcessScreen(1,{}, {},viewModel=vm) }
+        ui.onNodeWithText("قراءة غير مكتملة").assertIsDisplayed()
+        ui.onNodeWithText("إعادة المحاولة").performClick();verify(exactly=1){vm.retryLoad()}
+    }
+    @Test fun pendingConfirmationCannotBeCancelledIntoAnotherRefund() {
+        val item=InvoiceItem(id="line",transactionId=1,quantity=2.0,pricePerUnit=25.0)
+        state.value=ReturnScreenState(isLoading=false,lines=listOf(ReturnLineState(item,"قيد الإرجاع","حبة",returnQty=1.0,isSelected=true)),
+            showConfirmSheet=true,processingState=ReturnUiState.Loading)
+        show { ReturnProcessScreen(1,{}, {},viewModel=vm) }
+        ui.onNodeWithText("إلغاء").assertIsNotEnabled()
+        ui.onNodeWithText("تم إرجاع كامل الكمية مسبقاً").assertDoesNotExist()
+    }
+
 }

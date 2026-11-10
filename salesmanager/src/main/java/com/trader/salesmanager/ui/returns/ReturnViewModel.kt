@@ -10,6 +10,7 @@ import com.trader.core.domain.model.ReturnUiState
 import com.trader.core.domain.repository.InvoiceItemRepository
 import com.trader.core.domain.repository.ProductRepository
 import com.trader.core.domain.repository.ReturnRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +29,12 @@ data class ReturnLineState(
     (invoiceItem.quantity - alreadyReturned).coerceAtLeast(0.0),
     val isSelected: Boolean = false // هل اختاره للإرجاع
 ) {
-    val canReturn: Boolean  get() = maxReturnable > 0
+    val canReturn: Boolean  get() = maxReturnable.isFinite() && maxReturnable > 0
+    val isValid: Boolean get() = invoiceItem.quantity.isFinite() && invoiceItem.quantity > 0 &&
+        invoiceItem.pricePerUnit.isFinite() && invoiceItem.pricePerUnit >= 0 &&
+        costPrice.isFinite() && costPrice >= 0 && alreadyReturned.isFinite() && alreadyReturned >= 0 &&
+        maxReturnable.isFinite() && returnQty.isFinite() && returnQty >= 0 && returnQty <= maxReturnable &&
+        refundAmount.isFinite() && lostProfit.isFinite()
     val refundAmount: Double get() = returnQty * invoiceItem.pricePerUnit
     val lostProfit: Double
     get() = if (costPrice > 0) returnQty * (invoiceItem.pricePerUnit - costPrice) else 0.0
@@ -39,7 +45,8 @@ data class ReturnScreenState(
     val note: String = "",
     val isLoading: Boolean = true,
     val processingState: ReturnUiState = ReturnUiState.Idle,
-    val showConfirmSheet: Boolean = false
+    val showConfirmSheet: Boolean = false,
+    val loadError: String? = null
 ) {
     val selectedLines: List<ReturnLineState> get() = lines.filter {
         it.isSelected && it.returnQty > 0
@@ -53,7 +60,9 @@ data class ReturnScreenState(
     val isFullReturn: Boolean get() = lines.all {
         !it.canReturn || (it.isSelected && it.returnQty == it.maxReturnable)
     }
-    val canConfirm: Boolean get() = selectedLines.isNotEmpty() && processingState == ReturnUiState.Idle
+    val canConfirm: Boolean get() = !isLoading && loadError == null && lines.all { it.isValid } &&
+        selectedLines.isNotEmpty() && totalRefund.isFinite() && totalLostProfit.isFinite() &&
+        processingState == ReturnUiState.Idle
 }
 
 class ReturnViewModel(
@@ -66,56 +75,61 @@ class ReturnViewModel(
 
     private val _state = MutableStateFlow(ReturnScreenState())
     val state: StateFlow<ReturnScreenState> = _state.asStateFlow()
+    private var isSubmitting = false
+    // Keep identities and timestamps for an unchanged retry after uncertain completion.
+    // This is in-memory retry protection, not OS process-restoration qualification.
+    private var pendingRequest: Pair<ReturnInvoice, List<ReturnItem>>? = null
 
     init {
         load()
     } // ✅ يُستدعى تلقائياً عند الإنشاء
 
     private fun load() {
-        val transactionId = this.transactionId
+        _state.update { it.copy(isLoading = true, loadError = null, processingState = ReturnUiState.Idle) }
         viewModelScope.launch {
-            _state.update {
-                it.copy(isLoading = true)
-            }
-
-            val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
-
-            val lines = items.map {
-                item ->
-                // ✅ إصلاح Bug 1: جلب الكمية المُرجَعة فعلاً من DB بدل 0.0 hardcoded
-                val alreadyReturned = runCatching {
-                    returnRepo.getAlreadyReturnedQty(transactionId, item.unitId)
-                }.getOrDefault(0.0)
-
-                val unit = productRepo.getProductById(item.productId)
-                ?.units?.firstOrNull {
-                    it.id == item.unitId
+            try {
+                val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
+                val lines = items.map { item ->
+                    // A failed read is unknown, never evidence that no quantity was returned.
+                    val alreadyReturned = returnRepo.getAlreadyReturnedQty(transactionId, item.unitId)
+                    val unit = productRepo.getProductById(item.productId)?.units?.firstOrNull { it.id == item.unitId }
+                    val maxReturnable = (item.quantity - alreadyReturned).coerceAtLeast(0.0)
+                    ReturnLineState(
+                        invoiceItem = item,
+                        productName = item.productName,
+                        unitLabel = item.unitLabel,
+                        costPrice = unit?.costPrice ?: 0.0,
+                        alreadyReturned = alreadyReturned,
+                        returnQty = maxReturnable,
+                        isSelected = maxReturnable > 0
+                    )
                 }
-
-                val maxReturnable = (item.quantity - alreadyReturned).coerceAtLeast(0.0)
-
-                ReturnLineState(
-                    invoiceItem = item,
-                    productName = item.productName,
-                    unitLabel = item.unitLabel,
-                    costPrice = unit?.costPrice ?: 0.0,
-                    alreadyReturned = alreadyReturned,
-                    returnQty = maxReturnable, // ✅ بداية بالكمية المتبقية الفعلية
-                    isSelected = maxReturnable > 0 // ✅ فقط إذا لا يزال هناك ما يُرجع
-                )
-            }
-
-            _state.update {
-                it.copy(
-                    lines = lines,
-                    isLoading = false
-                )
+                require(lines.all { it.isValid } && lines.sumOf { it.refundAmount }.isFinite() &&
+                    lines.sumOf { it.lostProfit }.isFinite()) { "Invalid return amounts" }
+                _state.update { it.copy(lines = lines, isLoading = false, loadError = null) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                val message = "تعذر تحميل بيانات الإرجاع، حاول مجددًا"
+                _state.update {
+                    it.copy(lines = emptyList(), loadError = message, processingState = ReturnUiState.Error(message))
+                }
+            } finally {
+                _state.update { it.copy(isLoading = false) }
             }
         }
     }
 
+    fun retryLoad() {
+        if (_state.value.loadError != null && !_state.value.isLoading && !isSubmitting) load()
+    }
+
+    private fun canEdit() = !isSubmitting && _state.value.processingState !is ReturnUiState.Success
+
     // ── Toggle اختيار صنف ────────────────────────────────────────
     fun toggleLine(index: Int) {
+        if (!canEdit() || index !in _state.value.lines.indices) return
+        pendingRequest = null
         _state.update {
             s ->
             s.copy(lines = s.lines.mapIndexed {
@@ -127,6 +141,11 @@ class ReturnViewModel(
 
     // ── تغيير الكمية (Stepper) ───────────────────────────────────
     fun updateQty(index: Int, newQty: Double) {
+        if (!canEdit() || !newQty.isFinite() || index !in _state.value.lines.indices) return
+        val current = _state.value.lines[index]
+        val quantity = newQty.coerceIn(0.0, current.maxReturnable)
+        if (quantity == current.returnQty && current.isSelected == (quantity > 0)) return
+        pendingRequest = null
         _state.update {
             s ->
             s.copy(lines = s.lines.mapIndexed {
@@ -139,80 +158,74 @@ class ReturnViewModel(
         }
     }
 
-    fun updateNote(note: String) = _state.update {
-        it.copy(note = note)
+    fun updateNote(note: String) {
+        if (!canEdit() || note == _state.value.note) return
+        pendingRequest = null
+        _state.update { it.copy(note = note) }
     }
 
-    fun showConfirmSheet() = _state.update {
-        it.copy(showConfirmSheet = true)
+    fun showConfirmSheet() {
+        if (_state.value.canConfirm) _state.update { it.copy(showConfirmSheet = true) }
     }
-    fun dismissConfirmSheet() = _state.update {
-        it.copy(showConfirmSheet = false, processingState = ReturnUiState.Idle)
+    fun dismissConfirmSheet() {
+        if (!canEdit()) return
+        _state.update { it.copy(showConfirmSheet = false,
+            processingState = if (it.loadError == null) ReturnUiState.Idle else it.processingState) }
     }
 
     // ── تأكيد الإرجاع ────────────────────────────────────────────
     fun confirmReturn() {
         val s = _state.value
-        if (!s.canConfirm) return
+        if (isSubmitting || !s.canConfirm) return
+        if (merchantId.isBlank()) {
+            _state.update { it.copy(processingState = ReturnUiState.Error("انتهت جلسة التاجر"), showConfirmSheet = false) }
+            return
+        }
+
+        val invoice = pendingRequest?.first ?: ReturnInvoice(
+            originalTransactionId = transactionId,
+            merchantId = merchantId,
+            returnType = if (s.isFullReturn) ReturnType.FULL else ReturnType.PARTIAL,
+            totalRefund = s.totalRefund,
+            note = s.note
+        )
+        val returnItems = pendingRequest?.second ?: s.selectedLines.map { line ->
+            ReturnItem(
+                returnInvoiceId = invoice.id,
+                productId = line.invoiceItem.productId,
+                productName = line.productName,
+                unitId = line.invoiceItem.unitId,
+                unitLabel = line.unitLabel,
+                originalQuantity = line.invoiceItem.quantity,
+                returnedQuantity = line.returnQty,
+                pricePerUnit = line.invoiceItem.pricePerUnit,
+                costPricePerUnit = line.costPrice
+            )
+        }
+        pendingRequest = invoice to returnItems
+        isSubmitting = true
+        _state.update { it.copy(processingState = ReturnUiState.Loading) }
 
         viewModelScope.launch {
-            _state.update {
-                it.copy(processingState = ReturnUiState.Loading)
-            }
-
-            val returnType = if (s.isFullReturn) ReturnType.FULL else ReturnType.PARTIAL
-            val invoice = ReturnInvoice(
-                originalTransactionId = this@ReturnViewModel.transactionId,
-                merchantId = merchantId,
-                returnType = returnType,
-                totalRefund = s.totalRefund,
-                note = s.note
-            )
-            val returnItems = s.selectedLines.map {
-                line ->
-                ReturnItem(
-                    returnInvoiceId = invoice.id,
-                    productId = line.invoiceItem.productId,
-                    productName = line.productName,
-                    unitId = line.invoiceItem.unitId,
-                    unitLabel = line.unitLabel,
-                    originalQuantity = line.invoiceItem.quantity,
-                    returnedQuantity = line.returnQty,
-                    pricePerUnit = line.invoiceItem.pricePerUnit,
-                    costPricePerUnit = line.costPrice
-                )
-            }
-
-            // ✅ Local-First: الحفظ المحلي يكتمل دائماً حتى offline
-            // Firebase يحاول في الخلفية بدون انتظار (لن يعلق UI)
-            runCatching {
-                returnRepo.processReturn(invoice, returnItems)
-            }.fold(
-                onSuccess = {
-                    result ->
-                    _state.update {
-                        it.copy(
-                            processingState = ReturnUiState.Success(result),
-                            showConfirmSheet = false
-                        )
-                    }
-                },
-                onFailure = {
-                    e ->
-                    _state.update {
-                        it.copy(
-                            processingState = ReturnUiState.Error(
-                                when (e) {
-                                    is IllegalArgumentException -> e.message ?: "بيانات غير صحيحة"
-                                    is IllegalStateException -> e.message ?: "تجاوز الكمية المسموح بها"
-                                    else -> "حدث خطأ، حاول مجدداً"
-                                }
-                            ),
-                            showConfirmSheet = false
-                        )
-                    }
+            try {
+                val result = returnRepo.processReturn(invoice, returnItems)
+                _state.update { it.copy(processingState = ReturnUiState.Success(result), showConfirmSheet = false) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                val message = when (failure) {
+                    is IllegalArgumentException -> failure.message ?: "بيانات غير صحيحة"
+                    is IllegalStateException -> failure.message ?: "تجاوز الكمية المسموح بها"
+                    else -> "حدث خطأ، حاول مجدداً"
                 }
-            )
+                _state.update { it.copy(processingState = ReturnUiState.Error(message), showConfirmSheet = false) }
+            } finally {
+                isSubmitting = false
+                _state.update {
+                    if (it.processingState == ReturnUiState.Loading)
+                        it.copy(processingState = ReturnUiState.Idle, showConfirmSheet = false) else it
+                }
+            }
         }
     }
 }
