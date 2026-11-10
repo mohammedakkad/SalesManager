@@ -1,4 +1,4 @@
-> Current audited state (2026-11-10): 447 JVM cases PASS; Seller lines 75.2435%, weighted 74.7716%. Target 100% NOT ACHIEVED; release FAIL. See coverage-next-progress.md and the current section below. Earlier figures describe historical runs.
+> Current audited state (2026-11-10):514 JVM cases PASS; Seller lines 76.1051%, weighted 75.4753%. Target 100% NOT ACHIEVED; release FAIL. See coverage-recovery-progress.md and the current recovery section below. Earlier figures are historical.
 
 # Stage8 — actual boundaries and remaining implementation
 
@@ -157,7 +157,7 @@ A preselected eight-fault sample in a disposable git archive is detected by real
 
 Since94a2e48:54 new app/Seller JVM,6 Python,3 Android and3 PDFBox cases;432 distinct currently passing qualification cases across those separate suites, excluding repeated/mutant/failed diagnostic executions. Remaining explicit plan69 work items:36NOT TESTED,32BLOCKED,1PARTIAL; not an exhaustive count of all possible tests. Existing server fencing/authorization, Firestore/RTDB reconciliation, legacy tenant/cache/cross-device identity, historical fixtures, signed upgrade/security/performance/API/lifecycle blockers remain. Release readinessFAIL. Detailed Arabic accounting:test-completion-status-ar.md; structured qualification:coverage100/final/qualification.json. This final evidence increment changes documentation only after the audited source.
 
-## Current verified continuation — 2026-11-10
+## Previous verified boundary continuation — 2026-11-10
 
 Starting SHA: `78bc60543d490cf47317afb832f3d5bf1df6d43e`. Qualified source: `53ba5722ffe485f1ebcda55316e96830ac849b3b`, on the existing branch and PR #51. All **447 module JVM cases pass** (shared 135, Seller 312), with zero failures, errors or skips. All 409 starting identities remain; 38 cases were added. Eleven Python coverage guards pass. Seller JVM lines: **13440/17862 = 75.2435%**; weighted lines: **21034/28131 = 74.7716%**. Branches: Seller 6689/14446 = 46.3035%, weighted 8066/17473 = 46.1627%. The original 70% gates and production inclusion policy remain unchanged. The 100% target is **NOT ACHIEVED**.
 
@@ -170,3 +170,45 @@ API 24 failed during APK installation in attempts 42757328279 and 42759200717. A
 Local complete JaCoCo/gates/Lint/Debug/AndroidTest/minified unsigned Release acceptance passed in 5m9s on production source 6256d32, which remains unchanged. The final 447-case numeric JVM/coverage/Lint acceptance passed in 1m58s; the final hosted workflow also rebuilds and executes its full checks. Lint: zero errors, 24 warnings. Targeted secret policy passes; it is not a complete security audit. Room 2.6.1/schema 25, authentic schemas 22–25 and seven migration cases remain intact; historical versions 1–21 remain BLOCKED. No destructive migration or production signing was used.
 
 The explicit remaining plan has **63 work items: 29 NOT TESTED, 32 BLOCKED, two PARTIAL**. This is not a count of all possible tests. P0/P1 server authorization/revision fencing, cross-backend reconciliation, legacy tenant/cache/writer ownership, authentic historical fixtures, signed upgrades, and broader security/performance/device qualification remain unresolved. Release readiness is **FAIL**. See [Arabic accounting](test-completion-status-ar.md), [current structured evidence](evidence/continuation/coverage-next/final/qualification.json) and [actual per-API results](evidence/continuation/coverage-next/matrix/run-42762481171.json).
+
+## Current recovery continuation — 2026-11-10
+
+Starting SHA: `b9c978f6bb9e6a3d00eb895a386c7f856aae995c`. Qualified source: `59413ed14a306df0fff2d7127cc2ad0c90217971`, on the same branch and PR #51. **514 JVM cases PASS** (shared 162/Seller 352), zero failures/errors/skips; all 447 starting identities retained, **67 new cases**. Eleven Python coverage guards pass. Seller JVM lines **13619/17895 = 76.1051%**, weighted **21278/28192 = 75.4753%**; branches Seller6868/14660 = 46.8486%, weighted8312/17763 = 46.7939%. Original gates/inclusions remain unchanged. The 100% target is NOT ACHIEVED.
+
+Actual pre-repair evidence contains43 distinct failing regression cases (44 executions; one Room case repeated). A lost result after a committed partial return previously allowed a second refund: sale25→0, cash125→100, stock3→4 and two RETURN events. Stable unchanged retry identities now keep the one committed refund. Submission claims synchronously; active drafts/modal controls cannot reopen a second request; completed results cannot resubmit. Failed reads no longer invent zero prior returns; finite/overflow guards, visible errors, explicit reload and cancellation handling preserve existing zero-price/deleted-product behavior. Client retry identity remains in memory; actual edits create new intent, and OS process-restoration is not certified.
+
+All eight Seller SDK listener families now close/unregister on terminal errors without fabricated empty snapshots. Consumers recover inside merchant boundaries: at most three subscriptions with 500/1000ms delays for transient errors; denied credentials are not retried. Cancellation/programming errors propagate. Payment and employee logout now cancels the old listener. Exhausted-stream UI status/same-session retry and remote snapshot numeric quarantine remain explicit unfinished work. New cash guards reject nonfinite input and roll back SQL arithmetic overflow inside Room before ledger commit, preserving existing finite negative-balance rules and monetary formulas. Three isolated production Koin contracts verify shared DAO database identity, actual atomic sale persistence and Return navigation parameters; not MainActivity runtime.
+
+[Hosted run 42836384853](https://github.com/mohammedakkad/SalesManager/actions/runs/42836384853) is **SUCCESS**: seller and compose on API24/28/33/35. Each lane executes all seven Android and five real PDFBox cases, records five actual Context/export paths and hashes, measures EC coverage and preserves artifacts. Separate API28 Android+JVM lines: Seller **14624/17895 = 81.7212%**, weighted **22300/28192 = 79.1005%**; JVM gates retain their own counters. No fake PDF or exclusion was introduced.
+
+Full local JVM/Lint/Debug/AndroidTest/minified unsigned Release aggregate PASS in 5m32s, followed by final514 JVM/JaCoCo PASS in 1m37s and current Lint PASS in 37s. A prior asynchronous Room/Compose failure assertion was synchronized with actual completion; the original displayed-error and rollback/retry assertions remain. Lint: 0 errors/24 warnings; targeted secret policy and11 Python guards PASS. Release is unsigned QA output, not signed device-upgrade qualification. Room 2.6.1/schema 25/authentic22–25 and seven migration cases remain; no new DDL, destructive fallback, Admin business logic, production service access or signing material.
+
+The explicit remaining plan has **56 work items: 23 NOT TESTED, 32 BLOCKED, one PARTIAL**. Nine client/input items close; two discovered follow-ups are added openly. P0/P1 deployed authorization/revision fencing, distributed reconciliation, legacy tenant/cache/writer ownership, authentic historical1–21 fixtures, signed upgrades, and broader security/device/performance work remain. Release readiness **FAIL**. [Arabic details](test-completion-status-ar.md), [structured qualification](evidence/continuation/coverage-recovery/final/qualification.json), [actual per-API runtime](evidence/continuation/coverage-recovery/hosted/run-42836384853.json).
+
+### Return retry identity and the existing transaction boundary
+
+The new ViewModel guard runs before dispatching its coroutine. It retains the immutable ReturnInvoice/item IDs and timestamps for an unchanged retry. Actual draft edits create a new intent. This identity is not persisted through an Android OS process kill; existing database operation/outbox records remain durable. The real Room regression demonstrates a complete committed return with a lost result, followed by idempotent retry, rather than claiming that cancellation can undo an already committed transaction.
+
+```mermaid
+sequenceDiagram
+    participant UI as Seller UI
+    participant VM as ReturnViewModel
+    participant Repo as ReturnRepository
+    participant DB as Room and SaleCommands journal
+    participant Sync as Outbox dispatcher
+    UI->>VM: Confirm return
+    VM->>VM: Claim submission and freeze active draft
+    VM->>Repo: Immutable invoice and item identities
+    Repo->>DB: journalReturn and withTransaction for managed sale
+    DB->>DB: Return, stock, sale, cash, operation and outbox
+    DB-->>Repo: Commit
+    DB-->>Sync: Read committed intent and dispatch after commit
+    Repo-->>VM: Result, or cancellation after committed result is lost
+    VM->>Repo: Retry unchanged identities
+    Repo->>DB: Resolve prior committed operation
+    DB-->>VM: Existing result without replaying effects
+```
+
+The cash helper validates finite inputs, performs SQL balance arithmetic, verifies the resulting balance and writes its ledger inside one Room transaction. A failed post-arithmetic finite check throws before commit, rolling back the balance and any enclosing transfer. Existing finite negative balances are not clamped. No schema change is required; the authentic migration and backup cases remain in the full JVM suite.
+
+Legacy unmanaged returns/writers, tenant/cache ownership and remote protocols are separate limitations. The diagram describes the managed sale path tested by ReturnRecoveryRoomTest, not a guarantee that every legacy writer now has a durable outbox.

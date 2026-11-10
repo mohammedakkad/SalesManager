@@ -1,87 +1,87 @@
 {
   "startingSha": "94a2e48fee725e3a717cc133e36b4682ddd05639",
-  "qualifiedSourceSha": "53ba5722ffe485f1ebcda55316e96830ac849b3b",
-  "followingCommitScope": "QA documentation and actual evidence only; production source last changed at6256d32, JVM tests at4575cea, Android PDF export test at53ba572.",
+  "qualifiedSourceSha": "59413ed14a306df0fff2d7127cc2ad0c90217971",
+  "followingCommitScope": "QA documentation and actual evidence only; production sources last changed at99b5903, test/infrastructure59413ed.",
   "newCasesSinceStartingSha": {
-    "appAndSellerJvm": 92,
+    "appAndSellerJvm": 159,
     "pythonCoverageGuards": 6,
     "androidInstrumentation": 3,
     "hostPdfBox": 3,
-    "total": 104
+    "total": 171
   },
   "qualifiedPassingCases": {
-    "appAndSellerJvm": 447,
+    "appAndSellerJvm": 514,
     "pythonCoverageGuards": 11,
     "androidInstrumentation": 7,
     "hostPdfBox": 5,
-    "total": 470,
+    "total": 537,
     "failures": 0,
     "errors": 0,
     "skipped": 0
   },
-  "scope": "Distinct cases across separately identified local and hosted suites; repeated executions and seeded-fault experiments are not new production cases.",
+  "scope": "Unique cases across local and hosted suites. Four API lanes repeat the same7+5 cases:28 Android and20 PDFBox executions, not48 new test implementations.",
   "localCounters": {
     "app": {
-      "tests": 135,
+      "tests": 162,
       "failures": 0,
       "errors": 0,
       "skipped": 0,
       "coverage": {
         "INSTRUCTION": {
-          "covered": 48519,
-          "missed": 23189
+          "covered": 49159,
+          "missed": 22919
         },
         "BRANCH": {
-          "covered": 1377,
-          "missed": 1650
+          "covered": 1444,
+          "missed": 1659
         },
         "LINE": {
-          "covered": 7594,
-          "missed": 2675
+          "covered": 7659,
+          "missed": 2638
         },
         "COMPLEXITY": {
-          "covered": 2060,
-          "missed": 1976
+          "covered": 2109,
+          "missed": 1967
         },
         "METHOD": {
-          "covered": 1719,
-          "missed": 797
+          "covered": 1741,
+          "missed": 777
         },
         "CLASS": {
-          "covered": 548,
-          "missed": 236
+          "covered": 558,
+          "missed": 228
         }
       }
     },
     "salesmanager": {
-      "tests": 312,
+      "tests": 352,
       "failures": 0,
       "errors": 0,
       "skipped": 0,
       "coverage": {
         "INSTRUCTION": {
-          "covered": 143652,
-          "missed": 50549
+          "covered": 145114,
+          "missed": 49886
         },
         "BRANCH": {
-          "covered": 6689,
-          "missed": 7757
+          "covered": 6868,
+          "missed": 7792
         },
         "LINE": {
-          "covered": 13440,
-          "missed": 4422
+          "covered": 13619,
+          "missed": 4276
         },
         "COMPLEXITY": {
-          "covered": 3606,
-          "missed": 6856
+          "covered": 3706,
+          "missed": 6869
         },
         "METHOD": {
-          "covered": 2302,
-          "missed": 892
+          "covered": 2335,
+          "missed": 865
         },
         "CLASS": {
-          "covered": 1046,
-          "missed": 232
+          "covered": 1051,
+          "missed": 228
         }
       }
     }
@@ -89,22 +89,22 @@
   "hostedAdditionalAndroidJvmCounters": {
     "lines": {
       "app": {
-        "covered": 7611,
-        "missed": 2658,
-        "total": 10269,
-        "percent": 74.11627227578148
+        "covered": 7676,
+        "missed": 2621,
+        "total": 10297,
+        "percent": 74.54598426726231
       },
       "salesmanager": {
-        "covered": 14444,
-        "missed": 3418,
-        "total": 17862,
-        "percent": 80.86440488187213
+        "covered": 14624,
+        "missed": 3271,
+        "total": 17895,
+        "percent": 81.72115115954178
       },
       "weighted overall": {
-        "covered": 22055,
-        "missed": 6076,
-        "total": 28131,
-        "percent": 78.40105221997085
+        "covered": 22300,
+        "missed": 5892,
+        "total": 28192,
+        "percent": 79.10045402951192
       }
     },
     "nativePdfLines": {
@@ -123,14 +123,18 @@
     }
   },
   "ci": {
-    "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42762481171",
+    "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42836384853",
     "state": {
       "status": "WORKFLOW_RUN_STATUS_COMPLETED",
       "conclusion": "WORKFLOW_RUN_CONCLUSION_SUCCESS"
     },
-    "seller": [
-      "completed successfully: "
-    ],
+    "jobs": {
+      "seller": "SUCCESS",
+      "compose (API24)": "SUCCESS",
+      "compose (API28)": "SUCCESS",
+      "compose (API33)": "SUCCESS",
+      "compose (API35)": "SUCCESS"
+    },
     "apis": {
       "24": {
         "status": "PASS",
@@ -160,13 +164,6 @@
         "actualApi": 35,
         "exit": "stage=complete exit=0"
       }
-    },
-    "jobs": {
-      "seller": "SUCCESS",
-      "compose (API24)": "SUCCESS",
-      "compose (API28)": "SUCCESS",
-      "compose (API33)": "SUCCESS",
-      "compose (API35)": "SUCCESS"
     }
   },
   "lint": {
@@ -183,18 +180,18 @@
   "apks": [
     {
       "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
-      "bytes": 1077131,
-      "sha256": "86ebdc0354f674c6ddd538b55b80742be0057eecf513490fc34d941e63426d05"
+      "bytes": 1077216,
+      "sha256": "ba48461a7d4a434a5bb03988e990e8e6dd2964e11b87fda47daa135b7780033d"
     },
     {
       "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
-      "bytes": 51525841,
-      "sha256": "9a783f9a105f0b2b6ab521601efb95f9af45a983a325a4ec9d1fb75ea37c297a"
+      "bytes": 51293732,
+      "sha256": "53e6e8bf8cce860ce92f86c61f4b0e7cfc190c859147a8e8f4bafe36c730ae7b"
     },
     {
       "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
       "bytes": 26702050,
-      "sha256": "c28a79f372e587ae7570c95bc10e9107436dacb558bc7ec29c7aefe179762b90"
+      "sha256": "fba111fc1c5fd70c795b12ec9ae2ae77c383f4a4b2dc4de0fd16844930ae8504"
     }
   ],
   "database": {
@@ -209,11 +206,11 @@
     "migrationTestCases": 7,
     "historicalVersions1Through21": "BLOCKED"
   },
-  "remainingDefinedWorkItems": 63,
+  "remainingDefinedWorkItems": 56,
   "remainingByStatus": {
     "BLOCKED": 32,
-    "PARTIAL": 2,
-    "NOT TESTED": 29
+    "NOT TESTED": 23,
+    "PARTIAL": 1
   },
   "seededFaultSample": {
     "source": "ef1c8999577518e14f1fc799328360eb38721874",
@@ -239,12 +236,19 @@
     "Legacy tenant/cache ownership and cross-device identifiers",
     "Authentic historical1\u201321 fixtures",
     "Signed upgrade/APK authenticity and broader security qualification",
-    "Performance, device lifecycle and accessibility qualification; API lanes identified separately"
+    "Performance, device lifecycle and accessibility qualification; API lanes identified separately",
+    "User-visible exhausted realtime subscription status and same-session retry",
+    "Remote numeric snapshot quarantine without interpreting invalid rows as deletions"
   ],
-  "limitations": "447 module JVM cases plus11 Python guards and7 Android+5 PDFBox distinct cases. Repeated API executions are not new test implementations. Public XML-derived notices, Context paths/hash and artifact names inspected; authenticated raw archives not downloaded. SDK fakes do not prove deployed rules, Room reopen does not prove OS process kill. Target100NOT ACHIEVED, releaseFAIL.",
-  "continuationStartingSha": "78bc60543d490cf47317afb832f3d5bf1df6d43e",
-  "newModuleCasesThisContinuation": 38,
-  "fullLocalBuildSourceSha": "6256d32007ff389477ba7f9286ae39f9b37b9092",
-  "localJvmAcceptanceSourceSha": "4575cea07ef112ee0ecfbfcc234c76beb9ee0199",
-  "apkHashProvenance": "Hashes are from the verified6256d32 local offline QA build; hosted53ba572 rebuild success is separate evidence, without claiming independently downloaded hosted APK hashes."
+  "limitations": "Public actual XML-derived runtime notices, Context paths/hashes and five uploaded artifact names inspected. Raw authenticated archives and hosted APK hashes were not independently downloaded. SDK fakes do not prove deployed authorization; Room reopen is not OS process kill. Typed listener errors have bounded recovery/logging, but no new global user-visible status/retry API. Remote numeric snapshot quarantine remains unimplemented. Target100NOT ACHIEVED; releaseFAIL.",
+  "continuationStartingSha": "b9c978f6bb9e6a3d00eb895a386c7f856aae995c",
+  "newModuleCasesThisContinuation": 67,
+  "fullLocalBuildSourceSha": "99b59033911339f60b2d63972cecf688816c67da",
+  "localJvmAcceptanceSourceSha": "59413ed14a306df0fff2d7127cc2ad0c90217971",
+  "apkHashProvenance": "Local complete5m32s offline QA build; later DI additions affect JVM test source only, not APK production classes. No hosted APK hashes claimed.",
+  "preRepairRegressionEvidence": {
+    "distinctFailingCases": 43,
+    "failingExecutions": 44,
+    "excludedDiagnostics": "One prior Session async UI assertion and a missing offline StockRepository fixture override are documented separately; not new production regressions."
+  }
 }
