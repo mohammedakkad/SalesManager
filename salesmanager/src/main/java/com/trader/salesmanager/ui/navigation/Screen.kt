@@ -47,11 +47,11 @@ sealed class Screen(val route: String) {
     }
 
     object EditProduct : Screen("edit_product/{productId}") {
-        fun createRoute(productId: String) = "edit_product/$productId"
+        fun createRoute(productId: String) = "edit_product/${android.net.Uri.encode(productId)}"
     }
 
     object ProductDetail : Screen("product_detail/{productId}") {
-        fun createRoute(productId: String) = "product_detail/$productId"
+        fun createRoute(productId: String) = "product_detail/${android.net.Uri.encode(productId)}"
     }
 
     object InventorySession : Screen("inventory_session")

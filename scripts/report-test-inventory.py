@@ -14,7 +14,7 @@ OUT = ROOT / 'docs/qa/evidence/continuation/coverage100/final'
 def classify(source, name):
     text = source.read_text()
     tags = []
-    if 'OfflineSellerUiTest()' in text:
+    if 'OfflineSellerUiTest()' in text or 'OfflineNavigationFixture()' in text:
         tags.append('Compose UI on JVM')
     if re.search(r'Room\.(inMemoryDatabaseBuilder|databaseBuilder)|openOrCreateDatabase|SQLiteDatabase\.(create|open)', text):
         tags.append('Room/SQLite on JVM')

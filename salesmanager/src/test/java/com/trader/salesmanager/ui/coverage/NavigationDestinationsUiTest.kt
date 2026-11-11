@@ -32,45 +32,7 @@ import org.koin.dsl.module
 
 /** Real NavHost, notification entry points and invoice SavedStateHandle round trips; no real backend. */
 @RunWith(RobolectricTestRunner::class)
-class NavigationDestinationsUiTest:OfflineSellerUiTest() {
-    private val activation=mockk<ActivationViewModel>(relaxed=true)
-    private val startup=MutableStateFlow<StartupState>(StartupState.Proceed)
-    private val watcher=mockk<MerchantWatcherViewModel>(relaxed=true)
-    private val events=MutableSharedFlow<MerchantEvent>(extraBufferCapacity=1)
-    private val stock=mockk<InventoryListViewModel>(relaxed=true)
-    private val sale=mockk<AddEditTransactionViewModel>(relaxed=true)
-    private val customer=Customer(7,"زبون مسار")
-    private val saleState=MutableStateFlow(AddEditTransactionUiState(customers=listOf(customer),selectedCustomer=customer,amount="50"))
-    private val lineVm=mockk<InvoiceItemsViewModel>(relaxed=true)
-    private var appliedJson:String?=null
-    private val unit=ProductUnit("u","p",UnitType.WEIGHT,"kg",price=50.0,quantityInStock=100.0)
-    private val line=InvoiceLineItem(product=ProductWithUnits(Product("p",name="أرز المسار"),listOf(unit)),selectedUnit=unit,
-        displayQty=2.0,displayWeightUnit=SaleWeightUnit.POUND,customPrice=45.0,stockAvailable=100.0)
-    @Before fun models() {
-        every{activation.startupState} returns startup;every{activation.uiState} returns MutableStateFlow(ActivationUiState())
-        every{watcher.event} returns events;every{watcher.expiryBanner} returns MutableStateFlow(null)
-        val home=mockk<HomeViewModel>(relaxed=true);every{home.uiState} returns MutableStateFlow(HomeUiState())
-        val sync=mockk<SyncStatusViewModel>(relaxed=true);every{sync.syncState} returns MutableStateFlow(GlobalSyncState.AllSynced);every{sync.unsyncedItems} returns MutableStateFlow(emptyList())
-        val customers=mockk<CustomersViewModel>(relaxed=true);every{customers.uiState} returns MutableStateFlow(CustomersUiState(isLoading=false));every{customers.deleteConfirm} returns MutableStateFlow(null)
-        every{stock.uiState} returns MutableStateFlow(InventoryListUiState(isLoading=false))
-        val debts=mockk<DebtsViewModel>(relaxed=true);every{debts.uiState} returns MutableStateFlow(DebtsUiState(isLoading=false))
-        val reports=mockk<ReportsViewModel>(relaxed=true);every{reports.uiState} returns MutableStateFlow(ReportsUiState(isLoading=false))
-        val updates=mockk<AppUpdateViewModel>(relaxed=true);every{updates.uiState} returns MutableStateFlow(AppUpdateUiState())
-        val low=mockk<LowStockSettingsRepository>(relaxed=true);every{low.settings} returns MutableStateFlow(LowStockAlertSettings())
-        val boxes=mockk<BoxesViewModel>(relaxed=true);every{boxes.uiState} returns MutableStateFlow(BoxesUiState(isLoading=false))
-        val methods=mockk<PaymentMethodsViewModel>(relaxed=true);every{methods.uiState} returns MutableStateFlow(PaymentMethodsUiState(listOf(PaymentMethod(3,"طريقة المسار"))))
-        val backup=mockk<BackupViewModel>(relaxed=true);every{backup.uiState} returns MutableStateFlow(BackupUiState())
-        val chat=mockk<ChatViewModel>(relaxed=true);every{chat.uiState} returns MutableStateFlow(ChatUiState(isLoading=false,merchantId="offline"))
-        val payments=mockk<PaymentMethodRepository>(relaxed=true)
-        every{sale.uiState} returns saleState;every{sale.serializePendingLines()} returns null
-        every{sale.applyInvoiceLinesFromJson(any())} answers {appliedJson=firstArg();Unit}
-        every{lineVm.uiState} returns MutableStateFlow(InvoiceItemsUiState(lines=listOf(line),isLoading=false))
-        loadKoinModules(module {
-            viewModel{activation};viewModel{watcher};viewModel{home};viewModel{sync};viewModel{customers};viewModel{stock}
-            viewModel{debts};viewModel{reports};viewModel{updates};viewModel{boxes};viewModel{methods};viewModel{backup};viewModel{chat}
-            viewModel{sale};viewModel{lineVm};single<LowStockSettingsRepository>{low};single<PaymentMethodRepository>{payments}
-        })
-    }
+class NavigationDestinationsUiTest:OfflineNavigationFixture() {
     @Test fun settingsNotificationAcknowledgesExactlyOnceAndOpensCashDestination() {
         var handled=0;show{AppNavigation(MainActivity.NAV_SETTINGS){handled++}}
         ui.onNodeWithText("الصناديق").performScrollTo().performClick()

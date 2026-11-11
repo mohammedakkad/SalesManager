@@ -148,7 +148,7 @@ Scaffold(
             containerColor = Emerald500, contentColor = Color.White,
             shape = RoundedCornerShape(16.dp)
         ) {
-            Icon(Icons.Rounded.Add, null)
+            Icon(Icons.Rounded.Add, "إضافة عملية للزبون")
         }
     }
 ) {
@@ -176,7 +176,7 @@ Scaffold(
                         // ✅ إخفاء زر التعديل للزبون الزائر (id = -1)
                         if (customerId != -1L) {
                             IconButton(onClick = onEditCustomer) {
-                                Icon(Icons.Rounded.Edit, null, tint = Color.White)
+                                Icon(Icons.Rounded.Edit, "تعديل الزبون", tint = Color.White)
                             }
                         }
                     }

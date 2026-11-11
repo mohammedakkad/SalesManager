@@ -55,7 +55,7 @@ class CashFormContractsTest {
         assertNull(vm.uiState.value.error)
     }
     @Test fun zeroRemainsValidAndInvalidBlankOrNegativeTextCannotCreateMutations()=runTest {
-        val vm=model();runCurrent();vm.setInitialBalance("1","0");vm.adjustBalance("1","0",null,AdjustmentReason.OTHER);runCurrent()
+        val vm=model();runCurrent();vm.setInitialBalance("1","0");runCurrent();vm.adjustBalance("1","0",null,AdjustmentReason.OTHER);runCurrent()
         for(text in listOf("","bad","-1")){vm.setInitialBalance("1",text);vm.adjustBalance("1",text,null,AdjustmentReason.OTHER);runCurrent()}
         coVerify(exactly=1){cash.setInitialBalance("1",0.0)};coVerify(exactly=1){cash.adjustBalance("1",0.0,any(),AdjustmentReason.OTHER)}
         assertNotNull(vm.uiState.value.error);vm.clearError();assertNull(vm.uiState.value.error)

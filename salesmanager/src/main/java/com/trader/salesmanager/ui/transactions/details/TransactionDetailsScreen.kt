@@ -288,7 +288,7 @@ fun TransactionDetailsScreen(
                         IconButton(onClick = {
                             onEdit(transactionId)
                         }) {
-                            Icon(Icons.Rounded.Edit, null, tint = Color.White)
+                            Icon(Icons.Rounded.Edit, "تعديل العملية", tint = Color.White)
                         }
                         IconButton(onClick = {
                             showDeleteDialog = true

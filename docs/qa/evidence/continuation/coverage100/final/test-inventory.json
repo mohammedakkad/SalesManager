@@ -1,15 +1,15 @@
 {
   "summary": {
-    "jvmCases": 632,
+    "jvmCases": 663,
     "result": {
-      "passed": 632
+      "passed": 663
     },
     "primaryCategories": {
       "Room/SQLite on JVM": 214,
       "Room migration": 7,
       "Firebase SDK/protocol fake": 65,
-      "Unit/model with deterministic fakes": 184,
-      "Compose UI on JVM": 133,
+      "Unit/model with deterministic fakes": 186,
+      "Compose UI on JVM": 162,
       "Loopback HTTP": 4,
       "WorkManager lifecycle": 6,
       "Android notification component on JVM": 3,
@@ -18,12 +18,12 @@
       "Real XLSX file content": 4
     },
     "overlappingTags": {
-      "Room/SQLite on JVM": 229,
+      "Room/SQLite on JVM": 231,
       "Firebase SDK/protocol fake": 100,
       "Restart/recovery in test harness": 24,
       "Room migration": 7,
       "WorkManager lifecycle": 13,
-      "Compose UI on JVM": 133,
+      "Compose UI on JVM": 162,
       "Loopback HTTP": 4,
       "Android notification component on JVM": 3,
       "Native bitmap graphics": 2,
@@ -3968,6 +3968,162 @@
     },
     {
       "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "blankExplanationDoesNotInventAColonOrASecondCashEffect",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "cancelledAdjustmentRetainsTheDraftAndAllowsAnotherAttempt",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "transferReasonSendsAnAbsoluteBalanceAndTrimmedExplanation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "anEmptyBoxCollectionShowsAnEmptyStateAndNoAdjustmentActions",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "duplicateAdjustmentCannotQueueASecondRepositoryCommand",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "adjustmentFailureRetainsTheAmountNoteAndReasonForRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "accessibleBackActionNavigatesExactlyOnce",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "invalidInitialAmountRemainsEditableInsteadOfDiscardingTheDialog",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "pendingInitialSaveKeepsTheDialogAndBlocksSaveAndDismissUntilAcknowledged",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "cancellingAnEditedDraftDoesNotCallTheRepository",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "ledgerRetainsSignedAmountsKindsNotesAndRelativeTimeBuckets",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest",
+      "name": "initialFailureKeepsArabicAmountAndCanBeRetriedExplicitly",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxCommandJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxRollbackRoomUiTest",
+      "name": "correctionLedgerFailureRollsBackTheBalanceAndRetryCreatesOneDelta",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxRollbackRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CashBoxRollbackRoomUiTest",
+      "name": "initialLedgerFailureRollsBackRoomAndRetainsTheDraftUntilOneSuccessfulRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CashBoxRollbackRoomUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM",
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
       "class": "com.trader.salesmanager.ui.coverage.ChatJourneysUiTest",
       "name": "failedPendingMessageProvidesRetryAndDismissWithStableId",
       "result": "passed",
@@ -4412,6 +4568,171 @@
       "name": "confirmationReturnsActualLinesAndCalculatedTotal",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InvoiceUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "addingAProductWithoutScanningDoesNotInventAnInitialBarcode",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "recentSaleOpensItsActualTransactionIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "customerCreationReturnsToTheSameMainTabAfterSuccessfulSave",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "editingCustomerPreservesTheSelectedIdentityAndReturnsToItsDetails",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "deletionResultPopsDetailsOnlyAfterTheModelConfirmsDeletion",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "reportDayPreservesMidnightAndCanOpenItsActualInvoice",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "returningSaleUsesTheOriginalTransactionAndReturnsToItsDetails",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "productDetailsAndEditorUseTheSamePersistedId",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "debtRowOpensTheSelectedCustomerRatherThanAListPosition",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "editedInvoiceDraftRoundTripsOnceThroughTheEditorSavedState",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "customerSalePreselectsTheCustomerFromTheRoute",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "editingSalePassesItsIdAndDoesNotPreselectAnotherCustomer",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "inventoryReportsDestinationCanReturnToTheInventoryTab",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "inventorySessionDestinationCanReturnToTheInventoryTab",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest",
+      "name": "productRoutesPreserveLiteralPlusPercentQueryAndFragmentCharacters",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationBusinessRoutesUiTest.kt",
       "primary": "Compose UI on JVM",
       "tags": [
         "Compose UI on JVM"
@@ -5149,7 +5470,25 @@
     {
       "module": "salesmanager",
       "class": "com.trader.salesmanager.ui.coverage.RouteEncodingContractsTest",
+      "name": "productDetailIdCannotBecomeAQueryOrFragment",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/RouteEncodingContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.RouteEncodingContractsTest",
       "name": "barcodeQueryCannotBeTruncatedOrBecomeAnotherQueryParameter",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/RouteEncodingContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.RouteEncodingContractsTest",
+      "name": "productEditorIdRoundTripsExactlyOnce",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/RouteEncodingContractsTest.kt",
       "primary": "Unit/model with deterministic fakes",

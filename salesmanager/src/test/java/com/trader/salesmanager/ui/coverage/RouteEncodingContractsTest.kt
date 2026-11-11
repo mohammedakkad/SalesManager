@@ -20,4 +20,12 @@ class RouteEncodingContractsTest {
     @Test fun missingBarcodeRetainsTheExistingEmptyQueryContract() {
         assertEquals("",Uri.parse("https://offline.invalid/"+Screen.AddProduct.createRoute()).getQueryParameter("barcode"))
     }
+    @Test fun productDetailIdCannotBecomeAQueryOrFragment() {
+        val id="sku+50% ?#tail";val uri=Uri.parse("https://offline.invalid/"+Screen.ProductDetail.createRoute(id))
+        assertEquals(listOf("product_detail",id),uri.pathSegments);assertNull(uri.query);assertNull(uri.fragment)
+    }
+    @Test fun productEditorIdRoundTripsExactlyOnce() {
+        val id="sku+50% ?#tail";val uri=Uri.parse("https://offline.invalid/"+Screen.EditProduct.createRoute(id))
+        assertEquals(listOf("edit_product",id),uri.pathSegments);assertNull(uri.query);assertNull(uri.fragment)
+    }
 }

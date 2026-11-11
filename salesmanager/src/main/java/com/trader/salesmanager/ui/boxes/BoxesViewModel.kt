@@ -24,7 +24,8 @@ data class BoxesUiState(
     val paymentTypes: Map<Long, PaymentType> = emptyMap(),
     val expandedBoxId: String? = null,
     val isLoading: Boolean = true,
-    val error: String? = null
+    val error: String? = null,
+    val isSaving: Boolean = false
 ) {
     val totalBalance: Double get() = boxes.filter { it.isInitialized }.sumOf { it.currentBalance }
     val initializedCount: Int get() = boxes.count { it.isInitialized }
@@ -76,7 +77,8 @@ class BoxesViewModel(
         }
     }
 
-    fun setInitialBalance(boxId: String, amountText: String) {
+    fun setInitialBalance(boxId: String, amountText: String, onSaved: () -> Unit = {}) {
+        if (_uiState.value.isSaving) return
         val amount = amountText.toLatinDigits().toDoubleOrNull()
         if (amount == null || !amount.isFinite() || amount < 0) {
             _uiState.update {
@@ -84,26 +86,17 @@ class BoxesViewModel(
             }
             return
         }
-        viewModelScope.launch {
-            try {
-                cashBoxRepo.setInitialBalance(boxId, amount)
-                _uiState.update { it.copy(error = null) }
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(error = context.getString(R.string.boxes_error_generic, e.message ?: ""))
-                }
-            }
-        }
+        submit(onSaved) { cashBoxRepo.setInitialBalance(boxId, amount) }
     }
 
     fun adjustBalance(
         boxId: String,
         amountText: String,
         note: String?,
-        reason: AdjustmentReason
+        reason: AdjustmentReason,
+        onSaved: () -> Unit = {}
     ) {
+        if (_uiState.value.isSaving) return
         val amount = amountText.toLatinDigits().toDoubleOrNull()
         if (amount == null || !amount.isFinite() || amount < 0) {
             _uiState.update {
@@ -119,17 +112,32 @@ class BoxesViewModel(
                 append(note.trim())
             }
         }
+        submit(onSaved) { cashBoxRepo.adjustBalance(boxId, amount, fullNote, reason) }
+    }
+
+    private fun submit(onSaved: () -> Unit, action: suspend () -> Unit) {
+        // Claim synchronously: another tap must observe the in-progress operation.
+        while (true) {
+            val current = _uiState.value
+            if (current.isSaving) return
+            if (_uiState.compareAndSet(current, current.copy(isSaving = true, error = null))) break
+        }
         viewModelScope.launch {
-            try {
-                cashBoxRepo.adjustBalance(boxId, amount, fullNote, reason)
-                _uiState.update { it.copy(error = null) }
+            val saved = try {
+                action()
+                true
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(error = context.getString(R.string.boxes_error_generic, e.message ?: ""))
                 }
+                false
+            } finally {
+                _uiState.update { it.copy(isSaving = false) }
             }
+            // UI observer failures must not be reported as a failed monetary mutation.
+            if (saved) onSaved()
         }
     }
 

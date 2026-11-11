@@ -253,7 +253,7 @@ fun InventoryListScreen(
                     contentColor = Color.White,
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Icon(Icons.Rounded.Inventory2, null, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.Inventory2, "جرد المخزون", modifier = Modifier.size(18.dp))
                 }
 
                 SmallFloatingActionButton(
@@ -264,7 +264,7 @@ fun InventoryListScreen(
                     contentColor = Color.White,
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Icon(Icons.Rounded.BarChart, null, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.BarChart, "تقارير المخزن", modifier = Modifier.size(18.dp))
                 }
 
                 FloatingActionButton(
@@ -275,7 +275,7 @@ fun InventoryListScreen(
                     contentColor = Color.White,
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Icon(Icons.Rounded.Add, null)
+                    Icon(Icons.Rounded.Add, "إضافة صنف")
                 }
             }
         }
