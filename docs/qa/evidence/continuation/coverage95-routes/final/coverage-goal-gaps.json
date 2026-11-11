@@ -1,0 +1,164 @@
+[
+  {
+    "scope": "qaCoverage",
+    "module": "salesmanager",
+    "metric": "BRANCH",
+    "covered": 7746,
+    "total": 14756,
+    "percent": 52.4939007861209,
+    "additionalUnitsFor95Percent": 6273
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "salesmanager",
+    "metric": "LINE",
+    "covered": 14491,
+    "total": 17913,
+    "percent": 80.89655557416401,
+    "additionalUnitsFor95Percent": 2527
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "salesmanager",
+    "metric": "METHOD",
+    "covered": 2555,
+    "total": 3212,
+    "percent": 79.54545454545455,
+    "additionalUnitsFor95Percent": 497
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "weighted",
+    "metric": "LINE",
+    "covered": 22625,
+    "total": 28220,
+    "percent": 80.17363571934798,
+    "additionalUnitsFor95Percent": 4184
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "weighted",
+    "metric": "METHOD",
+    "covered": 4373,
+    "total": 5727,
+    "percent": 76.35760433036494,
+    "additionalUnitsFor95Percent": 1068
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "weighted",
+    "metric": "BRANCH",
+    "covered": 9361,
+    "total": 17867,
+    "percent": 52.392679241058936,
+    "additionalUnitsFor95Percent": 7613
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "salesmanager",
+    "metric": "BRANCH",
+    "covered": 7746,
+    "total": 14756,
+    "percent": 52.4939007861209,
+    "additionalUnitsFor95Percent": 6273
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "salesmanager",
+    "metric": "LINE",
+    "covered": 14491,
+    "total": 17913,
+    "percent": 80.89655557416401,
+    "additionalUnitsFor95Percent": 2527
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "salesmanager",
+    "metric": "METHOD",
+    "covered": 2555,
+    "total": 3212,
+    "percent": 79.54545454545455,
+    "additionalUnitsFor95Percent": 497
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "weighted",
+    "metric": "LINE",
+    "covered": 22949,
+    "total": 28220,
+    "percent": 81.32175761871014,
+    "additionalUnitsFor95Percent": 3860
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "weighted",
+    "metric": "METHOD",
+    "covered": 4505,
+    "total": 5727,
+    "percent": 78.6624759909202,
+    "additionalUnitsFor95Percent": 936
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "weighted",
+    "metric": "BRANCH",
+    "covered": 9472,
+    "total": 17867,
+    "percent": 53.013936307158446,
+    "additionalUnitsFor95Percent": 7502
+  },
+  {
+    "scope": "Android API28 + both JVM suites",
+    "module": "salesmanager",
+    "metric": "LINE",
+    "covered": 15496,
+    "total": 17913,
+    "percent": 86.50700608496622,
+    "additionalUnitsFor95Percent": 1522
+  },
+  {
+    "scope": "Android API28 + both JVM suites",
+    "module": "salesmanager",
+    "metric": "METHOD",
+    "covered": 2625,
+    "total": 3212,
+    "percent": 81.72478206724782,
+    "additionalUnitsFor95Percent": 427
+  },
+  {
+    "scope": "Android API28 + both JVM suites",
+    "module": "salesmanager",
+    "metric": "BRANCH",
+    "covered": 7896,
+    "total": 14756,
+    "percent": 53.51043643263757,
+    "additionalUnitsFor95Percent": 6123
+  },
+  {
+    "scope": "Android API28 + both JVM suites",
+    "module": "weighted overall",
+    "metric": "LINE",
+    "covered": 23957,
+    "total": 28220,
+    "percent": 84.89369241672573,
+    "additionalUnitsFor95Percent": 2852
+  },
+  {
+    "scope": "Android API28 + both JVM suites",
+    "module": "weighted overall",
+    "metric": "METHOD",
+    "covered": 4578,
+    "total": 5727,
+    "percent": 79.93713986380304,
+    "additionalUnitsFor95Percent": 863
+  },
+  {
+    "scope": "Android API28 + both JVM suites",
+    "module": "weighted overall",
+    "metric": "BRANCH",
+    "covered": 9622,
+    "total": 17867,
+    "percent": 53.8534728829686,
+    "additionalUnitsFor95Percent": 7352
+  }
+]

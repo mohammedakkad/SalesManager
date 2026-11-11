@@ -35,3 +35,19 @@ Full aggregate succeeds in5m41s: JVM suites, JaCoCo and original gates, Seller L
 Schema25/Room2.6.1 unchanged;7migration cases remain, historical1–21BLOCKED. Existing atomic sale and outbox implementation guarantees/limitations remain in stage10/stage11. No claim of server-enforced exactly-once completion, deployed authorization, legacy tenant/writer isolation or reconciliation. The56defined remaining work items remain22NOT TESTED,32BLOCKED,2PARTIAL; they are not an exhaustive count of all possible tests. Server, device/end-to-end, security, performance, signed upgrade and historical migration qualification keep release FAIL.
 
 Hosted workflow for this source: PENDING; previous run42983779778 qualifies the previous source only. No instrumentation runtime pass is inferred from APK compilation.
+
+## Final source qualification
+
+Source `9d10b1ebf1492e639fa84996a220b846fce86f5f` passes [hosted run42995958373](https://github.com/mohammedakkad/SalesManager/actions/runs/42995958373): **workflowSUCCESS; seller and compose API24/28/33/35SUCCESS**. Each actual Android lane executes7instrumentation and5PDFBox cases with zero failures/errors/skips and preserves five Android-generated PDF paths/hashes and its uploaded artifact. There are12distinct Android/PDFBox cases repeated on four environments (28Android/20PDFBox executions), not48independent cases. Together with663JVM and22Python cases, **697distinct cases PASS** in the verified suites. Public records retain actual XML-derived case results, per-lane EC counters and paths/hashes; raw authenticated artifact archives were not downloaded. Device scripts assert actual ADB SDK identity before instrumentation.
+
+This supersedes the checkpoint hosted-pending statements above. API28 is the comparison lane, matching the prior report; every other API keeps its actual counters in hosted/run-42995958373.json. Actual executed-line/method counts can differ slightly by lane (API24 Seller15497lines; API28 Seller15496), with matching denominators. The comparison does not select the highest lane.
+
+|Measured scope|Line covered/total|Method covered/total|Branch covered/total|
+|---|---:|---:|---:|
+|Seller — Android + JVM|15496/17913 = 86.5070%|2625/3212 = 81.7248%|7896/14756 = 53.5104%|
+|Weighted — Android + module JVM|23646/28220 = 83.7916%|4460/5727 = 77.8767%|9511/17867 = 53.2322%|
+|Weighted — Android + both JVM suites|23957/28220 = 84.8937%|4578/5727 = 79.9371%|9622/17867 = 53.8535%|
+
+At the current Android+JVM denominator95% still needs **1522more covered Seller lines** and **2852more weighted Android+both-JVM lines** (historical Android+module-JVM needs3163). These are line gaps, not test counts. Both-JVM scope remains additional and does not replace historical reports/gates. Complete local/module coverage and the additional source-file gap plan are preserved in final/.
+
+The documentation-only ending commit preserves this qualified production/test source; Git history identifies its SHA. The native push updates existing PR51's diff; publishing its description through the GitHub API remains unavailable, and the reviewable body is draft-pr-body.md. No force push or merge. ReleaseFAIL; goal95%NOT ACHIEVED.

@@ -1,18 +1,20 @@
-Seller export retries, inventory completion and unit editing coverage
+Seller cash recovery and business navigation qualification
 
-Failed downloads previously discarded the generated file state. All five Seller export consumers now retain the file/sheet for explicit retry and show failure feedback. Pending-item searches no longer claim inventory completion when the query hides uncounted items. Inventory and persisted-unit deletion actions gain accessible names. Financial formulas/schema remain unchanged.
+Cash initialization/correction dialogs now retain the entered draft after validation failure, local transaction failure or cancellation and close after a successful repository return. A synchronous in-flight guard prevents overlapping dispatch; busy controls are disabled and the reason choices scroll on small screens. Existing absolute-balance, nonnegative/finite/zero, Arabic digit and note semantics are preserved. Product route arguments are URI-encoded so reserved characters preserve the original identity through NavHost. Existing business actions have accessible Arabic labels. No Admin business or financial formula changes.
 
-Validation:632JVM PASS (31new;all601prior identities retained),22Python guardsPASS (10new);10actual failing-before UI regressions nowPASS. Clean Lint/Debug/AndroidTest/R8 unsigned Release aggregatePASS in6m40s;Lint0errors/24warnings. Source ee1fcc2ecf41ebba24884e366d6f8abf9748c467: hosted42983779778 SUCCESS, seller and compose API24/28/33/35;7Android/5PDFBox per lane with actual files/path hashes/artifacts.
+Validation:663JVM PASS,31new cases and all632prior identities retained;22Python integrity guards PASS. Two new integration journeys inject real SQLite movement-insert ABORT and prove balance/marker/ledger rollback before UI retention, then exactly one successful explicit retry. Actual Compose and NavHost journeys also cover sale/customer/product/inventory/report routing. Before/after XML and fixture diagnostics are retained separately.
+
+Clean compilation and full JVM/JaCoCo/original-gate/Lint/Debug/AndroidTest/minified unsigned Release aggregate PASS in5m41s. Seller Lint0errors/24warnings; APK sizes/hashes and unsigned check preserved. Original report/gate scopes stay unchanged; additional both-JVM scope is explicit. Seller JVM Line14491/17913=80.8966%, Method2555/3212=79.5455%, Branch7746/14756=52.4939%; weighted both-JVM Line22949/28220=81.3218%, Method4505/5727=78.6625%, Branch9472/17867=53.0139%.
+
+Hosted source9d10b1ebf1492e639fa84996a220b846fce86f5f: https://github.com/mohammedakkad/SalesManager/actions/runs/42995958373 SUCCESS, seller and compose API24/28/33/35. Each lane7actual Android/5PDFBox PASS and five generated PDF paths/hashes/artifact preserved.697distinct cases PASS across qualified suites; device repeats are not new independent cases.
 
 |Measured scope|Line covered/total|Method covered/total|Branch covered/total|
 |---|---:|---:|---:|
-|Seller — project-local JVM|14223/17903 = 79.4448%|2463/3201 = 76.9447%|7402/14708 = 50.3264%|
-|Weighted — project-local JVM|22357/28210 = 79.2520%|4281/5716 = 74.8950%|9017/17819 = 50.6033%|
-|Weighted — both JVM suites|22671/28210 = 80.3651%|4399/5716 = 76.9594%|9127/17819 = 51.2206%|
-|Seller — Android + JVM|15228/17903 = 85.0584%|2533/3201 = 79.1315%|7567/14708 = 51.4482%|
-|Weighted — Android + module JVM|23379/28210 = 82.8749%|4369/5716 = 76.4346%|9182/17819 = 51.5293%|
-|Weighted — Android + both JVM suites|23680/28210 = 83.9419%|4473/5716 = 78.2540%|9292/17819 = 52.1466%|
+|Seller — Android + JVM|15496/17913 = 86.5070%|2625/3212 = 81.7248%|7896/14756 = 53.5104%|
+|Weighted — Android + module JVM|23646/28220 = 83.7916%|4460/5727 = 77.8767%|9511/17867 = 53.2322%|
+|Weighted — Android + both JVM suites|23957/28220 = 84.8937%|4578/5727 = 79.9371%|9622/17867 = 53.8535%|
 
-Additional whole-suite reports merge actual app+Seller JVM streams, optionally Android. Existing reports/gates/class lists remain unchanged. Scope correction is explicit and is not attributed to new tests alone.
 
-Goal95% remains unmet; releaseFAIL. No Admin business changes, destructive migrations, production access, signing input, exclusions or exactly-once distributed claims. See docs/qa/coverage95-next-progress.md. Keep PR51 Draft and unmerged.
+Room2.6.1/schema25 unchanged;7migration cases remain and authentic historical1–21BLOCKED. Existing atomic sale/outbox guarantees and distributed limitations remain documented. The manual-cash UI guard does not provide durable operation idempotency or server exactly-once processing. No production Firebase/signing access, destructive migrations, coverage exclusions or reduced gates. Goal95% remains unmet; releaseFAIL due to server/tenant/writer/reconciliation, signed upgrade, device/security/performance qualification. Keep existing PR51 Draft and unmerged.
+
+Evidence: docs/qa/coverage95-routes-progress.md and docs/qa/evidence/continuation/coverage95-routes/.

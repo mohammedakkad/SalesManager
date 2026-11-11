@@ -1,4 +1,4 @@
-> Current continuation (2026-11-11):632 JVM PASS (31 new),22 Python guards PASS (10 new). Hosted42983779778 SUCCESS: seller and compose API24/28/33/35. Seller Android+JVM lines85.0584%; weighted historical scope82.8749%; additional Android+both-JVM-suites83.9419%. Goal95% NOT ACHIEVED; releaseFAIL. [Current results and scope definitions](coverage95-next-progress.md). Earlier figures below are historical.
+> Current continuation (2026-11-11):663 JVM PASS (31 new; all632prior cases retained),22 Python guards PASS. Hosted42995958373 SUCCESS: seller and compose API24/28/33/35;7Android/5PDFBox per lane, five actual PDF paths/hashes and artifacts preserved. Seller Android+JVM Line86.5070%, Method81.7248%, Branch53.5104%; weighted Android+both-JVM Line84.8937%, Method79.9371%, Branch53.8535%. Local Lint0errors/24warnings; Debug/AndroidTest/minified unsigned Release PASS. Goal95% NOT ACHIEVED; releaseFAIL. [Current evidence and scope definitions](coverage95-routes-progress.md). Earlier figures below are historical.
 
 # Stage8 — actual boundaries and remaining implementation
 
@@ -255,3 +255,31 @@ Source `ee1fcc2ecf41ebba24884e366d6f8abf9748c467`; starting HEAD `68e99a76286faa
 Full clean local aggregate PASS in6m40s, including original coverage gates, both-JVM reports, Lint, Debug/AndroidTest APKs and actual R8 minified unsigned Release. Lint0errors/24warnings; targeted credential/signing/token-log policyPASS. [Hosted run42983779778](https://github.com/mohammedakkad/SalesManager/actions/runs/42983779778): seller and all four compose lanesSUCCESS;7Android and5PDFBox cases per lane with five actual PDF paths/hashes and preserved artifacts. Public XML-derived notices and EC-counter records are preserved; raw authenticated archives/checkout are not independently downloaded.
 
 Whole-suite reports add actual Seller-test execution of shared app code. Original project-local reports/gates, production class lists and denominators remain unchanged; the additional scope is not silently substituted for the historical baseline or attributed entirely to the31new tests. UI save failures remain retryable, filtered inventory searches no longer invent completion, and action accessibility improves. Existing monetary/stock/debt formulas and DB schema remain unchanged; no Admin business changes or production data/service access. Room2.6.1/schema25 and seven migration cases remain; authentic historical1–21fixtures are stillBLOCKED.56remaining qualification items (22NOT TESTED/32BLOCKED/2PARTIAL), server authorization/fencing, distributed reconciliation, legacy tenant/writer ownership and broader device/security/performance work remain open. ReleaseFAIL.
+
+## Current cash UI acknowledgement boundary (2026-11-11)
+
+This continuation changes the UI completion boundary only. Existing repository balance/ledger transactions and legacy remote dispatch remain unchanged. A successful UI callback acknowledges the local repository result, not remote synchronization or durable exactly-once execution. Real SQLite BEFORE INSERT movement failures demonstrate rollback before the draft-retention assertion.
+
+```mermaid
+sequenceDiagram
+    participant UI as Cash dialog
+    participant VM as BoxesViewModel
+    participant R as CashBoxRepositoryImpl
+    participant DB as Room SQLite
+    UI->>VM: Submit validated absolute amount
+    VM->>VM: Synchronously claim isSaving
+    VM->>R: Existing local mutation
+    R->>DB: Transaction: balance, initialization marker, movement
+    alt SQLite failure
+        DB-->>R: Roll back all affected rows
+        R-->>VM: Exception
+        VM-->>UI: Error, release busy, retain draft
+    else Local commit
+        DB-->>R: Committed
+        Note over R: Existing asynchronous remote dispatch is separate
+        R-->>VM: Return success
+        VM-->>UI: Release busy, onSaved closes dialog
+    end
+```
+
+Cancellation releases the busy state through finally and propagates. Overlapping calls are rejected while saving. This guard is per ViewModel and in memory; it does not supply a durable operation identifier to legacy manual cash commands. See coverage95-routes-progress.md and the two Room/UI regression XMLs.

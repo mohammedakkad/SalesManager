@@ -1,0 +1,1617 @@
+{
+  "scope": "Project-local JVM only, current compiled production source; Android PDF execution is separate. Source-file counters do not replace module root counters, and tests required cannot be inferred from uncovered lines.",
+  "sourceFiles": [
+    {
+      "source": "com/trader/salesmanager/util/pdf/InvoicePdfGenerator.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 127
+        },
+        "LINE": {
+          "covered": 0,
+          "missed": 537
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 33
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/pdf/ReportPdfGenerator.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 53
+        },
+        "LINE": {
+          "covered": 12,
+          "missed": 445
+        },
+        "METHOD": {
+          "covered": 7,
+          "missed": 25
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/reports/ReportsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 503,
+          "missed": 603
+        },
+        "LINE": {
+          "covered": 967,
+          "missed": 244
+        },
+        "METHOD": {
+          "covered": 93,
+          "missed": 16
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/scanner/BarcodeScannerScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 101
+        },
+        "LINE": {
+          "covered": 0,
+          "missed": 133
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 28
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/di/SalesManagerModule.kt",
+      "counters": {
+        "LINE": {
+          "covered": 112,
+          "missed": 114
+        },
+        "METHOD": {
+          "covered": 23,
+          "missed": 61
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/export/ExportManager.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 65,
+          "missed": 35
+        },
+        "LINE": {
+          "covered": 167,
+          "missed": 112
+        },
+        "METHOD": {
+          "covered": 5,
+          "missed": 14
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 213,
+          "missed": 246
+        },
+        "LINE": {
+          "covered": 409,
+          "missed": 107
+        },
+        "METHOD": {
+          "covered": 38,
+          "missed": 21
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 266,
+          "missed": 254
+        },
+        "LINE": {
+          "covered": 569,
+          "missed": 106
+        },
+        "METHOD": {
+          "covered": 74,
+          "missed": 24
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/list/InventoryListScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 237,
+          "missed": 237
+        },
+        "LINE": {
+          "covered": 442,
+          "missed": 86
+        },
+        "METHOD": {
+          "covered": 43,
+          "missed": 31
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/employees/EmployeeManagementScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 252,
+          "missed": 224
+        },
+        "LINE": {
+          "covered": 369,
+          "missed": 79
+        },
+        "METHOD": {
+          "covered": 66,
+          "missed": 8
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/SettingsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 249,
+          "missed": 233
+        },
+        "LINE": {
+          "covered": 403,
+          "missed": 75
+        },
+        "METHOD": {
+          "covered": 41,
+          "missed": 23
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/navigation/AppNavigation.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 189,
+          "missed": 145
+        },
+        "LINE": {
+          "covered": 466,
+          "missed": 74
+        },
+        "METHOD": {
+          "covered": 107,
+          "missed": 35
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/backup/BackupScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 190,
+          "missed": 252
+        },
+        "LINE": {
+          "covered": 348,
+          "missed": 74
+        },
+        "METHOD": {
+          "covered": 45,
+          "missed": 15
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 26,
+          "missed": 52
+        },
+        "LINE": {
+          "covered": 96,
+          "missed": 67
+        },
+        "METHOD": {
+          "covered": 32,
+          "missed": 13
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ChatNotificationService.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 38
+        },
+        "LINE": {
+          "covered": 0,
+          "missed": 67
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 13
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/components/SharedComponents.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 111,
+          "missed": 279
+        },
+        "LINE": {
+          "covered": 100,
+          "missed": 65
+        },
+        "METHOD": {
+          "covered": 10,
+          "missed": 13
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/reports/StockReportsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 130,
+          "missed": 207
+        },
+        "LINE": {
+          "covered": 220,
+          "missed": 61
+        },
+        "METHOD": {
+          "covered": 32,
+          "missed": 6
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/InvoiceSharer.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 17
+        },
+        "LINE": {
+          "covered": 0,
+          "missed": 53
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/session/InventorySessionScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 348,
+          "missed": 258
+        },
+        "LINE": {
+          "covered": 501,
+          "missed": 53
+        },
+        "METHOD": {
+          "covered": 76,
+          "missed": 6
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 146,
+          "missed": 168
+        },
+        "LINE": {
+          "covered": 173,
+          "missed": 50
+        },
+        "METHOD": {
+          "covered": 29,
+          "missed": 18
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/update/AppUpdateChecker.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 32
+        },
+        "LINE": {
+          "covered": 0,
+          "missed": 47
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/MainActivity.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 36
+        },
+        "LINE": {
+          "covered": 0,
+          "missed": 44
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 13
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/pdf/PdfPrintManager.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 14
+        },
+        "LINE": {
+          "covered": 0,
+          "missed": 42
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 4
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/backup/BackupManager.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 172,
+          "missed": 120
+        },
+        "LINE": {
+          "covered": 190,
+          "missed": 41
+        },
+        "METHOD": {
+          "covered": 33,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/worker/LowStockCheckWorker.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 11,
+          "missed": 15
+        },
+        "LINE": {
+          "covered": 63,
+          "missed": 37
+        },
+        "METHOD": {
+          "covered": 7,
+          "missed": 5
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/update/BackgroundUpdateWorker.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 15,
+          "missed": 3
+        },
+        "LINE": {
+          "covered": 107,
+          "missed": 32
+        },
+        "METHOD": {
+          "covered": 12,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/theme/Theme.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 6,
+          "missed": 48
+        },
+        "LINE": {
+          "covered": 97,
+          "missed": 32
+        },
+        "METHOD": {
+          "covered": 18,
+          "missed": 12
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/customers/details/CustomerDetailsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 164,
+          "missed": 134
+        },
+        "LINE": {
+          "covered": 289,
+          "missed": 32
+        },
+        "METHOD": {
+          "covered": 30,
+          "missed": 9
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/SalesManagerApp.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 2
+        },
+        "LINE": {
+          "covered": 0,
+          "missed": 30
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 6
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/reports/DayTransactionsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 224,
+          "missed": 152
+        },
+        "LINE": {
+          "covered": 350,
+          "missed": 27
+        },
+        "METHOD": {
+          "covered": 57,
+          "missed": 6
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/chat/ChatScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 287,
+          "missed": 287
+        },
+        "LINE": {
+          "covered": 430,
+          "missed": 27
+        },
+        "METHOD": {
+          "covered": 57,
+          "missed": 8
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/addedit/AddEditProductScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 292,
+          "missed": 175
+        },
+        "LINE": {
+          "covered": 368,
+          "missed": 25
+        },
+        "METHOD": {
+          "covered": 51,
+          "missed": 8
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/sales/outbox/SaleOutboxWork.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 6,
+          "missed": 12
+        },
+        "LINE": {
+          "covered": 15,
+          "missed": 25
+        },
+        "METHOD": {
+          "covered": 3,
+          "missed": 11
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 235,
+          "missed": 125
+        },
+        "LINE": {
+          "covered": 468,
+          "missed": 21
+        },
+        "METHOD": {
+          "covered": 38,
+          "missed": 9
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/worker/UnpaidDebtWorker.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 9,
+          "missed": 3
+        },
+        "LINE": {
+          "covered": 58,
+          "missed": 19
+        },
+        "METHOD": {
+          "covered": 6,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/home/AnalyticsDashboard.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 214,
+          "missed": 281
+        },
+        "LINE": {
+          "covered": 357,
+          "missed": 19
+        },
+        "METHOD": {
+          "covered": 39,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/backup/BackupViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 21,
+          "missed": 5
+        },
+        "LINE": {
+          "covered": 198,
+          "missed": 19
+        },
+        "METHOD": {
+          "covered": 37,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/update/AppUpdateDownloader.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 18,
+          "missed": 14
+        },
+        "LINE": {
+          "covered": 48,
+          "missed": 18
+        },
+        "METHOD": {
+          "covered": 3,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/home/SyncStatusSheet.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 112,
+          "missed": 130
+        },
+        "LINE": {
+          "covered": 229,
+          "missed": 18
+        },
+        "METHOD": {
+          "covered": 26,
+          "missed": 5
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/transactions/list/TransactionsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 100,
+          "missed": 102
+        },
+        "LINE": {
+          "covered": 187,
+          "missed": 18
+        },
+        "METHOD": {
+          "covered": 20,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/home/HomeScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 126,
+          "missed": 106
+        },
+        "LINE": {
+          "covered": 269,
+          "missed": 15
+        },
+        "METHOD": {
+          "covered": 23,
+          "missed": 5
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/theme/Type.kt",
+      "counters": {
+        "LINE": {
+          "covered": 0,
+          "missed": 14
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/customers/addedit/AddEditCustomerScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 128,
+          "missed": 104
+        },
+        "LINE": {
+          "covered": 257,
+          "missed": 14
+        },
+        "METHOD": {
+          "covered": 22,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/activation/ActivationScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 60,
+          "missed": 38
+        },
+        "LINE": {
+          "covered": 131,
+          "missed": 14
+        },
+        "METHOD": {
+          "covered": 13,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/backup/BackupFormatting.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 3,
+          "missed": 13
+        },
+        "LINE": {
+          "covered": 2,
+          "missed": 13
+        },
+        "METHOD": {
+          "covered": 1,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/list/InventoryListViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 16,
+          "missed": 24
+        },
+        "LINE": {
+          "covered": 56,
+          "missed": 12
+        },
+        "METHOD": {
+          "covered": 17,
+          "missed": 6
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/session/InventorySessionViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 19,
+          "missed": 11
+        },
+        "LINE": {
+          "covered": 48,
+          "missed": 12
+        },
+        "METHOD": {
+          "covered": 22,
+          "missed": 6
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/export/ExportActionButton.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 160,
+          "missed": 168
+        },
+        "LINE": {
+          "covered": 181,
+          "missed": 10
+        },
+        "METHOD": {
+          "covered": 32,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/boxes/BoxesScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 328,
+          "missed": 201
+        },
+        "LINE": {
+          "covered": 497,
+          "missed": 10
+        },
+        "METHOD": {
+          "covered": 74,
+          "missed": 4
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/customers/addedit/AddEditCustomerViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 48,
+          "missed": 18
+        },
+        "LINE": {
+          "covered": 93,
+          "missed": 9
+        },
+        "METHOD": {
+          "covered": 25,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/addedit/AddEditProductViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 103,
+          "missed": 21
+        },
+        "LINE": {
+          "covered": 187,
+          "missed": 8
+        },
+        "METHOD": {
+          "covered": 49,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 170,
+          "missed": 58
+        },
+        "LINE": {
+          "covered": 281,
+          "missed": 8
+        },
+        "METHOD": {
+          "covered": 45,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/update/AppUpdateViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 14,
+          "missed": 8
+        },
+        "LINE": {
+          "covered": 91,
+          "missed": 7
+        },
+        "METHOD": {
+          "covered": 18,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/chat/ChatViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 51,
+          "missed": 19
+        },
+        "LINE": {
+          "covered": 180,
+          "missed": 6
+        },
+        "METHOD": {
+          "covered": 45,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/activation/ActivationViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 16,
+          "missed": 1
+        },
+        "LINE": {
+          "covered": 70,
+          "missed": 6
+        },
+        "METHOD": {
+          "covered": 17,
+          "missed": 4
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/service/NotificationService.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 6,
+          "missed": 4
+        },
+        "LINE": {
+          "covered": 54,
+          "missed": 6
+        },
+        "METHOD": {
+          "covered": 4,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/customers/list/CustomersScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 132,
+          "missed": 106
+        },
+        "LINE": {
+          "covered": 226,
+          "missed": 5
+        },
+        "METHOD": {
+          "covered": 30,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/pdf/PdfCanvas.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 3,
+          "missed": 1
+        },
+        "LINE": {
+          "covered": 65,
+          "missed": 5
+        },
+        "METHOD": {
+          "covered": 11,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/employees/EmployeeManagementViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 22,
+          "missed": 10
+        },
+        "LINE": {
+          "covered": 85,
+          "missed": 5
+        },
+        "METHOD": {
+          "covered": 22,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/export/ExportViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 19,
+          "missed": 9
+        },
+        "LINE": {
+          "covered": 63,
+          "missed": 4
+        },
+        "METHOD": {
+          "covered": 19,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/update/UpdateDownloadReceiver.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 4
+        },
+        "LINE": {
+          "covered": 1,
+          "missed": 4
+        },
+        "METHOD": {
+          "covered": 1,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/sales/outbox/OutboxDispatcher.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 62,
+          "missed": 30
+        },
+        "LINE": {
+          "covered": 92,
+          "missed": 4
+        },
+        "METHOD": {
+          "covered": 20,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/transactions/list/TransactionsViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 1,
+          "missed": 1
+        },
+        "LINE": {
+          "covered": 9,
+          "missed": 4
+        },
+        "METHOD": {
+          "covered": 4,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/reports/ReportsViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 76,
+          "missed": 23
+        },
+        "LINE": {
+          "covered": 381,
+          "missed": 3
+        },
+        "METHOD": {
+          "covered": 92,
+          "missed": 5
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/theme/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 0,
+          "missed": 3
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 4
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/sessions/SessionsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 62,
+          "missed": 52
+        },
+        "LINE": {
+          "covered": 92,
+          "missed": 3
+        },
+        "METHOD": {
+          "covered": 16,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/export/ExportState.kt",
+      "counters": {
+        "LINE": {
+          "covered": 16,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 18,
+          "missed": 6
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/update/AppUpdateInfo.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 0,
+          "missed": 2
+        },
+        "LINE": {
+          "covered": 6,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 4,
+          "missed": 4
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/transactions/details/TransactionDetailsViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 44,
+          "missed": 2
+        },
+        "LINE": {
+          "covered": 80,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 21,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/activation/MerchantWatcherViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 6,
+          "missed": 1
+        },
+        "LINE": {
+          "covered": 28,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 8,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/backup/BackupMigrator.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 92,
+          "missed": 56
+        },
+        "LINE": {
+          "covered": 139,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 27,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/BuildConfig.java",
+      "counters": {
+        "LINE": {
+          "covered": 0,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/sales/outbox/FirebaseOutboxTransport.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 28,
+          "missed": 7
+        },
+        "LINE": {
+          "covered": 74,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 12,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/detail/ProductDetailScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 245,
+          "missed": 150
+        },
+        "LINE": {
+          "covered": 349,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 47,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/debts/DebtsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 70,
+          "missed": 34
+        },
+        "LINE": {
+          "covered": 100,
+          "missed": 2
+        },
+        "METHOD": {
+          "covered": 14,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/reports/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 2,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/sales/SaleCommands.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 175,
+          "missed": 85
+        },
+        "LINE": {
+          "covered": 151,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 26,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/reports/Comparisons.kt",
+      "counters": {
+        "LINE": {
+          "covered": 1,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 4,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/reports/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 6,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/export/XlsxWriter.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 38,
+          "missed": 6
+        },
+        "LINE": {
+          "covered": 120,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 24,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/payments/PaymentMethodsScreen.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 77,
+          "missed": 81
+        },
+        "LINE": {
+          "covered": 34,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 28,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/util/pdf/PdfLayoutConstants.kt",
+      "counters": {
+        "LINE": {
+          "covered": 19,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 14,
+          "missed": 7
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/theme/Emitters.kt",
+      "counters": {
+        "LINE": {
+          "covered": 0,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/navigation/MainBottomNavigationBar.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 33,
+          "missed": 19
+        },
+        "LINE": {
+          "covered": 64,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 16,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/transactions/details/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 2,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/invoice/InvoiceUtils.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 10,
+          "missed": 2
+        },
+        "LINE": {
+          "covered": 27,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 12,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 6,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/sessions/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 2,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/settings/backup/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 2,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/list/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 2,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ActivityVM.kt",
+      "counters": {
+        "LINE": {
+          "covered": 0,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/KoinComponent.kt",
+      "counters": {
+        "LINE": {
+          "covered": 0,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 2
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/sales/outbox/ConditionalProtocol.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 64,
+          "missed": 36
+        },
+        "LINE": {
+          "covered": 34,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 7,
+          "missed": 1
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/transactions/list/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 2,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/detail/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 2,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/inventory/detail/ProductDetailViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 26,
+          "missed": 4
+        },
+        "LINE": {
+          "covered": 68,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 26,
+          "missed": 3
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/customers/details/CustomerDetailsViewModel.kt",
+      "counters": {
+        "LINE": {
+          "covered": 21,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 10,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/customers/details/SafeCollector.common.kt",
+      "counters": {
+        "LINE": {
+          "covered": 2,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 2,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/debts/DebtsViewModel.kt",
+      "counters": {
+        "BRANCH": {
+          "covered": 3,
+          "missed": 1
+        },
+        "LINE": {
+          "covered": 20,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 12,
+          "missed": 0
+        }
+      }
+    },
+    {
+      "source": "com/trader/salesmanager/ui/debts/Comparisons.kt",
+      "counters": {
+        "LINE": {
+          "covered": 0,
+          "missed": 1
+        },
+        "METHOD": {
+          "covered": 0,
+          "missed": 1
+        }
+      }
+    }
+  ]
+}

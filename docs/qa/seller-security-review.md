@@ -1,4 +1,4 @@
-> Current continuation (2026-11-11):632 JVM PASS (31 new),22 Python guards PASS (10 new). Hosted42983779778 SUCCESS: seller and compose API24/28/33/35. Seller Android+JVM lines85.0584%; weighted historical scope82.8749%; additional Android+both-JVM-suites83.9419%. Goal95% NOT ACHIEVED; releaseFAIL. [Current results and scope definitions](coverage95-next-progress.md). Earlier figures below are historical.
+> Current continuation (2026-11-11):663 JVM PASS (31 new; all632prior cases retained),22 Python guards PASS. Hosted42995958373 SUCCESS: seller and compose API24/28/33/35;7Android/5PDFBox per lane, five actual PDF paths/hashes and artifacts preserved. Seller Android+JVM Line86.5070%, Method81.7248%, Branch53.5104%; weighted Android+both-JVM Line84.8937%, Method79.9371%, Branch53.8535%. Local Lint0errors/24warnings; Debug/AndroidTest/minified unsigned Release PASS. Goal95% NOT ACHIEVED; releaseFAIL. [Current evidence and scope definitions](coverage95-routes-progress.md). Earlier figures below are historical.
 
 # Seller security review — partial, not release clearance
 
