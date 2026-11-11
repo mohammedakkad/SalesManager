@@ -1,15 +1,15 @@
 {
   "summary": {
-    "jvmCases": 601,
+    "jvmCases": 632,
     "result": {
-      "passed": 601
+      "passed": 632
     },
     "primaryCategories": {
       "Room/SQLite on JVM": 214,
       "Room migration": 7,
       "Firebase SDK/protocol fake": 65,
       "Unit/model with deterministic fakes": 184,
-      "Compose UI on JVM": 102,
+      "Compose UI on JVM": 133,
       "Loopback HTTP": 4,
       "WorkManager lifecycle": 6,
       "Android notification component on JVM": 3,
@@ -23,7 +23,7 @@
       "Restart/recovery in test harness": 24,
       "Room migration": 7,
       "WorkManager lifecycle": 13,
-      "Compose UI on JVM": 102,
+      "Compose UI on JVM": 133,
       "Loopback HTTP": 4,
       "Android notification component on JVM": 3,
       "Native bitmap graphics": 2,
@@ -4254,6 +4254,105 @@
     },
     {
       "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "physicalZeroIsAValidCountAndUpdatesOnlyTheSelectedItem",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "fullyCountedFinishCanBeDismissedWithoutApplyingInventoryChanges",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "clearSearchAndPendingFilterActionsAreAccessibleAndDispatchTheirOwnChanges",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "allCountedMessageRequiresNoPendingItemsInTheEntireSession",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "searchIsCaseInsensitiveAndPendingFilterStillExcludesCountedItems",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "invalidPhysicalCountsCannotSubmitAndUncountedItemsCannotClearAnAbsentCount",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "cancellingRequiresAnExplicitConfirmationAndCanBeDismissed",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "emptySearchAmongPendingItemsCannotClaimThatEveryItemWasCounted",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest",
+      "name": "headerBackActionHasAnAccessibleNameAndNavigatesOnce",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventorySessionJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
       "class": "com.trader.salesmanager.ui.coverage.InvoiceAdvancedUiTest",
       "name": "searchAddsChosenUnitAndCustomPriceIsIncludedInConfirmation",
       "result": "passed",
@@ -4617,6 +4716,83 @@
     },
     {
       "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest",
+      "name": "removingAPersistedUnitUsesItsAccessibleActionAndKeepsTheOtherUnit",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductUnitEditingJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest",
+      "name": "switchingFromCartonToWeightClearsPackSizeAndStoresKilograms",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductUnitEditingJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest",
+      "name": "cartonEditorPreservesPackSizePriceCostQuantityAndExplicitZeroThreshold",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductUnitEditingJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest",
+      "name": "failedSaveRetainsEditedFieldsAndAllowsAnExplicitSuccessfulRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductUnitEditingJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest",
+      "name": "secondUnitCanBecomeTheOnlyDefaultWithoutReplacingItsIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductUnitEditingJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest",
+      "name": "initialBarcodeConflictPreventsSavingAndShowsTheConflictingProduct",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductUnitEditingJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest",
+      "name": "marginFeedbackDistinguishesProfitAndLossFromActualEditedPrices",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductUnitEditingJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
       "class": "com.trader.salesmanager.ui.coverage.ReportCalendarUiTest",
       "name": "selectedDayDetailRoutesCorrectMidnightAndKeepsFullTransactionCount",
       "result": "passed",
@@ -4632,6 +4808,171 @@
       "name": "calendarMonthArrowsAndDaySelectionUseViewModelActions",
       "result": "passed",
       "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportCalendarUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "excelActionPassesTheSelectedPeriodTransactionsAndAnalytics",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "sharedExportButtonClosesOnlyAfterASuccessfulDownload",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "sharedExportButtonKeepsAFailedWorkbookDownloadRetryable",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "successfulReportDownloadClosesTheSheetAndResetsOnlyOnce",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "activeExportDisablesMonthlyShareAndPrintAndCannotQueueAnotherExcel",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "inventoryDownloadFailureRetainsItsExportForRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "monthlyShareDelegatesTheReadySnapshotAndCacheDirectory",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "closingAnExcelResultResetsOnceWithoutOfferingPdfPrinting",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "generationFailureDisplaysItsErrorAndDismissesTheFailedState",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "reportShareUsesTheActualWorkbookAndMimeTypeThenResets",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "customerStatementDownloadFailureRetainsItsExportForRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "invoiceDownloadFailureRetainsItsExportForRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "monthlyPrintRequestsTheSameFinancialSnapshotBeforePrinting",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "reportWhatsAppUsesTheActualWorkbookAndMimeTypeThenResets",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest",
+      "name": "failedReportDownloadKeepsTheFileAvailableForAnExplicitRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportExportJourneysUiTest.kt",
       "primary": "Compose UI on JVM",
       "tags": [
         "Compose UI on JVM"

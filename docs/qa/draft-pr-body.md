@@ -1,21 +1,18 @@
-Seller catalog integrity, safe navigation and truthful download completion
+Seller export retries, inventory completion and unit editing coverage
 
-Catalog sync preserves unit cost/numeric values, fails malformed numeric snapshots as a whole and owns reads in the current merchant scope. Notification navigation waits for NavHost and URI arguments decode once. Manual stock edits reject nonfinite values. Downloads only succeed after copy and publication, and clean pending entries on failure.
+Failed downloads previously discarded the generated file state. All five Seller export consumers now retain the file/sheet for explicit retry and show failure feedback. Pending-item searches no longer claim inventory completion when the query hides uncounted items. Inventory and persisted-unit deletion actions gain accessible names. Financial formulas/schema remain unchanged.
 
-|Metric (local JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
-|---|---:|---:|---:|---:|
-|LINE|13921/17898|77.7796%|22055/28205|78.1954%|
-|METHOD|2391/3200|74.7188%|4209/5715|73.6483%|
-|BRANCH|7148/14684|48.6788%|8763/17795|49.2442%|
+Validation:632JVM PASS (31new;all601prior identities retained),22Python guardsPASS (10new);10actual failing-before UI regressions nowPASS. Clean Lint/Debug/AndroidTest/R8 unsigned Release aggregatePASS in6m40s;Lint0errors/24warnings. Source ee1fcc2ecf41ebba24884e366d6f8abf9748c467: hosted42983779778 SUCCESS, seller and compose API24/28/33/35;7Android/5PDFBox per lane with actual files/path hashes/artifacts.
 
-Validation:601JVM PASS (87new;514retained);12Python guardsPASS; unchanged coverage gates; Lint0errors/24warnings; Debug/AndroidTest/minified unsigned ReleasePASS. Source fda922fb865dabf5633115268d3b4e72ccbb8e4f; hosted run42863854908 SUCCESS: seller and all compose API24/28/33/35 lanes;7Android/5PDFBox per lane. No Admin business changes, destructive migration, production network, signing input or exactly-once distributed claim.
+|Measured scope|Line covered/total|Method covered/total|Branch covered/total|
+|---|---:|---:|---:|
+|Seller — project-local JVM|14223/17903 = 79.4448%|2463/3201 = 76.9447%|7402/14708 = 50.3264%|
+|Weighted — project-local JVM|22357/28210 = 79.2520%|4281/5716 = 74.8950%|9017/17819 = 50.6033%|
+|Weighted — both JVM suites|22671/28210 = 80.3651%|4399/5716 = 76.9594%|9127/17819 = 51.2206%|
+|Seller — Android + JVM|15228/17903 = 85.0584%|2533/3201 = 79.1315%|7567/14708 = 51.4482%|
+|Weighted — Android + module JVM|23379/28210 = 82.8749%|4369/5716 = 76.4346%|9182/17819 = 51.5293%|
+|Weighted — Android + both JVM suites|23680/28210 = 83.9419%|4473/5716 = 78.2540%|9292/17819 = 52.1466%|
 
-Target95% remains unmet; release readinessFAIL. Server authorization/fencing/reconciliation, historical migrations1–21 and broader device/security/performance qualification remain open. See docs/qa/coverage95-progress.md. Keep PR51 Draft and unmerged.
+Additional whole-suite reports merge actual app+Seller JVM streams, optionally Android. Existing reports/gates/class lists remain unchanged. Scope correction is explicit and is not attributed to new tests alone.
 
-|Metric (hosted API28 Android+JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
-|---|---:|---:|---:|---:|
-|LINE|14927/17898|83.4004%|23078/28205|81.8224%|
-|METHOD|2461/3200|76.9062%|4297/5715|75.1881%|
-|BRANCH|7313/14684|49.8025%|8928/17795|50.1714%|
-
-Clean JVM compilation reconciles branch denominators with every hosted lane; the same production class set remains included. Source-specific evidence is in docs/qa/evidence/continuation/coverage95/.
+Goal95% remains unmet; releaseFAIL. No Admin business changes, destructive migrations, production access, signing input, exclusions or exactly-once distributed claims. See docs/qa/coverage95-next-progress.md. Keep PR51 Draft and unmerged.

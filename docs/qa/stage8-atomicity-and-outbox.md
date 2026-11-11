@@ -1,4 +1,4 @@
-> Current 95% continuation (2026-11-10):601 JVM PASS (87 new); Seller JVM lines 77.7796%, weighted 78.1954%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
+> Current continuation (2026-11-11):632 JVM PASS (31 new),22 Python guards PASS (10 new). Hosted42983779778 SUCCESS: seller and compose API24/28/33/35. Seller Android+JVM lines85.0584%; weighted historical scope82.8749%; additional Android+both-JVM-suites83.9419%. Goal95% NOT ACHIEVED; releaseFAIL. [Current results and scope definitions](coverage95-next-progress.md). Earlier figures below are historical.
 
 # Stage8 — actual boundaries and remaining implementation
 
@@ -238,3 +238,20 @@ Source `fda922fb865dabf5633115268d3b4e72ccbb8e4f`:601 JVM PASS (208 shared/393 S
 Hosted source qualification: [42863854908](https://github.com/mohammedakkad/SalesManager/actions/runs/42863854908) SUCCESS (seller and compose API24/28/33/35);7Android and5PDFBox cases pass per lane with5path/hash records and preserved artifacts. Clean JVM denominators reconcile with hosted compilation; clean601casesPASS. Additional Android+JVM line coverage83.3948% Seller/81.8188% weighted; target95% NOT ACHIEVED and releaseFAIL. See coverage95-progress.md for all Line/Method/Branch counters and their exact denominators.
 
 Final clean packaging PASS in4m44s after the clean601JVM/JaCoCo run (2m34s): Lint0errors/24warnings, Debug APK, AndroidTest APK and actual R8 unsigned Release. Current SHA256/size records and preserved local APK paths are in final/qualification.json. The hosted source remains fda922fb865dabf5633115268d3b4e72ccbb8e4f; the final documentation-only commit does not change production/test sources. No PR merge or PR-description publication is claimed.
+
+## Verified continuation — 2026-11-11
+
+Source `ee1fcc2ecf41ebba24884e366d6f8abf9748c467`; starting HEAD `68e99a76286faada1fcaedfba41749785789d7bb`, same branch/PR51.632JVM PASS (208shared/424Seller),31new and all601starting identities retained; zero failures/errors/skips.22Python guards PASS (10new). Ten actual failing-before UI regressions pass after repair; fixture-only failures are excluded from that count.
+
+|Measured scope|Line covered/total|Method covered/total|Branch covered/total|
+|---|---:|---:|---:|
+|Seller — project-local JVM|14223/17903 = 79.4448%|2463/3201 = 76.9447%|7402/14708 = 50.3264%|
+|Weighted — project-local JVM|22357/28210 = 79.2520%|4281/5716 = 74.8950%|9017/17819 = 50.6033%|
+|Weighted — both JVM suites|22671/28210 = 80.3651%|4399/5716 = 76.9594%|9127/17819 = 51.2206%|
+|Seller — Android + JVM|15228/17903 = 85.0584%|2533/3201 = 79.1315%|7567/14708 = 51.4482%|
+|Weighted — Android + module JVM|23379/28210 = 82.8749%|4369/5716 = 76.4346%|9182/17819 = 51.5293%|
+|Weighted — Android + both JVM suites|23680/28210 = 83.9419%|4473/5716 = 78.2540%|9292/17819 = 52.1466%|
+
+Full clean local aggregate PASS in6m40s, including original coverage gates, both-JVM reports, Lint, Debug/AndroidTest APKs and actual R8 minified unsigned Release. Lint0errors/24warnings; targeted credential/signing/token-log policyPASS. [Hosted run42983779778](https://github.com/mohammedakkad/SalesManager/actions/runs/42983779778): seller and all four compose lanesSUCCESS;7Android and5PDFBox cases per lane with five actual PDF paths/hashes and preserved artifacts. Public XML-derived notices and EC-counter records are preserved; raw authenticated archives/checkout are not independently downloaded.
+
+Whole-suite reports add actual Seller-test execution of shared app code. Original project-local reports/gates, production class lists and denominators remain unchanged; the additional scope is not silently substituted for the historical baseline or attributed entirely to the31new tests. UI save failures remain retryable, filtered inventory searches no longer invent completion, and action accessibility improves. Existing monetary/stock/debt formulas and DB schema remain unchanged; no Admin business changes or production data/service access. Room2.6.1/schema25 and seven migration cases remain; authentic historical1–21fixtures are stillBLOCKED.56remaining qualification items (22NOT TESTED/32BLOCKED/2PARTIAL), server authorization/fencing, distributed reconciliation, legacy tenant/writer ownership and broader device/security/performance work remain open. ReleaseFAIL.
