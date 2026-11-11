@@ -1,3 +1,5 @@
+> Current continuation (2026-11-11):758 JVM PASS (95 new; all663prior cases retained),22 Python guards PASS. Hosted43003544986 SUCCESS: seller and compose API24/28/33/35;7Android/5PDFBox per lane, five actual PDF paths/hashes and artifacts preserved. Seller Android+JVM Line89.0393%, Method83.0230%, Branch55.1542%; weighted Android+both-JVM Line86.5076%, Method80.6868%, Branch55.2165%. Local Lint0errors/24warnings; Debug/AndroidTest/minified unsigned Release PASS. Goal95% NOT ACHIEVED; releaseFAIL. [Current evidence and scope definitions](coverage95-lifecycle-progress.md). Earlier figures below are historical.
+
 # Seller measured coverage
 
 Debug JVM tests only. Not device/instrumentation or minified release coverage. Counts include compiled production classes, generated classes and compiler-generated branches; no production exclusions. Partial lines count as covered in JaCoCo line totals, while the gap CSV also identifies lines with any missed instructions.

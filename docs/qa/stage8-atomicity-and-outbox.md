@@ -1,4 +1,4 @@
-> Current continuation (2026-11-11):663 JVM PASS (31 new; all632prior cases retained),22 Python guards PASS. Hosted42995958373 SUCCESS: seller and compose API24/28/33/35;7Android/5PDFBox per lane, five actual PDF paths/hashes and artifacts preserved. Seller Android+JVM Line86.5070%, Method81.7248%, Branch53.5104%; weighted Android+both-JVM Line84.8937%, Method79.9371%, Branch53.8535%. Local Lint0errors/24warnings; Debug/AndroidTest/minified unsigned Release PASS. Goal95% NOT ACHIEVED; releaseFAIL. [Current evidence and scope definitions](coverage95-routes-progress.md). Earlier figures below are historical.
+> Current continuation (2026-11-11):758 JVM PASS (95 new; all663prior cases retained),22 Python guards PASS. Hosted43003544986 SUCCESS: seller and compose API24/28/33/35;7Android/5PDFBox per lane, five actual PDF paths/hashes and artifacts preserved. Seller Android+JVM Line89.0393%, Method83.0230%, Branch55.1542%; weighted Android+both-JVM Line86.5076%, Method80.6868%, Branch55.2165%. Local Lint0errors/24warnings; Debug/AndroidTest/minified unsigned Release PASS. Goal95% NOT ACHIEVED; releaseFAIL. [Current evidence and scope definitions](coverage95-lifecycle-progress.md). Earlier figures below are historical.
 
 # Stage8 — actual boundaries and remaining implementation
 
@@ -283,3 +283,7 @@ sequenceDiagram
 ```
 
 Cancellation releases the busy state through finally and propagates. Overlapping calls are rejected while saving. This guard is per ViewModel and in memory; it does not supply a durable operation identifier to legacy manual cash commands. See coverage95-routes-progress.md and the two Room/UI regression XMLs.
+
+## Lifecycle qualification boundaries (2026-11-11)
+
+This continuation adds95cases and repairs cancellation propagation/resource cleanup plus report/text presentation. It does not change sale command Room transactions, inventory/cash/debt mutation math, return persistence, schema25or outbox ownership/remote protocol. Text invoices explicitly display persisted original/net amounts and their difference rather than mutating either. Native chart pixels and semantics verify existing computed report inputs only. Draft cancellation preserves the prior basket; malformed-catalog skipping remains existing behavior, not immutable snapshot recovery. Full758JVM/22Python and local packaging PASS; source-specific Android/hosted acceptance is recorded in coverage95-lifecycle-progress.md. Server authorization, reconciliation, universal tenant/writer ownership and migration1–21constraints remain. ReleaseFAIL.
