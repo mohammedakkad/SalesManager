@@ -76,6 +76,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import com.trader.salesmanager.ui.inventory.invoice.formatAmount
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -317,7 +320,10 @@ fun ReportsScreen(
                         "إجمالي المبيعات",
                         uiState.totalAmount,
                         Emerald500,
-                        Modifier.fillMaxWidth()
+                        Modifier.fillMaxWidth(),
+                        paidAmount = uiState.paidAmount,
+                        unpaidAmount = uiState.unpaidAmount,
+                        txCount = uiState.txCount
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         MetricCard(
@@ -1236,7 +1242,9 @@ private fun LineChart(data: List<DaySalesEntry>, modifier: Modifier) {
     }
     val anim by progress.asState()
 
-    Canvas(modifier = modifier) {
+    Canvas(modifier = modifier.semantics {
+        contentDescription = "المبيعات اليومية: " + data.joinToString("; ") { "${it.label}: ${it.total.formatAmount()}" }
+    }) {
         if (data.isEmpty()) return@Canvas
 
         val maxVal = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
@@ -1308,7 +1316,9 @@ private fun BarChart(data: List<DaySalesEntry>, modifier: Modifier) {
     }
     val anim by progress.asState()
 
-    Canvas(modifier = modifier) {
+    Canvas(modifier = modifier.semantics {
+        contentDescription = "المدفوع وغير المدفوع: " + data.joinToString("; ") { "${it.label}: مدفوع ${it.paid.formatAmount()}، غير مدفوع ${(it.total - it.paid).formatAmount()}" }
+    }) {
         if (data.isEmpty()) return@Canvas
 
         val maxVal = data.maxOf { it.total }.takeIf { it > 0 } ?: 1.0
@@ -1400,7 +1410,11 @@ private fun SalesProfitBarChart(data: List<SalesProfitDayEntry>, modifier: Modif
             ColorDotLabel("الربح", Cyan500)
         }
 
-        Canvas(modifier = modifier) {
+        Canvas(modifier = modifier.semantics {
+            contentDescription = "المبيعات والربح: " + data.joinToString("; ") {
+                "${it.label}: مبيعات ${it.sales.formatAmount()}، ربح ${it.profit.formatAmount()}"
+            }
+        }) {
             if (data.isEmpty()) return@Canvas
 
             val cornerRadius = CornerRadius(6.dp.toPx(), 6.dp.toPx())
@@ -1459,7 +1473,7 @@ private fun SalesProfitBarChart(data: List<SalesProfitDayEntry>, modifier: Modif
 
                 val salesH = (entry.sales / maxUp * posSpan * anim).toFloat().coerceAtLeast(0f)
                 drawRoundRect(
-                    color = Cyan500,
+                    color = Emerald500,
                     topLeft = Offset(salesLeft, yZero - salesH),
                     size = Size(barW, salesH),
                     cornerRadius = cornerRadius
@@ -1469,7 +1483,7 @@ private fun SalesProfitBarChart(data: List<SalesProfitDayEntry>, modifier: Modif
                     val profitH =
                         (entry.profit / maxUp * posSpan * anim).toFloat().coerceAtLeast(0f)
                     drawRoundRect(
-                        color = PaidGreen,
+                        color = Cyan500,
                         topLeft = Offset(profitLeft, yZero - profitH),
                         size = Size(barW, profitH),
                         cornerRadius = cornerRadius
@@ -1557,7 +1571,9 @@ private fun DonutChart(data: List<PaymentShare>, modifier: Modifier) {
     }.takeIf {
         it > 0
     } ?: 1.0
-    Canvas(modifier = modifier) {
+    Canvas(modifier = modifier.semantics {
+        contentDescription = "طرق الدفع: " + data.joinToString("; ") { "${it.name}: ${it.amount.formatAmount()}" }
+    }) {
         val stroke = 28.dp.toPx()
         val radius = min(size.width, size.height) / 2f - stroke / 2f
         val center = Offset(size.width / 2f, size.height / 2f)

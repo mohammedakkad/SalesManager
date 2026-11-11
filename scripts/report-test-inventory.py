@@ -22,9 +22,11 @@ def classify(source, name):
         tags.append('Room migration')
     if 'GraphicsMode.Mode.NATIVE' in text:
         tags.append('Native bitmap graphics')
-    if 'MockWebServer' in text:
+    if 'MockWebServer' in text and (source.name != 'ReleaseMetadataContractsTest.kt' or name.startswith('loopback')):
         tags.append('Loopback HTTP')
     if 'TestListenableWorkerBuilder' in text and (source.name != 'UpdateLifecycleTest.kt' or name.startswith('background')):
+        tags.append('WorkManager lifecycle')
+    if source.name == 'LowStockSchedulingContractsTest.kt' and name in ('repeatedSchedulingKeepsOneExistingPeriodicRequest', 'explicitReplacementCancelsTheOldRequestAndCreatesOneActiveRequest', 'cancellationCancelsTheScheduledUniqueWork'):
         tags.append('WorkManager lifecycle')
     if 'mockk' in text and ('FirebaseDatabase' in text or 'FirebaseFirestore' in text or 'FirebaseOutboxTransport' in source.name):
         tags.append('Firebase SDK/protocol fake')
@@ -32,7 +34,7 @@ def classify(source, name):
         tags.append('Backup format/crypto')
     if source.name == 'WorkbookExportIntegrityTest.kt':
         tags.append('Real XLSX file content')
-    if source.name == 'NotificationContractsTest.kt':
+    if source.name in ('NotificationContractsTest.kt', 'ChatPushNotificationContractsTest.kt'):
         tags.append('Android notification component on JVM')
     if any(x in name.lower() for x in ('restart', 'reopen', 'restored')):
         tags.append('Restart/recovery in test harness')

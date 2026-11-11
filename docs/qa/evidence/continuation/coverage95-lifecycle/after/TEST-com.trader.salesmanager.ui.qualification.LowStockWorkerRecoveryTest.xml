@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-11T10:20:37" hostname="13302589aed6" time="7.242">
+  <properties/>
+  <testcase name="cancellationWhileReadingCandidatesDoesNotBecomeRetry" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.03"/>
+  <testcase name="cancellationWhileMarkingDeliveryDoesNotBecomeSuccess" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.019"/>
+  <testcase name="cancellationWhileReadingSettingsDoesNotBecomeRetry" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.02"/>
+  <testcase name="emptyCandidateSetDoesNotPostOrAcknowledgeAnything" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.021"/>
+  <testcase name="disabledStockChannelDoesNotConsumeCandidateCooldown" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.02"/>
+  <testcase name="deliveredNotificationUsesDistinctProductCountAndLowStockDestination" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.02"/>
+  <testcase name="failedCooldownPersistenceKeepsTheExistingDeliveredNotification" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.019"/>
+  <testcase name="globallyDisabledNotificationsDoNotConsumeCandidateCooldown" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.02"/>
+  <testcase name="legacyAndroidDeliversWithoutNotificationChannelSupport" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="1.348"/>
+  <testcase name="deniedNotificationPermissionDoesNotConsumeCandidateCooldown" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="5.725"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

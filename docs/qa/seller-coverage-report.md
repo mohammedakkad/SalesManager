@@ -1,5 +1,3 @@
-> Current continuation (2026-11-11):663 JVM PASS (31 new; all632prior cases retained),22 Python guards PASS. Hosted42995958373 SUCCESS: seller and compose API24/28/33/35;7Android/5PDFBox per lane, five actual PDF paths/hashes and artifacts preserved. Seller Android+JVM Line86.5070%, Method81.7248%, Branch53.5104%; weighted Android+both-JVM Line84.8937%, Method79.9371%, Branch53.8535%. Local Lint0errors/24warnings; Debug/AndroidTest/minified unsigned Release PASS. Goal95% NOT ACHIEVED; releaseFAIL. [Current evidence and scope definitions](coverage95-routes-progress.md). Earlier figures below are historical.
-
 # Seller measured coverage
 
 Debug JVM tests only. Not device/instrumentation or minified release coverage. Counts include compiled production classes, generated classes and compiler-generated branches; no production exclusions. Partial lines count as covered in JaCoCo line totals, while the gap CSV also identifies lines with any missed instructions.
@@ -10,14 +8,14 @@ Debug JVM tests only. Not device/instrumentation or minified release coverage. C
 | app | LINE | 8134 | 2173 | 78.9172% |
 | app | METHOD | 1818 | 697 | 72.2863% |
 | app | CLASS | 577 | 207 | 73.5969% |
-| salesmanager | BRANCH | 7746 | 7010 | 52.4939% |
-| salesmanager | LINE | 14491 | 3422 | 80.8966% |
-| salesmanager | METHOD | 2555 | 657 | 79.5455% |
-| salesmanager | CLASS | 1123 | 158 | 87.6659% |
-| weighted overall | BRANCH | 9361 | 8506 | 52.3927% |
-| weighted overall | LINE | 22625 | 5595 | 80.1736% |
-| weighted overall | METHOD | 4373 | 1354 | 76.3576% |
-| weighted overall | CLASS | 1700 | 365 | 82.3245% |
+| salesmanager | BRANCH | 7981 | 6803 | 53.9840% |
+| salesmanager | LINE | 14974 | 2972 | 83.4392% |
+| salesmanager | METHOD | 2605 | 617 | 80.8504% |
+| salesmanager | CLASS | 1131 | 150 | 88.2904% |
+| weighted overall | BRANCH | 9596 | 8299 | 53.6239% |
+| weighted overall | LINE | 23108 | 5145 | 81.7895% |
+| weighted overall | METHOD | 4423 | 1314 | 77.0960% |
+| weighted overall | CLASS | 1708 | 357 | 82.7119% |
 
 Exact class counters: seller-class-coverage-gaps.csv. Exact source line and branch gaps: seller-coverage-gaps.csv (branch counts per line; no true/false labels in JaCoCo XML). HTML and XML: each module build/reports/jacoco/qaCoverage/. No claim of 100% coverage or absence of defects. Initial production baseline had no tests/reports and was unmeasured; no verified numeric baseline was reduced. Reviewed CI floors in coverage-thresholds.json are based on measured module baselines with a small fixed margin for scheduled/generated paths; they are raised explicitly, never rewritten automatically by a test run.
 
