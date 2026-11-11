@@ -145,8 +145,9 @@ fun ExportActionButton(
                 ExportManager.shareToWhatsApp(context, file, state.type.mimeType); showSheet = false
             },
             onDownload = {
-                ExportManager.saveToDownloads(context, file, state.fileName)
-                showSheet = false
+                if (saveExportToDownloads(context, file, state.fileName)) {
+                    showSheet = false
+                }
             },
             onPrint = if (state.type == ExportType.PDF) {
                 {

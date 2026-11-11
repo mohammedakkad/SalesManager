@@ -52,7 +52,7 @@ export SELLER_QA_ANDROID_API_ACTUAL="$seller_device_api"
 qa_api_suffix=" [API $seller_device_api]"
 adb shell rm -rf /data/local/tmp/seller-qa-pdf
 qa_stage="JVM coverage"
-gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :app:qaCoverage :salesmanager:qaCoverage
+gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :app:qaCoverage :salesmanager:qaCoverage :app:qaAllJvmCoverage :salesmanager:qaAllJvmCoverage
 python3 - <<'PYEC'
 from pathlib import Path
 for path in Path('salesmanager/build/outputs/code_coverage').rglob('*.ec'):
@@ -74,7 +74,8 @@ gradle -p qa/pdf-verifier --no-daemon -PpdfFixtureDir=/tmp/seller-qa-pdf test
 python3 scripts/summarize-device-tests.py --check
 
 qa_stage="combined JaCoCo execution"
-gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :app:qaCombinedCoverage :salesmanager:qaCombinedCoverage 2>&1 | tee /tmp/seller-qa-combined-coverage.log
+gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :app:qaCombinedCoverage :salesmanager:qaCombinedCoverage :app:qaAllCombinedCoverage :salesmanager:qaAllCombinedCoverage 2>&1 | tee /tmp/seller-qa-combined-coverage.log
 qa_stage="combined coverage integrity validation"
 python3 scripts/report-device-coverage.py
+python3 scripts/report-suite-coverage.py --device --log /tmp/seller-qa-combined-coverage.log
 qa_stage="complete"

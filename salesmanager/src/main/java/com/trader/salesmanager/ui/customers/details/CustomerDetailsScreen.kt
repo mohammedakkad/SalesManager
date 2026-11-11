@@ -77,6 +77,7 @@ import com.trader.salesmanager.ui.theme.Emerald700
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.Violet500
 import com.trader.salesmanager.ui.theme.appColors
+import com.trader.salesmanager.util.export.saveExportToDownloads
 import com.trader.salesmanager.util.export.ExportManager
 import com.trader.salesmanager.util.export.ExportState
 import com.trader.salesmanager.util.export.ExportSuccessBottomSheet
@@ -129,7 +130,9 @@ if (showExportSheet && exportState is ExportState.Success) {
             ExportManager.shareToWhatsApp(context, file, success.type.mimeType); showExportSheet = false
         },
         onDownload = {
-            ExportManager.saveToDownloads(context, file, success.fileName); showExportSheet = false; exportVm.reset()
+            if (saveExportToDownloads(context, file, success.fileName)) {
+                showExportSheet = false; exportVm.reset()
+            }
         },
         onDismiss = {
             showExportSheet = false; exportVm.reset()

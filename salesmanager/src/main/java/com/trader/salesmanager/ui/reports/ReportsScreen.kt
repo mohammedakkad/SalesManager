@@ -90,6 +90,7 @@ import com.trader.salesmanager.ui.theme.Emerald500
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
+import com.trader.salesmanager.util.export.saveExportToDownloads
 import com.trader.salesmanager.util.export.ExportManager
 import com.trader.salesmanager.util.export.ExportState
 import com.trader.salesmanager.util.export.ExportSuccessBottomSheet
@@ -171,10 +172,11 @@ fun ReportsScreen(
                 exportVm.reset()
             },
             onDownload = {
-                ExportManager.saveToDownloads(context, file, success.fileName)
-                showExportSheet = false
-                pendingExportAction = null
-                exportVm.reset()
+                if (saveExportToDownloads(context, file, success.fileName)) {
+                    showExportSheet = false
+                    pendingExportAction = null
+                    exportVm.reset()
+                }
             },
             onPrint = if (success.type == com.trader.salesmanager.util.export.ExportType.PDF) {
                 {
