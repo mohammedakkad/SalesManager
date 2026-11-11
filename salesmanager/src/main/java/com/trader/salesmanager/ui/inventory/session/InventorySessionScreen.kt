@@ -221,7 +221,7 @@ fun InventorySessionScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, "رجوع", tint = Color.White)
                         }
                         Text(
                             "جرد المخزون", fontWeight = FontWeight.Bold,
@@ -237,7 +237,7 @@ fun InventorySessionScreen(
                                     .clip(CircleShape)
                                     .background(Color.White.copy(0.15f))
                             ) {
-                                Icon(Icons.Rounded.Cancel, null, tint = Color.White)
+                                Icon(Icons.Rounded.Cancel, "إلغاء الجرد", tint = Color.White)
                             }
                         }
                     }
@@ -285,13 +285,13 @@ fun InventorySessionScreen(
                                         }) {
                                             Icon(
                                                 Icons.Rounded.Close,
-                                                null,
+                                                "مسح البحث",
                                                 tint = Color.White.copy(0.7f)
                                             )
                                         }
                                     IconButton(onClick = viewModel::togglePendingOnly) {
                                         Icon(
-                                            Icons.Rounded.FilterList, null,
+                                            Icons.Rounded.FilterList, if (state.showOnlyPending) "عرض جميع الأصناف" else "عرض غير المعدود فقط",
                                             tint = if (state.showOnlyPending) UnpaidAmber else Color.White.copy(
                                                 0.7f
                                             )
@@ -339,6 +339,7 @@ fun InventorySessionScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         if (state.showOnlyPending && filtered.isEmpty()) {
+                            val allCounted = items.none { it.actualQuantity == null }
                             item {
                                 Box(
                                     Modifier
@@ -348,15 +349,15 @@ fun InventorySessionScreen(
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                         Icon(
-                                            Icons.Rounded.CheckCircle,
+                                            if (allCounted) Icons.Rounded.CheckCircle else Icons.Rounded.Search,
                                             null,
                                             Modifier.size(56.dp),
-                                            tint = Emerald500
+                                            tint = if (allCounted) Emerald500 else appColors.textSubtle
                                         )
                                         Spacer(Modifier.height(8.dp))
                                         Text(
-                                            "جميع الأصناف تم عدّها ✅",
-                                            color = Emerald500,
+                                            if (allCounted) "جميع الأصناف تم عدّها ✅" else "لا توجد أصناف مطابقة للبحث",
+                                            color = if (allCounted) Emerald500 else appColors.textSubtle,
                                             fontWeight = FontWeight.Bold
                                         )
                                     }
@@ -583,11 +584,11 @@ private fun CountInputDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    input.toDoubleOrNull()?.let {
+                    input.toDoubleOrNull()?.takeIf { it.isFinite() && it >= 0 }?.let {
                         onConfirm(it)
                     }
                 },
-                enabled = input.toDoubleOrNull() != null,
+                enabled = input.toDoubleOrNull()?.let { it.isFinite() && it >= 0 } == true,
                 colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
             ) {
                 Text("تأكيد")

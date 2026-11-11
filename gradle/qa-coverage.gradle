@@ -1,0 +1,60 @@
+// Report every compiled production Kotlin class; no coverage exclusions.
+jacoco { toolVersion = '0.8.12' }
+tasks.withType(Test).configureEach {
+    jacoco { includeNoLocationClasses = true; excludes = ['jdk.internal.*'] }
+}
+tasks.register('qaCoverage', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+    executionData.from(file("$buildDir/jacoco/testDebugUnitTest.exec"))
+    classDirectories.from(files("$buildDir/tmp/kotlin-classes/debug", "$buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes"))
+    sourceDirectories.from(files('src/main/java', 'src/main/kotlin'))
+    reports { xml.required = true; html.required = true }
+}
+tasks.withType(Test).configureEach {
+    ['https.proxyHost','https.proxyPort','http.proxyHost','http.proxyPort','javax.net.ssl.trustStore'].each { key ->
+        if (System.getProperty(key)) systemProperty key, System.getProperty(key)
+    }
+    systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
+}
+
+// Device coverage is opt-in. Preserve the original JVM-only metric and its floors.
+android {
+    buildTypes {
+        debug { enableAndroidTestCoverage = providers.gradleProperty('sellerQaDeviceCoverage').map { it.toBoolean() }.getOrElse(false) }
+    }
+    testCoverage { jacocoVersion = '0.8.12' }
+}
+def deviceExecutionData = rootProject.fileTree('salesmanager/build/outputs/code_coverage') { include '**/*.ec' }
+tasks.register('qaCombinedCoverage', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+    executionData.from(file("$buildDir/jacoco/testDebugUnitTest.exec"), deviceExecutionData)
+    classDirectories.from(files("$buildDir/tmp/kotlin-classes/debug", "$buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes"))
+    sourceDirectories.from(files('src/main/java', 'src/main/kotlin'))
+    doFirst {
+        if (!deviceExecutionData.files.any { it.length() > 0 }) throw new GradleException('No actual Android execution data; refusing a combined coverage claim')
+    }
+    reports { xml.required = true; html.required = true }
+}
+
+// Additional suite-wide reports: shared code exercised from either JVM module is counted once.
+// Keep qaCoverage/qaCombinedCoverage and their established floors unchanged.
+def allSellerJvmData = rootProject.files('app/build/jacoco/testDebugUnitTest.exec',
+        'salesmanager/build/jacoco/testDebugUnitTest.exec')
+['qaAllJvmCoverage', 'qaAllCombinedCoverage'].each { reportName ->
+    tasks.register(reportName, JacocoReport) {
+        dependsOn ':app:testDebugUnitTest', ':salesmanager:testDebugUnitTest'
+        executionData.from(allSellerJvmData)
+        if (reportName == 'qaAllCombinedCoverage') executionData.from(deviceExecutionData)
+        classDirectories.from(files("$buildDir/tmp/kotlin-classes/debug", "$buildDir/intermediates/javac/debug/compileDebugJavaWithJavac/classes"))
+        sourceDirectories.from(files('src/main/java', 'src/main/kotlin'))
+        doFirst {
+            if (allSellerJvmData.files.any { !it.isFile() || it.length() == 0 }) {
+                throw new GradleException('Missing actual JVM execution data from app or Seller')
+            }
+            if (reportName == 'qaAllCombinedCoverage' && !deviceExecutionData.files.any { it.length() > 0 }) {
+                throw new GradleException('Missing actual Android execution data')
+            }
+        }
+        reports { xml.required = true; html.required = true }
+    }
+}

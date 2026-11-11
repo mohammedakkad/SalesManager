@@ -1,0 +1,9 @@
+{
+  "scope": "Actual new presentation strings in APK DEX. Packaging integrity only, not runtime/signature qualification.",
+  "markers": {
+    "المبلغ الأصلي": "classes18.dex",
+    "الإجمالي الصافي": "classes18.dex",
+    "طرق الدفع: ": "classes22.dex",
+    "المبيعات والربح: ": "classes22.dex"
+  }
+}

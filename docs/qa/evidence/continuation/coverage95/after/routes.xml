@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.RouteEncodingContractsTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-10T16:50:06" hostname="13302589aed6" time="0.071">
+  <properties/>
+  <testcase name="barcodeQueryCannotBeTruncatedOrBecomeAnotherQueryParameter" classname="com.trader.salesmanager.ui.coverage.RouteEncodingContractsTest" time="0.042"/>
+  <testcase name="missingBarcodeRetainsTheExistingEmptyQueryContract" classname="com.trader.salesmanager.ui.coverage.RouteEncodingContractsTest" time="0.029"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

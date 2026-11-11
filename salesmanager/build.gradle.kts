@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    jacoco
 }
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -18,16 +19,17 @@ android {
     namespace  = "com.trader.salesmanager"
     compileSdk = 35
     defaultConfig {
+        testInstrumentationRunner = "com.trader.salesmanager.qa.OfflineQaRunner"
         applicationId = "com.trader.salesmanager"
         minSdk = 24; targetSdk = 35
         versionCode = 10205; versionName = "1.2.5"
     }
     signingConfigs {
         create("release") {
-            storeFile   = file(System.getenv("KEYSTORE_PATH")     ?: keystoreProperties["storeFile"]    as String)
-            storePassword = System.getenv("KEYSTORE_PASSWORD")    ?: keystoreProperties["storePassword"] as String
-            keyAlias    = System.getenv("KEY_ALIAS")              ?: keystoreProperties["keyAlias"]     as String
-            keyPassword = System.getenv("KEY_PASSWORD")           ?: keystoreProperties["keyPassword"]  as String
+            storeFile = (System.getenv("KEYSTORE_PATH") ?: keystoreProperties["storeFile"] as String?)?.let { file(it) }
+            storePassword = System.getenv("KEYSTORE_PASSWORD")    ?: keystoreProperties["storePassword"] as String?
+            keyAlias    = System.getenv("KEY_ALIAS")              ?: keystoreProperties["keyAlias"]     as String?
+            keyPassword = System.getenv("KEY_PASSWORD")           ?: keystoreProperties["keyPassword"]  as String?
         }
     }
     buildTypes {
@@ -42,14 +44,21 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+            // Without signing inputs, produce an explicitly unsigned QA artifact.
+            if (signingConfigs.getByName("release").storeFile != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         release {
             isMinifyEnabled = true; isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+            // Without signing inputs, produce an explicitly unsigned QA artifact.
+            if (signingConfigs.getByName("release").storeFile != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
+    testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
     kotlinOptions { jvmTarget = "11" }
     buildFeatures {
@@ -60,6 +69,20 @@ android {
 }
 
 dependencies {
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.test.compose.junit)
+    testImplementation(libs.test.workmanager)
+    testImplementation(libs.test.robolectric)
+    testImplementation(libs.test.androidx.core)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.test.androidx.runner)
+    androidTestImplementation(libs.test.androidx.junit)
+    androidTestImplementation(libs.test.compose.junit)
+    debugImplementation(libs.test.compose.manifest)
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
+    testImplementation("com.squareup.okhttp3:mockwebserver:${libs.versions.okhttp.get()}")
     implementation(project(":app"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
@@ -73,3 +96,5 @@ dependencies {
     implementation(libs.vico.compose.m3)
     debugImplementation(libs.compose.ui.tooling)
 }
+
+apply(from = rootProject.file("gradle/qa-coverage.gradle"))

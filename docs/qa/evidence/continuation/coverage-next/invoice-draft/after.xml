@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.InvoiceEditorContractsTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-11-10T05:07:09" hostname="13302589aed6" time="20.361">
+  <properties/>
+  <testcase name="nanPriceDraftCannotReplaceAFiniteInvoice" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="17.264"/>
+  <testcase name="lateInvoiceLoadKeepsPreviewEqualToCommittedGrossAmount" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.366"/>
+  <testcase name="unrecognizedLegacyWeightUnitUsesExistingKilogramFallback" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.264"/>
+  <testcase name="cancelledDraftLookupDoesNotChangeInvoiceOrReportAFalseFailure" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.214"/>
+  <testcase name="lineTotalOverflowRejectsTheCompleteDraft" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.125"/>
+  <testcase name="arabicAmountCustomerPreselectionAndPaymentChangesReachSaleCommand" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.192"/>
+  <testcase name="missingProductRejectsWholeDraftInsteadOfDroppingOnlyOneLine" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.135"/>
+  <testcase name="saveWaitsForTheSelectedDraftInsteadOfCommittingTheOldInvoice" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.187"/>
+  <testcase name="finiteLinesWhoseSumOverflowsCannotReplaceAFiniteInvoice" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.153"/>
+  <testcase name="zeroPriceLineRetainsTheExistingPositiveManualBaseAmount" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.136"/>
+  <testcase name="emptyDraftIsReportedWithoutReplacingTheInvoice" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.126"/>
+  <testcase name="repeatedLoadAndEditedLinesDoNotAccumulateBaseAmountOrReplaceOriginalItemId" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.16"/>
+  <testcase name="malformedDraftPreservesPreviouslyLoadedInvoiceAndEditIntent" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.107"/>
+  <testcase name="gramsRoundTripAndPersistAsKilogramsWithStableRetryIdentity" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.195"/>
+  <testcase name="nanQuantityDraftCannotReplaceAFiniteInvoice" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.094"/>
+  <testcase name="weightConversionOverflowRejectsTheCompleteDraft" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.19"/>
+  <testcase name="missingUnitRejectsWholeDraftInsteadOfPartiallyApplyingIt" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.109"/>
+  <testcase name="olderDraftLookupCannotReplaceANewerSelection" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.095"/>
+  <testcase name="delayedPaymentMethodsResolvePersistedSelectionAndUnchangedEditPreservesItems" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.246"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

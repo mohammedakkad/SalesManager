@@ -116,15 +116,12 @@ fun SettingsScreen(
     val clipboardManager = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
 
-    val storeName by context.appDataStore.data
-        .map { it[STORE_NAME_KEY] ?: "" }
-        .collectAsState(initial = "")
-    val merchantCode by context.appDataStore.data
-        .map { it[MERCHANT_CODE_KEY] ?: "" }
-        .collectAsState(initial = "")
-    val lastBackupAt by context.appDataStore.data
-        .map { it[LAST_BACKUP_AT_KEY] }
-        .collectAsState(initial = null)
+    val storeNameFlow = remember(context) { context.appDataStore.data.map { it[STORE_NAME_KEY] ?: "" } }
+    val storeName by storeNameFlow.collectAsState(initial = "")
+    val merchantCodeFlow = remember(context) { context.appDataStore.data.map { it[MERCHANT_CODE_KEY] ?: "" } }
+    val merchantCode by merchantCodeFlow.collectAsState(initial = "")
+    val lastBackupAtFlow = remember(context) { context.appDataStore.data.map { it[LAST_BACKUP_AT_KEY] } }
+    val lastBackupAt by lastBackupAtFlow.collectAsState(initial = null)
     val backupSubtitle = stringResource(
         R.string.settings_backup_last,
         formatLastBackupRelative(lastBackupAt)

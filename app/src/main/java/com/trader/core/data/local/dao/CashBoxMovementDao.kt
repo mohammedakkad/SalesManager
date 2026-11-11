@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CashBoxMovementDao {
+    @Query("SELECT * FROM cash_box_movements WHERE relatedTransactionId = :id")
+    suspend fun forTransactionOnce(id: Long): List<CashBoxMovementEntity>
+
     @Query("SELECT * FROM cash_box_movements ORDER BY createdAt DESC")
     fun getAll(): Flow<List<CashBoxMovementEntity>>
 
@@ -27,7 +30,7 @@ interface CashBoxMovementDao {
     @Query("SELECT * FROM cash_box_movements WHERE id = :id")
     suspend fun getById(id: String): CashBoxMovementEntity?
 
-    @Query("SELECT * FROM cash_box_movements WHERE syncStatus = 'PENDING'")
+    @Query("SELECT * FROM cash_box_movements WHERE syncStatus IN ('PENDING', 'FAILED')")
     suspend fun getPending(): List<CashBoxMovementEntity>
 
     @Query("UPDATE cash_box_movements SET syncStatus = 'SYNCED' WHERE id = :id")

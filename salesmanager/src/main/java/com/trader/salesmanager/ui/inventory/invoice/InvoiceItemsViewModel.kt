@@ -7,6 +7,7 @@ import com.trader.core.domain.model.ProductUnit
 import com.trader.core.domain.model.ProductWithUnits
 import com.trader.core.domain.model.UnitType
 import com.trader.core.domain.repository.ProductRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -264,6 +265,8 @@ class InvoiceItemsViewModel(
 
                 _lines.value = rebuilt
 
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (_: Exception) {}
         }
     }

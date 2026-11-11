@@ -17,10 +17,11 @@ class SyncStatusObserver(
     private val cashBoxDao: CashBoxDao,
     private val cashBoxMovementDao: CashBoxMovementDao,
     private val stockMovementDao: StockMovementDao,
-    private val invoiceItemDao: InvoiceItemDao
+    private val invoiceItemDao: InvoiceItemDao,
+    private val outboxDao: com.trader.core.data.local.dao.SaleOutboxDao? = null
 ) {
 
-    private val allUnsyncedItems: Flow<List<UnsyncedItem>> = combine(
+    private val legacyUnsyncedItems: Flow<List<UnsyncedItem>> = combine(
         transactionDao.observeUnsynced(),
         cashBoxDao.observeUnsynced(),
         cashBoxMovementDao.observeUnsynced(),
@@ -88,6 +89,16 @@ class SyncStatusObserver(
         items.sortedWith(compareByDescending { it.syncStatus == SyncStatus.FAILED })
     }
 
+    private val allUnsyncedItems: Flow<List<UnsyncedItem>> = combine(legacyUnsyncedItems,
+        outboxDao?.observeUnacknowledged() ?: kotlinx.coroutines.flow.flowOf(emptyList())) { legacy, events ->
+        legacy + events.map { event -> UnsyncedItem("outbox:${event.eventId}", UnsyncedItemType.TRANSACTION,
+            "مزامنة عملية #${event.aggregateId}", when(event.state) {
+                "CONFLICTING" -> SyncStatus.CONFLICT
+                "FAILED" -> SyncStatus.FAILED
+                else -> SyncStatus.PENDING
+            }) }
+    }
+
     val globalSyncState: Flow<GlobalSyncState> = combine(
         allUnsyncedItems,
         invoiceItemDao.observeUnsyncedCount()
@@ -95,7 +106,7 @@ class SyncStatusObserver(
         val totalCount = items.size + invoiceItemUnsyncedCount
         when {
             totalCount == 0 -> GlobalSyncState.AllSynced
-            items.any { it.syncStatus == SyncStatus.FAILED } ->
+            items.any { it.syncStatus == SyncStatus.FAILED || it.syncStatus == SyncStatus.CONFLICT } ->
                 GlobalSyncState.Failed(totalCount)
             else -> GlobalSyncState.Pending(totalCount)
         }

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    jacoco
 }
 
 android {
@@ -11,6 +12,8 @@ android {
     defaultConfig {
         minSdk = 24
     }
+    sourceSets.getByName("test").assets.srcDir("$projectDir/schemas")
+    testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11
     }
@@ -25,6 +28,11 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
+    testImplementation(libs.test.robolectric)
+    testImplementation(libs.test.androidx.core)
     api(libs.androidx.core.ktx)
     api(libs.androidx.lifecycle.runtime)
     api(libs.androidx.lifecycle.viewmodel)
@@ -55,3 +63,6 @@ dependencies {
     api(libs.gson)
     api(libs.coil.compose)
 }
+apply(from = rootProject.file("gradle/qa-coverage.gradle"))
+
+ksp { arg("room.schemaLocation", "$projectDir/schemas") }

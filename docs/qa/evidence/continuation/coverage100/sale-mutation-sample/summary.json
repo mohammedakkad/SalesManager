@@ -1,0 +1,12 @@
+{
+  "source": "ef1c8999577518e14f1fc799328360eb38721874",
+  "sampleSize": 8,
+  "killed": 8,
+  "survived": 0,
+  "invalid": 0,
+  "baselinePassingCases": 8,
+  "intentionalFailingCaseExecutions": 10,
+  "productionSourceUnchanged": true,
+  "productionCoverageUnchanged": true,
+  "qualification": "Bounded seeded-fault sample only. Comprehensive automated mutation score remains NOT TESTED. These are not new production test cases."
+}

@@ -77,6 +77,7 @@ import com.trader.salesmanager.ui.theme.Emerald700
 import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.Violet500
 import com.trader.salesmanager.ui.theme.appColors
+import com.trader.salesmanager.util.export.saveExportToDownloads
 import com.trader.salesmanager.util.export.ExportManager
 import com.trader.salesmanager.util.export.ExportState
 import com.trader.salesmanager.util.export.ExportSuccessBottomSheet
@@ -104,11 +105,8 @@ val initial = name.firstOrNull()?.uppercaseChar()?.toString() ?: "?"
 val rawPhone = phone.filter {
     it.isDigit()
 }.trimStart('0')
-val storeName by context.appDataStore.data
-.map {
-    it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
-}
-.collectAsState(initial = "")
+val storeNameFlow = remember(context) { context.appDataStore.data.map { it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: "" } }
+    val storeName by storeNameFlow.collectAsState(initial = "")
 
 val exportVm: ExportViewModel = koinViewModel()
 val exportState by exportVm.state.collectAsStateWithLifecycle()
@@ -132,7 +130,9 @@ if (showExportSheet && exportState is ExportState.Success) {
             ExportManager.shareToWhatsApp(context, file, success.type.mimeType); showExportSheet = false
         },
         onDownload = {
-            ExportManager.saveToDownloads(context, file, success.fileName); showExportSheet = false; exportVm.reset()
+            if (saveExportToDownloads(context, file, success.fileName)) {
+                showExportSheet = false; exportVm.reset()
+            }
         },
         onDismiss = {
             showExportSheet = false; exportVm.reset()
@@ -148,7 +148,7 @@ Scaffold(
             containerColor = Emerald500, contentColor = Color.White,
             shape = RoundedCornerShape(16.dp)
         ) {
-            Icon(Icons.Rounded.Add, null)
+            Icon(Icons.Rounded.Add, "إضافة عملية للزبون")
         }
     }
 ) {
@@ -176,7 +176,7 @@ Scaffold(
                         // ✅ إخفاء زر التعديل للزبون الزائر (id = -1)
                         if (customerId != -1L) {
                             IconButton(onClick = onEditCustomer) {
-                                Icon(Icons.Rounded.Edit, null, tint = Color.White)
+                                Icon(Icons.Rounded.Edit, "تعديل الزبون", tint = Color.White)
                             }
                         }
                     }
@@ -482,12 +482,13 @@ tx.date.toDateString(),
 style = MaterialTheme.typography.labelSmall,
 color = MaterialTheme.colorScheme.onSurfaceVariant
 )
-if (tx.paymentMethodName.isNotEmpty())
-Text(
-tx.paymentMethodName,
-style = MaterialTheme.typography.bodySmall,
-color = MaterialTheme.colorScheme.onSurfaceVariant
-)
+if (tx.paymentMethodName.isNotEmpty()) {
+    Text(
+        tx.paymentMethodName,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
 }
 Spacer(Modifier.width(12.dp))
 Text(

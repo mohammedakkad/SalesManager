@@ -13,6 +13,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.launch
 import com.trader.core.domain.model.InvoiceItem
@@ -186,6 +187,7 @@ class FirebaseSyncService {
                         TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE")
                     }.getOrDefault(TransactionReturnStatus.NONE),
                     isPaid = m["isPaid"] as? Boolean ?: false,
+                    paymentType = runCatching { PaymentType.valueOf(m["paymentType"] as? String ?: "DEBT") }.getOrDefault(PaymentType.DEBT),
                     paymentMethodId = m["paymentMethodId"].asLong(),
                     note = m["note"] as? String ?: "",
                     date = m["date"].asLong() ?: System.currentTimeMillis(),
@@ -343,7 +345,9 @@ class FirebaseSyncService {
                     runCatching { child.toCashBox(merchantCode) }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -387,7 +391,9 @@ class FirebaseSyncService {
                     runCatching { child.toCashBoxMovement(merchantCode) }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -435,7 +441,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -459,6 +467,7 @@ class FirebaseSyncService {
                                 TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE")
                             }.getOrDefault(TransactionReturnStatus.NONE),
                             isPaid = m["isPaid"] as? Boolean ?: false,
+                            paymentType = runCatching { PaymentType.valueOf(m["paymentType"] as? String ?: "DEBT") }.getOrDefault(PaymentType.DEBT),
                             paymentMethodId = m["paymentMethodId"].asLong(),
                             note = m["note"] as? String ?: "",
                             date = m["date"].asLong() ?: System.currentTimeMillis(),
@@ -470,7 +479,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -495,7 +506,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -525,7 +538,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -610,7 +625,9 @@ class FirebaseSyncService {
                     trySend(returns)
                 }
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
@@ -633,7 +650,7 @@ class FirebaseSyncService {
                 mapOf(
                     "id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
                     "originalAmount" to t.originalAmount, "returnStatus" to t.returnStatus.name,
-                    "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
+                    "isPaid" to t.isPaid, "paymentType" to t.paymentType.name, "paymentMethodId" to t.paymentMethodId,
                     "note" to t.note, "date" to t.date, "paidAt" to t.paidAt,
                     "hasItems" to t.hasItems,
                     "dueDate" to t.dueDate,
@@ -643,7 +660,7 @@ class FirebaseSyncService {
     }
 
     suspend fun pushReturnInvoice(merchantCode: String, returnInvoice: ReturnInvoice, items: List<ReturnItem>) {
-        withTimeoutOrNull(8_000) {
+        withTimeout(8_000) {
             val ref = db.reference.child("merchants").child(merchantCode).child("return_invoices").child(returnInvoice.id)
             ref.setValue(mapOf(
                 "id" to returnInvoice.id,
@@ -664,7 +681,8 @@ class FirebaseSyncService {
                         "returnedQty" to it.returnedQuantity,
                         "pricePerUnit" to it.pricePerUnit,
                         "costPricePerUnit" to it.costPricePerUnit,
-                        "totalRefund" to it.totalRefund
+                        "totalRefund" to it.totalRefund,
+                        "lostProfit" to it.lostProfit
                     )
                 }
             )).await()
@@ -741,7 +759,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }

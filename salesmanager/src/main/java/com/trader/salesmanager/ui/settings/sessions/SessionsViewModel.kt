@@ -7,6 +7,10 @@ import com.trader.core.data.local.dao.SessionDao
 import com.trader.core.domain.model.Session
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -31,13 +35,25 @@ class SessionsViewModel(
             initialValue = emptyList()
         )
 
-    fun revokeSession(sessionId: String) {
-        if (sessionId.isBlank() || merchantCode.isBlank()) return
+    private val _revoking = MutableStateFlow<Set<String>>(emptySet())
+    val revoking: StateFlow<Set<String>> = _revoking.asStateFlow()
+    private val _revokeError = MutableStateFlow<String?>(null)
+    val revokeError: StateFlow<String?> = _revokeError.asStateFlow()
 
+    fun revokeSession(sessionId: String) {
+        if (sessionId.isBlank() || merchantCode.isBlank() || sessionId in _revoking.value) return
+        _revoking.update { it + sessionId }
+        _revokeError.value = null
         viewModelScope.launch {
-            runCatching {
+            try {
                 sessionsReference.child(sessionId).removeValue().await()
                 sessionDao.deleteSessionById(sessionId)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                _revokeError.value = "تعذر إنهاء الجلسة، حاول مجددًا"
+            } finally {
+                _revoking.update { it - sessionId }
             }
         }
     }

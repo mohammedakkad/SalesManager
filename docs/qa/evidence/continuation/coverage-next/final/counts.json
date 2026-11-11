@@ -1,0 +1,89 @@
+{
+  "app": {
+    "tests": 135,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 48519,
+        "missed": 23189
+      },
+      "BRANCH": {
+        "covered": 1377,
+        "missed": 1650
+      },
+      "LINE": {
+        "covered": 7594,
+        "missed": 2675
+      },
+      "COMPLEXITY": {
+        "covered": 2060,
+        "missed": 1976
+      },
+      "METHOD": {
+        "covered": 1719,
+        "missed": 797
+      },
+      "CLASS": {
+        "covered": 548,
+        "missed": 236
+      }
+    }
+  },
+  "salesmanager": {
+    "tests": 312,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 143652,
+        "missed": 50549
+      },
+      "BRANCH": {
+        "covered": 6689,
+        "missed": 7757
+      },
+      "LINE": {
+        "covered": 13440,
+        "missed": 4422
+      },
+      "COMPLEXITY": {
+        "covered": 3606,
+        "missed": 6856
+      },
+      "METHOD": {
+        "covered": 2302,
+        "missed": 892
+      },
+      "CLASS": {
+        "covered": 1046,
+        "missed": 232
+      }
+    }
+  },
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 24
+  },
+  "apks": [
+    {
+      "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+      "bytes": 1077131,
+      "sha256": "86ebdc0354f674c6ddd538b55b80742be0057eecf513490fc34d941e63426d05"
+    },
+    {
+      "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+      "bytes": 51525841,
+      "sha256": "9a783f9a105f0b2b6ab521601efb95f9af45a983a325a4ec9d1fb75ea37c297a"
+    },
+    {
+      "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
+      "bytes": 26702050,
+      "sha256": "c28a79f372e587ae7570c95bc10e9107436dacb558bc7ec29c7aefe179762b90"
+    }
+  ],
+  "scope": "447 module JVM cases; shared app135 cached previously executed, Seller312 executed in numeric acceptance. APK hashes and full 5m9s build acceptance are from6256d32; production sources unchanged since that verified build. New matrix runtime tracked separately."
+}

@@ -43,21 +43,21 @@ sealed class Screen(val route: String) {
     object Inventory : Screen("inventory")
     object AddProduct : Screen("add_product?barcode={barcode}") {
         fun createRoute(barcode: String? = null) =
-            if (barcode != null) "add_product?barcode=$barcode" else "add_product?barcode="
+            if (barcode != null) "add_product?barcode=${android.net.Uri.encode(barcode)}" else "add_product?barcode="
     }
 
     object EditProduct : Screen("edit_product/{productId}") {
-        fun createRoute(productId: String) = "edit_product/$productId"
+        fun createRoute(productId: String) = "edit_product/${android.net.Uri.encode(productId)}"
     }
 
     object ProductDetail : Screen("product_detail/{productId}") {
-        fun createRoute(productId: String) = "product_detail/$productId"
+        fun createRoute(productId: String) = "product_detail/${android.net.Uri.encode(productId)}"
     }
 
     object InventorySession : Screen("inventory_session")
     object InvoiceItems : Screen("invoice_items/{customerName}") {
         fun createRoute(customerName: String) =
-            "invoice_items/${java.net.URLEncoder.encode(customerName, "UTF-8")}"
+            "invoice_items/${android.net.Uri.encode(customerName)}"
     }
 
     object StockReports : Screen("stock_reports")

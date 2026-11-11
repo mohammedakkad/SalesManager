@@ -36,7 +36,9 @@ class TransactionDetailsViewModel(
     private val invoiceItemRepo: InvoiceItemRepository,
     private val stockRepo: StockRepository,
     private val returnRepo: ReturnRepository,
-    private val customerRepo: CustomerRepository
+    private val customerRepo: CustomerRepository,
+    private val saleCommands: com.trader.salesmanager.sales.SaleCommands,
+    private val activationRepo: com.trader.core.domain.repository.ActivationRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TransactionDetailsUiState())
@@ -124,22 +126,7 @@ class TransactionDetailsViewModel(
     fun delete() {
         val t = _state.value.transaction ?: return
         viewModelScope.launch {
-            val items = _state.value.invoiceItems
-            if (items.isNotEmpty()) {
-                items.forEach {
-                    item ->
-                    stockRepo.returnStock(
-                        productId = item.productId,
-                        unitId = item.unitId,
-                        quantity = item.quantity,
-                        transactionId = t.id,
-                        productName = item.productName,
-                        unitLabel = item.unitLabel
-                    )
-                }
-                invoiceItemRepo.deleteItemsForTransaction(t.id)
-            }
-            transactionRepo.deleteTransaction(t)
+            saleCommands.delete(java.util.UUID.randomUUID().toString(), activationRepo.getMerchantCode(), t)
             _state.update {
                 it.copy(isDeleted = true)
             }

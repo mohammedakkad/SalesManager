@@ -1,0 +1,16 @@
+{
+  "localAndroidRuntime": "No /dev/kvm in this workspace; actual Android execution is delegated to hosted CI",
+  "emulatorBinaryProbe": {
+    "url": "https://storage.googleapis.com/firebase-preview-drop/emulator/cloud-firestore-emulator-v1.19.8.jar",
+    "result": "CONNECT tunnel failed:403 Forbidden",
+    "policyRevision": "4",
+    "note": "No production Firebase access attempted; backend-rule tests also require authentic rules and identity contract"
+  },
+  "nativePdfJvm": {
+    "currentRobolectric": "4.14.1",
+    "inspectedOfficialArtifact": "org.robolectric:shadows-framework:4.16",
+    "sha256": "f3ddb731c95cb4663634355bed62932ec8f2c7a3daab876885a16b48e1530eda",
+    "result": "Neither inspected shadows-framework artifact contains a PdfDocument implementation;4.16 was not executed or installed. Existing JVM probe returned document-is-closed. No fake PDF shadow introduced."
+  },
+  "lifecycleProbe": "Direct MainActivity launch spun in UI dispatch; Compose-aware launch did not settle/tear down in the diagnostic. Removed from qualified tests, not counted as passed or skipped. Stable device fixture still required."
+}

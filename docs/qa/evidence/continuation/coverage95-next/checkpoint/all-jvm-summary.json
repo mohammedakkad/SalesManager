@@ -1,0 +1,109 @@
+{
+  "scope": "Both JVM suites",
+  "executionData": [
+    {
+      "path": "app/build/jacoco/testDebugUnitTest.exec",
+      "bytes": 490661
+    },
+    {
+      "path": "salesmanager/build/jacoco/testDebugUnitTest.exec",
+      "bytes": 1052151
+    }
+  ],
+  "modules": {
+    "app": {
+      "projectLocalJvm": {
+        "BRANCH": {
+          "covered": 1615,
+          "missed": 1496
+        },
+        "LINE": {
+          "covered": 8134,
+          "missed": 2173
+        },
+        "METHOD": {
+          "covered": 1818,
+          "missed": 697
+        },
+        "CLASS": {
+          "covered": 577,
+          "missed": 207
+        }
+      },
+      "allSuites": {
+        "BRANCH": {
+          "covered": 1725,
+          "missed": 1386
+        },
+        "LINE": {
+          "covered": 8448,
+          "missed": 1859
+        },
+        "METHOD": {
+          "covered": 1936,
+          "missed": 579
+        },
+        "CLASS": {
+          "covered": 605,
+          "missed": 179
+        }
+      }
+    },
+    "salesmanager": {
+      "projectLocalJvm": {
+        "BRANCH": {
+          "covered": 7402,
+          "missed": 7306
+        },
+        "LINE": {
+          "covered": 14223,
+          "missed": 3680
+        },
+        "METHOD": {
+          "covered": 2463,
+          "missed": 738
+        },
+        "CLASS": {
+          "covered": 1096,
+          "missed": 184
+        }
+      },
+      "allSuites": {
+        "BRANCH": {
+          "covered": 7402,
+          "missed": 7306
+        },
+        "LINE": {
+          "covered": 14223,
+          "missed": 3680
+        },
+        "METHOD": {
+          "covered": 2463,
+          "missed": 738
+        },
+        "CLASS": {
+          "covered": 1096,
+          "missed": 184
+        }
+      }
+    }
+  },
+  "weighted overall": {
+    "LINE": {
+      "covered": 22671,
+      "missed": 5539
+    },
+    "METHOD": {
+      "covered": 4399,
+      "missed": 1317
+    },
+    "BRANCH": {
+      "covered": 9127,
+      "missed": 8692
+    },
+    "CLASS": {
+      "covered": 1701,
+      "missed": 363
+    }
+  }
+}

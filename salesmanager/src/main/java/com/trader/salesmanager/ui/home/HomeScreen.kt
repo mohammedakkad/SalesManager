@@ -169,7 +169,7 @@ fun HomeScreen(
                                         .clip(CircleShape)
                                         .background(Color.White.copy(0.2f))
                                 ) {
-                                    Icon(Icons.Rounded.Forum, null, tint = Color.White)
+                                    Icon(Icons.Rounded.Forum, "الدعم الفني", tint = Color.White)
                                 }
                                 if (uiState.unreadChatCount > 0) {
                                     val badgeText = when {
@@ -209,7 +209,7 @@ fun HomeScreen(
                                     .clip(CircleShape)
                                     .background(Color.White.copy(0.2f))
                             ) {
-                                Icon(Icons.Rounded.Settings, null, tint = Color.White)
+                                Icon(Icons.Rounded.Settings, "الإعدادات", tint = Color.White)
                             }
                         }
                     }

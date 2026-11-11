@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.InvoiceTextSharingJourneyUiTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-11T10:19:45" hostname="13302589aed6" time="0.073">
+  <properties/>
+  <testcase name="actualQuickShareActionPreservesPartialReturnIdentityAndNetAmount" classname="com.trader.salesmanager.ui.coverage.InvoiceTextSharingJourneyUiTest" time="0.073"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

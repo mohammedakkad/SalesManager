@@ -1,0 +1,7 @@
+# Evidence consistency
+
+Qualified source ee1fcc2ecf41ebba24884e366d6f8abf9748c467; starting head68e99a76286faada1fcaedfba41749785789d7bb. Current JUnit XML has632PASS (208app/424Seller),0failures/errors/skips. All601prior identities remain,31new.22Python integrity guards pass. Ten genuine failing-before UI regressions are preserved; fixture diagnostics are excluded from that count.
+
+Hosted42983779778 concludesSUCCESS: seller and all compose API24/28/33/35. Per lane7Android/5PDFBox cases,5actual generated/exported path/hash records, complete exit0 and expected artifacts. Original and added whole-suite metrics have the same production classes/denominators and retain prior measured coverage. Additional core execution from Seller tests is explicitly distinguished from gains attributable to new tests. API28 is the comparison lane; individual per-API counter differences remain in their actual records.
+
+Current local APK hashes match actual clean output and preserved copies. Release is intentionally unsigned; apksigner correctly reportsDOES NOT VERIFY. Lint0errors/24warnings; targeted secret/token-log/signing policyPASS, not a complete scan. No production/test/script/Gradle source or google-services.json differs from the qualified source in the final evidence-only worktree update. The56-item remaining CSV parses completely; readinessFAIL and goal95% remains unmet. Raw authenticated hosted archives/checkout were not independently downloaded.

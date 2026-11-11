@@ -1,0 +1,1794 @@
+[
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "localImportFailureRollsBackEveryEarlierWrite",
+    "seconds": "9.616",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "cancellationDuringCashInsertRollsBackEveryImportedRow",
+    "seconds": "0.25",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "managedOperationCommittedDuringFetchBlocksLateImport",
+    "seconds": "0.231",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "successfulImportPreservesExpectedBalancesAndDerivedDebt",
+    "seconds": "0.246",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "successfulCatalogImportDoesNetworkOutsideRoomAndPreservesStock",
+    "seconds": "0.236",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "unitInsertFailureRollsBackCustomerTransactionAndProductWrites",
+    "seconds": "0.179",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "cancelledUnitDownloadDoesNotPersistAnyStagedRows",
+    "seconds": "0.173",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "failedUnitDownloadLeavesAllLocalRowsUnchanged",
+    "seconds": "0.161",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "accountSwitchDuringFetchCannotApplyPreviousMerchantReply",
+    "seconds": "0.189",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+    "name": "logoutDuringFetchBlocksLateImport",
+    "seconds": "0.178",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+    "name": "foreignCashRowsAreNotRetargetedOnAccountSwitch",
+    "seconds": "0.258",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+    "name": "pendingOutboxPreventsIndependentLegacyStockUpload",
+    "seconds": "0.06",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+    "name": "foreignPendingInvoiceIsNotRetargetedOnAccountSwitch",
+    "seconds": "0.054",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+    "name": "standaloneCashEffectUploadsAfterCommitAndSeesCommittedBalance",
+    "seconds": "0.07",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+    "name": "foreignStockAndUnitsAreNotUploadedUnderTheNextMerchant",
+    "seconds": "0.062",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+    "name": "nestedCashEffectRemainsPendingForItsOwningOutbox",
+    "seconds": "0.084",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ReturnMigrationTest",
+    "name": "upgradePreservesFinancialRecordsForeignKeysAndPendingWrites",
+    "seconds": "0.252",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ReturnMigrationTest",
+    "name": "failedUpgradeRollsBackSchemaAndData",
+    "seconds": "0.559",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ReturnMigrationTest",
+    "name": "backfillsPartialFullUnreturnedAndMissingLineStates",
+    "seconds": "0.071",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ReturnPersistenceTest",
+    "name": "partialReturnSurvivesDatabaseCloseAndReopenWithoutChangingDebt",
+    "seconds": "0.088",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.ReturnPersistenceTest",
+    "name": "fullReturnSurvivesRestartWithOriginalInvoiceValue",
+    "seconds": "0.071",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.RoomIntegrityTest",
+    "name": "foreignKeyRejectsOrphanSale",
+    "seconds": "0.045",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.RoomIntegrityTest",
+    "name": "customerUpsertPreservesSalesAndDebt",
+    "seconds": "0.044",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleOutboxMigrationTest",
+    "name": "injectedMigrationFailureRollsBackSchemaAndData",
+    "seconds": "0.559",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleOutboxMigrationTest",
+    "name": "migrationPreservesAllFinancialRowsAndValidatesRoomSchema",
+    "seconds": "0.072",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+    "name": "concurrentClaimsHaveOneOwnerAndExpiredOwnerCannotAcknowledge",
+    "seconds": "0.063",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+    "name": "merchantsAreClaimedSeparately",
+    "seconds": "0.042",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+    "name": "duplicateIdentityAndRevisionAreRejected",
+    "seconds": "0.04",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+    "name": "eventSurvivesDatabaseRestart",
+    "seconds": "0.04",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+    "name": "transactionFailureRollsBackEvent",
+    "seconds": "0.06",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleReceiptMigrationTest",
+    "name": "injectedMigrationFailureRollsBackSchemaAndData",
+    "seconds": "0.559",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.local.SaleReceiptMigrationTest",
+    "name": "migrationPreservesAllFinancialRowsAndValidatesRoomSchema",
+    "seconds": "0.063",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.remote.ReturnPushTest",
+    "name": "uploadPreservesReturnedProfitForOtherDevices",
+    "seconds": "1.012",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.remote.ReturnPushTest",
+    "name": "timeoutCannotBeAcknowledgedAsSuccessfulUpload",
+    "seconds": "0.133",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "failedRecordsRetryWithoutReapplyingBalancesOrConflicts",
+    "seconds": "0.13",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "paidTransferReconcilesBalancesAndLedger",
+    "seconds": "0.075",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "offlineRetryKeepsDurableRecordsWithoutRemoteRequests",
+    "seconds": "0.071",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "cancelledBoxUploadPropagatesWithoutMarkingFailed",
+    "seconds": "0.062",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "cancelledMovementUploadPropagatesWithoutMarkingFailed",
+    "seconds": "0.09",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "unchangedPaymentDoesNotCreateLedgerNoise",
+    "seconds": "0.079",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "logoutCancelsBothRemoteSubscriptions",
+    "seconds": "0.064",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "unpaidSaleDoesNotAffectCash",
+    "seconds": "0.056",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "manualCorrectionRecordsOnlyDifferenceAndKeepsInitialHistory",
+    "seconds": "0.066",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "partialBatchFailureDoesNotBlockOthersAndRetryUsesSameLedgerId",
+    "seconds": "0.083",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "initialBalanceCanBeSetOnlyOnce",
+    "seconds": "0.058",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+    "name": "secondBoxFailureRollsBackWholePaymentTransfer",
+    "seconds": "0.056",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+    "name": "remoteSnapshotPreservesEveryUnsyncedCustomerStatus",
+    "seconds": "0.078",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+    "name": "visitorCannotBeOverwrittenByRemoteSnapshot",
+    "seconds": "0.067",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+    "name": "syncedRemoteEditsPreserveCustomerTransactionHistory",
+    "seconds": "0.059",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+    "name": "logoutCancelsCustomerSubscription",
+    "seconds": "0.037",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+    "name": "repeatedFinalizationAppliesEachAdjustmentOnce",
+    "seconds": "0.151",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+    "name": "finishPreservesOriginalStartTimeAndMerchant",
+    "seconds": "0.05",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+    "name": "cancellationPreservesHistoryWithoutChangingStock",
+    "seconds": "0.049",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+    "name": "failureOnSecondUnitRollsBackFirstQuantityAndSession",
+    "seconds": "0.056",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+    "name": "wrongMerchantCannotFinalizeLocalSession",
+    "seconds": "0.049",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+    "name": "invalidNegativeCountNeverPersists",
+    "seconds": "0.05",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+    "name": "newSessionCapturesCurrentProductUnits",
+    "seconds": "0.056",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+    "name": "uncountedAndUnchangedItemsDoNotAdjustStock",
+    "seconds": "0.082",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "processInterruptionBeforeUploadRetainsReturnForNextRepository",
+    "seconds": "0.429",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "sameReturnIdCannotApplyRefundAndStockTwice",
+    "seconds": "0.221",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "staleRemoteUpdateDoesNotOverwritePendingRefundOrItsItems",
+    "seconds": "0.183",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "aggregateQuantityCannotExceedSoldStockInOneBatch",
+    "seconds": "0.175",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "concurrentRetriesSerializeOneAcknowledgement",
+    "seconds": "0.192",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "fractionalReturnsConserveCashAndStockAtFloatingPointBoundary",
+    "seconds": "0.217",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "successfulPartialReturnMaintainsCashStockInvoiceAndReturnSummary",
+    "seconds": "0.194",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "cancellationLeavesReturnUnacknowledgedAndRetryable",
+    "seconds": "0.186",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "emptyRemoteSnapshotPreservesPendingFailedAndConflictingReturns",
+    "seconds": "0.222",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "failedUploadRetriesSameDurableIdWithoutReplayingCashOrStock",
+    "seconds": "0.203",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "stockFailureRollsBackReturnLedgerAndFinancialChanges",
+    "seconds": "0.198",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "retryNeverPushesAnotherMerchantOrConflict",
+    "seconds": "0.179",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "logoutCancelsPreviousMerchantListener",
+    "seconds": "0.15",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+    "name": "duplicateIdWithDifferentPayloadIsRejectedWithoutChangingBalances",
+    "seconds": "0.172",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.StaleTransactionAckTest",
+    "name": "oldFailureCannotMarkNewEditFailed",
+    "seconds": "0.16",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.StaleTransactionAckTest",
+    "name": "unchangedSuccessAcknowledges",
+    "seconds": "0.047",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.StaleTransactionAckTest",
+    "name": "unchangedFailureRemainsRetryable",
+    "seconds": "0.049",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.StaleTransactionAckTest",
+    "name": "oldSuccessCannotAcknowledgeNewEdit",
+    "seconds": "0.051",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.TransactionSyncTest",
+    "name": "interruptedUploadPropagatesCancellationWithoutFalseFailureAck",
+    "seconds": "1.202",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.TransactionSyncTest",
+    "name": "deletingPartiallyReturnedSaleRestoresOnlyRemainingUnitsAndCash",
+    "seconds": "0.069",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.TransactionSyncTest",
+    "name": "reconnectRetriesFailedAndPendingButNeverConflicts",
+    "seconds": "0.08",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.TransactionSyncTest",
+    "name": "failedFirstUploadDoesNotPreventLaterPendingUpload",
+    "seconds": "0.058",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.TransactionSyncTest",
+    "name": "transactionListenerStopsOnLogout",
+    "seconds": "0.041",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.TransactionSyncTest",
+    "name": "remoteAbsenceMustNotDeleteUnsyncedSales",
+    "seconds": "0.123",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.data.repository.TransactionSyncTest",
+    "name": "deletingFullyReturnedSaleDoesNotRestoreStockAgain",
+    "seconds": "0.012",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ProductStockTest",
+    "name": "explicitDefaultWinsOtherwiseFirst",
+    "seconds": "0.003",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ProductStockTest",
+    "name": "aggregateAttentionIncludesOutOfStockUnits",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ProductStockTest",
+    "name": "stockBoundaryClassification",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ProductStockTest",
+    "name": "profitIncludesLossButUnspecifiedCostIsUnknown",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ReturnItemTest",
+    "name": "partialRefundPreservesFinancialAmounts",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ReturnItemTest",
+    "name": "invalidOriginalQuantityIsRejected",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ReturnItemTest",
+    "name": "blankIdentityIsRejected",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ReturnItemTest",
+    "name": "invalidQuantitiesAreRejected",
+    "seconds": "0.001",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ReturnItemTest",
+    "name": "fullReturnIsAllowed",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ReturnItemTest",
+    "name": "freeReturnWithoutCostIsAllowed",
+    "seconds": "0.001",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.domain.model.ReturnItemTest",
+    "name": "invalidPricesAreRejected",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "app",
+    "class": "com.trader.core.sync.ReturnRetryCoordinatorTest",
+    "name": "reconnectRetriesReturnsEvenWhenStockUploadFails",
+    "seconds": "0.173",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "invoiceFailureRollsBackEverything",
+    "seconds": "5.149",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "debtIsDerivedFromCommittedUnpaidSale",
+    "seconds": "0.164",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "staleEditIsRejectedAndReplayCannotOverwriteLaterEdit",
+    "seconds": "0.173",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "deleteCashFailureRestoresEveryRow",
+    "seconds": "0.13",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "editInvoiceFailureRollsBackRestoredStock",
+    "seconds": "0.101",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "cancellationDuringDrainRollsBackEarlierStatusesAndCanRetryAfterRestart",
+    "seconds": "0.26",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "deleteSaleFailureRestoresEveryRow",
+    "seconds": "0.093",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "editStockFailureRollsBackEverything",
+    "seconds": "0.098",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "deleteFailurePreservesPartialReturnLedgerAndRefundState",
+    "seconds": "0.093",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "unversionedTransactionEchoCannotOverwriteOrResurrectManagedSale",
+    "seconds": "3.401",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "unpaidDeletionClearsDerivedDebtWithoutCashEffect",
+    "seconds": "0.193",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "idleRecoveryDoesNotRewriteAlreadyAcknowledgedRows",
+    "seconds": "0.202",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "restartKeepsCommittedOutboxPayloadUnchanged",
+    "seconds": "0.108",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "successfulEditChangesInvoiceStockCashAndDebtTogether",
+    "seconds": "0.127",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "backupRoundTripPreservesReceiptAndDoesNotReplaySale",
+    "seconds": "0.598",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "invoiceIdentityCannotOverwriteAnotherSale",
+    "seconds": "0.115",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "operationIdCannotBeReusedWithDifferentPayload",
+    "seconds": "0.109",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "relatedReturnAndPartialDeletionAreDurableAndDeliverableInOneSequence",
+    "seconds": "0.16",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "fullReturnDeletionDoesNotRestoreOrRefundTwice",
+    "seconds": "0.108",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "successfulCreation",
+    "seconds": "0.089",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "duplicateSubmissionHasExactlyOneLocalEffect",
+    "seconds": "0.094",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "idleRecoveryUpdatesOnlyTheMatchingUnsynchronizedRow",
+    "seconds": "0.108",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "acknowledgedBackupRevalidatesLatestRevisionWithoutReplayingHistoricalEffects",
+    "seconds": "0.357",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "oldAcknowledgedRestoreBecomesConflictIfRemoteRevisionHasAdvanced",
+    "seconds": "0.331",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "createThenEditDeliversBothImmutableRevisionsInOrder",
+    "seconds": "0.104",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "idleRestartRepairsRowsStrandedByPreviouslyAcknowledgedReceipts",
+    "seconds": "0.097",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "successfulDeletionRestoresAllNetEffects",
+    "seconds": "0.08",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "actualReturnRepositoryRollsBackAllEffectsIfOutboxCannotPersist",
+    "seconds": "0.398",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "actualReturnRepositoryJournalsStockCashAndReturnBeforeLegacyUploads",
+    "seconds": "0.194",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "failedBackupRestorePreservesReceiptAndSale",
+    "seconds": "0.069",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "cancelledDeleteRestoresAllRows",
+    "seconds": "0.074",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "wrongMerchantCannotEditOrDeleteExistingSale",
+    "seconds": "0.076",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "failedDrainRollsBackAllStatusesAndReceiptThenReusesRemoteCompletion",
+    "seconds": "0.096",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "concurrentIdenticalSubmissionsApplyOnce",
+    "seconds": "0.056",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "reopenCommittedSale",
+    "seconds": "0.061",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "reopenRolledBackSale",
+    "seconds": "0.057",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "editAndDeletionCreateVersionedOutboxTombstone",
+    "seconds": "0.061",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "failedIdleRecoveryRollsBackEarlierStatusesWithoutLosingReceipts",
+    "seconds": "0.082",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "realEditDuringOldUploadKeepsNewFinancialRowsPendingUntilItsOwnReceipt",
+    "seconds": "0.104",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "cancelledIdleRecoveryPreservesReceiptsAndEveryLocalStatusUntilRestart",
+    "seconds": "0.097",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "cashFailureRollsBackEverything",
+    "seconds": "0.054",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "commitCreatesExactlyOneOutboxEventAndReplayDoesNotDuplicateIt",
+    "seconds": "0.048",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "restartBetweenReceiptsDoesNotStrandEarlierSaleAsPending",
+    "seconds": "0.087",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "unversionedInvoiceEchoCannotResurrectDeletedManagedLines",
+    "seconds": "0.082",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "identicalContentRevisionIsNotAcknowledgedByAnOlderEventReceipt",
+    "seconds": "0.084",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "staleUiMerchantCannotCreateAnEventUnderThePreviousSession",
+    "seconds": "0.043",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "cancellationAfterWritesRollsBackAllTables",
+    "seconds": "0.067",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "restoreCannotRewriteExistingImmutablePayloadUnderTheSameEventId",
+    "seconds": "0.314",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "editCashFailureRollsBackInvoiceStockAndSale",
+    "seconds": "0.06",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "committedDeletionConflictRemainsVisibleAndNeverDisappears",
+    "seconds": "0.1",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "addingStockToFullyReturnedInvoiceMakesItPartiallyReturned",
+    "seconds": "0.067",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "outboxInsertFailureRollsBackSaleStockCashAndReceipt",
+    "seconds": "0.059",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "drainingMultipleSalesAcknowledgesEveryMatchingSaleAndLedger",
+    "seconds": "0.087",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "partialReturnDeletionRestoresOnlyRemainingStockAndCash",
+    "seconds": "0.064",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "returnedSaleEditPreservesRefundAndUsesRemainingQuantities",
+    "seconds": "0.077",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "freshRestoreDoesNotReuseADeletedAggregateIdentity",
+    "seconds": "0.31",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "repeatedDeletionDoesNotApplyStockOrCashAgain",
+    "seconds": "0.072",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "createThenDeleteDeliversTombstoneAndNetZeroCashAndStock",
+    "seconds": "0.08",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "cancelledEditRestoresAllRows",
+    "seconds": "0.055",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "deleteInvoiceFailureRestoresStockAndReturnLedger",
+    "seconds": "0.055",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "olderBackupCannotEraseAnUncertainDeletionTombstone",
+    "seconds": "0.262",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "unversionedRemoteDeletionIsQuarantinedWithoutGuessingFinancialEffects",
+    "seconds": "0.088",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "concurrentLastStockAllowsOnlyOneSale",
+    "seconds": "0.096",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "stockFailureRollsBackEverything",
+    "seconds": "0.061",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+    "name": "restoreDuringDispatchInvalidatesOldLeaseAndReplaysRemoteReceiptSafely",
+    "seconds": "0.263",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleSessionViewModelTest",
+    "name": "restoredDraftCannotRetargetMerchantAndOriginalAccountRetryIsIdempotent",
+    "seconds": "0.268",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.SaleSessionViewModelTest",
+    "name": "viewModelCreatedBeforeActivationUsesCurrentMerchantWhenSaving",
+    "seconds": "0.058",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "numericCompareDoesNotRoundDistinctLongIdentifiersIntoOneValue",
+    "seconds": "0.898",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "completedEventFromOlderRestoreCannotAcknowledgeNewerRemoteRevision",
+    "seconds": "0.565",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "foreignMerchantPayloadIsRejectedBeforeAnySdkWrite",
+    "seconds": "0.036",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "conditionalUpsertPreservesUnrelatedRemoteFields",
+    "seconds": "0.076",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "repeatedDeliveryUsesBothReceiptsWithoutReapplyingFinancialEffects",
+    "seconds": "0.069",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "conflictingFirestoreValueIsNotOverwritten",
+    "seconds": "0.044",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "staleRevisionAndEventIdentityCollisionCannotOverwriteRemoteData",
+    "seconds": "0.074",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "bothConditionalBackendPhasesCompleteBeforeFullAcknowledgment",
+    "seconds": "0.045",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "sdkWrappedConflictRemainsExplicitAndDoesNotBecomeInfiniteTransientRetry",
+    "seconds": "0.038",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "secondBackendConflictIsExplicitRatherThanClaimedAtomicSuccess",
+    "seconds": "0.041",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+    "name": "failureBetweenBackendsRetainsCompletedPhaseForIdempotentRetry",
+    "seconds": "0.055",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "newEditDuringFlightDoesNotLoseNewRevisionOrHoldDatabaseLock",
+    "seconds": "0.067",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "remoteFailureRetainsIdentityAndRetriesAfterBackoff",
+    "seconds": "0.043",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "conflictIsRetainedAndBlocksLaterFinancialEvents",
+    "seconds": "0.034",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "cancellationReleasesClaimWithoutAcknowledging",
+    "seconds": "0.039",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "logoutDuringDispatchCancelsOldMerchantAndRetainsIntent",
+    "seconds": "0.039",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "merchantSwitchNeverClaimsAnotherTenant",
+    "seconds": "0.036",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "expiredOwnershipRejectsOldNetworkCompletion",
+    "seconds": "0.046",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "timeoutAndRestartKeepDeletionIntent",
+    "seconds": "0.083",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "failedLocalAcknowledgmentKeepsUncertainRemoteCompletionRetryable",
+    "seconds": "0.041",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+    "name": "concurrentDispatchersDoNotClaimOneEventTwice",
+    "seconds": "0.05",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+    "name": "workerDoesNotDispatchPreviousMerchantAfterSwitch",
+    "seconds": "0.105",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+    "name": "workerRecoversDurableDeletionAfterDatabaseRestart",
+    "seconds": "0.048",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+    "name": "workerReturnsRetryAndKeepsDeletionAfterNetworkFailure",
+    "seconds": "0.043",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+    "name": "cancelledWorkerPreservesRetryIntent",
+    "seconds": "0.041",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+    "name": "validCodeIsTrimmedAndSavedOnlyAfterRemoteValidation",
+    "seconds": "0.738",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+    "name": "activeAccountProceeds",
+    "seconds": "0.012",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+    "name": "disabledAndExpiredAccountsAreBlocked",
+    "seconds": "0.019",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+    "name": "blankCodeDoesNotCallRemoteOrSaveActivation",
+    "seconds": "0.036",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+    "name": "networkFailureOffersRetryWithoutActivating",
+    "seconds": "0.031",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+    "name": "rejectedCodesNeverPersistActivation",
+    "seconds": "0.031",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.BackupUiFlowTest",
+    "name": "restoringRequiresExplicitReplacementConfirmation",
+    "seconds": "4.07",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.BackupUiFlowTest",
+    "name": "exportingRequiresPasswordAndConfirmationBeforeDelegation",
+    "seconds": "0.911",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.BoxesUiFlowTest",
+    "name": "initializedBalanceAndMovementDetailsCanBeExpanded",
+    "seconds": "0.372",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.BoxesUiFlowTest",
+    "name": "initialBalanceDialogPassesArabicAmountToCorrectBox",
+    "seconds": "0.361",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.DetailUiFlowTest",
+    "name": "deletionNavigatesBackOnlyAfterStateConfirmsDeletion",
+    "seconds": "0.413",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.DetailUiFlowTest",
+    "name": "partiallyReturnedInvoiceKeepsNetItemsAndCustomerDebtVisible",
+    "seconds": "0.256",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.DetailUiFlowTest",
+    "name": "customerDetailsShowsDerivedDebtAndRealTransactionNavigation",
+    "seconds": "0.298",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InventoryCountUiFlowTest",
+    "name": "enteringPhysicalCountUpdatesOnlyTheSelectedInventoryItem",
+    "seconds": "0.415",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InventoryCountUiFlowTest",
+    "name": "startingCountDoesNotPretendItIsAlreadyFinished",
+    "seconds": "0.109",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InventoryListUiFlowTest",
+    "name": "stockFiltersKeepLowAndOutOfStockProductsSeparate",
+    "seconds": "0.407",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InventoryListUiFlowTest",
+    "name": "emptyStockOffersAnAddProductAction",
+    "seconds": "0.108",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InvoiceUiFlowTest",
+    "name": "editingArabicQuantityRecalculatesConfirmation",
+    "seconds": "0.354",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InvoiceUiFlowTest",
+    "name": "emptyInvoiceShowsCustomerAndDisablesConfirmation",
+    "seconds": "0.063",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InvoiceUiFlowTest",
+    "name": "zeroQuantityCannotBeApplied",
+    "seconds": "0.201",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InvoiceUiFlowTest",
+    "name": "confirmationReturnsActualLinesAndCalculatedTotal",
+    "seconds": "0.113",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ProductFormUiFlowTest",
+    "name": "validProductSavesTheUnitPriceCostAndQuantity",
+    "seconds": "0.368",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ProductFormUiFlowTest",
+    "name": "blankProductCannotBeSubmitted",
+    "seconds": "0.173",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportsCalculationsTest",
+    "name": "periodChangesAndLiveRowsRecomputeTotalsWithoutLosingAnalytics",
+    "seconds": "0.299",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportsCalculationsTest",
+    "name": "paidDebtProfitAndCustomerRanksRemainConsistent",
+    "seconds": "0.011",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportsCalculationsTest",
+    "name": "selectingDayBuildsCorrectPaidAndUnpaidBreakdownAndCanDeselect",
+    "seconds": "0.01",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportsCalculationsTest",
+    "name": "changingMonthClearsSelectionAndProducesReadyMonthlyExport",
+    "seconds": "0.015",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportsUiFlowTest",
+    "name": "pendingMonthlyTotalsDisablePdfUntilReady",
+    "seconds": "0.278",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportsUiFlowTest",
+    "name": "financialSectionsPresentAllSalesProfitAndDebtAnalytics",
+    "seconds": "0.85",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest",
+    "name": "alreadyReturnedLineCannotOfferAnotherRefund",
+    "seconds": "0.235",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest",
+    "name": "partialReturnShowsRemainingQuantityAndCorrectRefund",
+    "seconds": "0.213",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.SettingsUiFlowTest",
+    "name": "editingStoreNameRequiresExplicitSave",
+    "seconds": "0.436",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.SettingsUiFlowTest",
+    "name": "paymentCashAndSupportSettingsNavigateToTheRequestedDestination",
+    "seconds": "0.129",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.StockDetailUiFlowTest",
+    "name": "manualStockDeductionUsesTheSelectedUnitAndNegativeQuantity",
+    "seconds": "0.17",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.StockDetailUiFlowTest",
+    "name": "stockReportTabsShowCashDebtAndInventoryAlerts",
+    "seconds": "0.235",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.TransactionsUiFlowTest",
+    "name": "paidFilterAndRowNavigationPreserveTransactionIdentity",
+    "seconds": "0.298",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.TransactionsUiFlowTest",
+    "name": "emptyTransactionsRemainVisibleWithoutInventingARecord",
+    "seconds": "0.055",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+    "name": "conflictingPhoneBlocksSave",
+    "seconds": "0.015",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+    "name": "editUpdatesExistingCustomerRatherThanInserting",
+    "seconds": "0.091",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+    "name": "rapidDoubleSaveCannotCreateDuplicateCustomer",
+    "seconds": "0.009",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+    "name": "shortAndReservedNamesNeverPersist",
+    "seconds": "0.003",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+    "name": "creationTrimsNameAndPreservesArabic",
+    "seconds": "0.004",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+    "name": "phoneInputKeepsOnlyTenDigits",
+    "seconds": "0.002",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+    "name": "arabicDecimalAndGroupingSeparatorsAreParsed",
+    "seconds": "0.001",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+    "name": "supportedWeightConversionsRoundTrip",
+    "seconds": "0.001",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+    "name": "amountFormattingIsIndependentOfDeviceLocale",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+    "name": "quantityFormattingKeepsFractionalStock",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+    "name": "latinAndPersianDigitsAreParsed",
+    "seconds": "0.001",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+    "name": "nonFiniteAndMalformedFinancialInputsAreRejected",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.inventory.session.InventorySessionViewModelTest",
+    "name": "validCountsAndClearingPersistWhileInvalidCountsNeverReachRepository",
+    "seconds": "0.207",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+    "name": "randomSaltAndIvPreventIdenticalCiphertexts",
+    "seconds": "0.187",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+    "name": "encryptedRoundTripPreservesArabicBytesAndHeader",
+    "seconds": "0.171",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+    "name": "emptyArchiveRoundTrips",
+    "seconds": "0.164",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+    "name": "wrongPasswordRejected",
+    "seconds": "0.168",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+    "name": "ciphertextTamperingRejected",
+    "seconds": "0.162",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+    "name": "unknownEncryptionVersionRejected",
+    "seconds": "0.085",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+    "name": "truncatedHeaderRejected",
+    "seconds": "0.0",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+    "name": "exportReadsTablesInsideOneDatabaseSnapshot",
+    "seconds": "0.582",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+    "name": "encryptedExportImportRoundTripPreservesAmountsAndReturnState",
+    "seconds": "0.251",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+    "name": "malformedFilesAreRejectedWithoutTouchingDatabase",
+    "seconds": "0.044",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+    "name": "failedRestoreRollsBackExistingMerchantData",
+    "seconds": "0.033",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+    "name": "legacyBackupRestoresReturnStateFromItsDurableLedger",
+    "seconds": "0.034",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupMigratorTest",
+    "name": "futurePayloadIsRejectedRatherThanRestored",
+    "seconds": "0.009",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupMigratorTest",
+    "name": "unsupportedOldPayloadIsRejectedRatherThanRestored",
+    "seconds": "0.001",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.settings.backup.BackupMigratorTest",
+    "name": "allSupportedPayloadVersionsPreserveFinancialRecords",
+    "seconds": "0.008",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
+    "name": "inventoryWorkbookPreservesQuantitiesValuesAndStockStatus",
+    "seconds": "0.058",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
+    "name": "salesWorkbookContainsCorrectPaidDebtAndCustomerIdentity",
+    "seconds": "0.028",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
+    "name": "styleCountsAndFillReferencesMatchActualXmlElements",
+    "seconds": "0.022",
+    "result": "passed"
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
+    "name": "workbookRoundTripsArabicEscapingAndLiteralFormulaText",
+    "seconds": "0.026",
+    "result": "passed"
+  }
+]

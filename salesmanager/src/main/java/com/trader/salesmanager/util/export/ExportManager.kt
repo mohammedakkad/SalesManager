@@ -385,14 +385,18 @@ object ExportManager {
                     put(MediaStore.Downloads.MIME_TYPE, mimeType)
                     put(MediaStore.Downloads.IS_PENDING, 1)
                 }
-                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-                uri?.let {
-                    resolver.openOutputStream(it)?.use { out -> file.inputStream().copyTo(out) }
+                val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values) ?: return false
+                var published = false
+                try {
+                    val output = resolver.openOutputStream(uri) ?: return false
+                    output.use { out -> file.inputStream().use { input -> input.copyTo(out) } }
                     values.clear()
                     values.put(MediaStore.Downloads.IS_PENDING, 0)
-                    resolver.update(it, values, null, null)
+                    published = resolver.update(uri, values, null, null) > 0
+                    published
+                } finally {
+                    if (!published) runCatching { resolver.delete(uri, null, null) }
                 }
-                true
             } else {
                 val dest = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), displayName)
                 file.copyTo(dest, overwrite = true)

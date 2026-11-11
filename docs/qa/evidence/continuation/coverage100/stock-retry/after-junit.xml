@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.StockOperationsQualificationTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T14:41:47" hostname="13302589aed6" time="0.262">
+  <properties/>
+  <testcase name="conflictsAreReportedAndOnlyExplicitChoiceChangesLocalOrRemoteQuantity" classname="com.trader.core.data.repository.StockOperationsQualificationTest" time="0.056"/>
+  <testcase name="failedStockLedgerRetriesWithoutRewritingItsPendingState" classname="com.trader.core.data.repository.StockOperationsQualificationTest" time="0.056"/>
+  <testcase name="localMovementHelpersParticipateInCallerTransactionWithoutUploading" classname="com.trader.core.data.repository.StockOperationsQualificationTest" time="0.054"/>
+  <testcase name="failedStockRetryDoesNotUploadAnotherMerchantsLedger" classname="com.trader.core.data.repository.StockOperationsQualificationTest" time="0.056"/>
+  <testcase name="callerRollbackRestoresStockAndLedgerTogether" classname="com.trader.core.data.repository.StockOperationsQualificationTest" time="0.04"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

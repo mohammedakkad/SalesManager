@@ -22,6 +22,7 @@ import com.trader.core.domain.repository.LowStockSettingsRepository
 import com.trader.salesmanager.MainActivity
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlinx.coroutines.CancellationException
 import java.util.Calendar
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
@@ -37,6 +38,8 @@ class LowStockCheckWorker(
     override suspend fun doWork(): Result {
         val settings = try {
             settingsRepository.getSettings()
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (_: Exception) {
             return Result.retry()
         }
@@ -45,6 +48,8 @@ class LowStockCheckWorker(
         val now = System.currentTimeMillis()
         val candidates = try {
             alertRepository.getNotificationCandidates(now, COOLDOWN_MILLIS)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (_: Exception) {
             return Result.retry()
         }
@@ -54,8 +59,12 @@ class LowStockCheckWorker(
         val productCount = candidates.map { it.productId }.distinct().size
         if (!showNotification(productCount)) return Result.success()
 
-        runCatching {
+        try {
             alertRepository.markNotified(candidates, now)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            // Delivery already succeeded; retain the existing best-effort cooldown policy.
         }
         return Result.success()
     }

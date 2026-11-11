@@ -8,6 +8,7 @@ import com.trader.core.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 data class CustomerDebt(val customer: Customer, val debt: Double)
@@ -22,7 +23,9 @@ class DebtsViewModel(
 
     init {
         viewModelScope.launch {
-            customerRepo.getAllCustomers().collect { customers ->
+            combine(customerRepo.getAllCustomers(), transactionRepo.getAllTransactions()) { customers, _ ->
+                customers
+            }.collect { customers ->
                 val debts = customers.mapNotNull { customer ->
                     val debt = transactionRepo.getUnpaidAmountByCustomer(customer.id)
                     if (debt > 0) CustomerDebt(customer, debt) else null

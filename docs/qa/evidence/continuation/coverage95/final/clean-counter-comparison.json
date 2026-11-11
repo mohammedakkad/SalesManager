@@ -1,0 +1,53 @@
+{
+  "sameProductionClassSet": true,
+  "incrementalClasses": 1317,
+  "cleanClasses": 1317,
+  "branchDenominatorChanges": [
+    {
+      "class": "com/trader/salesmanager/ui/reports/ReportsScreenKt",
+      "incremental": {
+        "covered": 277,
+        "missed": 387
+      },
+      "clean": {
+        "covered": 270,
+        "missed": 392
+      }
+    },
+    {
+      "class": "com/trader/salesmanager/ui/home/HomeScreenKt",
+      "incremental": {
+        "covered": 72,
+        "missed": 56
+      },
+      "clean": {
+        "covered": 69,
+        "missed": 49
+      }
+    },
+    {
+      "class": "com/trader/salesmanager/ui/settings/SettingsScreenKt",
+      "incremental": {
+        "covered": 162,
+        "missed": 78
+      },
+      "clean": {
+        "covered": 158,
+        "missed": 78
+      }
+    },
+    {
+      "class": "com/trader/salesmanager/ui/settings/sessions/SessionsScreenKt",
+      "incremental": {
+        "covered": 30,
+        "missed": 22
+      },
+      "clean": {
+        "covered": 29,
+        "missed": 21
+      }
+    }
+  ],
+  "source": "fda922fb865dabf5633115268d3b4e72ccbb8e4f",
+  "scope": "No source or exclusion changes; actual measured clean compilation replaces incremental measurement."
+}

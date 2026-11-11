@@ -1,0 +1,13 @@
+{
+  "app": {
+    "BRANCH": 18.9,
+    "LINE": 32.1
+  },
+  "salesmanager": {
+    "BRANCH": 1.7,
+    "LINE": 70.0
+  },
+  "weighted overall": {
+    "LINE": 70.0
+  }
+}
