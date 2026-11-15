@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-15T07:59:26" hostname="236b99701f27" time="0.435">
+  <properties/>
+  <testcase name="futureHourIsScheduledTodayAndRemovesMinutesSecondsAndMilliseconds" classname="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" time="0.059"/>
+  <testcase name="cancellationCancelsTheScheduledUniqueWork" classname="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" time="0.226"/>
+  <testcase name="exactPreferredHourSchedulesTomorrowInsteadOfImmediateDuplicate" classname="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" time="0.034"/>
+  <testcase name="repeatedSchedulingKeepsOneExistingPeriodicRequest" classname="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" time="0.03"/>
+  <testcase name="autumnDstTransitionPreservesTheLocalHour" classname="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" time="0.026"/>
+  <testcase name="springDstTransitionPreservesTheLocalHour" classname="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" time="0.017"/>
+  <testcase name="explicitReplacementCancelsTheOldRequestAndCreatesOneActiveRequest" classname="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" time="0.027"/>
+  <testcase name="pastPreferredHourSchedulesTheNextDay" classname="com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest" time="0.015"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

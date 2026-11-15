@@ -1,3 +1,5 @@
+> Current Branch75 continuation:20 additional public Outbox contract cases;778JVM PASS,22Python PASS. Fresh JVM Seller Branch8014/14784; weighted historical9628/17895; both-JVM9740/17895. Branch75 and prior Line95 remain unachieved. New-source hosted43692281378 SUCCESS: seller/API24/28/33/35; API35 required a second attempt after timeout. API28 combined Seller Branch8164/14784; weighted historical9779/17895; both-JVM9891/17895. Each lane7Android/5PDFBox PASS with5real PDF path/hash records. 812distinct qualified cases PASS; no older EC reused. [Current evidence](branch75-progress.md). ReleaseFAIL. Earlier results below remain historical.
+
 # Seller lifecycle, metadata and native chart continuation — 2026-11-11
 
 Starting HEAD: `c9bfb3a1516d210cb05822e631a821314020f2a2`. Same audit branch and Draft PR51. Goal95% remains unachieved; release readiness FAIL. No Admin business, Room schema, sale command, outbox protocol or financial mutation formula changes.
