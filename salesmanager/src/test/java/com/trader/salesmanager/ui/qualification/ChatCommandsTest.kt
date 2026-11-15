@@ -74,6 +74,7 @@ class ChatCommandsTest {
         vm.onLongPress(own);vm.requestDeleteSelected();vm.confirmDeleteForEveryone();runCurrent();assertTrue("a" in vm.uiState.value.locallyDeletedIds)
         coEvery {repo.deleteMessage(any(),any())} just Runs
         vm.onLongPress(own);vm.requestDeleteSelected();vm.confirmDeleteForEveryone();runCurrent();assertFalse("a" in vm.uiState.value.locallyDeletedIds)
+        queued.value=listOf(PendingMessageEntity("pending","m1","queued","store",isFailed=true));runCurrent()
         vm.dismissFailedMessage("pending");runCurrent();coVerify {pending.delete("pending")}
     }
 }

@@ -72,10 +72,10 @@ class ChatSelectionBoundaryUiTest:OfflineSellerUiTest() {
     }
     @Test fun failedControlsAppearOnlyAfterPendingMessageFailure() {
         val pending=PendingMessageEntity("stable","tenant","pending body","store")
-        state.value=state.value.copy(pendingMessages=listOf(pending));render()
+        state.value=state.value.copy(pendingMessages=listOf(pending),sendingIds=setOf("stable"));render()
         ui.onNodeWithText("pending body").assertExists();ui.onNodeWithText("إعادة").assertDoesNotExist()
         ui.onNodeWithText("فشل الإرسال").assertDoesNotExist()
-        ui.runOnIdle { state.value=state.value.copy(pendingMessages=listOf(pending.copy(isFailed=true))) };ui.waitForIdle()
+        ui.runOnIdle { state.value=state.value.copy(pendingMessages=listOf(pending.copy(isFailed=true)),sendingIds=emptySet()) };ui.waitForIdle()
         ui.onNodeWithText("إعادة").performClick();verify(exactly=1) { vm.retryMessage("stable") }
     }
     @Test fun locallyDeletedAndQueuedServerEchoesDoNotRevealDuplicateContent() {

@@ -194,6 +194,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
                         pending ->
                         PendingBubble(
                             pending = pending,
+                            isSending = pending.tempId in state.sendingIds,
                             onRetry = {
                                 viewModel.retryMessage(pending.tempId)
                             },
@@ -654,6 +655,7 @@ private fun ReadReceipt(status: MessageStatus) {
 @Composable
 private fun PendingBubble(
     pending: PendingMessageEntity,
+    isSending: Boolean,
     onRetry: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -675,10 +677,10 @@ private fun PendingBubble(
                     style = MaterialTheme.typography.bodyMedium)
             }
             Spacer(Modifier.height(3.dp))
-            if (pending.isFailed) {
+            if (!isSending) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.ErrorOutline, null, tint = DebtRed, modifier = Modifier.size(12.dp))
-                    Text("فشل الإرسال", style = MaterialTheme.typography.labelSmall, color = DebtRed, fontSize = 10.sp)
+                    Icon(Icons.Rounded.ErrorOutline, null, tint = if (pending.isFailed) DebtRed else appColors.textSubtle, modifier = Modifier.size(12.dp))
+                    Text(if (pending.isFailed) "فشل الإرسال" else "الإرسال غير مؤكد", style = MaterialTheme.typography.labelSmall, color = if (pending.isFailed) DebtRed else appColors.textSubtle, fontSize = 10.sp)
                     TextButton(onClick = onRetry, contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)) {
                         Text("إعادة", style = MaterialTheme.typography.labelSmall, color = Emerald500, fontSize = 10.sp)
                     }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-15T13:25:59" hostname="236b99701f27" time="8.63">
+<testsuite name="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-15T14:00:34" hostname="236b99701f27" time="0.671">
   <properties/>
-  <testcase name="deleteCancellationCannotBecomeAVisibleDeletionFailure" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="8.169"/>
-  <testcase name="lookupFailureCannotBeInterpretedAsAnUnusedPin" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.113"/>
-  <testcase name="ordinarySaveFailureStillReportsReasonAndPreservesDraft" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.083"/>
-  <testcase name="saveCancellationRetainsDraftAndReleasesSubmittingWithoutFailureEvent" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.096"/>
-  <testcase name="ordinaryDeleteFailureRetainsRowAndReportsTheFailure" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.055"/>
-  <testcase name="lookupCancellationDoesNotCreateEmployeeOrFailureEvent" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.054"/>
-  <testcase name="twoSubmitClicksBeforeDispatchPersistOnlyOneEmployee" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.059"/>
+  <testcase name="deleteCancellationCannotBecomeAVisibleDeletionFailure" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.322"/>
+  <testcase name="lookupFailureCannotBeInterpretedAsAnUnusedPin" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.068"/>
+  <testcase name="ordinarySaveFailureStillReportsReasonAndPreservesDraft" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.054"/>
+  <testcase name="saveCancellationRetainsDraftAndReleasesSubmittingWithoutFailureEvent" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.053"/>
+  <testcase name="ordinaryDeleteFailureRetainsRowAndReportsTheFailure" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.053"/>
+  <testcase name="lookupCancellationDoesNotCreateEmployeeOrFailureEvent" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.06"/>
+  <testcase name="twoSubmitClicksBeforeDispatchPersistOnlyOneEmployee" classname="com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest" time="0.058"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

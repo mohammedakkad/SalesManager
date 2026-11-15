@@ -29,7 +29,8 @@ data class ChatUiState(
     val isSelectionMode: Boolean = false,
     val locallyDeletedIds: Set<String> = emptySet(),
     val pendingOwnDeleteIds: Set<String> = emptySet(),
-    val showDeleteDialog: Boolean = false
+    val showDeleteDialog: Boolean = false,
+    val sendingIds: Set<String> = emptySet()
 ) {
     val visibleMessages: List<ChatMessage>
         get() = messages.filter { m ->
@@ -118,47 +119,52 @@ class ChatViewModel(
         val text = _uiState.value.inputText.trim()
         val id = _uiState.value.merchantId
         if (text.isEmpty() || id.isEmpty()) return
-
-        // ✅ Unified ID capture
         val msgId = UUID.randomUUID().toString()
-
-        _uiState.update { it.copy(inputText = "") }
-
+        _uiState.update { it.copy(inputText = "", sendingIds = it.sendingIds + msgId) }
         viewModelScope.launch {
-            // ✅ Use same msgId for both
-            pendingDao.insert(PendingMessageEntity(tempId = msgId, merchantId = id, text = text, senderName = "تاجر"))
             try {
-                chatRepo.sendMessage(id, ChatMessage(id = msgId, text = text, senderId = id, senderName = "تاجر"))
-                pendingDao.delete(msgId)
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (e: Exception) {
-                pendingDao.setFailed(msgId, true)
+                pendingDao.insert(PendingMessageEntity(tempId = msgId, merchantId = id, text = text, senderName = "تاجر"))
+                try {
+                    chatRepo.sendMessage(id, ChatMessage(id = msgId, text = text, senderId = id, senderName = "تاجر"))
+                    pendingDao.delete(msgId)
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (e: Exception) {
+                    pendingDao.setFailed(msgId, true)
+                }
+            } finally {
+                _uiState.update { it.copy(sendingIds = it.sendingIds - msgId) }
             }
         }
     }
 
     fun retryMessage(tempId: String) {
-        val msg = _uiState.value.pendingMessages.find { it.tempId == tempId } ?: return
-        val id = _uiState.value.merchantId
+        val state = _uiState.value
+        val msg = state.pendingMessages.find { it.tempId == tempId } ?: return
+        if (tempId in state.sendingIds) return
+        val id = state.merchantId
+        _uiState.update { it.copy(sendingIds = it.sendingIds + tempId) }
         viewModelScope.launch {
-            pendingDao.setFailed(tempId, false)
             try {
-                // ✅ Pass existing tempId into ChatMessage constructor
-                chatRepo.sendMessage(id, ChatMessage(id = tempId, text = msg.text, senderId = id, senderName = "تاجر"))
-                pendingDao.delete(tempId)
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (e: Exception) {
-                pendingDao.setFailed(tempId, true)
+                pendingDao.setFailed(tempId, false)
+                try {
+                    chatRepo.sendMessage(id, ChatMessage(id = tempId, text = msg.text, senderId = id, senderName = "تاجر"))
+                    pendingDao.delete(tempId)
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (e: Exception) {
+                    pendingDao.setFailed(tempId, true)
+                }
+            } finally {
+                _uiState.update { it.copy(sendingIds = it.sendingIds - tempId) }
             }
         }
     }
 
     fun dismissFailedMessage(tempId: String) {
-        viewModelScope.launch {
-            pendingDao.delete(tempId)
-        }
+        val state = _uiState.value
+        if (tempId in state.sendingIds || state.pendingMessages.none { it.tempId == tempId }) return
+        viewModelScope.launch { pendingDao.delete(tempId) }
     }
 
     // ── وضع التحديد ──────────────────────────────────────────────
