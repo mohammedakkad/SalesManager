@@ -8,6 +8,7 @@ import com.trader.core.domain.model.ChatMessage
 import com.trader.core.domain.model.SENDER_ADMIN
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.ChatRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -129,6 +130,8 @@ class ChatViewModel(
             try {
                 chatRepo.sendMessage(id, ChatMessage(id = msgId, text = text, senderId = id, senderName = "تاجر"))
                 pendingDao.delete(msgId)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (e: Exception) {
                 pendingDao.setFailed(msgId, true)
             }
@@ -144,6 +147,8 @@ class ChatViewModel(
                 // ✅ Pass existing tempId into ChatMessage constructor
                 chatRepo.sendMessage(id, ChatMessage(id = tempId, text = msg.text, senderId = id, senderName = "تاجر"))
                 pendingDao.delete(tempId)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (e: Exception) {
                 pendingDao.setFailed(tempId, true)
             }
@@ -187,8 +192,9 @@ class ChatViewModel(
     // ── تعديل ────────────────────────────────────────────────────
 
     fun startEditSelected() {
-        val msg = _uiState.value.selectedMessages.firstOrNull() ?: return
-        if (msg.senderId != _uiState.value.merchantId) return
+        val state = _uiState.value
+        if (!state.canEdit) return
+        val msg = state.selectedMessages.firstOrNull() ?: return
         _uiState.update {
             it.copy(editingMessage = msg, inputText = msg.text, selectedIds = emptySet(), isSelectionMode = false)
         }
@@ -210,6 +216,8 @@ class ChatViewModel(
         viewModelScope.launch {
             try {
                 chatRepo.editMessage(id, msg.id, newText)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (_: Exception) {}
         }
     }
@@ -290,6 +298,8 @@ class ChatViewModel(
                     _uiState.update {
                         it.copy(locallyDeletedIds = it.locallyDeletedIds - id)
                     }
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
                 } catch (_: Exception) {
                     // offline: الرسالة مخفية محلياً — TODO: PendingDeleteEntity for retry
                 }

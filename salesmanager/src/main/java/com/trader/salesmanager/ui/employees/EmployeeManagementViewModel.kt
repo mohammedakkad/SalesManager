@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.Employee
 import com.trader.core.domain.model.EmployeeRole
 import com.trader.core.domain.repository.EmployeeRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -102,35 +103,25 @@ class EmployeeManagementViewModel(
             return
         }
 
+        // Reserve before dispatch so two clicks in the same UI turn cannot start two writes.
+        _form.update { it.copy(submitting = true, error = AddEmployeeError.NONE) }
         viewModelScope.launch {
-            _form.update { it.copy(submitting = true, error = AddEmployeeError.NONE) }
-            val existing = runCatching { repository.getByPin(pin) }.getOrNull()
-            if (existing != null) {
-                _form.update {
-                    it.copy(submitting = false, error = AddEmployeeError.PIN_TAKEN)
+            try {
+                val existing = repository.getByPin(pin)
+                if (existing != null) {
+                    _form.update { it.copy(error = AddEmployeeError.PIN_TAKEN) }
+                    _events.trySend(EmployeeManagementEvent.Failure("هذا الرمز مستخدم بالفعل"))
+                    return@launch
                 }
-                _events.trySend(
-                    EmployeeManagementEvent.Failure("هذا الرمز مستخدم بالفعل")
-                )
-                return@launch
-            }
-
-            runCatching {
-                repository.addOrUpdate(
-                    Employee(
-                        name = name,
-                        pinCode = pin,
-                        role = current.role
-                    )
-                )
-            }.onSuccess {
+                repository.addOrUpdate(Employee(name = name, pinCode = pin, role = current.role))
                 resetForm()
                 _events.trySend(EmployeeManagementEvent.EmployeeAdded)
-            }.onFailure { t ->
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (t: Throwable) {
+                _events.trySend(EmployeeManagementEvent.Failure(t.message ?: "تعذّر حفظ الموظف"))
+            } finally {
                 _form.update { it.copy(submitting = false) }
-                _events.trySend(
-                    EmployeeManagementEvent.Failure(t.message ?: "تعذّر حفظ الموظف")
-                )
             }
         }
     }
@@ -147,6 +138,7 @@ class EmployeeManagementViewModel(
             runCatching { repository.deleteById(employee.id) }
                 .onSuccess { _events.trySend(EmployeeManagementEvent.EmployeeDeleted) }
                 .onFailure {
+                    if (it is CancellationException) throw it
                     _events.trySend(
                         EmployeeManagementEvent.Failure(
                             it.message ?: "تعذّر حذف الموظف"

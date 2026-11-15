@@ -1,0 +1,72 @@
+{
+  "cases": [
+    {
+      "class": "com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest",
+      "name": "remotelyDeletedSelectionCannotEnterEditorFromAStaleUiCallback",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest",
+      "name": "cancelledRetryRetainsStableIdentityWithoutInventingASecondFailure",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest",
+      "name": "multipleSelectionCannotEnterSingleMessageEditor",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest",
+      "name": "cancelledEditPropagatesInsteadOfReportingACompletedChild",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest",
+      "name": "cancelledBatchDeletionStopsBeforeDispatchingAnotherMessage",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest",
+      "name": "cancelledNewSendLeavesThePersistedMessagePendingRatherThanFailed",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest",
+      "name": "deleteCancellationCannotBecomeAVisibleDeletionFailure",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest",
+      "name": "lookupFailureCannotBeInterpretedAsAnUnusedPin",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest",
+      "name": "saveCancellationRetainsDraftAndReleasesSubmittingWithoutFailureEvent",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest",
+      "name": "lookupCancellationDoesNotCreateEmployeeOrFailureEvent",
+      "before": "FAIL",
+      "after": "PASS"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeFailureRoomTest",
+      "name": "twoSubmitClicksBeforeDispatchPersistOnlyOneEmployee",
+      "before": "FAIL",
+      "after": "PASS"
+    }
+  ],
+  "count": 11,
+  "scope": "Cases, not a count of distinct defects. Harness initialization/selector/constructor errors are excluded."
+}
