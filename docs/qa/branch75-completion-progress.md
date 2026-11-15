@@ -1,3 +1,5 @@
+> Latest source d53b248:39new cases,841JVM PASS (all802starting cases retained),22Python PASS;15before-failure regression identities, not15independent defects. Hosted43722488513 SUCCESS on attempt1: seller/API24/28/33/35; raw XML/PDF bytes verified.875distinct qualified cases PASS. API28 Seller Line16134/17957, Method2703/3223, Branch8328/14796; historical weighted24285/28264,4539/5738,9943/17907; both-JVM weighted24605/28264,4661/5738,10056/17907. Branch75 needs2769/3488/3375more branches. Prior Line95 unachieved; ReleaseFAIL. [Current evidence](branch75-chat-progress.md). Earlier measurements below are historical.
+
 # Branch75 completion-boundary continuation — 2026-11-15
 
 Starting SHA `660266dc309fa4c16746584ff6855ce2c5b46801`; new test source `d788b7cf6a27030fdf081721b87c25c28ed2773a`. Existing branch and PR51. No production logic, financial formula, schema, migration or Admin changes. Production remains as qualified at d37df33a. **Branch75 and previous Line95 are NOT ACHIEVED. Release FAIL.**

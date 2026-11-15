@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.EmployeeCommandsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-15T14:10:55" hostname="236b99701f27" time="0.334">
+  <properties/>
+  <testcase name="seededManagerCannotBeDeletedButCashierCan" classname="com.trader.salesmanager.ui.qualification.EmployeeCommandsTest" time="0.313"/>
+  <testcase name="duplicatePinIsRejectedWithoutOverwritingExistingEmployee" classname="com.trader.salesmanager.ui.qualification.EmployeeCommandsTest" time="0.008"/>
+  <testcase name="persistenceFailureKeepsFormForRetryAndShowsFailure" classname="com.trader.salesmanager.ui.qualification.EmployeeCommandsTest" time="0.004"/>
+  <testcase name="successfulSubmissionTrimsNamePreservesRoleAndResetsForm" classname="com.trader.salesmanager.ui.qualification.EmployeeCommandsTest" time="0.005"/>
+  <testcase name="invalidNameAndPinNeverPersistAndInputIsSanitized" classname="com.trader.salesmanager.ui.qualification.EmployeeCommandsTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

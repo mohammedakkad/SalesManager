@@ -1,0 +1,120 @@
+{
+  "startingSha": "1165187b12f208d2ba2d33130e4132b6277611fa",
+  "sourceSha": "cc31e58c5c8040032ec7c007a85d4f0f09e3cf5f",
+  "newJvmCases": 34,
+  "preservedPreviousCases": 802,
+  "failingBeforeFinalRegressions": 11,
+  "jvm": {
+    "app": 208,
+    "seller": 628,
+    "total": 836,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "pythonPassed": 22,
+  "migrationCases": 7,
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "debug": "PASS",
+  "androidTestAssembly": "PASS (not runtime qualification)",
+  "unsignedMinifiedRelease": "PASS",
+  "coverage": {
+    "qaCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1615,
+          "total": 3111
+        },
+        "LINE": {
+          "covered": 8133,
+          "total": 10307
+        },
+        "METHOD": {
+          "covered": 1817,
+          "total": 2515
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8153,
+          "total": 14780
+        },
+        "LINE": {
+          "covered": 15122,
+          "total": 17949
+        },
+        "METHOD": {
+          "covered": 2632,
+          "total": 3222
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23255,
+          "total": 28256
+        },
+        "METHOD": {
+          "covered": 4449,
+          "total": 5737
+        },
+        "BRANCH": {
+          "covered": 9768,
+          "total": 17891
+        }
+      }
+    },
+    "qaAllJvmCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1728,
+          "total": 3111
+        },
+        "LINE": {
+          "covered": 8466,
+          "total": 10307
+        },
+        "METHOD": {
+          "covered": 1953,
+          "total": 2515
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8153,
+          "total": 14780
+        },
+        "LINE": {
+          "covered": 15122,
+          "total": 17949
+        },
+        "METHOD": {
+          "covered": 2632,
+          "total": 3222
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23588,
+          "total": 28256
+        },
+        "METHOD": {
+          "covered": 4585,
+          "total": 5737
+        },
+        "BRANCH": {
+          "covered": 9881,
+          "total": 17891
+        }
+      }
+    }
+  },
+  "workflowRun": 43719095128,
+  "workflowStatus": "SUCCESS",
+  "branch75": "NOT ACHIEVED",
+  "line95": "NOT ACHIEVED",
+  "release": "FAIL",
+  "scope": "Intermediate cc31e58 checkpoint, before pending recovery and pending dismissal ownership refinement. Do not reuse EC for the final source."
+}
