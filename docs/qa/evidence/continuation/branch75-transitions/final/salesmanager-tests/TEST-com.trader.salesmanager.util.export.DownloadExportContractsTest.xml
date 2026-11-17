@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.util.export.DownloadExportContractsTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:19:15" hostname="6d75d821cc71" time="2.066">
+  <properties/>
+  <testcase name="failedCopyDoesNotPublishAnIncompleteFileAndCleansUpItsEntry" classname="com.trader.salesmanager.util.export.DownloadExportContractsTest" time="1.871"/>
+  <testcase name="cleanupFailureCannotEscapeOrChangeTheFailedDownloadResult" classname="com.trader.salesmanager.util.export.DownloadExportContractsTest" time="0.049"/>
+  <testcase name="successCopiesActualWorkbookBeforePublishingItsMediaStoreEntry" classname="com.trader.salesmanager.util.export.DownloadExportContractsTest" time="0.035"/>
+  <testcase name="failedPublicationCannotBeReportedAsSuccess" classname="com.trader.salesmanager.util.export.DownloadExportContractsTest" time="0.025"/>
+  <testcase name="deniedInsertCannotBeReportedAsASuccessfulDownload" classname="com.trader.salesmanager.util.export.DownloadExportContractsTest" time="0.045"/>
+  <testcase name="absentOutputStreamFailsAndRemovesTheUnpublishedEntry" classname="com.trader.salesmanager.util.export.DownloadExportContractsTest" time="0.041"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

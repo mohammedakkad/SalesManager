@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-17T13:52:56" hostname="6d75d821cc71" time="5.476">
+  <properties/>
+  <testcase name="addingAProductWithoutScanningDoesNotInventAnInitialBarcode" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="1.944"/>
+  <testcase name="recentSaleOpensItsActualTransactionIdentity" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.189"/>
+  <testcase name="customerCreationReturnsToTheSameMainTabAfterSuccessfulSave" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.28"/>
+  <testcase name="editingCustomerPreservesTheSelectedIdentityAndReturnsToItsDetails" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.325"/>
+  <testcase name="deletionResultPopsDetailsOnlyAfterTheModelConfirmsDeletion" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.274"/>
+  <testcase name="reportDayPreservesMidnightAndCanOpenItsActualInvoice" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.361"/>
+  <testcase name="returningSaleUsesTheOriginalTransactionAndReturnsToItsDetails" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.255"/>
+  <testcase name="productDetailsAndEditorUseTheSamePersistedId" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.267"/>
+  <testcase name="debtRowOpensTheSelectedCustomerRatherThanAListPosition" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.167"/>
+  <testcase name="editedInvoiceDraftRoundTripsOnceThroughTheEditorSavedState" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.315"/>
+  <testcase name="customerSalePreselectsTheCustomerFromTheRoute" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.278"/>
+  <testcase name="editingSalePassesItsIdAndDoesNotPreselectAnotherCustomer" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.173"/>
+  <testcase name="inventoryReportsDestinationCanReturnToTheInventoryTab" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.206"/>
+  <testcase name="inventorySessionDestinationCanReturnToTheInventoryTab" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.191"/>
+  <testcase name="productRoutesPreserveLiteralPlusPercentQueryAndFragmentCharacters" classname="com.trader.salesmanager.ui.coverage.NavigationBusinessRoutesUiTest" time="0.25"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

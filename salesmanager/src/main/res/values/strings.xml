@@ -105,4 +105,5 @@
     <string name="sync_sheet_retry_button">إعادة المزامنة الآن</string>
     <string name="sync_sheet_empty_title">لا يوجد شيء معلق</string>
     <string name="sync_sheet_empty_subtitle">جميع بياناتك متزامنة بالكامل</string>
+    <string name="search_clear">مسح البحث</string>
 </resources>

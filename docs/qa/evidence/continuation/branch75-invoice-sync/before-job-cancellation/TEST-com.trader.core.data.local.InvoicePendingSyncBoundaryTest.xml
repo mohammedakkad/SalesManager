@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" tests="2" skipped="0" failures="1" errors="0" timestamp="2026-11-17T14:41:58" hostname="6d75d821cc71" time="17.82">
+  <properties/>
+  <testcase name="cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="17.509">
+    <failure message="java.lang.AssertionError: Verification failed: call 1 of 1: FirebaseSyncService(#2).pushInvoiceItems(any(), any(), any())) should not be called&#10;&#10;Calls:&#10;1) FirebaseSyncService(#2).pushInvoiceItems(owner, [InvoiceItem(id=line, transactionId=8, productId=product, productName=صنف, unitId=unit, unitLabel=حبة, quantity=1.0, pricePerUnit=25.0, totalPrice=25.0, merchantId=owner, syncStatus=PENDING)], continuation {})&#10;&#10;&#10;Stack traces:&#10;1)                                               io.mockk.impl.InternalPlatform.captureStackTrace                                                (InternalPlatform.kt:130)              &#10;                                                   io.mockk.impl.stub.MockKStub.handleInvocation                                                 (MockKStub.kt:255)                     &#10;                 io.mockk.impl.instantiation.JvmMockFactoryHelper$mockHandler$1.invocation                                                       (JvmMockFactoryHelper.kt:25)           &#10;                                          io.mockk.proxy.jvm.advice.Interceptor.call                                                             (Interceptor.kt:21)                    &#10;                                com.trader.core.data.remote.FirebaseSyncService.pushInvoiceItems                                                 (FirebaseSyncService.kt:705)           &#10;                      com.trader.core.data.repository.InvoiceItemRepositoryImpl.syncPendingItems                                                 (InvoiceItemRepositoryImpl.kt:121)     &#10;   com.trader.core.data.repository.InvoiceItemRepositoryImpl$syncPendingItems$1.invokeSuspend                                                    (InvoiceItemRepositoryImpl.kt:-1)      &#10;                            kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith                                                       (ContinuationImpl.kt:33)               &#10;                                              kotlinx.coroutines.DispatchedTask.run                                                              (DispatchedTask.kt:101)                &#10;                                           kotlinx.coroutines.EventLoopImplBase.processNextEvent                                                 (EventLoop.common.kt:263)              &#10;                                           kotlinx.coroutines.BlockingCoroutine.joinBlocking                                                     (Builders.kt:95)                       &#10;                                      kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking                                                      (Builders.kt:69)                       &#10;                                                  kotlinx.coroutines.BuildersKt.runBlocking                                                      (-:1)                                  &#10;                                      kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default                                              (Builders.kt:47)                       &#10;                                                  kotlinx.coroutines.BuildersKt.runBlocking$default                                              (-:1)                                  &#10;                      com.trader.core.data.local.InvoicePendingSyncBoundaryTest.cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime (InvoicePendingSyncBoundaryTest.kt:101)&#10;                                  jdk.internal.reflect.NativeMethodAccessorImpl.invoke0                                                          (NativeMethodAccessorImpl.java:-2)N    &#10;                                  jdk.internal.reflect.NativeMethodAccessorImpl.invoke                                                           (NativeMethodAccessorImpl.java:77)     &#10;                              jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke                                                           (DelegatingMethodAccessorImpl.java:43) &#10;                                                       java.lang.reflect.Method.invoke                                                           (Method.java:569)                      &#10;                                      org.junit.runners.model.FrameworkMethod$1.runReflectiveCall                                                (FrameworkMethod.java:59)              &#10;                            org.junit.internal.runners.model.ReflectiveCallable.run                                                              (ReflectiveCallable.java:12)           &#10;                                        org.junit.runners.model.FrameworkMethod.invokeExplosively                                                (FrameworkMethod.java:56)              &#10;                             org.junit.internal.runners.statements.InvokeMethod.evaluate                                                         (InvokeMethod.java:17)                 &#10;                               org.junit.internal.runners.statements.RunBefores.evaluate                                                         (RunBefores.java:26)                   &#10;                                org.junit.internal.runners.statements.RunAfters.evaluate                                                         (RunAfters.java:27)                    &#10;                                               org.junit.runners.ParentRunner$3.evaluate                                                         (ParentRunner.java:306)                &#10;                       org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate                                                         (RobolectricTestRunner.java:502)       &#10;                                   org.robolectric.internal.SandboxTestRunner$2.lambda$evaluate$2                                                (SandboxTestRunner.java:285)           &#10;                                      org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0                                         (Sandbox.java:104)                     &#10;                                                java.util.concurrent.FutureTask.run                                                              (FutureTask.java:264)                  &#10;                                        java.util.concurrent.ThreadPoolExecutor.runWorker                                                        (ThreadPoolExecutor.java:1136)         &#10;                                 java.util.concurrent.ThreadPoolExecutor$Worker.run                                                              (ThreadPoolExecutor.java:635)          &#10;                                                               java.lang.Thread.run                                                              (Thread.java:840)                      " type="java.lang.AssertionError">java.lang.AssertionError: Verification failed: call 1 of 1: FirebaseSyncService(#2).pushInvoiceItems(any(), any(), any())) should not be called
+
+Calls:
+1) FirebaseSyncService(#2).pushInvoiceItems(owner, [InvoiceItem(id=line, transactionId=8, productId=product, productName=صنف, unitId=unit, unitLabel=حبة, quantity=1.0, pricePerUnit=25.0, totalPrice=25.0, merchantId=owner, syncStatus=PENDING)], continuation {})
+
+
+Stack traces:
+1)                                               io.mockk.impl.InternalPlatform.captureStackTrace                                                (InternalPlatform.kt:130)
+                                                   io.mockk.impl.stub.MockKStub.handleInvocation                                                 (MockKStub.kt:255)
+                 io.mockk.impl.instantiation.JvmMockFactoryHelper$mockHandler$1.invocation                                                       (JvmMockFactoryHelper.kt:25)
+                                          io.mockk.proxy.jvm.advice.Interceptor.call                                                             (Interceptor.kt:21)
+                                com.trader.core.data.remote.FirebaseSyncService.pushInvoiceItems                                                 (FirebaseSyncService.kt:705)
+                      com.trader.core.data.repository.InvoiceItemRepositoryImpl.syncPendingItems                                                 (InvoiceItemRepositoryImpl.kt:121)
+   com.trader.core.data.repository.InvoiceItemRepositoryImpl$syncPendingItems$1.invokeSuspend                                                    (InvoiceItemRepositoryImpl.kt:-1)
+                            kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith                                                       (ContinuationImpl.kt:33)
+                                              kotlinx.coroutines.DispatchedTask.run                                                              (DispatchedTask.kt:101)
+                                           kotlinx.coroutines.EventLoopImplBase.processNextEvent                                                 (EventLoop.common.kt:263)
+                                           kotlinx.coroutines.BlockingCoroutine.joinBlocking                                                     (Builders.kt:95)
+                                      kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking                                                      (Builders.kt:69)
+                                                  kotlinx.coroutines.BuildersKt.runBlocking                                                      (-:1)
+                                      kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default                                              (Builders.kt:47)
+                                                  kotlinx.coroutines.BuildersKt.runBlocking$default                                              (-:1)
+                      com.trader.core.data.local.InvoicePendingSyncBoundaryTest.cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime (InvoicePendingSyncBoundaryTest.kt:101)
+                                  jdk.internal.reflect.NativeMethodAccessorImpl.invoke0                                                          (NativeMethodAccessorImpl.java:-2)N
+                                  jdk.internal.reflect.NativeMethodAccessorImpl.invoke                                                           (NativeMethodAccessorImpl.java:77)
+                              jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke                                                           (DelegatingMethodAccessorImpl.java:43)
+                                                       java.lang.reflect.Method.invoke                                                           (Method.java:569)
+                                      org.junit.runners.model.FrameworkMethod$1.runReflectiveCall                                                (FrameworkMethod.java:59)
+                            org.junit.internal.runners.model.ReflectiveCallable.run                                                              (ReflectiveCallable.java:12)
+                                        org.junit.runners.model.FrameworkMethod.invokeExplosively                                                (FrameworkMethod.java:56)
+                             org.junit.internal.runners.statements.InvokeMethod.evaluate                                                         (InvokeMethod.java:17)
+                               org.junit.internal.runners.statements.RunBefores.evaluate                                                         (RunBefores.java:26)
+                                org.junit.internal.runners.statements.RunAfters.evaluate                                                         (RunAfters.java:27)
+                                               org.junit.runners.ParentRunner$3.evaluate                                                         (ParentRunner.java:306)
+                       org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate                                                         (RobolectricTestRunner.java:502)
+                                   org.robolectric.internal.SandboxTestRunner$2.lambda$evaluate$2                                                (SandboxTestRunner.java:285)
+                                      org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0                                         (Sandbox.java:104)
+                                                java.util.concurrent.FutureTask.run                                                              (FutureTask.java:264)
+                                        java.util.concurrent.ThreadPoolExecutor.runWorker                                                        (ThreadPoolExecutor.java:1136)
+                                 java.util.concurrent.ThreadPoolExecutor$Worker.run                                                              (ThreadPoolExecutor.java:635)
+                                                               java.lang.Thread.run                                                              (Thread.java:840)
+	at io.mockk.impl.recording.states.VerifyingState.failIfNotPassed(VerifyingState.kt:61)
+	at io.mockk.impl.recording.states.VerifyingState.recordingDone(VerifyingState.kt:40)
+	at io.mockk.impl.recording.CommonCallRecorder.done(CommonCallRecorder.kt:47)
+	at io.mockk.impl.eval.RecordedBlockEvaluator.record(RecordedBlockEvaluator.kt:63)
+	at io.mockk.impl.eval.VerifyBlockEvaluator.verify(VerifyBlockEvaluator.kt:30)
+	at io.mockk.MockKDsl.internalCoVerify(API.kt:145)
+	at io.mockk.MockKKt.coVerify(MockK.kt:244)
+	at io.mockk.MockKKt.coVerify$default(MockK.kt:235)
+	at com.trader.core.data.local.InvoicePendingSyncBoundaryTest$cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime$1.invokeSuspend(InvoicePendingSyncBoundaryTest.kt:105)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:99)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+	at com.trader.core.data.local.InvoicePendingSyncBoundaryTest.cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime(InvoicePendingSyncBoundaryTest.kt:101)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:502)
+	at org.robolectric.internal.SandboxTestRunner$2.lambda$evaluate$2(SandboxTestRunner.java:285)
+	at org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:104)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+</failure>
+  </testcase>
+  <testcase name="cancellationDuringANonSuspendingRealtimeCompletionPreventsAcknowledgement" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.311"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

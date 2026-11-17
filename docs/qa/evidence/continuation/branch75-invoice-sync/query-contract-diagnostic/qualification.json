@@ -1,0 +1,5 @@
+{
+  "result": "225 app cases ran: 224 passed, 1 existing query contract failed. This intermediate run is not qualified.",
+  "resolution": "Restore getPending to PENDING only and introduce getRetryable specifically for syncPendingItems. Existing test assertions remain unchanged.",
+  "counting": "This is a rejected implementation change, not an additional baseline product defect or new regression test."
+}

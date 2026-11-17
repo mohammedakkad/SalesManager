@@ -1,5 +1,7 @@
 """Named runtime requirements; shared by XML validation and public evidence summaries."""
 INSTRUMENTATION = {
+    ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport'),
+    ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom'),
     ('com.trader.salesmanager.qa.CustomerJourneyTest', 'createArabicCustomerValidatesFormSavesOnceAndNavigatesBack'),
     ('com.trader.salesmanager.qa.CustomerJourneyTest', 'editCustomerPreservesIdAndDoesNotCreateDuplicate'),
     ('com.trader.salesmanager.qa.PdfFixtureTest', 'generateSingleInvoiceForHostContentVerification'),

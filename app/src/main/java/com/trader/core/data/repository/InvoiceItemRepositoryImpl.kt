@@ -15,6 +15,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 
 class InvoiceItemRepositoryImpl(
     private val dao: InvoiceItemDao,
@@ -101,25 +103,41 @@ class InvoiceItemRepositoryImpl(
 
 
     override suspend fun syncPendingItems() {
+        currentCoroutineContext().ensureActive()
         val merchantId = activation?.getMerchantCode() ?: this.merchantId
         if (activation != null && activation.getMerchantCode() != merchantId) return
-        val pending = dao.getPending().filter { (activation == null || it.merchantId == merchantId) && outboxDatabase?.saleOutboxDao()?.manages(it.transactionId) != true }
+        val pending = dao.getRetryable().filter { (activation == null || it.merchantId == merchantId) && outboxDatabase?.saleOutboxDao()?.manages(it.transactionId) != true }
         if (pending.isEmpty()) return
 
         val items = pending.map { it.toDomain() }
-
         var firestoreSynced = false
         var realtimeSynced = false
 
-        runCatching { remote.uploadInvoiceItems(merchantId, items) }
-            .onSuccess { firestoreSynced = true }
-        runCatching { sync.pushInvoiceItems(merchantId, items) }
-            .onSuccess { realtimeSynced = true }
+        try {
+            remote.uploadInvoiceItems(merchantId, items)
+            firestoreSynced = true
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (_: Exception) { }
+        currentCoroutineContext().ensureActive()
+        if (activation != null && activation.getMerchantCode() != merchantId) return
+        try {
+            sync.pushInvoiceItems(merchantId, items)
+            realtimeSynced = true
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (_: Exception) { }
+        currentCoroutineContext().ensureActive()
+        if (activation != null && activation.getMerchantCode() != merchantId) return
 
-        if (firestoreSynced && realtimeSynced) {
-            pending.forEach { dao.markSynced(it.id) }
-        } else {
-            pending.forEach { dao.markFailed(it.id) }
+        pending.forEach { snapshot ->
+            if (outboxDatabase == null) {
+                dao.finishUpload(snapshot, firestoreSynced && realtimeSynced)
+            } else outboxDatabase.withTransaction {
+                if (!outboxDatabase.saleOutboxDao().manages(snapshot.transactionId)) {
+                    dao.finishUpload(snapshot, firestoreSynced && realtimeSynced)
+                }
+            }
         }
     }
 }

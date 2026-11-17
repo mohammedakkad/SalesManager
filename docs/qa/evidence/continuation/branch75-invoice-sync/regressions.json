@@ -1,0 +1,51 @@
+{
+  "count": 9,
+  "cases": [
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "accountSwitchDuringSecondTransportDoesNotAcknowledgeTheOldAccountsRows",
+      "beforeStage": "before"
+    },
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "firestoreCancellationPropagatesWithoutSecondTransportOrStatusMutation",
+      "beforeStage": "before"
+    },
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "failedRowCanRetryAndOnlyThenBecomeSynced",
+      "beforeStage": "before"
+    },
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "accountSwitchAfterFirstTransportStopsTheSecondTransportAndLocalAcknowledgement",
+      "beforeStage": "before"
+    },
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "realtimeCancellationPropagatesWithoutMarkingTheInvoiceFailed",
+      "beforeStage": "before"
+    },
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime",
+      "beforeStage": "before-job-cancellation"
+    },
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "failedOldSnapshotDoesNotMarkANewerInvoiceEditFailed",
+      "beforeStage": "before-inflight"
+    },
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "successfulOldSnapshotDoesNotAcknowledgeAnInvoiceEditedDuringUpload",
+      "beforeStage": "before-inflight"
+    },
+    {
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "outboxTakingOwnershipDuringUploadPreventsTheLegacyAcknowledgement",
+      "beforeStage": "before-inflight"
+    }
+  ],
+  "meaning": "Distinct failing regression cases, not nine independent defects. Staged before evidence is identified explicitly."
+}

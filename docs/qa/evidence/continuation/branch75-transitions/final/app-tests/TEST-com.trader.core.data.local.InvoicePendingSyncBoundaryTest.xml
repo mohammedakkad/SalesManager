@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" tests="17" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:15:11" hostname="6d75d821cc71" time="1.227">
+  <properties/>
+  <testcase name="failedOldSnapshotDoesNotMarkANewerInvoiceEditFailed" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.233"/>
+  <testcase name="managedAndForeignRowsAreExcludedFromTheSamePendingBatch" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.087"/>
+  <testcase name="alreadySyncedRowsDoNotGenerateAnotherUpload" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.092"/>
+  <testcase name="cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.104"/>
+  <testcase name="cancellationDuringANonSuspendingRealtimeCompletionPreventsAcknowledgement" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.045"/>
+  <testcase name="successfulOldSnapshotDoesNotAcknowledgeAnInvoiceEditedDuringUpload" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.069"/>
+  <testcase name="accountSwitchDuringSecondTransportDoesNotAcknowledgeTheOldAccountsRows" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.041"/>
+  <testcase name="realtimeFailureDoesNotAcknowledgeTheSuccessfulFirestoreWrite" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.061"/>
+  <testcase name="outboxTakingOwnershipDuringUploadPreventsTheLegacyAcknowledgement" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.051"/>
+  <testcase name="deletingTheInvoiceWhileItUploadsDoesNotResurrectTheRow" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.069"/>
+  <testcase name="bothAcknowledgementsAreRequiredToMarkTheExactInvoiceSynced" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.062"/>
+  <testcase name="firestoreCancellationPropagatesWithoutSecondTransportOrStatusMutation" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.043"/>
+  <testcase name="firestoreFailureStillAttemptsRealtimeAndLeavesARetryableFailure" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.065"/>
+  <testcase name="failedRowCanRetryAndOnlyThenBecomeSynced" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.041"/>
+  <testcase name="accountSwitchAfterFirstTransportStopsTheSecondTransportAndLocalAcknowledgement" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.06"/>
+  <testcase name="realtimeCancellationPropagatesWithoutMarkingTheInvoiceFailed" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.044"/>
+  <testcase name="bothFailuresKeepEveryOriginalFinancialField" classname="com.trader.core.data.local.InvoicePendingSyncBoundaryTest" time="0.053"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-17T13:53:27" hostname="6d75d821cc71" time="18.723">
+  <properties/>
+  <testcase name="duplicateDirectCallsShareOneInFlightRemoval" classname="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" time="2.41"/>
+  <testcase name="blankIdentityOrMerchantCannotIssueRemoval" classname="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" time="2.325"/>
+  <testcase name="rejectedRevokeCanBeRetriedWithoutDeletingLocalSessionEarly" classname="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" time="2.32"/>
+  <testcase name="localDeleteFailureAfterRemoteAcknowledgmentIsVisibleAndRetryable" classname="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" time="2.328"/>
+  <testcase name="pendingRevokeDisablesAnotherSubmissionUntilAcknowledged" classname="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" time="2.328"/>
+  <testcase name="failedRemoteRevokeKeepsRealLocalSessionAndDisplaysFailure" classname="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" time="2.345"/>
+  <testcase name="realSessionStreamSortsActivityAndDisplaysUnknownDeviceFallback" classname="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" time="2.341"/>
+  <testcase name="cancellationBeforeRemoteCompletionKeepsLocalRecordWithoutFalseError" classname="com.trader.salesmanager.ui.coverage.SessionRevokeRoomUiTest" time="2.326"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

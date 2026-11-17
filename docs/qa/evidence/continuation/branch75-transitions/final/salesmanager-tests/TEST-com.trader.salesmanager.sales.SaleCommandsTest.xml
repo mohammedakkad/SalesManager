@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.SaleCommandsTest" tests="65" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:16:57" hostname="6d75d821cc71" time="12.078">
+  <properties/>
+  <testcase name="invoiceFailureRollsBackEverything" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.127"/>
+  <testcase name="debtIsDerivedFromCommittedUnpaidSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.105"/>
+  <testcase name="staleEditIsRejectedAndReplayCannotOverwriteLaterEdit" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.182"/>
+  <testcase name="deleteCashFailureRestoresEveryRow" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.199"/>
+  <testcase name="editInvoiceFailureRollsBackRestoredStock" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.241"/>
+  <testcase name="cancellationDuringDrainRollsBackEarlierStatusesAndCanRetryAfterRestart" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.578"/>
+  <testcase name="deleteSaleFailureRestoresEveryRow" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.191"/>
+  <testcase name="editStockFailureRollsBackEverything" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.191"/>
+  <testcase name="deleteFailurePreservesPartialReturnLedgerAndRefundState" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.209"/>
+  <testcase name="unversionedTransactionEchoCannotOverwriteOrResurrectManagedSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.516"/>
+  <testcase name="unpaidDeletionClearsDerivedDebtWithoutCashEffect" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.198"/>
+  <testcase name="idleRecoveryDoesNotRewriteAlreadyAcknowledgedRows" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.264"/>
+  <testcase name="restartKeepsCommittedOutboxPayloadUnchanged" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.141"/>
+  <testcase name="successfulEditChangesInvoiceStockCashAndDebtTogether" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.192"/>
+  <testcase name="backupRoundTripPreservesReceiptAndDoesNotReplaySale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="1.284"/>
+  <testcase name="invoiceIdentityCannotOverwriteAnotherSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.185"/>
+  <testcase name="operationIdCannotBeReusedWithDifferentPayload" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.152"/>
+  <testcase name="relatedReturnAndPartialDeletionAreDurableAndDeliverableInOneSequence" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.342"/>
+  <testcase name="fullReturnDeletionDoesNotRestoreOrRefundTwice" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.212"/>
+  <testcase name="successfulCreation" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.134"/>
+  <testcase name="duplicateSubmissionHasExactlyOneLocalEffect" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.174"/>
+  <testcase name="idleRecoveryUpdatesOnlyTheMatchingUnsynchronizedRow" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.21"/>
+  <testcase name="acknowledgedBackupRevalidatesLatestRevisionWithoutReplayingHistoricalEffects" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="1.003"/>
+  <testcase name="oldAcknowledgedRestoreBecomesConflictIfRemoteRevisionHasAdvanced" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.901"/>
+  <testcase name="createThenEditDeliversBothImmutableRevisionsInOrder" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.325"/>
+  <testcase name="idleRestartRepairsRowsStrandedByPreviouslyAcknowledgedReceipts" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.17"/>
+  <testcase name="successfulDeletionRestoresAllNetEffects" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.097"/>
+  <testcase name="actualReturnRepositoryRollsBackAllEffectsIfOutboxCannotPersist" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.178"/>
+  <testcase name="actualReturnRepositoryJournalsStockCashAndReturnBeforeLegacyUploads" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.139"/>
+  <testcase name="failedBackupRestorePreservesReceiptAndSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.065"/>
+  <testcase name="cancelledDeleteRestoresAllRows" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.064"/>
+  <testcase name="wrongMerchantCannotEditOrDeleteExistingSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.076"/>
+  <testcase name="failedDrainRollsBackAllStatusesAndReceiptThenReusesRemoteCompletion" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.126"/>
+  <testcase name="concurrentIdenticalSubmissionsApplyOnce" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.067"/>
+  <testcase name="reopenCommittedSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.065"/>
+  <testcase name="reopenRolledBackSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.053"/>
+  <testcase name="editAndDeletionCreateVersionedOutboxTombstone" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.074"/>
+  <testcase name="failedIdleRecoveryRollsBackEarlierStatusesWithoutLosingReceipts" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.101"/>
+  <testcase name="realEditDuringOldUploadKeepsNewFinancialRowsPendingUntilItsOwnReceipt" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.095"/>
+  <testcase name="cancelledIdleRecoveryPreservesReceiptsAndEveryLocalStatusUntilRestart" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.11"/>
+  <testcase name="cashFailureRollsBackEverything" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.056"/>
+  <testcase name="commitCreatesExactlyOneOutboxEventAndReplayDoesNotDuplicateIt" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.048"/>
+  <testcase name="restartBetweenReceiptsDoesNotStrandEarlierSaleAsPending" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.095"/>
+  <testcase name="unversionedInvoiceEchoCannotResurrectDeletedManagedLines" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.088"/>
+  <testcase name="identicalContentRevisionIsNotAcknowledgedByAnOlderEventReceipt" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.085"/>
+  <testcase name="staleUiMerchantCannotCreateAnEventUnderThePreviousSession" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.041"/>
+  <testcase name="cancellationAfterWritesRollsBackAllTables" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.071"/>
+  <testcase name="restoreCannotRewriteExistingImmutablePayloadUnderTheSameEventId" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.241"/>
+  <testcase name="editCashFailureRollsBackInvoiceStockAndSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.055"/>
+  <testcase name="committedDeletionConflictRemainsVisibleAndNeverDisappears" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.086"/>
+  <testcase name="addingStockToFullyReturnedInvoiceMakesItPartiallyReturned" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.051"/>
+  <testcase name="outboxInsertFailureRollsBackSaleStockCashAndReceipt" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.046"/>
+  <testcase name="drainingMultipleSalesAcknowledgesEveryMatchingSaleAndLedger" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.069"/>
+  <testcase name="partialReturnDeletionRestoresOnlyRemainingStockAndCash" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.056"/>
+  <testcase name="returnedSaleEditPreservesRefundAndUsesRemainingQuantities" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.071"/>
+  <testcase name="freshRestoreDoesNotReuseADeletedAggregateIdentity" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.251"/>
+  <testcase name="repeatedDeletionDoesNotApplyStockOrCashAgain" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.066"/>
+  <testcase name="createThenDeleteDeliversTombstoneAndNetZeroCashAndStock" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.077"/>
+  <testcase name="cancelledEditRestoresAllRows" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.063"/>
+  <testcase name="deleteInvoiceFailureRestoresStockAndReturnLedger" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.055"/>
+  <testcase name="olderBackupCannotEraseAnUncertainDeletionTombstone" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.245"/>
+  <testcase name="unversionedRemoteDeletionIsQuarantinedWithoutGuessingFinancialEffects" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.068"/>
+  <testcase name="concurrentLastStockAllowsOnlyOneSale" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.062"/>
+  <testcase name="stockFailureRollsBackEverything" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.044"/>
+  <testcase name="restoreDuringDispatchInvalidatesOldLeaseAndReplaysRemoteReceiptSafely" classname="com.trader.salesmanager.sales.SaleCommandsTest" time="0.232"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

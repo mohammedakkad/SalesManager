@@ -1,0 +1,123 @@
+{
+  "startingSha": "64384bd04e4e20547b1344db8c21af9f712d7d25",
+  "qualification": "LOCAL PASS; hosted Android runtime pending",
+  "productionTestSourceFingerprint": "a863537958837bc59bad2238e8054c97a6144a1f7f4519b41c8292f3a079c121",
+  "jvmCases": 948,
+  "newJvmCases": 65,
+  "moduleCounts": {
+    "app": 225,
+    "salesmanager": 723
+  },
+  "preservedStartingCases": 883,
+  "failingBeforeRegressionCases": 19,
+  "newCaseGroups": {
+    "invoicePendingRoom": 17,
+    "saleCommandInputRoom": 16,
+    "composeUiJvm": 32
+  },
+  "androidCasesAdded": 2,
+  "androidRuntime": "NOT EXECUTED locally; actual hosted runtime is required",
+  "pythonCases": 22,
+  "coverage": {
+    "qaCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1642,
+          "total": 3129
+        },
+        "LINE": {
+          "covered": 8187,
+          "total": 10364
+        },
+        "METHOD": {
+          "covered": 1825,
+          "total": 2522
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8729,
+          "total": 14812
+        },
+        "LINE": {
+          "covered": 15236,
+          "total": 17967
+        },
+        "METHOD": {
+          "covered": 2663,
+          "total": 3224
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23423,
+          "total": 28331
+        },
+        "METHOD": {
+          "covered": 4488,
+          "total": 5746
+        },
+        "BRANCH": {
+          "covered": 10371,
+          "total": 17941
+        }
+      }
+    },
+    "qaAllJvmCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1749,
+          "total": 3129
+        },
+        "LINE": {
+          "covered": 8520,
+          "total": 10364
+        },
+        "METHOD": {
+          "covered": 1961,
+          "total": 2522
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8729,
+          "total": 14812
+        },
+        "LINE": {
+          "covered": 15236,
+          "total": 17967
+        },
+        "METHOD": {
+          "covered": 2663,
+          "total": 3224
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23756,
+          "total": 28331
+        },
+        "METHOD": {
+          "covered": 4624,
+          "total": 5746
+        },
+        "BRANCH": {
+          "covered": 10478,
+          "total": 17941
+        }
+      }
+    }
+  },
+  "lint": {
+    "Warning": 24
+  },
+  "builds": {
+    "Debug": "PASS",
+    "AndroidTestAssembly": "PASS (not runtime)",
+    "minifiedUnsignedRelease": "PASS; mapping upload excluded"
+  },
+  "branch75": "NOT ACHIEVED",
+  "priorLine95": "NOT ACHIEVED",
+  "release": "FAIL",
+  "constraints": "No Admin business source, financial formula, schema, Outbox protocol, production coverage exclusion or gate changes. Legacy completion equality is not an ABA/revision fence or atomic Firestore/RTDB protocol."
+}

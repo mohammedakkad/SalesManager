@@ -1,0 +1,403 @@
+{
+  "startingJvmCases": 883,
+  "finalJvmCases": 948,
+  "newJvmCases": 65,
+  "preservedStartingCases": 883,
+  "missingStartingIdentities": [],
+  "newByModule": {
+    "app": 17,
+    "salesmanager": 48
+  },
+  "newCases": [
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "failedOldSnapshotDoesNotMarkANewerInvoiceEditFailed",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "managedAndForeignRowsAreExcludedFromTheSamePendingBatch",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "alreadySyncedRowsDoNotGenerateAnotherUpload",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "cancellationDuringANonSuspendingRealtimeCompletionPreventsAcknowledgement",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "successfulOldSnapshotDoesNotAcknowledgeAnInvoiceEditedDuringUpload",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "accountSwitchDuringSecondTransportDoesNotAcknowledgeTheOldAccountsRows",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "realtimeFailureDoesNotAcknowledgeTheSuccessfulFirestoreWrite",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "outboxTakingOwnershipDuringUploadPreventsTheLegacyAcknowledgement",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "deletingTheInvoiceWhileItUploadsDoesNotResurrectTheRow",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "bothAcknowledgementsAreRequiredToMarkTheExactInvoiceSynced",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "firestoreCancellationPropagatesWithoutSecondTransportOrStatusMutation",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "firestoreFailureStillAttemptsRealtimeAndLeavesARetryableFailure",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "failedRowCanRetryAndOnlyThenBecomeSynced",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "accountSwitchAfterFirstTransportStopsTheSecondTransportAndLocalAcknowledgement",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "realtimeCancellationPropagatesWithoutMarkingTheInvoiceFailed",
+      "result": "passed"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "bothFailuresKeepEveryOriginalFinancialField",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "editingRejectsNegativeAndNonfiniteGrossAmounts",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "deletionRequiresAPersistedPositiveTransactionId",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "editingCannotChangeTheExistingTransactionIdentity",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "finiteInputsWhoseCashAdditionOverflowsAreRolledBack",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "missingCashProvisioningRollsBackSaleInvoiceAndStockDeduction",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "anotherMerchantsCashBoxCannotReceiveTheSaleProceeds",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "anotherMerchantsProductCannotBeSoldUnderTheCurrentSession",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "duplicateLineIdsCannotCollapseTwoSoldQuantitiesIntoOneStoredRow",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "creationRequiresANewTransactionIdentity",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "creationRejectsNonpositiveAndNonfiniteGrossAmounts",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "blankOperationIdentityCannotCreateAnyBusinessOrOutboxRows",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "invoiceLineTotalsCannotExceedTheGrossSaleAmount",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "editingAMissingSaleDoesNotInventANewAggregate",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "invalidInvoiceLineFieldsAreRejectedWithoutPartialFinancialEffects",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "aRemovedUnitRollsBackTheAlreadyInsertedSaleAndInvoiceLines",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest",
+      "name": "blankMerchantCannotWriteTheFinancialAggregate",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "changingThemeRetainsTheSeriesAndItsVisibleCurve",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "clearingAnAlreadyDrawnSeriesRemovesItsAccessibleAmounts",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "sevenDayChartExposesEveryActualDayAndAmountAndDrawsItsCurve",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "replacingHistoryUpdatesAccessibleValuesAndRemovesStaleDates",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "noHistoryIsDescribedWithoutInventingASale",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest",
+      "name": "debtorRankingReorderingNavigatesUsingTheCurrentIdentity",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest",
+      "name": "clearingDebtorsAfterSettlementRemovesClickTargetsAndShowsEmptyState",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest",
+      "name": "narrowIndicatorsWrapDebtToASecondRowWithoutDroppingItsValue",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest",
+      "name": "wideIndicatorsKeepAllThreeValuesOnOneRowAndRefreshTheirNumbers",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest",
+      "name": "productRankingCanLoadReplaceAndBecomeEmptyWithoutStaleRows",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "clearingAfterParentChangesTheQueryUsesTheLatestVisibleValue",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "paidStatusChangesBothWaysWithoutLeavingTheOldLabelOnScreen",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "animatedMoneyCounterSettlesOnNewPositiveNegativeAndZeroAmounts",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "finiteDoubleAmountsOutsideFloatRangeDoNotBecomeInfinity",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "searchEditsUseTheCurrentCallbackAndClearingRemovesTheQuery",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "emptySearchHasNoClearActionAndShowsTheProvidedHint",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "settledMoneyCounterPreservesCentsBeyondFloatPrecision",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "countFormattingChangesPrecisionAndCurrencyAffixesWithItsInputs",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest",
+      "name": "externalPreferenceChangesUpdateAnAlreadyComposedTheme",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest",
+      "name": "changingUnrelatedPreferencesPreservesTheSelectedDarkTheme",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest",
+      "name": "missingPreferenceStartsLightAndTwoUserTogglesPersistTheCurrentChoice",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest",
+      "name": "firstCompositionUsesPersistedDarkColorsWithoutAnOppositeInitialFrame",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedDraftUiTest",
+      "name": "reportSelectionAndReadyMonthRemainStableWhenThemeChanges",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedDraftUiTest",
+      "name": "customerDraftSurvivesTwoThemeChangesAndOnlyExplicitSavePersistsIt",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedDraftUiTest",
+      "name": "productDraftKeepsUnitCostsAndStockWithoutSavingOnThemeChange",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedDraftUiTest",
+      "name": "pendingReturnKeepsCancellationDisabledWhileThemeAndFailureStateChange",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest",
+      "name": "stockReportSelectedCashTabSurvivesThemeAndRefreshesLiveTotals",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest",
+      "name": "selectedChatMessageKeepsItsIdentityAfterThemeChangeAndLiveReordering",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest",
+      "name": "chatDeletionAfterThemeChangeRemovesTheOriginalTextFromTheUi",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest",
+      "name": "paidInvoiceFilterSurvivesThemeAndAnInvoiceChangingPaymentStatus",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest",
+      "name": "invoiceDeletionNavigatesOnceEvenWhenThemeChangesBeforeAndAfterCompletion",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest",
+      "name": "inventoryLowStockSelectionSurvivesThemeWhileLiveQuantitiesChangeMembership",
+      "result": "passed"
+    }
+  ]
+}

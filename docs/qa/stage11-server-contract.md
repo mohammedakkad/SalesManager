@@ -1,3 +1,5 @@
+> Current local continuation:16 real Room command-boundary cases preserve every financial/stock/receipt/Outbox row on rejection;17 legacy invoice-upload cases cover cancellation, retry, observed account switches, changed-row completion and late Outbox ownership. Legacy completion checks field equality and is not a revision/ABA fence or server protocol. Schema25, financial formulas and versioned Outbox protocol stay unchanged. Actual Android dialog execution is pending. [Scope and evidence](branch75-transitions-progress.md).
+
 # Stage 11 — Firebase protocol and deployment boundary
 
 The implementation uses Firebase SDK transactions, not independent blind uploads, for outbox-managed sale effects. No production Firebase requests, rules changes or deployments were performed during this task. SDK callback tests are deterministic fakes; Firebase Emulator Suite and deployed-rule acceptance are NOT TESTED.

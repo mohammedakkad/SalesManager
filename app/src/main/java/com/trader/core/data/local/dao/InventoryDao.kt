@@ -56,8 +56,18 @@ interface InvoiceItemDao {
     @Query("SELECT * FROM invoice_items WHERE syncStatus = 'PENDING'")
     suspend fun getPending(): List<InvoiceItemEntity>
 
+    @Query("SELECT * FROM invoice_items WHERE syncStatus IN ('PENDING', 'FAILED')")
+    suspend fun getRetryable(): List<InvoiceItemEntity>
+
     @Query("UPDATE invoice_items SET syncStatus = 'SYNCED' WHERE id = :id")
     suspend fun markSynced(id: String)
+
+    /** Only the unchanged uploaded snapshot may receive its transport completion. */
+    @Transaction
+    suspend fun finishUpload(snapshot: InvoiceItemEntity, succeeded: Boolean) {
+        if (getById(snapshot.id) != snapshot) return
+        if (succeeded) markSynced(snapshot.id) else markFailed(snapshot.id)
+    }
 
     @Query("SELECT COUNT(*) FROM invoice_items WHERE syncStatus != 'SYNCED'")
     fun observeUnsyncedCount(): Flow<Int>

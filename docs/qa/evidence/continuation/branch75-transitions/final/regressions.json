@@ -1,0 +1,120 @@
+{
+  "count": 19,
+  "meaning": "Distinct final identities which failed before repair, not 19 independent defects. Host-only dialog layout diagnostics and the rejected query-contract change are excluded from this product-regression count.",
+  "cases": [
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "clearingAfterParentChangesTheQueryUsesTheLatestVisibleValue",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before/TEST-com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "finiteDoubleAmountsOutsideFloatRangeDoNotBecomeInfinity",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before/TEST-com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "searchEditsUseTheCurrentCallbackAndClearingRemovesTheQuery",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before/TEST-com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "emptySearchHasNoClearActionAndShowsTheProvidedHint",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before/TEST-com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest",
+      "name": "settledMoneyCounterPreservesCentsBeyondFloatPrecision",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before/TEST-com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "changingThemeRetainsTheSeriesAndItsVisibleCurve",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before-chart/TEST-com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "clearingAnAlreadyDrawnSeriesRemovesItsAccessibleAmounts",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before-chart/TEST-com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "sevenDayChartExposesEveryActualDayAndAmountAndDrawsItsCurve",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before-chart/TEST-com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "replacingHistoryUpdatesAccessibleValuesAndRemovesStaleDates",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before-chart/TEST-com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest.xml"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest",
+      "name": "noHistoryIsDescribedWithoutInventingASale",
+      "beforeEvidence": "evidence/continuation/branch75-transitions/before-chart/TEST-com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest.xml"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "accountSwitchDuringSecondTransportDoesNotAcknowledgeTheOldAccountsRows",
+      "beforeStage": "before"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "firestoreCancellationPropagatesWithoutSecondTransportOrStatusMutation",
+      "beforeStage": "before"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "failedRowCanRetryAndOnlyThenBecomeSynced",
+      "beforeStage": "before"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "accountSwitchAfterFirstTransportStopsTheSecondTransportAndLocalAcknowledgement",
+      "beforeStage": "before"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "realtimeCancellationPropagatesWithoutMarkingTheInvoiceFailed",
+      "beforeStage": "before"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "cancellationDuringANonSuspendingFirestoreCompletionStopsRealtime",
+      "beforeStage": "before-job-cancellation"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "failedOldSnapshotDoesNotMarkANewerInvoiceEditFailed",
+      "beforeStage": "before-inflight"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "successfulOldSnapshotDoesNotAcknowledgeAnInvoiceEditedDuringUpload",
+      "beforeStage": "before-inflight"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.InvoicePendingSyncBoundaryTest",
+      "name": "outboxTakingOwnershipDuringUploadPreventsTheLegacyAcknowledgement",
+      "beforeStage": "before-inflight"
+    }
+  ]
+}

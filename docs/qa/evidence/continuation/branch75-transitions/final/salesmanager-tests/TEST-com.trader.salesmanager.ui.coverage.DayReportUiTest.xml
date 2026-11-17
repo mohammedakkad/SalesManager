@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.DayReportUiTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:17:40" hostname="6d75d821cc71" time="0.582">
+  <properties/>
+  <testcase name="activeFiltersCanBeClearedWithoutChangingDayTotals" classname="com.trader.salesmanager.ui.coverage.DayReportUiTest" time="0.453"/>
+  <testcase name="dayCardsUseTransactionIdentityAndSearchIsDelegated" classname="com.trader.salesmanager.ui.coverage.DayReportUiTest" time="0.129"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
