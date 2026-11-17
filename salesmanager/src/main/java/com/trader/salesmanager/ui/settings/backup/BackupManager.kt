@@ -47,6 +47,8 @@ class BackupManager(
             val file = File(context.cacheDir, "sales_backup_$timestamp.$BACKUP_FILE_EXTENSION")
             FileOutputStream(file).use { it.write(encrypted) }
             file
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             Log.e(BACKUP_LOG_TAG, "Encrypted export failed: ${e.javaClass.simpleName}", e)
             throw BackupException.StorageFailed
