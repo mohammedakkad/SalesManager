@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:46:36" hostname="6d75d821cc71" time="0.011">
+  <properties/>
+  <testcase name="unrelatedReturnInvoicesDoNotAlterSaleOrInflateOriginalAmount" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.01"/>
+  <testcase name="missingReturnForOneSoldUnitKeepsSalePartial" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.0"/>
+  <testcase name="fullReturnSumsSplitSoldAndReturnedLinesForTheSameUnit" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.0"/>
+  <testcase name="returnInvoiceWithoutItemsReconstructsAmountButKeepsPartialStatus" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.0"/>
+  <testcase name="multipleReturnInvoicesSumRefundsWithoutChangingNetAmount" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.0"/>
+  <testcase name="returnsWithoutSoldLinesNeverInferFullReturn" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.0"/>
+  <testcase name="missingStatusIsReconstructedWithoutReplacingExplicitOriginalAmount" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.0"/>
+  <testcase name="explicitCurrentReturnStateAndOriginalAmountArePreserved" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.0"/>
+  <testcase name="missingOriginalAmountIsReconstructedWithoutReplacingExplicitStatus" classname="com.trader.salesmanager.ui.settings.backup.BackupLedgerBoundaryTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

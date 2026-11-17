@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.SaleFormUiTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:45:34" hostname="6d75d821cc71" time="0.401">
+  <properties/>
+  <testcase name="restoringInvoiceDisablesSubmissionUntilSelectionIsReady" classname="com.trader.salesmanager.ui.coverage.SaleFormUiTest" time="0.108"/>
+  <testcase name="amountNoteAndDebtSelectionReachApplicationModelBeforeSave" classname="com.trader.salesmanager.ui.coverage.SaleFormUiTest" time="0.205"/>
+  <testcase name="invoiceEditorReceivesSelectedCustomerAndExistingLines" classname="com.trader.salesmanager.ui.coverage.SaleFormUiTest" time="0.087"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

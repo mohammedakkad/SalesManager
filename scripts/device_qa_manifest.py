@@ -1,5 +1,6 @@
 """Named runtime requirements; shared by XML validation and public evidence summaries."""
 INSTRUMENTATION = {
+    ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword'),
     ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport'),
     ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom'),
     ('com.trader.salesmanager.qa.CustomerJourneyTest', 'createArabicCustomerValidatesFormSavesOnceAndNavigatesBack'),
@@ -17,3 +18,9 @@ PDFBOX = {('com.trader.qa.InvoicePdfContentTest', name) for name in (
     'monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages',
     'viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances',
 )}
+
+
+def failure_details(case):
+    """Extract the available JUnit failure description for public runtime evidence."""
+    return ' '.join((case.find(tag).get('message') or case.find(tag).text or '').strip()
+                    for tag in ('failure', 'error', 'skipped') if case.find(tag) is not None)

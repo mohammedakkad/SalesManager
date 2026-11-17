@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.BackupCommandsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:46:06" hostname="6d75d821cc71" time="2.329">
+  <properties/>
+  <testcase name="corruptWrongPasswordEmptyAndVersionFailuresDoNotReachRestore" classname="com.trader.salesmanager.ui.qualification.BackupCommandsTest" time="0.326"/>
+  <testcase name="encryptedImportAsksPasswordAndRequiresSeparateRestoreConfirmation" classname="com.trader.salesmanager.ui.qualification.BackupCommandsTest" time="0.288"/>
+  <testcase name="cancellingEncryptedOrParsedImportDoesNotRestoreAnything" classname="com.trader.salesmanager.ui.qualification.BackupCommandsTest" time="0.28"/>
+  <testcase name="exportRequiresMatchingNonblankPasswordBeforeManagerIsCalled" classname="com.trader.salesmanager.ui.qualification.BackupCommandsTest" time="0.288"/>
+  <testcase name="successfulExportClearsPasswordArrayAndPersistsTimestamp" classname="com.trader.salesmanager.ui.qualification.BackupCommandsTest" time="0.285"/>
+  <testcase name="restoreFailureClearsPendingPayloadAndStopsProgress" classname="com.trader.salesmanager.ui.qualification.BackupCommandsTest" time="0.285"/>
+  <testcase name="pickerFailuresSurfaceSpecificMessagesAndConfirmWithoutPayloadIsNoOp" classname="com.trader.salesmanager.ui.qualification.BackupCommandsTest" time="0.291"/>
+  <testcase name="exportStorageFailureClearsSensitiveBufferAndLeavesRetryAvailable" classname="com.trader.salesmanager.ui.qualification.BackupCommandsTest" time="0.286"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

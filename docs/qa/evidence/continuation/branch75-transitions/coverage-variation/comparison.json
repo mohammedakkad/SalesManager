@@ -1,0 +1,25 @@
+{
+  "earlierFullJvm": {
+    "cases": 948,
+    "sellerBranch": {
+      "covered": 8718,
+      "total": 14812
+    },
+    "log": "final/final-clean-qa.log.gz"
+  },
+  "finalFullJvm": {
+    "cases": 948,
+    "sellerBranch": {
+      "covered": 8729,
+      "total": 14812
+    },
+    "log": "final/final-verified-qa.log.gz"
+  },
+  "productionSourceChangedBetweenRuns": false,
+  "testOnlyChanges": "Capitalized test composable Probe to remove a new lint warning; replacement-chart pixel oracle now waits for and asserts central-zero valley.",
+  "difference": {
+    "source": "com/trader/salesmanager/ui/boxes/BoxesScreen.kt",
+    "coveredBranches": 11
+  },
+  "cause": "Exact cause of the existing Boxes coverage variation is unresolved; do not attribute these11 branches to newly added cases or select the largest historical measurement. Final counters are the latest full successful execution. API28 hosted counters will be reported independently."
+}

@@ -1,6 +1,6 @@
 {
   "startingSha": "64384bd04e4e20547b1344db8c21af9f712d7d25",
-  "qualification": "LOCAL PASS; hosted Android runtime pending",
+  "qualification": "LOCAL PASS; hosted seller PASS; all four Android lanes FAIL at the new password-field text assertion; PDFBox NOT EXECUTED",
   "productionTestSourceFingerprint": "a863537958837bc59bad2238e8054c97a6144a1f7f4519b41c8292f3a079c121",
   "jvmCases": 948,
   "newJvmCases": 65,
@@ -119,5 +119,15 @@
   "branch75": "NOT ACHIEVED",
   "priorLine95": "NOT ACHIEVED",
   "release": "FAIL",
-  "constraints": "No Admin business source, financial formula, schema, Outbox protocol, production coverage exclusion or gate changes. Legacy completion equality is not an ABA/revision fence or atomic Firestore/RTDB protocol."
+  "constraints": "No Admin business source, financial formula, schema, Outbox protocol, production coverage exclusion or gate changes. Legacy completion equality is not an ABA/revision fence or atomic Firestore/RTDB protocol.",
+  "localProductionTestSourceSha": "5ce08486e4d2fbc0aab8ecd739b66bd8439981a6",
+  "hostedSourceSha": "5ce08486e4d2fbc0aab8ecd739b66bd8439981a6",
+  "hostedRun": "https://github.com/mohammedakkad/SalesManager/actions/runs/44113818430",
+  "hostedStatus": "FAILURE",
+  "hostedDeviceCases": {
+    "androidPassed": 8,
+    "androidFailed": 1,
+    "pdfBoxNotExecuted": 5,
+    "note": "Distinct identities repeated on API24/28/33/35, not multiplied by lane. The new inventory-count case passes."
+  }
 }

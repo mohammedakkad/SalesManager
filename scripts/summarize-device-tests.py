@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 import sys
 import xml.etree.ElementTree as ET
-from device_qa_manifest import INSTRUMENTATION, PDFBOX
+from device_qa_manifest import INSTRUMENTATION, PDFBOX, failure_details
 
 root = Path(__file__).resolve().parents[1]
 rows = []
@@ -22,7 +22,7 @@ for group, directory, expected in (
                 status = next((tag.upper() for tag in ('failure', 'error', 'skipped') if case.find(tag) is not None), 'PASS')
                 if identity in seen:
                     status = 'DUPLICATE'
-                details = ' '.join(case.find(tag).get('message', '') for tag in ('failure', 'error', 'skipped') if case.find(tag) is not None)
+                details = failure_details(case)
                 seen[identity] = {'group': group, 'class': identity[0], 'test': identity[1], 'status': status, 'details': details[:1500]}
     for identity in sorted(expected):
         rows.append(seen.get(identity, {'group': group, 'class': identity[0], 'test': identity[1], 'status': 'NOT EXECUTED', 'details': ''}))

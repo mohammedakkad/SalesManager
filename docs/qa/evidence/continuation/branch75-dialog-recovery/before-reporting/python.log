@@ -1,0 +1,49 @@
+test_body_only_android_failure_retains_the_actual_assertion (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_body_only_android_failure_retains_the_actual_assertion) ... FAIL
+test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome) ...
+  test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome) (outcome='failure') ... FAIL
+  test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome) (outcome='error') ... FAIL
+  test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome) (outcome='skipped') ... FAIL
+test_message_attribute_remains_the_preferred_description (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_message_attribute_remains_the_preferred_description) ... ok
+
+======================================================================
+FAIL: test_body_only_android_failure_retains_the_actual_assertion (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_body_only_android_failure_retains_the_actual_assertion)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/SalesManager/scripts/tests/test_device_failure_coverage_report.py", line 15, in test_body_only_android_failure_retains_the_actual_assertion
+    self.assertIn('Password draft length changed', manifest.failure_details(case))
+AssertionError: 'Password draft length changed' not found in ''
+
+======================================================================
+FAIL: test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome) (outcome='failure')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/SalesManager/scripts/tests/test_device_failure_coverage_report.py", line 25, in test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome
+    self.assertEqual(f'useful {tag} body', manifest.failure_details(case))
+AssertionError: 'useful failure body' != ''
+- useful failure body
+
+
+======================================================================
+FAIL: test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome) (outcome='error')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/SalesManager/scripts/tests/test_device_failure_coverage_report.py", line 25, in test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome
+    self.assertEqual(f'useful {tag} body', manifest.failure_details(case))
+AssertionError: 'useful error body' != ''
+- useful error body
+
+
+======================================================================
+FAIL: test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome (test_device_failure_coverage_report.DeviceFailureCoverageEvidenceTest.test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome) (outcome='skipped')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/SalesManager/scripts/tests/test_device_failure_coverage_report.py", line 25, in test_empty_attribute_falls_back_to_body_for_each_nonpassing_outcome
+    self.assertEqual(f'useful {tag} body', manifest.failure_details(case))
+AssertionError: 'useful skipped body' != ''
+- useful skipped body
+
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=4)

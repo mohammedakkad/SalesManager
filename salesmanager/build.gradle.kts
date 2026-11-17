@@ -78,6 +78,7 @@ dependencies {
     androidTestImplementation(libs.test.androidx.runner)
     androidTestImplementation(libs.test.androidx.junit)
     androidTestImplementation(libs.test.compose.junit)
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
     debugImplementation(libs.test.compose.manifest)
     testImplementation(libs.test.junit)
     testImplementation(libs.test.mockk)
