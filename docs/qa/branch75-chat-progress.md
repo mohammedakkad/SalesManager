@@ -1,3 +1,5 @@
+> Current continuation (2026-11-17):42 new cases;883 JVM PASS (all 841 starting identities retained),22 Python PASS;7 before-failure regression identities. Hosted44059871127 SUCCESS for 69ef00b: seller/API24/28/33/35,7 Android / 5 PDFBox per lane;917 distinct cases. API28 required a same-source retry after JVM-phase failure; raw archive bytes remain separately limited. Seller API28 Branch8415/14798; Branch75/prior Line95 NOT ACHIEVED; Release FAIL. Signed jobs were cancelled after automatic keystore decoding on the first push; the new guard is verified skipped with zero steps. [Current source-specific scope, counters and limitations](branch75-backup-progress.md). Earlier results below are historical.
+
 # Branch75 chat, employee and pending recovery qualification — 2026-11-15
 
 Starting SHA `1165187b12f208d2ba2d33130e4132b6277611fa`; qualified production/test source `d53b248b6091ca16d6df2a0c06debfac41af86ef`. Same branch and Draft PR51. **Branch75 NOT ACHIEVED; prior Line95 NOT ACHIEVED; Release FAIL.**

@@ -1,0 +1,55 @@
+[
+  {
+    "scope": "qaCoverage",
+    "module": "salesmanager",
+    "covered": 8254,
+    "total": 14798,
+    "percent": 55.77780781186647,
+    "additionalBranchesFor75Percent": 2845
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "weighted",
+    "covered": 9869,
+    "total": 17909,
+    "percent": 55.10637109833045,
+    "additionalBranchesFor75Percent": 3563
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "salesmanager",
+    "covered": 8254,
+    "total": 14798,
+    "percent": 55.77780781186647,
+    "additionalBranchesFor75Percent": 2845
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "weighted",
+    "covered": 9982,
+    "total": 17909,
+    "percent": 55.7373387682171,
+    "additionalBranchesFor75Percent": 3450
+  },
+  {
+    "scope": "Seller Android API28 + JVM",
+    "covered": 8415,
+    "total": 14798,
+    "percent": 56.86579267468577,
+    "additionalBranchesFor75Percent": 2684
+  },
+  {
+    "scope": "Historical weighted Android + module JVM",
+    "covered": 10030,
+    "total": 17909,
+    "percent": 56.00536043330169,
+    "additionalBranchesFor75Percent": 3402
+  },
+  {
+    "scope": "Additional weighted Android + both JVM",
+    "covered": 10143,
+    "total": 17909,
+    "percent": 56.63632810318834,
+    "additionalBranchesFor75Percent": 3289
+  }
+]

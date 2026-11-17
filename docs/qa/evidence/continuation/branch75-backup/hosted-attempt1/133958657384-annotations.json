@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Seller device QA exit [API 35]",
+    "message": "stage=complete exit=0",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller actual Android PDF paths [API 35]",
+    "message": "[{\"package\": \"com.trader.salesmanager.debug\", \"source\": \"/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf\", \"exported\": \"/data/local/tmp/seller-qa-pdf/customer-statement.pdf\", \"sha256\": \"f0b9b19cb1227cc211468f4f44c91869fdb1d39f53e75b6d585388d987380e80\"}, {\"package\": \"com.trader.salesmanager.debug\", \"source\": \"/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf\", \"exported\": \"/data/local/tmp/seller-qa-pdf/invoice-content.pdf\", \"sha256\": \"12c1ff653e83bba9c4c142805337f3a6455f943e487227126a1a6796d46c9241\"}, {\"package\": \"com.trader.salesmanager.debug\", \"source\": \"/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf\", \"exported\": \"/data/local/tmp/seller-qa-pdf/invoice-long.pdf\", \"sha256\": \"c93e430f4ccf1374b94772bb9e8397d64ffdff2a76ed85ff797cdf1bd6ac6a7c\"}, {\"package\": \"com.trader.salesmanager.debug\", \"source\": \"/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf\", \"exported\": \"/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf\", \"sha256\": \"0973088825fea45b762af554d1ee20ce8d8e8fb35303f98be641a18ef3e65611\"}, {\"package\": \"com.trader.salesmanager.debug\", \"source\": \"/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf\", \"exported\": \"/data/local/tmp/seller-qa-pdf/monthly-report.pdf\", \"sha256\": \"34a7e9d120d1134fa375f56f40186c63c9eacf77038d5bf8a3270cc0b904fb32\"}]",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller actual device and PDFBox XML [API 35]",
+    "message": "[{\"test\": \"createArabicCustomerValidatesFormSavesOnceAndNavigatesBack\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"editCustomerPreservesIdAndDoesNotCreateDuplicate\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generateCustomerStatementForHostBalanceVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generateLongInvoiceForHostPaginationAndContentVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generateMonthlyReportForHostPaginationAndFinancialVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generateSingleInvoiceForHostContentVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"longInvoicePaginatesWithoutDroppingFinalItemOrTotal\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances\", \"result\": \"PASS\", \"detail\": \"\"}]",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller measured all-combined suite coverage [API 35]",
+    "message": "{\"BRANCH\": {\"app\": {\"covered\": 1728, \"missed\": 1383}, \"salesmanager\": {\"covered\": 8415, \"missed\": 6383}, \"weighted overall\": {\"covered\": 10143, \"missed\": 7766}}, \"LINE\": {\"app\": {\"covered\": 8471, \"missed\": 1836}, \"salesmanager\": {\"covered\": 16161, \"missed\": 1797}, \"weighted overall\": {\"covered\": 24632, \"missed\": 3633}}, \"METHOD\": {\"app\": {\"covered\": 1958, \"missed\": 557}, \"salesmanager\": {\"covered\": 2705, \"missed\": 518}, \"weighted overall\": {\"covered\": 4663, \"missed\": 1075}}}",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller measured Android plus JVM coverage [API 35]",
+    "message": "{\"branches\": {\"app\": {\"covered\": 1615, \"missed\": 1496}, \"salesmanager\": {\"covered\": 8415, \"missed\": 6383}, \"weighted overall\": {\"covered\": 10030, \"missed\": 7879}}, \"lines\": {\"app\": {\"covered\": 8151, \"missed\": 2156}, \"salesmanager\": {\"covered\": 16161, \"missed\": 1797}, \"weighted overall\": {\"covered\": 24312, \"missed\": 3953}}, \"methods\": {\"app\": {\"covered\": 1836, \"missed\": 679}, \"salesmanager\": {\"covered\": 2705, \"missed\": 518}, \"weighted overall\": {\"covered\": 4541, \"missed\": 1197}}, \"nativePdfLines\": {\"InvoicePdfGenerator.kt\": {\"covered\": 489, \"missed\": 48}, \"PdfCanvas.kt\": {\"covered\": 68, \"missed\": 2}, \"ReportPdfGenerator.kt\": {\"covered\": 438, \"missed\": 19}}}",
+    "annotation_level": "notice"
+  }
+]

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.StockReportDayBoundaryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:43:08" hostname="6d75d821cc71" time="0.433">
+  <properties/>
+  <testcase name="todayIncludesLastMillisecondAndExcludesAdjacentDays" classname="com.trader.salesmanager.sales.StockReportDayBoundaryTest" time="0.433"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

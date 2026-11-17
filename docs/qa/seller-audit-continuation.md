@@ -1,3 +1,5 @@
+> Current continuation (2026-11-17):42 new cases;883 JVM PASS (all 841 starting identities retained),22 Python PASS;7 before-failure regression identities. Hosted44059871127 SUCCESS for 69ef00b: seller/API24/28/33/35,7 Android / 5 PDFBox per lane;917 distinct cases. API28 required a same-source retry after JVM-phase failure; raw archive bytes remain separately limited. Seller API28 Branch8415/14798; Branch75/prior Line95 NOT ACHIEVED; Release FAIL. Signed jobs were cancelled after automatic keystore decoding on the first push; the new guard is verified skipped with zero steps. [Current source-specific scope, counters and limitations](branch75-backup-progress.md). Earlier results below are historical.
+
 > Current continuation (2026-11-11):632 JVM PASS (31 new),22 Python guards PASS (10 new). Hosted42983779778 SUCCESS: seller and compose API24/28/33/35. Seller Android+JVM lines85.0584%; weighted historical scope82.8749%; additional Android+both-JVM-suites83.9419%. Goal95% NOT ACHIEVED; releaseFAIL. [Current results and scope definitions](coverage95-next-progress.md). Earlier figures below are historical.
 
 # Continued audit on the existing feature branch

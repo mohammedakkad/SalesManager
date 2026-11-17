@@ -1,0 +1,1171 @@
+{
+  "startingSha": "cb8cea94548cfefa4446ce351c0347b6047f2e61",
+  "localProductionTestSourceSha": "186ffe91a18f8b15ad3dab052a0a5fa0f8d61910",
+  "hostedSourceSha": "69ef00b3d60ab2919861aa7c98efae0668f0cbb0",
+  "hostedRun": "https://github.com/mohammedakkad/SalesManager/actions/runs/44059871127",
+  "hostedStatus": "SUCCESS",
+  "newJvmCases": 42,
+  "preservedStartingCases": 841,
+  "failingBeforeFinalRegressionCases": 7,
+  "jvmSummary": {
+    "jvmCases": 883,
+    "result": {
+      "passed": 883
+    },
+    "primaryCategories": {
+      "Room/SQLite on JVM": 273,
+      "Room migration": 7,
+      "Firebase SDK/protocol fake": 65,
+      "Unit/model with deterministic fakes": 272,
+      "Compose UI on JVM": 206,
+      "Android notification component on JVM": 11,
+      "Loopback HTTP": 5,
+      "WorkManager lifecycle": 19,
+      "Native bitmap graphics": 2,
+      "Backup format/crypto": 19,
+      "Real XLSX file content": 4
+    },
+    "overlappingTags": {
+      "Room/SQLite on JVM": 292,
+      "Firebase SDK/protocol fake": 100,
+      "Restart/recovery in test harness": 27,
+      "Room migration": 7,
+      "WorkManager lifecycle": 26,
+      "Compose UI on JVM": 206,
+      "Native bitmap graphics": 10,
+      "Android notification component on JVM": 11,
+      "Loopback HTTP": 5,
+      "Backup format/crypto": 51,
+      "Real XLSX file content": 4
+    },
+    "remainingDefinedWorkItems": 56,
+    "remainingByStatus": {
+      "BLOCKED": 32,
+      "NOT TESTED": 22,
+      "PARTIAL": 2
+    },
+    "remainingByKind": {
+      "Historical migration": 21,
+      "Firebase/server integration": 8,
+      "Device/end-to-end": 10,
+      "Performance benchmark": 5,
+      "Security qualification": 5,
+      "Mutation campaign": 5,
+      "SDK failure contract": 1,
+      "Logic boundary": 1
+    },
+    "scope": "Categories partition actual JVM cases; tags overlap. Remaining work items are an explicit plan, not a count of all possible tests."
+  },
+  "moduleCounts": {
+    "app": 208,
+    "salesmanager": 675
+  },
+  "pythonGuards": {
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0
+  },
+  "coverage": {
+    "qaCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1615,
+          "total": 3111
+        },
+        "LINE": {
+          "covered": 8134,
+          "total": 10307
+        },
+        "METHOD": {
+          "covered": 1818,
+          "total": 2515
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8254,
+          "total": 14798
+        },
+        "LINE": {
+          "covered": 15157,
+          "total": 17958
+        },
+        "METHOD": {
+          "covered": 2635,
+          "total": 3223
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23291,
+          "total": 28265
+        },
+        "METHOD": {
+          "covered": 4453,
+          "total": 5738
+        },
+        "BRANCH": {
+          "covered": 9869,
+          "total": 17909
+        }
+      }
+    },
+    "qaAllJvmCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1728,
+          "total": 3111
+        },
+        "LINE": {
+          "covered": 8467,
+          "total": 10307
+        },
+        "METHOD": {
+          "covered": 1954,
+          "total": 2515
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8254,
+          "total": 14798
+        },
+        "LINE": {
+          "covered": 15157,
+          "total": 17958
+        },
+        "METHOD": {
+          "covered": 2635,
+          "total": 3223
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23624,
+          "total": 28265
+        },
+        "METHOD": {
+          "covered": 4589,
+          "total": 5738
+        },
+        "BRANCH": {
+          "covered": 9982,
+          "total": 17909
+        }
+      }
+    }
+  },
+  "sellerLint": {
+    "Error": 0,
+    "Warning": 24
+  },
+  "localBuild": "PASS in13m41s; clean Seller; fresh app and Seller Test tasks; Debug, AndroidTest and minified unsigned Release. Mapping upload excluded.",
+  "localApks": [
+    {
+      "kind": "debugAndroidTest",
+      "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+      "bytes": 1060537,
+      "sha256": "6ccd67d3ad992ac8df497644970a2cf714526e124238ba51ecb42824ff7ca776",
+      "signatureVerified": true,
+      "signatureExit": 0
+    },
+    {
+      "kind": "debug",
+      "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+      "bytes": 51026086,
+      "sha256": "6c7287ac6353b5a52112d224644f47a1db03a446e54157692011407b6f44413d",
+      "signatureVerified": true,
+      "signatureExit": 0
+    },
+    {
+      "kind": "unsignedRelease",
+      "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
+      "bytes": 26718434,
+      "sha256": "b343b317d2cc0b12dbfee65901a5e5222653b06a1760f2eb43727c869d37978c",
+      "signatureVerified": false,
+      "signatureExit": 1
+    }
+  ],
+  "sourceScope": "186ffe9 to69ef00b changes only two signed-release CI job guards; production/test/build inputs unchanged. Local data was not merged with any Android EC. Hosted69ef00b must supply its own fresh Android/JVM counters.",
+  "releaseReadiness": "FAIL",
+  "branch75Goal": "NOT ACHIEVED",
+  "priorLine95Goal": "NOT ACHIEVED",
+  "signatureIncident": "The first push automatically started existing signed workflows; Decode Keystore succeeded in both before cancellation. Builds cancelled, uploads/publications skipped. Materials were not read or downloaded locally. Guard commit must be verified with skipped jobs/zero steps on subsequent heads. Guard-head workflows are verified skipped with zero steps; see signed-workflow-guards.json.",
+  "rawHostedArchiveVerification": "BLOCKED: canonical final API28 archive redirects to productionresultssa17.blob.core.windows.net; environment proxy CONNECT403. No raw hosted PDF/JVM bytes independently verified locally.",
+  "hostedArtifacts": [
+    {
+      "id": 14319831038,
+      "name": "seller-compose-results-api-28",
+      "size_in_bytes": 35724935,
+      "digest": "sha256:c5710c60e8d346cfbd68b7eb322858e6663e08475b173ef7b01c2389e25f69d4"
+    },
+    {
+      "id": 14319300009,
+      "name": "seller-compose-results-api-24",
+      "size_in_bytes": 26955786,
+      "digest": "sha256:d4325e18adf6663c35a2e5778db8d7ec772380ae3dffaa034c77d06b36845192"
+    },
+    {
+      "id": 14319035850,
+      "name": "seller-qa-reports",
+      "size_in_bytes": 10333627,
+      "digest": "sha256:9f48e38724d5c184f124b497988c5d770a9eada749168ba7cf8776b54964657c"
+    },
+    {
+      "id": 14318940345,
+      "name": "seller-compose-results-api-33",
+      "size_in_bytes": 23968467,
+      "digest": "sha256:78473e72548b0a0b998d847174fc469ae85bdfe6c9adbe0dacdd733dd6245322"
+    },
+    {
+      "id": 14317992804,
+      "name": "seller-compose-results-api-35",
+      "size_in_bytes": 21009626,
+      "digest": "sha256:1e3aab2424ef6fb08404ff5b7592d38540491cf9e6ad30efb4838d0814bd9e6f"
+    },
+    {
+      "id": 14317977264,
+      "name": "seller-compose-results-api-28",
+      "size_in_bytes": 7275,
+      "digest": "sha256:e61be4ec0fcf9f1bdd2e6a923543a23a8d1cc52e97248d60c19026de2534da8c"
+    }
+  ],
+  "sourceSha": "186ffe91a18f8b15ad3dab052a0a5fa0f8d61910",
+  "qualificationHeadSha": "69ef00b3d60ab2919861aa7c98efae0668f0cbb0",
+  "hostedRunAttempt": 2,
+  "hostedApi28": {
+    "historical": {
+      "app": {
+        "LINE": {
+          "covered": 8151,
+          "total": 10307
+        },
+        "METHOD": {
+          "covered": 1836,
+          "total": 2515
+        },
+        "BRANCH": {
+          "covered": 1615,
+          "total": 3111
+        }
+      },
+      "salesmanager": {
+        "LINE": {
+          "covered": 16162,
+          "total": 17958
+        },
+        "METHOD": {
+          "covered": 2705,
+          "total": 3223
+        },
+        "BRANCH": {
+          "covered": 8415,
+          "total": 14798
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 24313,
+          "total": 28265
+        },
+        "METHOD": {
+          "covered": 4541,
+          "total": 5738
+        },
+        "BRANCH": {
+          "covered": 10030,
+          "total": 17909
+        }
+      }
+    },
+    "bothJvm": {
+      "app": {
+        "LINE": {
+          "covered": 8471,
+          "total": 10307
+        },
+        "METHOD": {
+          "covered": 1958,
+          "total": 2515
+        },
+        "BRANCH": {
+          "covered": 1728,
+          "total": 3111
+        }
+      },
+      "salesmanager": {
+        "LINE": {
+          "covered": 16162,
+          "total": 17958
+        },
+        "METHOD": {
+          "covered": 2705,
+          "total": 3223
+        },
+        "BRANCH": {
+          "covered": 8415,
+          "total": 14798
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 24633,
+          "total": 28265
+        },
+        "METHOD": {
+          "covered": 4663,
+          "total": 5738
+        },
+        "BRANCH": {
+          "covered": 10143,
+          "total": 17909
+        }
+      }
+    }
+  },
+  "hostedApis": {
+    "28": {
+      "job": "compose (API 28)",
+      "status": "completed",
+      "conclusion": "success",
+      "evidenceJobId": 133966140120,
+      "executionAttempt": 2,
+      "reportedByLatestJobId": 133966140120,
+      "actualApi": 28,
+      "exit": "stage=complete exit=0",
+      "paths": [
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+          "sha256": "c59cd1fbbccdb9bc491b0acf4ed518152e58afde9616b47b5b4770a408abe5ee"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+          "sha256": "7eb18b239daecf9703b8e66d6de5be243be5e538f12a8778aa03183d69e0ec3a"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+          "sha256": "73439530f1a9695dbff9723b02e30ab2c78198d7330849e3ac427800ab63f45a"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+          "sha256": "2a02826bd93b29d0b160829612a6927050908aa604bf3f338089e9d9fd9a8373"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+          "sha256": "e891ac1b978ba6c8f524836c5f7db98889bd7cec74793cba2ba186431e4342d2"
+        }
+      ],
+      "cases": [
+        {
+          "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateCustomerStatementForHostBalanceVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateSingleInvoiceForHostContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+          "result": "PASS",
+          "detail": ""
+        }
+      ],
+      "bothJvmCoverage": {
+        "BRANCH": {
+          "app": {
+            "covered": 1728,
+            "missed": 1383
+          },
+          "salesmanager": {
+            "covered": 8415,
+            "missed": 6383
+          },
+          "weighted overall": {
+            "covered": 10143,
+            "missed": 7766
+          }
+        },
+        "LINE": {
+          "app": {
+            "covered": 8471,
+            "missed": 1836
+          },
+          "salesmanager": {
+            "covered": 16162,
+            "missed": 1796
+          },
+          "weighted overall": {
+            "covered": 24633,
+            "missed": 3632
+          }
+        },
+        "METHOD": {
+          "app": {
+            "covered": 1958,
+            "missed": 557
+          },
+          "salesmanager": {
+            "covered": 2705,
+            "missed": 518
+          },
+          "weighted overall": {
+            "covered": 4663,
+            "missed": 1075
+          }
+        }
+      },
+      "historicalCoverage": {
+        "branches": {
+          "app": {
+            "covered": 1615,
+            "missed": 1496
+          },
+          "salesmanager": {
+            "covered": 8415,
+            "missed": 6383
+          },
+          "weighted overall": {
+            "covered": 10030,
+            "missed": 7879
+          }
+        },
+        "lines": {
+          "app": {
+            "covered": 8151,
+            "missed": 2156
+          },
+          "salesmanager": {
+            "covered": 16162,
+            "missed": 1796
+          },
+          "weighted overall": {
+            "covered": 24313,
+            "missed": 3952
+          }
+        },
+        "methods": {
+          "app": {
+            "covered": 1836,
+            "missed": 679
+          },
+          "salesmanager": {
+            "covered": 2705,
+            "missed": 518
+          },
+          "weighted overall": {
+            "covered": 4541,
+            "missed": 1197
+          }
+        },
+        "nativePdfLines": {
+          "InvoicePdfGenerator.kt": {
+            "covered": 489,
+            "missed": 48
+          },
+          "PdfCanvas.kt": {
+            "covered": 68,
+            "missed": 2
+          },
+          "ReportPdfGenerator.kt": {
+            "covered": 438,
+            "missed": 19
+          }
+        }
+      }
+    },
+    "seller": {
+      "job": "seller",
+      "status": "completed",
+      "conclusion": "success",
+      "evidenceJobId": 133958656876,
+      "executionAttempt": 1,
+      "reportedByLatestJobId": 133966141731
+    },
+    "24": {
+      "job": "compose (API 24)",
+      "status": "completed",
+      "conclusion": "success",
+      "evidenceJobId": 133958657424,
+      "executionAttempt": 1,
+      "reportedByLatestJobId": 133966142253,
+      "actualApi": 24,
+      "exit": "stage=complete exit=0",
+      "paths": [
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+          "sha256": "925dcb90b4c86cebcc6de79797299d676a788119fe1a76b3a0dde4e501c9a6a6"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+          "sha256": "7ff75ac4aae1ddabee22b762848d3248ca3156d22975750d9d05eb98d1e3fb2d"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+          "sha256": "ce435c8a3fa4447d071ad4a17857c300e643fc31d7d63496cf19363da1a33e93"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+          "sha256": "0ce362446165fd181a382e2c6a0591a44e5b346461fa1a3e8197d2a31d34ad41"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+          "sha256": "2ccde5ca7a58ee758e49203f7b7e727130b10f02d4a09f2d4b9728255aeacc24"
+        }
+      ],
+      "cases": [
+        {
+          "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateCustomerStatementForHostBalanceVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateSingleInvoiceForHostContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+          "result": "PASS",
+          "detail": ""
+        }
+      ],
+      "bothJvmCoverage": {
+        "BRANCH": {
+          "app": {
+            "covered": 1728,
+            "missed": 1383
+          },
+          "salesmanager": {
+            "covered": 8415,
+            "missed": 6383
+          },
+          "weighted overall": {
+            "covered": 10143,
+            "missed": 7766
+          }
+        },
+        "LINE": {
+          "app": {
+            "covered": 8471,
+            "missed": 1836
+          },
+          "salesmanager": {
+            "covered": 16162,
+            "missed": 1796
+          },
+          "weighted overall": {
+            "covered": 24633,
+            "missed": 3632
+          }
+        },
+        "METHOD": {
+          "app": {
+            "covered": 1958,
+            "missed": 557
+          },
+          "salesmanager": {
+            "covered": 2705,
+            "missed": 518
+          },
+          "weighted overall": {
+            "covered": 4663,
+            "missed": 1075
+          }
+        }
+      },
+      "historicalCoverage": {
+        "branches": {
+          "app": {
+            "covered": 1615,
+            "missed": 1496
+          },
+          "salesmanager": {
+            "covered": 8415,
+            "missed": 6383
+          },
+          "weighted overall": {
+            "covered": 10030,
+            "missed": 7879
+          }
+        },
+        "lines": {
+          "app": {
+            "covered": 8151,
+            "missed": 2156
+          },
+          "salesmanager": {
+            "covered": 16162,
+            "missed": 1796
+          },
+          "weighted overall": {
+            "covered": 24313,
+            "missed": 3952
+          }
+        },
+        "methods": {
+          "app": {
+            "covered": 1836,
+            "missed": 679
+          },
+          "salesmanager": {
+            "covered": 2705,
+            "missed": 518
+          },
+          "weighted overall": {
+            "covered": 4541,
+            "missed": 1197
+          }
+        },
+        "nativePdfLines": {
+          "InvoicePdfGenerator.kt": {
+            "covered": 489,
+            "missed": 48
+          },
+          "PdfCanvas.kt": {
+            "covered": 68,
+            "missed": 2
+          },
+          "ReportPdfGenerator.kt": {
+            "covered": 438,
+            "missed": 19
+          }
+        }
+      }
+    },
+    "33": {
+      "job": "compose (API 33)",
+      "status": "completed",
+      "conclusion": "success",
+      "evidenceJobId": 133958657218,
+      "executionAttempt": 1,
+      "reportedByLatestJobId": 133966192218,
+      "actualApi": 33,
+      "exit": "stage=complete exit=0",
+      "paths": [
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+          "sha256": "7bc7bf9dd0cde96470a058d6ec4a135fee6426fa58bd3e10f13c74d113d9a4d5"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+          "sha256": "3b8a2ead5f8b84e22c070f9ddc832b74200e217635383230b5623d88757a784d"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+          "sha256": "11f0ab9aeca264feeaf23b7d61fcf9393b63c4c04872b63627a6caf684f5c8c8"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+          "sha256": "d1715432ebcb58cc070c835a5e4545fa8f0bd66b4a4e7751a9ebf49b118c395f"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+          "sha256": "3a39efa8ff8bf5d17e5bd6c71b763e2b522099541759c5a962fe98eeef5795fa"
+        }
+      ],
+      "cases": [
+        {
+          "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateCustomerStatementForHostBalanceVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateSingleInvoiceForHostContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+          "result": "PASS",
+          "detail": ""
+        }
+      ],
+      "bothJvmCoverage": {
+        "BRANCH": {
+          "app": {
+            "covered": 1728,
+            "missed": 1383
+          },
+          "salesmanager": {
+            "covered": 8415,
+            "missed": 6383
+          },
+          "weighted overall": {
+            "covered": 10143,
+            "missed": 7766
+          }
+        },
+        "LINE": {
+          "app": {
+            "covered": 8471,
+            "missed": 1836
+          },
+          "salesmanager": {
+            "covered": 16162,
+            "missed": 1796
+          },
+          "weighted overall": {
+            "covered": 24633,
+            "missed": 3632
+          }
+        },
+        "METHOD": {
+          "app": {
+            "covered": 1958,
+            "missed": 557
+          },
+          "salesmanager": {
+            "covered": 2705,
+            "missed": 518
+          },
+          "weighted overall": {
+            "covered": 4663,
+            "missed": 1075
+          }
+        }
+      },
+      "historicalCoverage": {
+        "branches": {
+          "app": {
+            "covered": 1615,
+            "missed": 1496
+          },
+          "salesmanager": {
+            "covered": 8415,
+            "missed": 6383
+          },
+          "weighted overall": {
+            "covered": 10030,
+            "missed": 7879
+          }
+        },
+        "lines": {
+          "app": {
+            "covered": 8151,
+            "missed": 2156
+          },
+          "salesmanager": {
+            "covered": 16162,
+            "missed": 1796
+          },
+          "weighted overall": {
+            "covered": 24313,
+            "missed": 3952
+          }
+        },
+        "methods": {
+          "app": {
+            "covered": 1836,
+            "missed": 679
+          },
+          "salesmanager": {
+            "covered": 2705,
+            "missed": 518
+          },
+          "weighted overall": {
+            "covered": 4541,
+            "missed": 1197
+          }
+        },
+        "nativePdfLines": {
+          "InvoicePdfGenerator.kt": {
+            "covered": 489,
+            "missed": 48
+          },
+          "PdfCanvas.kt": {
+            "covered": 68,
+            "missed": 2
+          },
+          "ReportPdfGenerator.kt": {
+            "covered": 438,
+            "missed": 19
+          }
+        }
+      }
+    },
+    "35": {
+      "job": "compose (API 35)",
+      "status": "completed",
+      "conclusion": "success",
+      "evidenceJobId": 133958657384,
+      "executionAttempt": 1,
+      "reportedByLatestJobId": 133966203699,
+      "actualApi": 35,
+      "exit": "stage=complete exit=0",
+      "paths": [
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+          "sha256": "f0b9b19cb1227cc211468f4f44c91869fdb1d39f53e75b6d585388d987380e80"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+          "sha256": "12c1ff653e83bba9c4c142805337f3a6455f943e487227126a1a6796d46c9241"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+          "sha256": "c93e430f4ccf1374b94772bb9e8397d64ffdff2a76ed85ff797cdf1bd6ac6a7c"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+          "sha256": "0973088825fea45b762af554d1ee20ce8d8e8fb35303f98be641a18ef3e65611"
+        },
+        {
+          "package": "com.trader.salesmanager.debug",
+          "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+          "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+          "sha256": "34a7e9d120d1134fa375f56f40186c63c9eacf77038d5bf8a3270cc0b904fb32"
+        }
+      ],
+      "cases": [
+        {
+          "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateCustomerStatementForHostBalanceVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generateSingleInvoiceForHostContentVerification",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+          "result": "PASS",
+          "detail": ""
+        }
+      ],
+      "bothJvmCoverage": {
+        "BRANCH": {
+          "app": {
+            "covered": 1728,
+            "missed": 1383
+          },
+          "salesmanager": {
+            "covered": 8415,
+            "missed": 6383
+          },
+          "weighted overall": {
+            "covered": 10143,
+            "missed": 7766
+          }
+        },
+        "LINE": {
+          "app": {
+            "covered": 8471,
+            "missed": 1836
+          },
+          "salesmanager": {
+            "covered": 16161,
+            "missed": 1797
+          },
+          "weighted overall": {
+            "covered": 24632,
+            "missed": 3633
+          }
+        },
+        "METHOD": {
+          "app": {
+            "covered": 1958,
+            "missed": 557
+          },
+          "salesmanager": {
+            "covered": 2705,
+            "missed": 518
+          },
+          "weighted overall": {
+            "covered": 4663,
+            "missed": 1075
+          }
+        }
+      },
+      "historicalCoverage": {
+        "branches": {
+          "app": {
+            "covered": 1615,
+            "missed": 1496
+          },
+          "salesmanager": {
+            "covered": 8415,
+            "missed": 6383
+          },
+          "weighted overall": {
+            "covered": 10030,
+            "missed": 7879
+          }
+        },
+        "lines": {
+          "app": {
+            "covered": 8151,
+            "missed": 2156
+          },
+          "salesmanager": {
+            "covered": 16161,
+            "missed": 1797
+          },
+          "weighted overall": {
+            "covered": 24312,
+            "missed": 3953
+          }
+        },
+        "methods": {
+          "app": {
+            "covered": 1836,
+            "missed": 679
+          },
+          "salesmanager": {
+            "covered": 2705,
+            "missed": 518
+          },
+          "weighted overall": {
+            "covered": 4541,
+            "missed": 1197
+          }
+        },
+        "nativePdfLines": {
+          "InvoicePdfGenerator.kt": {
+            "covered": 489,
+            "missed": 48
+          },
+          "PdfCanvas.kt": {
+            "covered": 68,
+            "missed": 2
+          },
+          "ReportPdfGenerator.kt": {
+            "covered": 438,
+            "missed": 19
+          }
+        }
+      }
+    }
+  },
+  "distinctPassingCases": 917,
+  "hostedEvidence": "Actual source-specific check annotations derived from Android/PDFBox XML and device Logcat paths/hashes. Raw archive verification has a separate status; do not equate annotations with downloaded bytes.",
+  "remainingBranchesFor75Percent": {
+    "Seller JVM": 2845,
+    "Historical weighted module JVM": 3563,
+    "Additional weighted both JVM": 3450,
+    "Seller Android API28 + JVM": 2684,
+    "Historical weighted Android + module JVM": 3402,
+    "Additional weighted Android + both JVM": 3289
+  },
+  "hostedJvmEnumeration": "Local XML independently enumerates883 cases. Hosted seller test/coverage step succeeds for69ef00b; raw hosted JVM identity enumeration is unavailable when artifact bytes are blocked."
+}
