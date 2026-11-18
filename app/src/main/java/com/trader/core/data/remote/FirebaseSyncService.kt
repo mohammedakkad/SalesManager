@@ -45,6 +45,33 @@ class FirebaseSyncService {
         is Double -> this; is Long -> toDouble(); is Int -> toDouble(); is String -> toDoubleOrNull(); else -> null
     }
 
+    private class NonfiniteFinancialSnapshot : IllegalArgumentException("Nonfinite financial snapshot")
+
+    private fun Map<*, *>.requireFiniteFields(fields: Set<String>) {
+        for (field in fields) {
+            // Preserve absent optional fields and existing legacy coercions. A parsed
+            // NaN/Infinity must never enter a monetary or quantity replacement batch.
+            val number = this[field].asDouble()
+            if (number != null && !number.isFinite()) throw NonfiniteFinancialSnapshot()
+        }
+    }
+
+    private fun DataSnapshot.requireFiniteFinancials(fields: Set<String>, nestedReturns: Boolean = false): DataSnapshot {
+        for (child in children) {
+            val row = child.value as? Map<*, *> ?: continue
+            row.requireFiniteFields(fields)
+            if (nestedReturns) {
+                val items = when (val raw = row["items"]) {
+                    is Map<*, *> -> raw.values
+                    is List<*> -> raw
+                    else -> emptyList<Any>()
+                }
+                for (raw in items) (raw as? Map<*, *>)?.requireFiniteFields(RETURN_ITEM_FINANCIAL_FIELDS)
+            }
+        }
+        return this
+    }
+
     /** Cached Tasks can complete without suspension, so check both sides of the read. */
     private suspend fun DatabaseReference.snapshotWhileActive(): DataSnapshot {
         currentCoroutineContext().ensureActive()
@@ -196,7 +223,7 @@ class FirebaseSyncService {
         }
 
         val transactions = try {
-            root.child("transactions").snapshotWhileActive().children.mapNotNull { snap ->
+            root.child("transactions").snapshotWhileActive().requireFiniteFinancials(TRANSACTION_FINANCIAL_FIELDS).children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 AppTransaction(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
@@ -219,12 +246,16 @@ class FirebaseSyncService {
             }
         } catch (cancelled: CancellationException) {
             throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
         val invoiceItems = try {
-            root.child("invoice_items").snapshotWhileActive().children.mapNotNull { snap ->
+            root.child("invoice_items").snapshotWhileActive().requireFiniteFinancials(INVOICE_FINANCIAL_FIELDS).children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 InvoiceItem(
                     id = m["id"] as? String ?: return@mapNotNull null,
@@ -241,12 +272,16 @@ class FirebaseSyncService {
             }
         } catch (cancelled: CancellationException) {
             throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
         val returns = try {
-            root.child("return_invoices").snapshotWhileActive().children.mapNotNull { snap ->
+            root.child("return_invoices").snapshotWhileActive().requireFiniteFinancials(RETURN_FINANCIAL_FIELDS, nestedReturns = true).children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 val invoiceId = m["id"] as? String ?: snap.key ?: return@mapNotNull null
                 val originalTxId = m["originalTransactionId"].asLong() ?: m["transactionId"].asLong() ?: return@mapNotNull null
@@ -305,26 +340,38 @@ class FirebaseSyncService {
             }
         } catch (cancelled: CancellationException) {
             throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
         val cashBoxes = try {
-            root.child("cash_boxes").snapshotWhileActive().children.mapNotNull { snap ->
+            root.child("cash_boxes").snapshotWhileActive().requireFiniteFinancials(CASH_FINANCIAL_FIELDS).children.mapNotNull { snap ->
                 snap.toCashBox(merchantCode)
             }
         } catch (cancelled: CancellationException) {
             throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
         val cashBoxMovements = try {
-            root.child("cash_box_movements").snapshotWhileActive().children.mapNotNull { snap ->
+            root.child("cash_box_movements").snapshotWhileActive().requireFiniteFinancials(CASH_MOVEMENT_FINANCIAL_FIELDS).children.mapNotNull { snap ->
                 snap.toCashBoxMovement(merchantCode)
             }
         } catch (cancelled: CancellationException) {
             throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
@@ -372,6 +419,12 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("cash_boxes")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(CASH_FINANCIAL_FIELDS)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 trySend(snap.children.mapNotNull { child ->
                     runCatching { child.toCashBox(merchantCode) }.getOrNull()
                 })
@@ -418,6 +471,12 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("cash_box_movements")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(CASH_MOVEMENT_FINANCIAL_FIELDS)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 trySend(snap.children.mapNotNull { child ->
                     runCatching { child.toCashBoxMovement(merchantCode) }.getOrNull()
                 })
@@ -486,6 +545,12 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("transactions")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(TRANSACTION_FINANCIAL_FIELDS)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 trySend(snap.children.mapNotNull { child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
@@ -551,6 +616,12 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(INVOICE_FINANCIAL_FIELDS)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 trySend(snap.children.mapNotNull { child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
@@ -583,10 +654,22 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("return_invoices")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(RETURN_FINANCIAL_FIELDS, nestedReturns = true)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 launch {
                     val invoiceItemsSnap = runCatching {
                         db.reference.child("merchants").child(merchantCode).child("invoice_items").get().await()
                     }.getOrNull()
+                    try {
+                        invoiceItemsSnap?.requireFiniteFinancials(INVOICE_FINANCIAL_FIELDS)
+                    } catch (invalid: NonfiniteFinancialSnapshot) {
+                        close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                        return@launch
+                    }
 
                     val invoiceItems = invoiceItemsSnap?.children?.mapNotNull { itemSnap ->
                         val m = itemSnap.value as? Map<*, *> ?: return@mapNotNull null
@@ -822,6 +905,13 @@ class FirebaseSyncService {
     }
 
     companion object {
+        private val TRANSACTION_FINANCIAL_FIELDS = setOf("amount", "originalAmount")
+        private val INVOICE_FINANCIAL_FIELDS = setOf("quantity", "pricePerUnit", "totalPrice")
+        private val RETURN_FINANCIAL_FIELDS = setOf("totalRefund")
+        private val RETURN_ITEM_FINANCIAL_FIELDS = setOf("originalQuantity", "returnedQty", "returnedQuantity", "pricePerUnit", "costPricePerUnit", "lostProfit", "totalRefund")
+        private val CASH_FINANCIAL_FIELDS = setOf("currentBalance", "initialBalance")
+        private val CASH_MOVEMENT_FINANCIAL_FIELDS = setOf("amountDelta", "balanceAfter")
+
         private const val PATH_SUBSCRIPTION_REQUESTS = "subscription_requests"
         private const val PATH_ACTIVATION_CODES = "activation_codes"
         private const val KEY_STATUS = "status"

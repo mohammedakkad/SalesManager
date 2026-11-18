@@ -1,3 +1,5 @@
+> Current client-only continuation: whole known nonfinite RTDB financial batches are rejected before local replacement. This does not change the versioned Outbox/server contract or establish server numeric validation, authorization, fencing, reconciliation or exactly-once behavior. Persistent quarantine and same-session user-visible listener retry remain unqualified. [Scope and evidence](branch75-remote-numerics-progress.md).
+
 > Current local continuation:16 real Room command-boundary cases preserve every financial/stock/receipt/Outbox row on rejection;17 legacy invoice-upload cases cover cancellation, retry, observed account switches, changed-row completion and late Outbox ownership. Legacy completion checks field equality and is not a revision/ABA fence or server protocol. Schema25, financial formulas and versioned Outbox protocol stay unchanged. Actual Android dialog execution is pending. [Scope and evidence](branch75-transitions-progress.md).
 
 # Stage 11 — Firebase protocol and deployment boundary

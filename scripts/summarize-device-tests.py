@@ -69,6 +69,28 @@ if '--annotation' in sys.argv and os.environ.get('GITHUB_ACTIONS') == 'true':
                 tail = path.read_text(errors='replace').encode('utf-8')[-2200:].decode('utf-8',errors='replace')
                 detail = json.dumps(tail, ensure_ascii=False).replace('%', '%25')
                 print('::notice title=Seller Android ' + key + api_suffix + '::' + detail)
+    if os.environ.get('SELLER_QA_EXIT_CODE', '0') != '0':
+        # Keep the beginning of each JVM failure, which a Gradle tail can omit.
+        # Actual XML only; a pre-instrumentation failure is never device success.
+        for module in ('app', 'salesmanager'):
+            emitted = 0
+            for path in sorted((root / module / 'build/test-results/testDebugUnitTest').glob('TEST-*.xml')):
+                try:
+                    cases = ET.parse(path).getroot().iter('testcase')
+                    for case in cases:
+                        if emitted >= 10:
+                            break
+                        if case.find('failure') is None and case.find('error') is None:
+                            continue
+                        failure = next(case.find(tag) for tag in ('failure', 'error') if case.find(tag) is not None)
+                        # The message attribute often omits every stack frame.
+                        failure_text = (failure.text or failure.get('message') or '').strip()
+                        detail = json.dumps({'module': module, 'class': case.get('classname'),
+                                             'test': case.get('name'), 'detailHead': failure_text[:1800]}, ensure_ascii=False)
+                        print('::notice title=Seller JVM failure XML ' + module + ' ' + str(emitted + 1) + api_suffix + '::' + detail.replace('%', '%25'))
+                        emitted += 1
+                except (ET.ParseError, OSError):
+                    print('::notice title=Seller JVM incomplete XML' + api_suffix + '::' + module + '/' + path.name)
 if os.environ.get('GITHUB_STEP_SUMMARY'):
     path = Path(os.environ['GITHUB_STEP_SUMMARY'])
     begin, end = '<!-- seller-qa-runtime-start -->', '<!-- seller-qa-runtime-end -->'

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:31:03" hostname="ac8333d6728a" time="1.257">
+  <properties/>
+  <testcase name="externalPreferenceChangesUpdateAnAlreadyComposedTheme" classname="com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest" time="0.292"/>
+  <testcase name="changingUnrelatedPreferencesPreservesTheSelectedDarkTheme" classname="com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest" time="0.288"/>
+  <testcase name="missingPreferenceStartsLightAndTwoUserTogglesPersistTheCurrentChoice" classname="com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest" time="0.348"/>
+  <testcase name="firstCompositionUsesPersistedDarkColorsWithoutAnOppositeInitialFrame" classname="com.trader.salesmanager.ui.coverage.ThemePreferenceUiTest" time="0.328"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

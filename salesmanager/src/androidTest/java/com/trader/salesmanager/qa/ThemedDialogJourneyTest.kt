@@ -116,6 +116,12 @@ class ThemedDialogJourneyTest {
         fields.assertCountEquals(0)
         compose.runOnIdle{assertFalse(vm.uiState.value.showExportPasswordDialog);assertFalse(vm.uiState.value.isExporting)}
         compose.onNodeWithText(context.getString(R.string.backup_export_title)).performScrollTo().performClick()
+        try {
+            compose.waitUntil(5000){vm.uiState.value.showExportPasswordDialog && fields.fetchSemanticsNodes().size==2}
+        } catch (timeout: androidx.compose.ui.test.ComposeTimeoutException) {
+            val state=vm.uiState.value
+            throw AssertionError("Export reopen not ready: requested=${state.showExportPasswordDialog}, exporting=${state.isExporting}, importing=${state.isImporting}, fields=${fields.fetchSemanticsNodes().size}",timeout)
+        }
         fields.assertCountEquals(2)
         for(index in 0..1){
             fields[index].assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText,androidx.compose.ui.text.AnnotatedString("")))

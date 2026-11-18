@@ -1,7 +1,7 @@
 {
   "startingSha": "a5c402f564669129aacdc745210c4f6a3075352d",
   "productionTestSourceFingerprint": "090655e3c07075f1df43a503582170d15ee47f4f1b2e1e9aaacd77a714d94cb1",
-  "qualification": "LOCAL PASS; fresh hosted runtime pending",
+  "qualification": "LOCAL PASS; hosted seller PASS but all4 compose lanes FAIL; no combined coverage for this source",
   "jvmCases": 1056,
   "moduleCounts": {
     "app": 267,
@@ -120,5 +120,17 @@
   "rawProductionClasses": 2336,
   "coverageModeIdentity": "PASS normal/covered/normal,0 changed original classes",
   "probeCompatibility": "PASS0.8.12/0.8.14 identical after only runtime package normalization",
-  "coverageEnabledApkAssembly": "PASS main+AndroidTest, NOT runtime"
+  "coverageEnabledApkAssembly": "PASS main+AndroidTest, NOT runtime",
+  "qualifiedSourceSha": "d8a7d3e2bcd0397d8d8588f5a7a35f9331b677f1",
+  "hostedRun": {
+    "id": 44337453411,
+    "sha": "d8a7d3e2bcd0397d8d8588f5a7a35f9331b677f1",
+    "url": "https://github.com/mohammedakkad/SalesManager/actions/runs/44337453411",
+    "conclusion": "failure",
+    "seller": "success",
+    "api24_28_35": "13 Android PASS/1 extended export-reopen assertion FAIL;5 PDFBox NOT EXECUTED per lane;5 actual PDF path/hash notices per lane",
+    "api33": "JVM DashboardChartNativeUiTest ViewRootImpl.CalledFromWrongThreadException,789 tests1failure; all19 Android/PDF identities NOT EXECUTED",
+    "combinedCoverage": "UNAVAILABLE for this source",
+    "signedWorkflows": "Both SKIPPED0steps"
+  }
 }
