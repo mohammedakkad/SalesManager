@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:16:45" hostname="ac8333d6728a" time="0.366">
+  <properties/>
+  <testcase name="debtorRankingReorderingNavigatesUsingTheCurrentIdentity" classname="com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest" time="0.062"/>
+  <testcase name="clearingDebtorsAfterSettlementRemovesClickTargetsAndShowsEmptyState" classname="com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest" time="0.05"/>
+  <testcase name="narrowIndicatorsWrapDebtToASecondRowWithoutDroppingItsValue" classname="com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest" time="0.056"/>
+  <testcase name="wideIndicatorsKeepAllThreeValuesOnOneRowAndRefreshTheirNumbers" classname="com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest" time="0.128"/>
+  <testcase name="productRankingCanLoadReplaceAndBecomeEmptyWithoutStaleRows" classname="com.trader.salesmanager.ui.coverage.DashboardTransitionsUiTest" time="0.07"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

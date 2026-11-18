@@ -12,6 +12,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import androidx.room.withTransaction
 import java.util.UUID
 
 class StockRepositoryImpl(
@@ -20,10 +22,9 @@ class StockRepositoryImpl(
     private val remote: ProductFirestoreService,
     private val merchantId: String,
     private val outboxDatabase: com.trader.core.data.local.db.AppDatabase? = null,
-    private val activation: com.trader.core.domain.repository.ActivationRepository? = null
+    private val activation: com.trader.core.domain.repository.ActivationRepository? = null,
+    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) : StockRepository {
-
-    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
 
     override fun getMovementsForProduct(productId: String, unitId: String): Flow<List<StockMovement>> =
@@ -64,7 +65,10 @@ class StockRepositoryImpl(
             if (entity.relatedTransactionId?.let { outboxDatabase?.saleOutboxDao()?.manages(it) } == true) return@forEach
             runCatching { remote.uploadMovement(merchantId, entity.toDomain()) }
                 .onSuccess { movementDao.markSynced(entity.id) }
-                .onFailure { movementDao.markFailed(entity.id) }
+                .onFailure {
+                    if (it is CancellationException) throw it
+                    movementDao.markFailed(entity.id)
+                }
         }
         productDao.getPendingUnits().forEach { unit ->
             runCatching {
@@ -74,7 +78,10 @@ class StockRepositoryImpl(
                     remote.updateRemoteQuantity(merchantId, unit.id, unit.quantityInStock, pid)
                     productDao.markUnitSynced(unit.id)
                 }
-            }.onFailure { android.util.Log.e("StockSync", "syncPendingMovements unit failed", it) }
+            }.onFailure {
+                if (it is CancellationException) throw it
+                android.util.Log.e("StockSync", "syncPendingMovements unit failed", it)
+            }
         }
     }
 
@@ -123,37 +130,55 @@ class StockRepositoryImpl(
     ) {
         val merchantId = activation?.getMerchantCode() ?: this.merchantId
         if (activation != null) require(merchantId.isNotBlank()) { "Merchant session ended" }
-        val currentQty = productDao.getQuantity(unitId) ?: 0.0
-        val newQty = (currentQty + delta).coerceAtLeast(0.0)
+        require(delta.isFinite()) { "Stock adjustment must be finite" }
+        val callerTransaction = outboxDatabase?.inTransaction() == true
+        suspend fun persistMovement(): StockMovement {
+            val currentQty = productDao.getQuantity(unitId) ?: 0.0
+            val sum = currentQty + delta
+            require(currentQty.isFinite() && sum.isFinite()) { "Stock quantity must remain finite" }
+            val newQty = sum.coerceAtLeast(0.0)
+            productDao.updateQuantity(unitId, newQty)
+            val movement = StockMovement(
+                id = UUID.randomUUID().toString(),
+                productId = productId, productName = productName,
+                unitId = unitId, unitLabel = unitLabel,
+                movementType = type, quantity = delta,
+                quantityBefore = currentQty, quantityAfter = newQty,
+                relatedTransactionId = relatedTransactionId,
+                note = note, merchantId = merchantId,
+                syncStatus = SyncStatus.PENDING
+            )
+            movementDao.insert(movement.toEntity())
+            return movement
+        }
+        // Seller supplies this database: serialize the read/modify/ledger write,
+        // including standalone manual adjustments. Existing caller transactions nest.
+        val movement = if (outboxDatabase != null) {
+            outboxDatabase.withTransaction { persistMovement() }
+        } else {
+            persistMovement()
+        }
 
-        // ✅ Local first — فوري
-        productDao.updateQuantity(unitId, newQty)
-        val movement = StockMovement(
-            id = UUID.randomUUID().toString(),
-            productId = productId, productName = productName,
-            unitId = unitId, unitLabel = unitLabel,
-            movementType = type, quantity = delta,
-            quantityBefore = currentQty, quantityAfter = newQty,
-            relatedTransactionId = relatedTransactionId,
-            note = note, merchantId = merchantId,
-            syncStatus = SyncStatus.PENDING
-        )
-        movementDao.insert(movement.toEntity())
-
-        if (outboxDatabase?.inTransaction() != true) syncScope.launch {
+        if (!callerTransaction) syncScope.launch {
             if (activation != null && (merchantId.isBlank() || activation.getMerchantCode() != merchantId)) return@launch
             if (outboxDatabase?.saleOutboxDao()?.hasOutstandingFor(merchantId) == true || relatedTransactionId?.let { outboxDatabase?.saleOutboxDao()?.manages(it) } == true) return@launch
             runCatching { remote.uploadMovement(merchantId, movement) }
                 .onSuccess { movementDao.markSynced(movement.id) }
-                .onFailure { movementDao.markFailed(movement.id) }
+                .onFailure {
+                    if (it is CancellationException) throw it
+                    movementDao.markFailed(movement.id)
+                }
 
             runCatching {
                 val pid = productDao.getProductIdForUnit(unitId)
                 if (pid != null) {
-                    remote.updateRemoteQuantity(merchantId, unitId, newQty, pid)
+                    remote.updateRemoteQuantity(merchantId, unitId, movement.quantityAfter, pid)
                     productDao.markUnitSynced(unitId)
                 }
-            }.onFailure { android.util.Log.e("StockSync", "quantity sync failed for unit=$unitId", it) }
+            }.onFailure {
+                if (it is CancellationException) throw it
+                android.util.Log.e("StockSync", "quantity sync failed for unit=$unitId", it)
+            }
         }
     }
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.SellerQueryContractTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:14:14" hostname="ac8333d6728a" time="0.615">
+  <properties/>
+  <testcase name="transactionStatusQueriesTrackConflictsAndRemoval" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.05"/>
+  <testcase name="reportTotalsDebtAndHistoricalBalanceDoNotDoubleCountPaidRows" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.055"/>
+  <testcase name="pendingMessagesRetryStateAndCleanupStayMerchantScoped" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.046"/>
+  <testcase name="transactionListsRespectRangePaidStatusCustomerAndLimit" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.061"/>
+  <testcase name="paymentMethodsRoundTripTypesUpdatesAndDeletion" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.041"/>
+  <testcase name="employeeQueriesPartitionMerchantPinsAndAcknowledgments" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.055"/>
+  <testcase name="debtAgingBoundariesAndCountsAreDisjoint" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.04"/>
+  <testcase name="sessionLatestLoginAndLastActiveUseDifferentOrdering" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.058"/>
+  <testcase name="productRelationsSearchBarcodeAndValuationKeepUnitIdentity" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.062"/>
+  <testcase name="sevenDayBucketsUseHalfOpenBoundariesAndIncludeEmptyDays" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.044"/>
+  <testcase name="catalogEditsAndPendingAcknowledgmentsPreserveRetainedUnits" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.063"/>
+  <testcase name="customerSearchPhoneExclusionAndDeletePreserveVisitor" classname="com.trader.core.data.local.SellerQueryContractTest" time="0.039"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

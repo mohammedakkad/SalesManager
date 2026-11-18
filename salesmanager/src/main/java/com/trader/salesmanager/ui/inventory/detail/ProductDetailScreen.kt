@@ -143,6 +143,9 @@ fun ProductDetailScreen(
                         label = { Text("ملاحظة (اختياري)") },
                         singleLine = true, modifier = Modifier.fillMaxWidth()
                     )
+                    adj.error?.let { message ->
+                        Text(message, color = MaterialTheme.colorScheme.error)
+                    }
                 }
             },
             confirmButton = {

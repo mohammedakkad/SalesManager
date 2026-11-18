@@ -1,0 +1,16 @@
+{
+  "run": "after-targeted3",
+  "productViewModelCases": {
+    "new": 4,
+    "existing": 4,
+    "passed": 8
+  },
+  "productDraftUiCases": {
+    "passed": 4
+  },
+  "newProductErrorUiCase": {
+    "failed": 1,
+    "reason": "Robolectric AppNotIdleException in app-theme dialog; unqualified fixture attempt, not a proven product defect"
+  },
+  "qualification": "Model regressions pass; full source qualification pending."
+}

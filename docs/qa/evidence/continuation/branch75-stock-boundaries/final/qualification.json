@@ -1,0 +1,124 @@
+{
+  "startingSha": "a5c402f564669129aacdc745210c4f6a3075352d",
+  "productionTestSourceFingerprint": "090655e3c07075f1df43a503582170d15ee47f4f1b2e1e9aaacd77a714d94cb1",
+  "qualification": "LOCAL PASS; fresh hosted runtime pending",
+  "jvmCases": 1056,
+  "moduleCounts": {
+    "app": 267,
+    "salesmanager": 789
+  },
+  "newJvmCases": 36,
+  "preservedStartingCases": 1020,
+  "pythonCases": 31,
+  "newPythonCases": 6,
+  "newProductRegressionIdentities": 13,
+  "androidCasesRequired": 14,
+  "pdfBoxCasesRequired": 5,
+  "androidRuntime": "NOT EXECUTED locally",
+  "coverage": {
+    "qaCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1929,
+          "total": 3169
+        },
+        "LINE": {
+          "covered": 8353,
+          "total": 10408
+        },
+        "METHOD": {
+          "covered": 1858,
+          "total": 2515
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 9547,
+          "total": 14816
+        },
+        "LINE": {
+          "covered": 15479,
+          "total": 17982
+        },
+        "METHOD": {
+          "covered": 2702,
+          "total": 3225
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23832,
+          "total": 28390
+        },
+        "METHOD": {
+          "covered": 4560,
+          "total": 5740
+        },
+        "BRANCH": {
+          "covered": 11476,
+          "total": 17985
+        }
+      }
+    },
+    "qaAllJvmCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 2036,
+          "total": 3169
+        },
+        "LINE": {
+          "covered": 8679,
+          "total": 10408
+        },
+        "METHOD": {
+          "covered": 1990,
+          "total": 2515
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 9547,
+          "total": 14816
+        },
+        "LINE": {
+          "covered": 15479,
+          "total": 17982
+        },
+        "METHOD": {
+          "covered": 2702,
+          "total": 3225
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 24158,
+          "total": 28390
+        },
+        "METHOD": {
+          "covered": 4692,
+          "total": 5740
+        },
+        "BRANCH": {
+          "covered": 11583,
+          "total": 17985
+        }
+      }
+    }
+  },
+  "jvmReportTool": "0.8.12",
+  "jvmAgent": "0.8.14",
+  "androidInstrumenter": "0.8.14",
+  "branch75Goal": "NOT ACHIEVED",
+  "line95PriorGoal": "NOT ACHIEVED",
+  "release": "FAIL",
+  "remainingPlan": {
+    "total": 56,
+    "NOT TESTED": 22,
+    "BLOCKED": 32,
+    "PARTIAL": 2
+  },
+  "rawProductionClasses": 2336,
+  "coverageModeIdentity": "PASS normal/covered/normal,0 changed original classes",
+  "probeCompatibility": "PASS0.8.12/0.8.14 identical after only runtime package normalization",
+  "coverageEnabledApkAssembly": "PASS main+AndroidTest, NOT runtime"
+}

@@ -27,6 +27,12 @@ import com.trader.core.data.local.entity.CustomerEntity
 import java.security.MessageDigest
 import com.trader.core.data.repository.InventoryRepositoryImpl
 import com.trader.core.domain.model.InventorySession
+import com.trader.core.domain.model.Product
+import com.trader.core.domain.model.ProductUnit
+import com.trader.core.domain.model.ProductWithUnits
+import com.trader.core.domain.model.MovementType
+import com.trader.salesmanager.ui.inventory.detail.*
+import kotlinx.coroutines.flow.flowOf
 import com.trader.core.domain.model.InventorySessionItem
 import com.trader.core.domain.repository.ProductRepository
 import com.trader.core.domain.repository.StockRepository
@@ -109,6 +115,13 @@ class ThemedDialogJourneyTest {
         dark(false)
         fields.assertCountEquals(0)
         compose.runOnIdle{assertFalse(vm.uiState.value.showExportPasswordDialog);assertFalse(vm.uiState.value.isExporting)}
+        compose.onNodeWithText(context.getString(R.string.backup_export_title)).performScrollTo().performClick()
+        fields.assertCountEquals(2)
+        for(index in 0..1){
+            fields[index].assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText,androidx.compose.ui.text.AnnotatedString("")))
+        }
+        compose.onNodeWithText(context.getString(R.string.backup_export_confirm)).assertIsNotEnabled()
+        compose.onNodeWithText(context.getString(R.string.backup_cancel)).performClick()
         assertEquals(originalFiles.filter{it.startsWith("sales_backup_")}.toSet(),context.cacheDir.listFiles()?.map{it.name}?.filter{it.startsWith("sales_backup_")}?.toSet().orEmpty())
     }
     @Test fun inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom()=runBlocking {
@@ -191,6 +204,73 @@ class ThemedDialogJourneyTest {
         println("ACTUAL_ANDROID_ENCRYPTED_BACKUP bytes=${bytes.size} sha256=$digest customerId=7")
         context.cacheDir.listFiles()?.filter{it.name.startsWith("sales_backup_")&&it.name !in existing}?.forEach{assertTrue(it.delete())}
         Unit
+    }
+    @Test fun encryptedImportPasswordSurvivesThemeAndUnlocksWithoutReplacingRoom()=runBlocking {
+        val archived=CustomerEntity(id=7,name="أرشيف للاستعادة",phone="0500000000",createdAt=123)
+        db.customerDao().insertCustomer(archived)
+        val manager=BackupManager(context,db,"offline-dialog")
+        val password="سر الاستعادة الأصلي"
+        val file=manager.exportEncryptedBackup(password.toCharArray())
+        try {
+            val bytes=file.readBytes()
+            val current=archived.copy(name="بيانات حالية محفوظة")
+            db.customerDao().updateCustomer(current)
+            val vm=BackupViewModel(manager,context);store.put("backup",vm)
+            show{BackupScreen({},viewModel=vm)}
+            // The picker/URI permission path is separate; these are real archive bytes.
+            compose.runOnIdle{vm.onImportBytes(bytes)}
+            compose.waitUntil(5000){vm.uiState.value.showImportPasswordDialog}
+            val field=compose.onNode(hasSetTextAction() and hasAnyAncestor(isDialog()))
+            field.performTextReplacement(password)
+            dark(true)
+            context.appDataStore.edit{it[LAST_BACKUP_AT_KEY]=1700000000000}
+            dark(false)
+            field.assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Password))
+            assertEquals(password.length,field.fetchSemanticsNode().config[SemanticsProperties.EditableText].text.length)
+            assertEquals(current,db.customerDao().getCustomerById(7))
+            compose.onNodeWithText(context.getString(R.string.backup_import_unlock)).performClick()
+            compose.waitUntil(30000){vm.uiState.value.showImportConfirmDialog}
+            compose.runOnIdle{assertEquals(archived,vm.uiState.value.pendingImport!!.customers.single{it.id==7L});assertFalse(vm.uiState.value.isImporting)}
+            assertEquals(current,db.customerDao().getCustomerById(7))
+            compose.onNodeWithText(context.getString(R.string.backup_confirm_no)).performClick()
+            compose.runOnIdle{assertNull(vm.uiState.value.pendingImport);assertFalse(vm.uiState.value.showImportConfirmDialog)}
+            assertEquals(current,db.customerDao().getCustomerById(7))
+        } finally {assertTrue(file.delete())}
+        Unit
+    }
+    @Test fun failedStockAdjustmentRetainsDraftAndExplicitRetryUsesTheEditedQuantity() {
+        val unit=ProductUnit("u","p",unitLabel="كيس استعادة",quantityInStock=10.0)
+        val product=ProductWithUnits(Product("p",name="صنف استعادة"),listOf(unit))
+        val products=object:ProductRepository by unused(ProductRepository::class.java){
+            override fun getAllProducts()=flowOf(listOf(product))
+        }
+        val requests=mutableListOf<Pair<Double,String>>()
+        val stock=object:StockRepository by unused(StockRepository::class.java){
+            override fun getMovementsForProduct(productId:String,unitId:String)=flowOf(emptyList<com.trader.core.domain.model.StockMovement>())
+            override suspend fun manualAdjust(productId:String,unitId:String,quantity:Double,type:MovementType,productName:String,unitLabel:String,note:String){
+                assertEquals("p",productId);assertEquals("u",unitId);assertEquals(MovementType.MANUAL_IN,type)
+                requests.add(quantity to note)
+                if(requests.size==1)throw java.io.IOException("offline fixture write fault")
+            }
+        }
+        val vm=ProductDetailViewModel(products,stock,"p");store.put("detail",vm)
+        show{ProductDetailScreen("p",{},{},vm)}
+        compose.waitUntil(5000){!vm.uiState.value.isLoading}
+        compose.runOnIdle{vm.showAdjust(unit,true)}
+        compose.onNode(hasSetTextAction() and hasText("الكمية")).performTextReplacement("2.5")
+        compose.onNode(hasSetTextAction() and hasText("ملاحظة (اختياري)")).performTextReplacement("جرد محفوظ")
+        compose.onNodeWithText("تطبيق").performClick()
+        compose.onNodeWithText("تعذر تعديل المخزون. حاول مرة أخرى.").assertExists()
+        dark(true);dark(false)
+        compose.onNodeWithText("تطبيق").assertIsEnabled()
+        compose.onNode(hasSetTextAction() and hasText("الكمية")).assertTextContains("2.5")
+        assertEquals(listOf(2.5 to "جرد محفوظ"),requests)
+        compose.onNode(hasSetTextAction() and hasText("الكمية")).performTextReplacement("3.5")
+        compose.onNodeWithText("تعذر تعديل المخزون. حاول مرة أخرى.").assertDoesNotExist()
+        compose.onNodeWithText("تطبيق").performClick()
+        compose.onNode(isDialog()).assertDoesNotExist()
+        assertEquals(listOf(2.5 to "جرد محفوظ",3.5 to "جرد محفوظ"),requests)
+        compose.runOnIdle{assertFalse(vm.uiState.value.isSaving)}
     }
     @Test fun actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext() {
         val output=java.io.ByteArrayOutputStream()

@@ -5,9 +5,20 @@ set -e
 mkdir -p /tmp/seller-qa-pdf
 qa_stage="initialization"
 qa_api_suffix=""
+qa_logcat_pid=""
+stop_device_logcat() {
+  if [[ -n "$qa_logcat_pid" ]]; then
+    kill "$qa_logcat_pid" 2>/dev/null || true
+    wait "$qa_logcat_pid" 2>/dev/null || true
+    qa_logcat_pid=""
+  fi
+}
 finish_device_qa() {
   result=$?
-  adb logcat -d -s SellerQaPdf:I > /tmp/seller-qa-pdf/device-paths.log || true
+  stop_device_logcat
+  # Also retain the final buffer for diagnostics; continuous capture preserves
+  # early invoice notices even when that buffer no longer contains them.
+  adb logcat -d -s SellerQaPdf:I >> /tmp/seller-qa-pdf/device-paths.log || true
   if [[ "$result" -ne 0 ]]; then
     adb logcat -b crash -d > /tmp/seller-qa-pdf/device-crash.log || true
     adb logcat -d -s PackageManager:I PackageInstaller:I installd:V > /tmp/seller-qa-pdf/device-installer.log || true
@@ -59,7 +70,10 @@ for path in Path('salesmanager/build/outputs/code_coverage').rglob('*.ec'):
     path.unlink()
 PYEC
 qa_stage="Android instrumentation"
+adb logcat -v threadtime -s SellerQaPdf:I > /tmp/seller-qa-pdf/device-paths.log &
+qa_logcat_pid=$!
 gradle -PsellerQaDeviceCoverage=true --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :salesmanager:connectedDebugAndroidTest --stacktrace 2>&1 | tee /tmp/seller-qa-instrumentation.log
+stop_device_logcat
 qa_stage="instrumentation XML validation"
 python3 scripts/check-device-qa-results.py
 qa_stage="PDF extraction"
@@ -69,6 +83,8 @@ test -s /tmp/seller-qa-pdf/invoice-long.pdf
 test -s /tmp/seller-qa-pdf/customer-statement.pdf
 test -s /tmp/seller-qa-pdf/monthly-report.pdf
 test -s /tmp/seller-qa-pdf/invoice-return-viewmodel.pdf
+qa_stage="PDF path/hash provenance validation"
+python3 scripts/check-device-pdf-provenance.py
 qa_stage="PDFBox content verification"
 gradle -p qa/pdf-verifier --no-daemon -PpdfFixtureDir=/tmp/seller-qa-pdf test
 python3 scripts/summarize-device-tests.py --check

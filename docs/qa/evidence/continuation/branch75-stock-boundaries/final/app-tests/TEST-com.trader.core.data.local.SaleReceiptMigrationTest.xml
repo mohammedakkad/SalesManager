@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.SaleReceiptMigrationTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:14:13" hostname="ac8333d6728a" time="0.63">
+  <properties/>
+  <testcase name="injectedMigrationFailureRollsBackSchemaAndData" classname="com.trader.core.data.local.SaleReceiptMigrationTest" time="0.571"/>
+  <testcase name="migrationPreservesAllFinancialRowsAndValidatesRoomSchema" classname="com.trader.core.data.local.SaleReceiptMigrationTest" time="0.059"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

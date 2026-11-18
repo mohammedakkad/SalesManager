@@ -1,0 +1,6 @@
+{
+  "result": "PASS normal-to-covered-to-normal",
+  "rawProductionClasses": 2336,
+  "changedClassFiles": 0,
+  "scope": "Original production class SHA256 values; not rewritten instrumentation, not Android runtime."
+}

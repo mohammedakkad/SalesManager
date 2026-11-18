@@ -1,3 +1,11 @@
+> Hosted qualification for `a5c402f564669129aacdc745210c4f6a3075352d`: [44288339259](https://github.com/mohammedakkad/SalesManager/actions/runs/44288339259) SUCCESS, seller and API24/28/33/35. Each device lane has17 actual Android/PDFBox PASS identities (12+5). API28/33/35 expose all5 PDF path/hash notices; API24 exposes only2 despite all5 PDFBox content cases passing. That metadata gap remains explicit; no missing paths/hashes are invented. Raw API28 archive transfer is blocked by proxy CONNECT403 at productionresultssa5.blob.core.windows.net. Both signed release jobs SKIPPED with0 steps.1020 JVM +25 Python +17 device/PDF identities =1062 distinct source-specific cases; repeated lanes are not new distinct cases. Release FAIL.
+
+|API28 reference scope|Line|Method|Branch|More branches for75%|
+|---|---:|---:|---:|---:|
+|Seller Android+JVM|16487/17971 = 91.7423%|2772/3224 = 85.9801%|9769/14812 = 65.9533%|1340|
+|Historical weighted Android+JVM|24794/28359 = 87.4290%|4651/5747 = 80.9292%|11615/17941 = 64.7400%|1841|
+|Additional weighted Android+both JVM|25072/28359 = 88.4093%|4763/5747 = 82.8780%|11717/17941 = 65.3085%|1739|
+
 # Invoice accessibility and coverage build compatibility
 
 Starting source `db96831d1b53cb3f8e18c1769422c0835a39e06c`; same branch and Draft PR51/base production. Qualified source fingerprint `f66c80b4640276e46ce21b66c933e96fc56507010e00fa42784eff267cd49fe5` ([manifest](evidence/continuation/branch75-invoice-access/final/source-manifest.json)). **Branch75 and prior Line95 NOT ACHIEVED; Release FAIL.**
@@ -18,7 +26,7 @@ Android/JVM instrumenters now use0.8.14; the report reader is independently pinn
 
 Canonical clean validation passed in13m8s: both full JVM suites, all four reports, lint, Debug, AndroidTest and minified unsigned Release (mapping upload excluded). Lint0 errors/27 warnings; debug and test signatures verify; unsigned Release is rejected as expected. Coverage-enabled main AND AndroidTest APK assembly also passes; assembly alone is not device execution. Every one of2340 raw production class SHA256 values is identical normal→covered→normal. Instrumenting these actual classes with0.8.12 and0.8.14 produces identical probe layouts after normalizing only the injected seven-character runtime package. No EC or APK was rewritten. Evidence is under [final](evidence/continuation/branch75-invoice-access/final) and [tooling](evidence/continuation/branch75-invoice-access/tooling).
 
-Required fresh CI:12 Android +5 PDFBox cases on each API24/28/33/35, with five actual Android-generated PDF files and source-specific combined coverage using API28 reference. Pending for this new source. The two signed workflows must remain skipped with zero steps. No local Android runtime is available. Offline Firebase fixture is restored before commit; no production Firebase or signing material is used.
+Required runtime:12 Android +5 PDFBox cases on each API24/28/33/35 completed for a5c402f as recorded above; API24 path notices remain incomplete. API28 supplies the source-specific combined reference. Both signed workflows are verified skipped with zero steps. No local Android runtime is available. Offline Firebase fixture is restored before commit; no production Firebase or signing material is used.
 
 Initial before-test readiness timeouts and an incorrect new amount-field assumption were fixture mistakes, not product defects; exact diagnostics remain preserved. The final five before failures use the same source and corrected readiness as the passing tests. All999 qualified starting cases remain.
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:16:36" hostname="ac8333d6728a" time="0.732">
+  <properties/>
+  <testcase name="editCancelClearsTheBannerWhenTheModelLeavesEditingMode" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.099"/>
+  <testcase name="foreignMultiSelectionCopiesThroughTheActualClipboardAndClosesSelection" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.08"/>
+  <testcase name="ownSingleSelectionOffersEditAndDelegatesTheSelectedAction" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.08"/>
+  <testcase name="mixedSelectionBubblesDelegateTheirOwnIdentitiesOnTap" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.07"/>
+  <testcase name="emptyPromptWaitsUntilHistoryLoadingFinishes" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.047"/>
+  <testcase name="normalBackNavigatesAndSelectionBackCancelsSelection" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.101"/>
+  <testcase name="deletedSelectionExposesNeitherCopyNorEditAndHidesOriginalText" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.095"/>
+  <testcase name="locallyDeletedAndQueuedServerEchoesDoNotRevealDuplicateContent" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.068"/>
+  <testcase name="failedControlsAppearOnlyAfterPendingMessageFailure" classname="com.trader.salesmanager.ui.coverage.ChatSelectionBoundaryUiTest" time="0.085"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

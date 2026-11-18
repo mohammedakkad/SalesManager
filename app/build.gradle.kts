@@ -33,6 +33,7 @@ dependencies {
     testImplementation(libs.test.coroutines)
     testImplementation(libs.test.robolectric)
     testImplementation(libs.test.androidx.core)
+    testImplementation(libs.test.workmanager)
     api(libs.androidx.core.ktx)
     api(libs.androidx.lifecycle.runtime)
     api(libs.androidx.lifecycle.viewmodel)

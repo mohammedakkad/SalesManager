@@ -1,0 +1,39 @@
+# Stock failures, activation status and adjustment recovery
+
+Starting source `a5c402f564669129aacdc745210c4f6a3075352d`, same branch and Draft PR51/base production. Qualified production/test/build/QA source fingerprint `090655e3c07075f1df43a503582170d15ee47f4f1b2e1e9aaacd77a714d94cb1` ([manifest](evidence/continuation/branch75-stock-boundaries/final/source-manifest.json)). **Branch75 and previous Line95 NOT ACHIEVED; Release FAIL.** New-source hosted runtime remains pending; preceding Android results belong to a5c402f, not this source.
+
+**1056 JVM PASS (app267/Seller789), zero failures/errors/skips; all1020 previous identities preserved.**36 new cases:8 real Room stock failure/input/session cases,5 real Room standalone upload cases,9 WorkManager status/notification cases,6 activation listener/startup lifecycle contracts,4 product-draft Compose refreshes and4 manual-adjustment view-model recovery cases.31 Python guards PASS, including6 new provenance guards.13 final product regression identities failed before repair and pass afterward; these are not13 independent defects.
+
+## Behavior and boundaries
+
+Seller supplies AppDatabase to StockRepositoryImpl. Quantity read/modify and movement insert now share a local Room transaction, including standalone manual adjustments; caller transactions nest and still suppress the standalone upload launch. A real SQLite trigger proves that a failed movement insert rolls back the preceding quantity update. Finite delta/current/result checks reject Infinity and finite overflow before either write. The existing finite arithmetic and zero clamp are preserved. This is documented local stock validation/atomicity, not a new reservation or financial reconciliation policy. Legacy construction without a database retains its old boundary; no Admin wiring/business change.
+
+Pending and standalone movement/quantity uploads propagate CancellationException. Cancelled movement delivery preserves PENDING and stops the next quantity upload; an already-acknowledged movement remains SYNCED if quantity upload is cancelled. Ordinary failure/retry and independent quantity fallback retain their existing behavior. The constructor accepts a coroutine owner (production default unchanged); tests join the actual launched job using that public lifecycle seam and real Room, without private-member access or compiler/probe flags. Network work in the successful standalone test observes both local writes committed and no active Room transaction. No exactly-once/server fence claim.
+
+StatusCheckWorker reads activation/code from one preference snapshot, then compares active/code again inside DataStore's atomic edit before clearing a blocked account. A late old-account response cannot clear a different current merchant or post a false notification after the tested logout. ACTIVE/unknown/offline, disabled/expired/deleted, legacy API24 notification and cancellation contracts are tested through WorkManager's builder and offline SDK substitutes. These are JVM/Robolectric cases, not actual device status-worker qualification. This comparison is not an activation revision/ABA or global server-authorization protocol.
+
+ProductDetailViewModel reserves manual adjustment before launching its coroutine, preventing two queued submissions. Cancellation and ordinary failures release its busy state; failed drafts stay editable, ordinary errors expose a static Arabic retry message, and explicit retry uses the new quantity/note. No financial formula, schema25 or versioned Outbox protocol changes. Four product Compose cases retain carton fields/margin, loaded identity/default-unit deletion and a pending-save gate across live/theme changes.
+
+## Current measured coverage
+
+|Scope|Line|Method|Branch|More branches for75%|
+|---|---:|---:|---:|---:|
+|Seller JVM|15479/17982 = 86.0805%|2702/3225 = 83.7829%|9547/14816 = 64.4371%|1565|
+|Historical weighted module JVM|23832/28390 = 83.9451%|4560/5740 = 79.4425%|11476/17985 = 63.8087%|2013|
+|Additional weighted both JVM|24158/28390 = 85.0933%|4692/5740 = 81.7422%|11583/17985 = 64.4037%|1906|
+
+The historical scope uses each module's own JVM EC; the additional scope unions both JVM suites. Weighted counters sum numerators/denominators. No old Android EC is merged. Actual compiled branches are3169 app (+40) and14816 Seller (+4). The coherent single preference read removes old mapped-flow adapters, so method population also changes; all actual generated classes/branches are retained, with the report reader still0.8.12 and all gates unchanged.
+
+The latest clean Seller count is3 below a5c402f despite new coverage: unchanged BoxesScreen contributes an11-branch runtime variation, while product paths add8. All47 original Boxes class SHA256 values match the previous canonical compilation. The probe-variation cause remains unresolved; no historical maximum was selected and no EC was substituted. Class deltas are recorded in [counter analysis](evidence/continuation/branch75-stock-boundaries/final/counter-change-analysis.json).
+
+Canonical clean full validation passed in12m54s: both JVM suites/all four reports/lint/Debug/AndroidTest/minified unsigned Release, mapping upload excluded. Lint0 errors/27 warnings. Debug/test signatures PASS; unsigned Release rejection is expected. Coverage-enabled main/test APK assembly passes; production class SHA256 identities remain stable normal→covered→normal, with matching0.8.12/0.8.14 probe layouts after runtime-package normalization only. Assembly is not Android runtime. Tooling evidence records the exact class count and APK digests.
+
+## Runtime and evidence requirements
+
+Required fresh CI:14 Android +5 PDFBox cases on each API24/28/33/35, five actual device-generated PDFs with source/export paths and hashes, and source-specific combined coverage using API28 reference. Two new Android cases exercise real encrypted archive import-password/theme/unlock/cancel without replacing Room, and the stock error/retry dialog with a deterministic repository fault. The existing export-cancel case additionally verifies an empty sensitive draft when reopened. No host stand-in PDFs.
+
+Exploratory new JVM app-theme dialogs failed at Robolectric measure/layout idling; native graphics and opening after screen entrance did not resolve that limitation. A plain MaterialTheme stock dialog also failed. Exact diagnostics and unqualified drafts remain preserved; none is counted as a passing JVM case or a new proven product bug. The unique paths were moved to real Android; all1020 previously qualified JVM cases remain. No idling/timeout policy was relaxed.
+
+The preceding [a5c402f run44288339259](https://github.com/mohammedakkad/SalesManager/actions/runs/44288339259) SUCCESS: seller/all four APIs,17 runtime/PDF identities per lane. API28/33/35 expose5 path/hash notices; API24 exposes2 despite all5 PDFBox content checks passing. The new runner continuously captures the PDF log tag and rejects missing/conflicting provenance or a mismatch between device hashes and actual pulled bytes before PDFBox. Six new Python fixtures use ordinary binary metadata payloads, not stand-in PDFs. Raw API28 archive download remains blocked by proxy CONNECT403; no raw-byte verification is claimed. Both signed workflows were skipped with0 steps for a5c402f; new-source guards remain to be checked.
+
+Seven authentic Room migrations PASS;1–21 remain BLOCKED without authentic fixtures. The56 defined remaining plan items stay22 NOT TESTED/32 BLOCKED/2 PARTIAL. New lifecycle cases do not implement user-visible exhausted-listener retry or complete remote numeric quarantine. Server permissions/fencing, cross-store reconciliation, legacy ownership, signed-update authenticity and security/performance/device qualification remain blockers. **Release FAIL.**
