@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.TransactionSyncTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:02:20" hostname="ac8333d6728a" time="1.137">
+  <properties/>
+  <testcase name="interruptedUploadPropagatesCancellationWithoutFalseFailureAck" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.941"/>
+  <testcase name="deletingPartiallyReturnedSaleRestoresOnlyRemainingUnitsAndCash" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.032"/>
+  <testcase name="reconnectRetriesFailedAndPendingButNeverConflicts" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.027"/>
+  <testcase name="failedFirstUploadDoesNotPreventLaterPendingUpload" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.018"/>
+  <testcase name="transactionListenerStopsOnLogout" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.03"/>
+  <testcase name="remoteAbsenceMustNotDeleteUnsyncedSales" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.081"/>
+  <testcase name="deletingFullyReturnedSaleDoesNotRestoreStockAgain" classname="com.trader.core.data.repository.TransactionSyncTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

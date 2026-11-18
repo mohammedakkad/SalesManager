@@ -53,6 +53,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,6 +75,9 @@ import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.trader.core.data.local.appDataStore
 import com.trader.core.domain.repository.LowStockAlertSettings
 import com.trader.core.domain.repository.LowStockSettingsRepository
@@ -140,7 +144,19 @@ fun SettingsScreen(
     }
 
     val updateState by updateViewModel.uiState.collectAsStateWithLifecycle()
-    val canInstall = AppUpdateDownloader.canInstallUnknownApps(context)
+    var canInstall by remember(context) {
+        mutableStateOf(AppUpdateDownloader.canInstallUnknownApps(context))
+    }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner, context) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                canInstall = AppUpdateDownloader.canInstallUnknownApps(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     if (showStoreNameDialog) {
         StoreNameDialog(

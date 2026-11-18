@@ -1,7 +1,7 @@
 {
   "startingSha": "d8a7d3e2bcd0397d8d8588f5a7a35f9331b677f1",
   "productionTestSourceFingerprint": "afe04cbcb5c060d25a5c2b440313b2318316c0f74cc9d257dc97837432ae62cb",
-  "qualification": "LOCAL PASS; fresh hosted runtime pending",
+  "qualification": "LOCAL PASS; published b241995 hosted runtime FAIL",
   "jvmCases": 1074,
   "moduleCounts": {
     "app": 285,
@@ -120,5 +120,15 @@
   "rawProductionClasses": 2337,
   "coverageModeIdentity": "PASS normal/covered/normal,0 changed original classes",
   "probeCompatibility": "PASS0.8.12/0.8.14 identical after only runtime package normalization",
-  "coverageEnabledApkAssembly": "PASS main+AndroidTest, NOT runtime"
+  "coverageEnabledApkAssembly": "PASS main+AndroidTest, NOT runtime",
+  "publishedSource": "b241995f2fd26c085606a8bceea12507d2b87e3a",
+  "hostedRuntime": {
+    "run": 44350521568,
+    "conclusion": "failure",
+    "seller": "success",
+    "api24_28_33": "13 Android PASS/1 FAILURE/5 PDFBox NOT EXECUTED;5 actual PDF path/hash notices each",
+    "api35": "JVM Maven artifact fetch failure before all19 runtime cases",
+    "combinedCoverage": "NOT QUALIFIED",
+    "rawArtifact": "Canonical API28 download proxy CONNECT403; bytes NOT VERIFIED"
+  }
 }

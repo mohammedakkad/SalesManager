@@ -1,0 +1,7 @@
+{
+  "startingSha": "b241995f2fd26c085606a8bceea12507d2b87e3a",
+  "productionFileSha256": "ce09b0fa474573d05664367153ed68ec96b805a787d52fb790925131c483407b",
+  "tests": 2,
+  "failed": 2,
+  "scope": "Public permission adapter confirms grant/revocation changed; ActivityScenario stopped/resumed; actual screen actions stay stale. This is UI permission refresh, not install authenticity/security bypass qualification."
+}

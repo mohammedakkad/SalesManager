@@ -1,11 +1,11 @@
-Numeric strings such as1e309 could become Infinity in downloaded money/quantity fields, overwrite real Room caches and replace/delete refund rows. Validate the complete known financial snapshot before mapping/emission; propagate bulk validation failure past empty-family fallback and terminate invalid listeners with a typed failure. Preserve finite/optional legacy behavior and existing financial formulas/schema25/Outbox protocol. Single-box reads, malformed identities/shapes, persistent quarantine and server rules remain unqualified.
+Returning from Android installation settings could leave Seller showing stale download/install actions after permission was granted or revoked. Refresh the actual system permission when the settings lifecycle resumes and unregister the observer on disposal. Preserve existing install policy and financial/schema/Outbox behavior.
 
-18 new cases, all1056 prior cases retained:1074 JVM PASS,31 Python PASS.16 final regression identities fail by actual assertions on the original production source; the real-SQLite wait fixture was corrected and the full clean qualification repeated. Lint0errors/27warnings; normal/covered APK assembly and minified unsigned Release PASS.
+6 new real UI cases; all1074 prior identities preserved:1080 JVM PASS,31 Python PASS.2 assertion regressions fail on the exact original settings screen and pass after repair. Clean qualification includes four reports, lint0errors/27warnings, normal/covered APK assembly and minified unsigned Release. Debug/test signing checks pass; no production signing materials.
 
 |Scope|Line|Method|Branch|More branches for75%|
 |---|---:|---:|---:|---:|
-|Seller JVM|15479/17982 = 86.0805%|2702/3225 = 83.7829%|9547/14816 = 64.4371%|1565|
-|Historical weighted module JVM|23897/28452 = 83.9906%|4570/5745 = 79.5474%|11506/18015 = 63.8690%|2006|
-|Additional weighted both JVM|24223/28452 = 85.1364%|4702/5745 = 81.8451%|11613/18015 = 64.4629%|1899|
+|Seller JVM|15534/17994 = 86.3288%|2717/3231 = 84.0916%|9610/14818 = 64.8536%|1504|
+|Historical weighted module JVM|23952/28464 = 84.1484%|4585/5751 = 79.7253%|11569/18017 = 64.2116%|1944|
+|Additional weighted both JVM|24278/28464 = 85.2937%|4717/5751 = 82.0205%|11676/18017 = 64.8055%|1837|
 
-Fresh14 Android+5 PDFBox cases per API24/28/33/35 pending. Previous d8a7d3e run44337453411 passed seller but failed extended dialog reopening on3APIs and native JVM drawing beforeAPI33 devices. Keep all assertions; wait for actual reopen readiness and expose actual JVM XML stack heads for diagnosis. No old EC or host stand-in PDFs; source classes/probe layouts verified.7 authentic migrations PASS;1–21 BLOCKED;56 defined plan items remain. Branch75/prior Line95 NOT ACHIEVED; Release FAIL. Evidence: docs/qa/branch75-remote-numerics-progress.md.
+The prior b241995 CI44350521568 failed: API24/28/33 reused cached Compose IDs across reopened dialogs; API35 failed fetching a Robolectric dependency before devices. Query fresh dialog nodes per readiness poll and after reopen, retaining all assertions and the5-second budget. Fresh14 Android+5 PDFBox cases per API24/28/33/35 pending. No old EC or host substitute PDFs. Report reader0.8.12 and instrumenters0.8.14, class/probe identities and existing gates retained.7 authentic migrations PASS;1–21 BLOCKED. Branch75/prior Line95 NOT ACHIEVED; Release FAIL. Evidence: docs/qa/branch75-update-permission-progress.md.

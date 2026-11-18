@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:05:36" hostname="ac8333d6728a" time="2.053">
+  <properties/>
+  <testcase name="downloadProgressRemainsBusyAcrossThemeAndOnlyReadyStateOffersInstallation" classname="com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest" time="0.382"/>
+  <testcase name="aPendingCheckBlocksRepeatedClicksAndItsErrorCanBeRetriedExplicitly" classname="com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest" time="0.366"/>
+  <testcase name="revokingUnknownAppsPermissionOutsideTheActivityRemovesTheInstallActionOnResume" classname="com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest" time="0.315"/>
+  <testcase name="deniedUnknownAppsPermissionOffersSettingsWithoutDownloadingOrInstalling" classname="com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest" time="0.324"/>
+  <testcase name="grantingUnknownAppsPermissionOutsideTheActivityRefreshesActionsOnResume" classname="com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest" time="0.314"/>
+  <testcase name="aRefreshedCandidateReplacesTheVisibleVersionWithoutStartingADownload" classname="com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest" time="0.351"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
