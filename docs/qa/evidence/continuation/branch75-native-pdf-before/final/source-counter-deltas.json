@@ -1,0 +1,66 @@
+[
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/sales/outbox/OutboxDispatcher.kt",
+    "before": {
+      "BRANCH": {
+        "covered": 73,
+        "total": 92
+      },
+      "LINE": {
+        "covered": 95,
+        "total": 96
+      },
+      "METHOD": {
+        "covered": 20,
+        "total": 21
+      }
+    },
+    "after": {
+      "BRANCH": {
+        "covered": 73,
+        "total": 92
+      },
+      "LINE": {
+        "covered": 96,
+        "total": 96
+      },
+      "METHOD": {
+        "covered": 20,
+        "total": 21
+      }
+    }
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/boxes/BoxesScreen.kt",
+    "before": {
+      "BRANCH": {
+        "covered": 344,
+        "total": 529
+      },
+      "LINE": {
+        "covered": 502,
+        "total": 507
+      },
+      "METHOD": {
+        "covered": 74,
+        "total": 78
+      }
+    },
+    "after": {
+      "BRANCH": {
+        "covered": 333,
+        "total": 529
+      },
+      "LINE": {
+        "covered": 502,
+        "total": 507
+      },
+      "METHOD": {
+        "covered": 74,
+        "total": 78
+      }
+    }
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+    "sha256": "3c1931d8259913ca401a215bebf216e0c73886763da28f2a4f651d20621bb72b",
+    "bytes": 66044823,
+    "agent14RuntimePrefixPresent": true
+  },
+  {
+    "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+    "sha256": "e299c26eda48ca3c5dc20730392d1537e3aae4855e1b0337072e2fe469a9d6cc",
+    "bytes": 1075853,
+    "agent14RuntimePrefixPresent": false
+  }
+]

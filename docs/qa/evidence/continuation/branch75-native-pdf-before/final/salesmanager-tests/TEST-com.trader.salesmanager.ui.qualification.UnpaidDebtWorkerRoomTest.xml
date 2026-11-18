@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:26:04" hostname="ac8333d6728a" time="1.857">
+  <properties/>
+  <testcase name="paidAndRecentTransactionsDoNotProduceDebtNotifications" classname="com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest" time="0.867"/>
+  <testcase name="overdueInvoicesAreGroupedByCustomerWithCorrectTotalAndNavigation" classname="com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest" time="0.516"/>
+  <testcase name="repeatExecutionUpdatesExistingNotificationsWithoutChangingDebt" classname="com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest" time="0.474"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

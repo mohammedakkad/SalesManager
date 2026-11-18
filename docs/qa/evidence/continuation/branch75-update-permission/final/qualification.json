@@ -1,7 +1,7 @@
 {
   "startingSha": "b241995f2fd26c085606a8bceea12507d2b87e3a",
   "productionTestSourceFingerprint": "55495697f2d5fe720eb96df2a17dd596f18c9905b2825e701e08cb509c4e5b89",
-  "qualification": "LOCAL PASS; fresh hosted runtime pending",
+  "qualification": "LOCAL PASS; HOSTED seller and all4API lanes PASS from source-specific XML/counter/provenance annotations; local raw archive verification blocked",
   "jvmCases": 1080,
   "moduleCounts": {
     "app": 285,
@@ -120,5 +120,87 @@
   "rawProductionClasses": 2338,
   "coverageModeIdentity": "PASS normal/covered/normal,0 changed original classes",
   "probeCompatibility": "PASS0.8.12/0.8.14 identical after only runtime package normalization",
-  "coverageEnabledApkAssembly": "PASS main+AndroidTest, NOT runtime"
+  "coverageEnabledApkAssembly": "PASS main+AndroidTest, NOT runtime",
+  "publishedSource": "4cee8203736132816bfa2b38f59b330d9bdbbcc8",
+  "hostedRuntime": {
+    "run": 44356823025,
+    "url": "https://github.com/mohammedakkad/SalesManager/actions/runs/44356823025",
+    "conclusion": "success",
+    "seller": "success",
+    "api24_28_33_35": "Each14Android+5PDFBox PASS with5actual path/SHA256 notices and successful pulled-byte provenance guard",
+    "independentCases": 1130,
+    "caseScopes": {
+      "jvm": 1080,
+      "python": 31,
+      "android": 14,
+      "pdfBox": 5
+    },
+    "api28ReferenceCounters": {
+      "Seller API28 Android + JVM": {
+        "LINE": {
+          "covered": 16554,
+          "total": 17994
+        },
+        "METHOD": {
+          "covered": 2789,
+          "total": 3231
+        },
+        "BRANCH": {
+          "covered": 9854,
+          "total": 14818
+        }
+      },
+      "Historical weighted API28 Android + own module JVM": {
+        "LINE": {
+          "covered": 25048,
+          "total": 28464
+        },
+        "METHOD": {
+          "covered": 4701,
+          "total": 5751
+        },
+        "BRANCH": {
+          "covered": 11824,
+          "total": 18017
+        }
+      },
+      "Additional weighted API28 Android + both JVM suites": {
+        "LINE": {
+          "covered": 25319,
+          "total": 28464
+        },
+        "METHOD": {
+          "covered": 4811,
+          "total": 5751
+        },
+        "BRANCH": {
+          "covered": 11926,
+          "total": 18017
+        }
+      }
+    },
+    "rawArchive": {
+      "artifact": "seller-compose-results-api-28",
+      "id": 14452273902,
+      "source": "4cee8203736132816bfa2b38f59b330d9bdbbcc8",
+      "redirectHost": "productionresultssa14.blob.core.windows.net",
+      "status": "BLOCKED",
+      "error": "Tunnel connection failed: 403 Forbidden",
+      "rawBytesVerified": false
+    },
+    "signedWorkflowGuards": [
+      {
+        "id": 44356803125,
+        "name": "Build Admin Release APK",
+        "conclusion": "skipped",
+        "steps": 0
+      },
+      {
+        "id": 44356803303,
+        "name": "Build SalesManager Release APK",
+        "conclusion": "skipped",
+        "steps": 0
+      }
+    ]
+  }
 }

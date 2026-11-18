@@ -8,12 +8,12 @@ Debug JVM tests only. Not device/instrumentation or minified release coverage. C
 | app | LINE | 8418 | 2052 | 80.4011% |
 | app | METHOD | 1868 | 652 | 74.1270% |
 | app | CLASS | 600 | 183 | 76.6284% |
-| salesmanager | BRANCH | 9610 | 5208 | 64.8536% |
-| salesmanager | LINE | 15534 | 2460 | 86.3288% |
+| salesmanager | BRANCH | 9599 | 5219 | 64.7793% |
+| salesmanager | LINE | 15535 | 2459 | 86.3343% |
 | salesmanager | METHOD | 2717 | 514 | 84.0916% |
 | salesmanager | CLASS | 1184 | 98 | 92.3557% |
-| weighted overall | BRANCH | 11569 | 6448 | 64.2116% |
-| weighted overall | LINE | 23952 | 4512 | 84.1484% |
+| weighted overall | BRANCH | 11558 | 6459 | 64.1505% |
+| weighted overall | LINE | 23953 | 4511 | 84.1519% |
 | weighted overall | METHOD | 4585 | 1166 | 79.7253% |
 | weighted overall | CLASS | 1784 | 281 | 86.3923% |
 

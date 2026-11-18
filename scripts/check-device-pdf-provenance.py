@@ -6,7 +6,9 @@ from pathlib import Path
 import re
 
 EXPECTED = {'invoice-content.pdf', 'invoice-long.pdf', 'customer-statement.pdf',
-            'monthly-report.pdf', 'invoice-return-viewmodel.pdf'}
+            'monthly-report.pdf', 'invoice-return-viewmodel.pdf', 'customer-statement-long.pdf',
+            'invoice-manual-bank.pdf', 'invoice-full-return.pdf', 'invoice-fractional-logo.pdf',
+            'monthly-report-empty.pdf'}
 PACKAGE = 'com.trader.salesmanager.debug'
 
 
@@ -36,4 +38,4 @@ if __name__ == '__main__':
     directory = Path('/tmp/seller-qa-pdf')
     rows = verify_provenance((directory / 'device-paths.log').read_text(), directory)
     (directory / 'verified-device-provenance.json').write_text(json.dumps(rows, indent=2) + '\n')
-    print('PASS: five Android source/export paths match SHA256 of the actual pulled PDFs')
+    print('PASS: ten Android source/export paths match SHA256 of the actual pulled PDFs')

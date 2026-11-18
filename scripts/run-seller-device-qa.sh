@@ -83,6 +83,11 @@ test -s /tmp/seller-qa-pdf/invoice-long.pdf
 test -s /tmp/seller-qa-pdf/customer-statement.pdf
 test -s /tmp/seller-qa-pdf/monthly-report.pdf
 test -s /tmp/seller-qa-pdf/invoice-return-viewmodel.pdf
+test -s /tmp/seller-qa-pdf/customer-statement-long.pdf
+test -s /tmp/seller-qa-pdf/invoice-manual-bank.pdf
+test -s /tmp/seller-qa-pdf/invoice-full-return.pdf
+test -s /tmp/seller-qa-pdf/invoice-fractional-logo.pdf
+test -s /tmp/seller-qa-pdf/monthly-report-empty.pdf
 qa_stage="PDF path/hash provenance validation"
 python3 scripts/check-device-pdf-provenance.py
 qa_stage="PDFBox content verification"

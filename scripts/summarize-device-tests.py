@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 import sys
 import xml.etree.ElementTree as ET
-from device_qa_manifest import INSTRUMENTATION, PDFBOX, failure_details
+from device_qa_manifest import INSTRUMENTATION, PDFBOX, failure_details, annotation_chunks
 
 root = Path(__file__).resolve().parents[1]
 rows = []
@@ -47,12 +47,15 @@ print(summary)
 if '--annotation' in sys.argv and os.environ.get('GITHUB_ACTIONS') == 'true':
     # Public annotations expose actual XML outcomes when authenticated logs/artifacts
     # and job summaries are unavailable; never infer success from compilation.
-    notice = json.dumps([{'test': row['test'], 'result': row['status'], 'detail': row['details'][:300]}
-                         for row in rows], ensure_ascii=False)
-    notice = notice.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-    print('::notice title=Seller actual device and PDFBox XML' + api_suffix + '::' + notice)
-    paths_notice = json.dumps(result['actualDevicePdfPaths'], ensure_ascii=False)
-    print('::notice title=Seller actual Android PDF paths' + api_suffix + '::' + paths_notice.replace('%', '%25'))
+    for title, facts in (
+        ('Seller actual device and PDFBox XML',
+         [{'test': row['test'], 'result': row['status'], 'detail': row['details'][:300]} for row in rows]),
+        ('Seller actual Android PDF paths', result['actualDevicePdfPaths']),
+    ):
+        chunks = annotation_chunks(facts)
+        for index, notice in enumerate(chunks, 1):
+            part = f' part {index}/{len(chunks)}' if len(chunks) > 1 else ''
+            print('::notice title=' + title + api_suffix + part + '::' + notice)
     if os.environ.get('SELLER_QA_EXIT_CODE', '0') != '0':
         for key, location in (
             ('Gradle tail', '/tmp/seller-qa-instrumentation.log'),
