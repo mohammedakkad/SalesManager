@@ -1,0 +1,9 @@
+[
+  {
+    "file": "docs/qa/evidence/continuation/branch75-compat-ui-diagnostics/worker-stack.txt",
+    "originalSha256": "8ab6a2637a3bfbd7283032e9c3402bce7ea6bc318f903650fe2fc580d18e8f61",
+    "rawGzip": "docs/qa/evidence/continuation/branch75-compat-ui-diagnostics/worker-stack.txt.gz",
+    "readableSha256": "e8f1c309546a1feda03c49afb93f771238a1a0ad2d7ffed90306086094d9b313",
+    "transformation": "Strip trailing whitespace/blank EOF only; XML test identities/outcomes preserved"
+  }
+]

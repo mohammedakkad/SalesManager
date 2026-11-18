@@ -1,5 +1,7 @@
 """Named runtime requirements; shared by XML validation and public evidence summaries."""
 INSTRUMENTATION = {
+    ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem'),
+    ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext'),
     ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword'),
     ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport'),
     ('com.trader.salesmanager.qa.ThemedDialogJourneyTest', 'inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom'),

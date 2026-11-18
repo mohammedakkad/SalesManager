@@ -111,3 +111,4 @@ jobs:
             /tmp/seller-qa-combined-counts.json
             /tmp/seller-qa-device-test-summary.json
             /tmp/seller-qa-instrumentation.log
+            /tmp/seller-qa-device-jvm-coverage.log

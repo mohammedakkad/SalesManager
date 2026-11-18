@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupCryptoCompatibilityTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-17T16:44:02" hostname="6d75d821cc71" time="6.934">
+  <properties/>
+  <testcase name="decryptsIndependentAsciiArabicAndEmojiVersionOneReferenceArchivesWithoutPlatformFactory" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoCompatibilityTest" time="4.689"/>
+  <testcase name="encryptsAndInteroperatesWithTheNativeFactoryWhenTheNamedPlatformFactoryIsAbsent" classname="com.trader.salesmanager.ui.settings.backup.BackupCryptoCompatibilityTest" time="2.245"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

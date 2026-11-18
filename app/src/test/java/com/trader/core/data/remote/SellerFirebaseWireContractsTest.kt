@@ -184,4 +184,173 @@ class SellerFirebaseWireContractsTest {
         }
     }
 
+    @Test fun customerSnapshotsRetainSupportedIdsAndSkipMalformedRecordsOnBothReadPaths()=runTest {
+        val rows=linkedMapOf<String,Any>(
+            "explicit" to mapOf("id" to 7L,"name" to "سارة","phone" to true,"createdAt" to "invalid"),
+            "8" to mapOf("id" to false,"name" to "ليلى","createdAt" to 9L),
+            "bad-key" to mapOf("id" to false,"name" to "skip"),
+            "missing-name" to mapOf("id" to 10L),"primitive" to "invalid")
+        reads["$root/customers"]=rows
+        val service=FirebaseSyncService()
+        for(values in listOf(service.fetchAllData("m1").customers,observe(service.observeCustomers("m1"),"$root/customers",rows))){
+            assertEquals(setOf(7L,8L),values.map{it.id}.toSet())
+            assertEquals("",values.single{it.id==7L}.phone);assertTrue(values.single{it.id==7L}.createdAt>0)
+            assertEquals(9L,values.single{it.id==8L}.createdAt)
+        }
+    }
+    @Test fun paymentSchemasPreserveIntegerDecimalAndStringIdsWithDocumentedTypeFallback()=runTest {
+        val rows=linkedMapOf<String,Any>(
+            "a" to mapOf("id" to 1L,"name" to "cash","type" to "CASH"),
+            "b" to mapOf("id" to 2.0,"name" to "bank","type" to "BANK"),
+            "3" to mapOf("id" to "invalid","name" to "fallback","type" to false),
+            "d" to mapOf("id" to "4","name" to "future","type" to "future"),
+            "bad" to mapOf("id" to "invalid","name" to "skip"),"missing" to mapOf("id" to 9L),"primitive" to true)
+        reads["$root/payment_methods"]=rows;val service=FirebaseSyncService()
+        for(values in listOf(service.fetchAllData("m1").paymentMethods,observe(service.observePaymentMethods("m1"),"$root/payment_methods",rows))){
+            assertEquals(setOf(1L,2L,3L,4L),values.map{it.id}.toSet())
+            assertEquals(PaymentType.CASH,values.single{it.id==1L}.type);assertEquals(PaymentType.BANK,values.single{it.id==2L}.type)
+            assertTrue(values.filter{it.id>=3L}.all{it.type==PaymentType.OTHER})
+        }
+    }
+    @Test fun transactionOptionalWireFieldsFallBackWithoutAcceptingMissingRequiredIdentityOrAmount()=runTest {
+        val rows=linkedMapOf<String,Any>(
+            "41" to mapOf("id" to false,"customerId" to 7L,"amount" to 25.0),
+            "42" to mapOf("id" to 42L,"customerId" to "7","amount" to 30L,"originalAmount" to false,"returnStatus" to "future","paymentType" to "future","isPaid" to "true","paymentMethodId" to 2.0,"note" to false,"date" to 400L,"paidAt" to "300","hasItems" to 0L,"dueDate" to 500L,"reminderEnabled" to false),
+            "43" to mapOf("customerId" to 7L),"44" to mapOf("amount" to 9.0),
+            "bad-key" to mapOf("customerId" to 7L,"amount" to 9.0),"primitive" to "invalid")
+        reads["$root/transactions"]=rows;val service=FirebaseSyncService()
+        for(values in listOf(service.fetchAllData("m1").transactions,observe(service.observeTransactions("m1"),"$root/transactions",rows))){
+            assertEquals(setOf(41L,42L),values.map{it.id}.toSet())
+            val first=values.single{it.id==41L};assertEquals(25.0,first.originalAmount,0.0);assertTrue(first.date>0);assertTrue(first.reminderEnabled)
+            val second=values.single{it.id==42L};assertEquals(30.0,second.originalAmount,0.0);assertEquals(TransactionReturnStatus.NONE,second.returnStatus)
+            assertEquals(PaymentType.DEBT,second.paymentType);assertFalse(second.isPaid);assertFalse(second.hasItems);assertFalse(second.reminderEnabled)
+            assertEquals(2L,second.paymentMethodId);assertEquals(300L,second.paidAt);assertEquals(500L,second.dueDate);assertEquals(400L,second.date);assertEquals("",second.note)
+        }
+    }
+    @Test fun invoiceReadPathsKeepTheirExplicitSparseLegacyAndRealtimeRequirements()=runTest {
+        val complete=mapOf("id" to "live","transactionId" to 41L,"productId" to "p","unitId" to "u","quantity" to "2.5","pricePerUnit" to 10L,"totalPrice" to 25.0,"merchantId" to "other")
+        val rows=linkedMapOf<String,Any>("live" to complete,"legacy" to mapOf("id" to "legacy","transactionId" to "41"),"missing-id" to mapOf("transactionId" to 41L),"missing-tx" to complete.minus("transactionId"),"primitive" to false)
+        reads["$root/invoice_items"]=rows;val service=FirebaseSyncService()
+        val fetched=service.fetchAllData("m1").invoiceItems
+        assertEquals(setOf("live","legacy"),fetched.map{it.id}.toSet())
+        val sparse=fetched.single{it.id=="legacy"};assertEquals("",sparse.productId);assertEquals("",sparse.unitId);assertEquals(0.0,sparse.quantity,0.0)
+        val live=observe(service.observeInvoiceItems("m1"),"$root/invoice_items",rows).single()
+        assertEquals("live",live.id);assertEquals(2.5,live.quantity,0.0);assertEquals(10.0,live.pricePerUnit,0.0);assertEquals(25.0,live.totalPrice,0.0)
+        assertTrue(fetched.all{it.merchantId=="m1"});assertEquals("m1",live.merchantId)
+    }
+    @Test fun cashBoxWireFallbacksKeepTheRequestedMerchantAndSkipUnusableMethodIds()=runTest {
+        val rows=linkedMapOf<String,Any>(
+            "1" to mapOf("id" to false,"paymentMethodId" to false,"paymentMethodName" to true,"currentBalance" to false),
+            "box" to mapOf("id" to "explicit-box","paymentMethodId" to "2","paymentMethodName" to "bank","currentBalance" to 120L,"initialBalance" to "100.5","initialBalanceSetAt" to 3.0,"updatedAt" to "4","merchantId" to "other"),
+            "bad-key" to mapOf("id" to "bad"),"primitive" to "invalid")
+        reads["$root/cash_boxes"]=rows;val service=FirebaseSyncService()
+        for(values in listOf(service.fetchAllData("m1").cashBoxes,observe(service.observeCashBoxes("m1"),"$root/cash_boxes",rows))){
+            assertEquals(setOf("1","explicit-box"),values.map{it.id}.toSet())
+            val fallback=values.single{it.id=="1"};assertEquals(1L,fallback.paymentMethodId);assertEquals(0.0,fallback.currentBalance,0.0);assertNull(fallback.initialBalanceSetAt);assertTrue(fallback.updatedAt>0)
+            val explicit=values.single{it.id=="explicit-box"};assertEquals(120.0,explicit.currentBalance,0.0);assertEquals(100.5,explicit.initialBalance,0.0);assertEquals(3L,explicit.initialBalanceSetAt);assertEquals(4L,explicit.updatedAt)
+            assertTrue(values.all{it.merchantId=="m1"&&it.syncStatus==SyncStatus.SYNCED})
+        }
+    }
+    @Test fun cashMovementWireFallbacksRetainSignedAmountsAndRelatedTransaction()=runTest {
+        val rows=linkedMapOf<String,Any>(
+            "move" to mapOf("id" to false,"cashBoxId" to "box","type" to false,"paymentMethodName" to false,"amountDelta" to "-12.5","balanceAfter" to false,"note" to false,"relatedTransactionId" to 41.0,"createdAt" to "2"),
+            "defaults" to mapOf("cashBoxId" to "box"),"missing-box" to mapOf("id" to "skip"),"primitive" to false)
+        reads["$root/cash_box_movements"]=rows;val service=FirebaseSyncService()
+        for(values in listOf(service.fetchAllData("m1").cashBoxMovements,observe(service.observeCashBoxMovements("m1"),"$root/cash_box_movements",rows))){
+            assertEquals(setOf("move","defaults"),values.map{it.id}.toSet())
+            val movement=values.single{it.id=="move"};assertEquals(-12.5,movement.amountDelta,0.0);assertEquals(0.0,movement.balanceAfter,0.0);assertEquals(41L,movement.relatedTransactionId);assertEquals(2L,movement.createdAt)
+            assertEquals(CashBoxMovementType.MANUAL_ADJUSTMENT,movement.type);assertEquals("",movement.note);assertEquals("",movement.paymentMethodName)
+            val defaults=values.single{it.id=="defaults"};assertNull(defaults.relatedTransactionId);assertTrue(defaults.createdAt>0)
+            assertTrue(values.all{it.merchantId=="m1"&&it.syncStatus==SyncStatus.SYNCED})
+        }
+    }
+    @Test fun returnWireMapAndListItemsKeepLegacyBindingsAndExplicitUnitOverrides()=runTest {
+        reads["$root/invoice_items"]=mapOf("sold" to mapOf("id" to "sold","transactionId" to 41L,"productId" to "p","productName" to "أرز","unitId" to "u","unitLabel" to "كيس","quantity" to 5L,"pricePerUnit" to 10L))
+        val rows=linkedMapOf<String,Any>(
+            "map-return" to mapOf("transactionId" to "41","returnType" to "future","totalRefund" to "15","note" to false,"items" to mapOf("legacy" to mapOf("productId" to "p","returnedQty" to "1.5","costPricePerUnit" to 2L,"lostProfit" to 3L,"totalRefund" to 15L),"skip" to true)),
+            "list-return" to mapOf("originalTransactionId" to 41.0,"returnType" to "FULL","createdAt" to 2L,"items" to listOf(null,"skip",mapOf("id" to "explicit","productId" to "other","unitId" to "x","originalQuantity" to 2L,"returnedQuantity" to 1.0,"pricePerUnit" to 5L),mapOf("productId" to "unmatched"))),
+            "empty-return" to mapOf("originalTransactionId" to 41L),"missing-tx" to mapOf("id" to "skip"),"primitive" to false)
+        reads["$root/return_invoices"]=rows;val service=FirebaseSyncService()
+        for(values in listOf(service.fetchAllData("m1").returns,observe(service.observeReturnInvoices("m1"),"$root/return_invoices",rows))){
+            assertEquals(setOf("map-return","list-return","empty-return"),values.map{it.first.id}.toSet())
+            val legacy=values.single{it.first.id=="map-return"};assertEquals(ReturnType.PARTIAL,legacy.first.returnType);assertEquals(15.0,legacy.first.totalRefund,0.0);assertTrue(legacy.first.createdAt>0)
+            val item=legacy.second.single();assertTrue(item.id.isNotBlank());assertEquals("u",item.unitId);assertEquals("أرز",item.productName);assertEquals("كيس",item.unitLabel);assertEquals(5.0,item.originalQuantity,0.0);assertEquals(1.5,item.returnedQuantity,0.0);assertEquals(10.0,item.pricePerUnit,0.0);assertEquals(2.0,item.costPricePerUnit,0.0);assertEquals(3.0,item.lostProfit,0.0)
+            val explicit=values.single{it.first.id=="list-return"};assertEquals(ReturnType.FULL,explicit.first.returnType);assertEquals(2L,explicit.first.createdAt);assertEquals("explicit",explicit.second.single().id);assertEquals("x",explicit.second.single().unitId);assertEquals(2.0,explicit.second.single().originalQuantity,0.0);assertEquals(1.0,explicit.second.single().returnedQuantity,0.0)
+            assertTrue(values.single{it.first.id=="empty-return"}.second.isEmpty());assertTrue(values.all{it.first.merchantId=="m1"})
+        }
+    }
+    @Test fun employeeWireRequiresNameAndPinAndPreservesSupportedRolesAndMerchant()=runTest {
+        val rows=linkedMapOf<String,Any>(
+            "cashier" to mapOf("id" to false,"name" to "بائع","pinCode" to "1234","role" to false),
+            "admin" to mapOf("id" to "owner-employee","name" to "مدير","pinCode" to "5678","role" to "ADMIN","createdAt" to "2","merchantId" to "other"),
+            "missing-name" to mapOf("pinCode" to "0000"),"missing-pin" to mapOf("name" to "skip"),"primitive" to true)
+        val values=observe(FirebaseSyncService().observeEmployees("m1"),"$root/employees",rows)
+        assertEquals(setOf("cashier","owner-employee"),values.map{it.id}.toSet())
+        assertEquals(EmployeeRole.CASHIER,values.single{it.id=="cashier"}.role);assertTrue(values.single{it.id=="cashier"}.createdAt>0)
+        assertEquals(EmployeeRole.ADMIN,values.single{it.id=="owner-employee"}.role);assertEquals(2L,values.single{it.id=="owner-employee"}.createdAt)
+        assertTrue(values.all{it.merchantId=="m1"})
+    }
+    @Test fun subscriptionStatusUsesTheProvidedLatestChildAndDoesNotApproveUnknownStatus()=runTest {
+        val service=FirebaseSyncService();val path="subscription_requests/m1"
+        assertEquals(SubscriptionStatus.PENDING,observe(service.observeSubscriptionRequestStatus("m1"),path,emptyMap<String,Any>()))
+        assertEquals(SubscriptionStatus.PENDING,observe(service.observeSubscriptionRequestStatus("m1"),path,linkedMapOf("old" to mapOf("status" to "APPROVED"),"latest" to mapOf("status" to "future"))))
+        assertEquals(SubscriptionStatus.APPROVED,observe(service.observeSubscriptionRequestStatus("m1"),path,mapOf("latest" to mapOf("status" to "APPROVED"))))
+    }
+    @Test fun cancellingEachSnapshotReadNeverReturnsAnAuthoritativePayloadToItsConsumer()=runTest {
+        val service=FirebaseSyncService();val returnedAfterCancellation=mutableListOf<String>()
+        for(family in listOf("customers","payment_methods","transactions","invoice_items","return_invoices","cash_boxes","cash_box_movements")){
+            val path="$root/$family";val node=ref(path);val gate=TaskCompletionSource<DataSnapshot>()
+            every{node.get()} returns gate.task
+            var consumed=false
+            val job=launch{service.fetchAllData("m1");consumed=true}
+            runCurrent();assertFalse("Read must actually suspend at $family",job.isCompleted)
+            job.cancelAndJoin();if(consumed)returnedAfterCancellation+=family
+            gate.setResult(snapshot(family,emptyMap<String,Any>(),path));runCurrent()
+            every{node.get()} answers{TaskCompletionSource<DataSnapshot>().also{it.setResult(snapshot(family,reads[path],path))}.task}
+        }
+        assertEquals("Cancelled snapshots must not become authoritative empty/partial data",emptyList<String>(),returnedAfterCancellation)
+    }
+    @Test fun cancelledActivationValidationNeverReturnsANetworkErrorToTheConsumer()=runTest {
+        val node=ref("activation_codes/pending");val gate=TaskCompletionSource<DataSnapshot>();every{node.get()} returns gate.task
+        var consumed=false;val job=launch{FirebaseSyncService().validateCodeDetailed("pending");consumed=true}
+        runCurrent();assertFalse(job.isCompleted);job.cancelAndJoin()
+        gate.setResult(snapshot("pending",mapOf("status" to "ACTIVE"),"activation_codes/pending"));runCurrent()
+        assertFalse("Parent cancellation must escape validation",consumed)
+    }
+    @Test fun cancelledCodeStatusReadNeverReturnsAFalseMissingStatusToTheConsumer()=runTest {
+        val node=ref("activation_codes/pending");val gate=TaskCompletionSource<DataSnapshot>();every{node.get()} returns gate.task
+        var consumed=false;val job=launch{FirebaseSyncService().getCodeStatus("pending");consumed=true}
+        runCurrent();assertFalse(job.isCompleted);job.cancelAndJoin()
+        gate.setResult(snapshot("pending",mapOf("status" to "ACTIVE"),"activation_codes/pending"));runCurrent()
+        assertFalse("Parent cancellation must escape code-status lookup",consumed)
+    }
+
+    @Test fun cachedSnapshotCompletionStillHonorsCancellationBeforeDeliveringData()=runTest {
+        val service=FirebaseSyncService();val path="$root/customers";val node=ref(path)
+        lateinit var job:Job
+        every{node.get()} answers {
+            job.cancel()
+            TaskCompletionSource<DataSnapshot>().also{it.setResult(snapshot("customers",emptyMap<String,Any>(),path))}.task
+        }
+        var consumed=false
+        job=launch(start=CoroutineStart.LAZY){service.fetchAllData("m1");consumed=true}
+        job.start();runCurrent();job.join()
+        assertFalse("Cached task completion must not bypass the cancelled caller",consumed)
+    }
+    @Test fun cancellationDuringFinalSnapshotParsingCannotDeliverThePayload()=runTest {
+        val service=FirebaseSyncService();val path="$root/cash_box_movements"
+        val payload=mapOf("cashBoxId" to "box","amountDelta" to 1.0)
+        val item=snapshot("movement",payload,"$path/movement")
+        val parent=snapshot("cash_box_movements",emptyMap<String,Any>(),path)
+        lateinit var job:Job
+        every{parent.children} returns listOf(item)
+        every{item.value} answers{job.cancel();payload}
+        val node=ref(path)
+        every{node.get()} returns TaskCompletionSource<DataSnapshot>().also{it.setResult(parent)}.task
+        var consumed=false
+        job=launch(start=CoroutineStart.LAZY){service.fetchAllData("m1");consumed=true}
+        job.start();runCurrent();job.join()
+        assertFalse("Cancellation during the final family must escape before snapshot delivery",consumed)
+    }
+
 }

@@ -1,0 +1,31 @@
+# Branch75 compatibility and live-data continuation
+
+Starting source `e517cafe4fb00dccb56f9f3bac4131c10ae22054`, same audit branch and Draft PR51/base production. Production/test/resource fingerprint `8a1ef88e1d0b338794d9e8050cb49b44d3f782fa9045ec06d59e1eeee5f713d0` is recorded in [source manifest](evidence/continuation/branch75-compatibility/final/source-manifest.json). **Branch75 and previous Line95 NOT ACHIEVED; Release FAIL.** Local results describe this fingerprint, not the old HEAD by itself. Hosted runtime for the new source is pending.
+
+**999 JVM PASS (app239/Seller760), no failures/errors/skips.** All956 starting identities are preserved.43 new cases comprise14 shared wire/cancellation contracts,2 backup crypto contracts and27 real Compose transitions.25 Python evidence guards PASS. New UI cases exercise live report totals/month readiness, selected-day navigation and retained query; stock count progress/filter/finish gates; product-unit ledger refresh; customer/debt identity/contact changes; employee drafts/events; cash-box initialization/ledger separation; dashboard rankings, unread thresholds and actual synchronization status replacement/retry. These are cases, not counts of branches or independent defects.
+
+Seven final regression identities genuinely fail before production repair and pass afterward:5 Firebase read cancellations and2 crypto compatibility cases. The snapshot case which loops over7 data families is one case. The exact e517 production service was restored temporarily to verify all5 cancellation failures after correcting an unrelated MockK recording fixture; unqualified initial fixture evidence is retained separately. The production fix checks coroutine activity before/after completed or suspended SDK Tasks, propagates cancellation in activation/status/bulk-read catches and checks before delivering the final payload. Ordinary network fallback/partial-data behavior, realtime writers and server consistency are not globally qualified by this change.
+
+The previous hosted source [44120805029](https://github.com/mohammedakkad/SalesManager/actions/runs/44120805029) passed seller and API28/35 (all15 runtime/PDFBox identities and5 real PDF paths per lane). API24 failed at the unavailable named PBKDF2WithHmacSHA256 factory; API33 failed in JVM coverage before Android/PDFBox, so all15 were NOT EXECUTED there. Source-specific annotations are retained under branch75-dialog-recovery/hosted-attempt1. Their EC/results are not merged into this source.
+
+Backup encryption now uses Bouncy Castle lightweight PBKDF2-HMAC-SHA256 on all supported APIs, with identical version1 UTF-8 password encoding,100000 iterations,256-bit key and AES-GCM envelope parameters. No downgrade/global provider/manual crypto implementation. Temporary password/key bytes are cleared; caller char arrays retain their contract. Independent Python hashlib/AESGCM reference vectors cover ASCII/Arabic/emoji; a separately captured native JCE factory decrypts newly produced bytes. Schema42 in crypto metadata is synthetic, not a historical Room migration fixture. Dependency bcprov-jdk18on1.87 matches its Maven-published SHA256; provenance is preserved. This is not a complete dependency security qualification.
+
+## Fresh local measurement
+
+|Scope|Line|Method|Branch|More branches for75%|
+|---|---:|---:|---:|---:|
+|Seller JVM|15365/17971 = 85.4989%|2689/3224 = 83.4057%|9356/14812 = 63.1650%|1753|
+|Historical weighted module JVM|23596/28359 = 83.2046%|4524/5747 = 78.7193%|11191/17941 = 62.3767%|2265|
+|Additional weighted both JVM|23929/28359 = 84.3789%|4658/5747 = 81.0510%|11298/17941 = 62.9731%|2158|
+
+Weighted means sum of covered/sum of denominators. The historical scope uses each module's own JVM execution; the additional scope uses both JVM suites for each module. All original compiled classes/generated branches/gates remain. No Android coverage is claimed locally. Unchanged BoxesScreen had an earlier11-branch full-run variation whose cause remains unresolved; current latest full results are reported without selecting a historical maximum. New Box UI coverage does not resolve that prior variation.
+
+Lint0 errors/27 warnings; Debug, AndroidTest assembly and minified unsigned Release PASS, with mapping upload excluded. The27 warnings include the prior24 plus2 version-catalog suggestions and an available Espresso Intents update; no lint error was suppressed. APK metadata/signature checks are recorded separately. Offline google-services fixture is restored before commit. Room2.6.1/schema25 and financial/Outbox protocols are unchanged;7 authentic migration cases PASS,1–21 remain BLOCKED without authentic fixtures. No Admin business change.
+
+## Runtime requirements and fixture evidence
+
+New source requires12 Android +5 PDFBox identities on API24/28/33/35. One new case performs real Android encryption/decryption, rejects wrong passwords/modified ciphertext and checks native factory interoperability on API26+. Another clears a Room-backed count after theme round-trip, preserving the other item's count and empty stock ledger. It replaces an unqualified new JVM window case which hit the documented Robolectric measure/layout idling limitation; that failed full run is preserved with982 passes/1 failure, not reported as a successful run or counted as a lost starting case. AndroidTest compilation is not runtime proof. No fake host PDF or substitute Android export archive is used.
+
+UI fixture rules keep Koin/preferences alive until Compose/activity disposal. Initial full-run idling failures and fixture assertion corrections are retained under branch75-compat-ui-diagnostics; resource ordering is explicit, while the earlier native full-run idling cause is not presented as a proven product defect. No test timeout/idling gate was relaxed and no starting test was removed. The device JVM phase now preserves its Gradle log/tail to diagnose failures such as the previous API33 pre-instrumentation exit.
+
+The defined remaining plan stays56 items:22 NOT TESTED/32 BLOCKED/2 PARTIAL, not all possible tests. Server permissions/fencing, cross-store reconciliation, legacy cache/writer ownership, signed-update authenticity, security/performance and device qualification remain blockers. **Release FAIL.**

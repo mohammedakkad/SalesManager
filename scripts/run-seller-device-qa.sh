@@ -52,7 +52,7 @@ export SELLER_QA_ANDROID_API_ACTUAL="$seller_device_api"
 qa_api_suffix=" [API $seller_device_api]"
 adb shell rm -rf /data/local/tmp/seller-qa-pdf
 qa_stage="JVM coverage"
-gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :app:qaCoverage :salesmanager:qaCoverage :app:qaAllJvmCoverage :salesmanager:qaAllJvmCoverage
+gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :app:qaCoverage :salesmanager:qaCoverage :app:qaAllJvmCoverage :salesmanager:qaAllJvmCoverage 2>&1 | tee /tmp/seller-qa-device-jvm-coverage.log
 python3 - <<'PYEC'
 from pathlib import Path
 for path in Path('salesmanager/build/outputs/code_coverage').rglob('*.ec'):

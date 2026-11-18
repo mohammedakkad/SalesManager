@@ -16,6 +16,7 @@ import com.trader.salesmanager.ui.theme.*
 import io.mockk.*
 import kotlinx.coroutines.flow.*
 import org.junit.*
+import org.junit.rules.ExternalResource
 import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -32,11 +33,13 @@ class ThemePreferenceUiTest:OfflineSellerUiTest() {
             writes++;return transform(preferences.value).also{preferences.value=it}
         }
     }
-    @Before fun preferencesFixture() {
-        mockkStatic("com.trader.core.data.local.DataStoreProviderKt")
-        every{any<Context>().appDataStore} returns store
+    @get:Rule(order=-1) val preferencesFixture=object:ExternalResource(){
+        override fun before(){
+            mockkStatic("com.trader.core.data.local.DataStoreProviderKt")
+            every{any<Context>().appDataStore} returns store
+        }
+        override fun after(){unmockkStatic("com.trader.core.data.local.DataStoreProviderKt")}
     }
-    @After fun releasePreferences(){unmockkStatic("com.trader.core.data.local.DataStoreProviderKt")}
     @Composable private fun Probe() {
         val toggle=toggleTheme
         val snapshot="dark:$isDarkTheme/tokens:${appColors.isDark}/primary:${MaterialTheme.colorScheme.primary.toArgb()}"

@@ -133,8 +133,32 @@ class ThemedDialogJourneyTest {
         assertEquals(item.copy(actualQuantity=7.5),db.inventoryDao().getSessionItemsOnce(session.id).single().toDomain())
         assertTrue(db.stockMovementDao().getAllOnce().isEmpty())
     }
+    @Test fun clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem()=runBlocking {
+        val session=InventorySession("clear-session","offline-dialog")
+        val selected=InventorySessionItem("clear-row",session.id,"p","أرز محفوظ","u","كيس مختار",5.0,4.5)
+        val other=InventorySessionItem("untouched-row",session.id,"q","سكر محفوظ","v","علبة باقية",3.0,3.0)
+        db.inventoryDao().insertSession(session.toEntity())
+        db.inventoryDao().insertSessionItems(listOf(selected.toEntity(),other.toEntity()))
+        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),"offline-dialog",db)
+        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),"offline-dialog")
+        store.put("inventory",vm)
+        show{InventorySessionScreen({},viewModel=vm)}
+        compose.waitUntil(5000){!vm.uiState.value.isLoading&&vm.sessionItems.value.size==2}
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(selected.unitLabel))
+        compose.onNodeWithText(selected.unitLabel).performClick()
+        val field=compose.onNode(hasSetTextAction() and hasAnyAncestor(isDialog()))
+        field.assertTextContains("4.5")
+        dark(true);dark(false)
+        field.assertTextContains("4.5")
+        assertEquals(selected,db.inventoryDao().getSessionItemsOnce(session.id).single{it.id==selected.id}.toDomain())
+        compose.onNodeWithText("مسح العدّ").performClick()
+        compose.waitUntil(5000){vm.countedItems==1}
+        val persisted=db.inventoryDao().getSessionItemsOnce(session.id).map{it.toDomain()}.associateBy{it.id}
+        assertEquals(selected.copy(actualQuantity=null),persisted[selected.id])
+        assertEquals(other,persisted[other.id])
+        assertTrue(db.stockMovementDao().getAllOnce().isEmpty())
+    }
     @Test fun encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword()=runBlocking {
-        javax.crypto.SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
         val customer=CustomerEntity(id=7,name="نسخة واجهة",phone="0500000000",createdAt=123)
         db.customerDao().insertCustomer(customer)
         val manager=BackupManager(context,db,"offline-dialog")
@@ -167,6 +191,29 @@ class ThemedDialogJourneyTest {
         println("ACTUAL_ANDROID_ENCRYPTED_BACKUP bytes=${bytes.size} sha256=$digest customerId=7")
         context.cacheDir.listFiles()?.filter{it.name.startsWith("sales_backup_")&&it.name !in existing}?.forEach{assertTrue(it.delete())}
         Unit
+    }
+    @Test fun actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext() {
+        val output=java.io.ByteArrayOutputStream()
+        java.util.zip.ZipOutputStream(output).use{zip->
+            zip.putNextEntry(java.util.zip.ZipEntry("fixture.txt"))
+            zip.write("اختبار توثيق النسخة".toByteArray(Charsets.UTF_8));zip.closeEntry()
+        }
+        val plaintext=output.toByteArray();val password="كلمة مرور 🌿".toCharArray()
+        val bytes=BackupCrypto.encryptZip(plaintext,password,BACKUP_FORMAT_VERSION,123)
+        assertArrayEquals(plaintext,BackupCrypto.decryptToZip(bytes,password))
+        assertThrows(BackupException.WrongPasswordOrCorrupted::class.java){BackupCrypto.decryptToZip(bytes,"wrong fixture".toCharArray())}
+        val changed=bytes.copyOf();changed[changed.lastIndex]=(changed.last().toInt() xor 1).toByte()
+        assertThrows(BackupException.WrongPasswordOrCorrupted::class.java){BackupCrypto.decryptToZip(changed,password)}
+        if(android.os.Build.VERSION.SDK_INT>=26){
+            val header=BackupCrypto.parseHeader(bytes)
+            val spec=javax.crypto.spec.PBEKeySpec(password,header.salt,100000,256)
+            val key=try{javax.crypto.SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).encoded}finally{spec.clearPassword()}
+            try{
+                val cipher=javax.crypto.Cipher.getInstance("AES/GCM/NoPadding")
+                cipher.init(javax.crypto.Cipher.DECRYPT_MODE,javax.crypto.spec.SecretKeySpec(key,"AES"),javax.crypto.spec.GCMParameterSpec(128,header.iv))
+                assertArrayEquals(plaintext,cipher.doFinal(bytes.copyOfRange(61,bytes.size)))
+            }finally{key.fill(0)}
+        }
     }
     /** These paths must not start stock adjustment, product discovery or network work. */
     private fun <T:Any> unused(type:Class<T>):T = requireNotNull(type.cast(Proxy.newProxyInstance(type.classLoader,arrayOf(type)){_,method,_->

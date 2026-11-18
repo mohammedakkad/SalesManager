@@ -5,10 +5,12 @@ import java.nio.ByteOrder
 import java.security.SecureRandom
 import javax.crypto.AEADBadTagException
 import javax.crypto.Cipher
-import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
+import org.bouncycastle.crypto.PBEParametersGenerator
+import org.bouncycastle.crypto.digests.SHA256Digest
+import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator
+import org.bouncycastle.crypto.params.KeyParameter
 
 internal object BackupCrypto {
     private val MAGIC = byteArrayOf(0x53, 0x4D, 0x42, 0x4B)
@@ -89,10 +91,20 @@ internal object BackupCrypto {
     }
 
     private fun deriveKey(password: CharArray, salt: ByteArray): SecretKeySpec {
-        val spec = PBEKeySpec(password, salt, PBKDF2_ITERATIONS, KEY_LENGTH_BYTES * 8)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val encoded = factory.generateSecret(spec).encoded
-        spec.clearPassword()
-        return SecretKeySpec(encoded, "AES")
+        // API24/25 lack the named JCE factory. Keep version1 PBKDF2-HMAC-SHA256,
+        // UTF-8 passwords,100000 iterations and256-bit keys on every supported API.
+        val passwordBytes = PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(password)
+        try {
+            val generator = PKCS5S2ParametersGenerator(SHA256Digest())
+            generator.init(passwordBytes, salt, PBKDF2_ITERATIONS)
+            val encoded = (generator.generateDerivedParameters(KEY_LENGTH_BYTES * 8) as KeyParameter).key
+            return try {
+                SecretKeySpec(encoded, "AES")
+            } finally {
+                encoded.fill(0)
+            }
+        } finally {
+            passwordBytes.fill(0)
+        }
     }
 }

@@ -69,6 +69,7 @@ android {
 }
 
 dependencies {
+    implementation("org.bouncycastle:bcprov-jdk18on:1.87")
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.test.compose.junit)
     testImplementation(libs.test.workmanager)

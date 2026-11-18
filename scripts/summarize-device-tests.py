@@ -56,6 +56,7 @@ if '--annotation' in sys.argv and os.environ.get('GITHUB_ACTIONS') == 'true':
     if os.environ.get('SELLER_QA_EXIT_CODE', '0') != '0':
         for key, location in (
             ('Gradle tail', '/tmp/seller-qa-instrumentation.log'),
+            ('JVM coverage tail', '/tmp/seller-qa-device-jvm-coverage.log'),
             ('crash buffer', '/tmp/seller-qa-pdf/device-crash.log'),
             ('installer log', '/tmp/seller-qa-pdf/device-installer.log'),
             ('storage', '/tmp/seller-qa-pdf/device-storage.log'),

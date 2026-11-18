@@ -1,3 +1,5 @@
+> Hosted outcome for e517cafe: [44120805029](https://github.com/mohammedakkad/SalesManager/actions/runs/44120805029) FAIL overall; seller/API28/API35 PASS, API24 FAIL at missing PBKDF2 SHA256 factory, API33 FAIL in JVM phase before runtime. All15 cases PASS on each successful device lane; API33 has15 NOT EXECUTED. Current compatible repair and fresh-source qualification: [branch75-compatibility-progress.md](branch75-compatibility-progress.md). Original local checkpoint below is historical.
+
 # Branch75 dialog recovery and account transitions — local checkpoint
 
 Starting HEAD `5ce08486e4d2fbc0aab8ecd739b66bd8439981a6`; same branch/PR51. Current code/test fingerprint `08ff04bd09ddd1e607f50d8d860821aeb113fd1368e3ae81847bb84edd0843f4` is recorded in final/source-manifest.json. **Branch75 and prior Line95 NOT ACHIEVED; Release FAIL.** Hosted runtime for this follow-up is pending; AndroidTest assembly is not runtime.

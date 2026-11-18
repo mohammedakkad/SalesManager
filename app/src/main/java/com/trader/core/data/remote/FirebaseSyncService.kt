@@ -2,6 +2,7 @@ package com.trader.core.data.remote
 
 import androidx.work.await
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
@@ -16,6 +17,9 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.CancellationException
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.SubscriptionStatus
 import com.trader.core.domain.model.ReturnInvoice
@@ -41,10 +45,18 @@ class FirebaseSyncService {
         is Double -> this; is Long -> toDouble(); is Int -> toDouble(); is String -> toDoubleOrNull(); else -> null
     }
 
+    /** Cached Tasks can complete without suspension, so check both sides of the read. */
+    private suspend fun DatabaseReference.snapshotWhileActive(): DataSnapshot {
+        currentCoroutineContext().ensureActive()
+        val snapshot = get().await()
+        currentCoroutineContext().ensureActive()
+        return snapshot
+    }
+
     suspend fun validateCodeDetailed(code: String): ValidationResult {
         return try {
             val snap = withTimeoutOrNull(8_000) {
-                db.reference.child(PATH_ACTIVATION_CODES).child(code).get().await()
+                db.reference.child(PATH_ACTIVATION_CODES).child(code).snapshotWhileActive()
             } ?: return ValidationResult.NetworkError
 
             if (!snap.exists()) return ValidationResult.NotFound
@@ -58,6 +70,8 @@ class FirebaseSyncService {
                 "EXPIRED" -> ValidationResult.Expired
                 else -> ValidationResult.NotFound
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             ValidationResult.NetworkError
         }
@@ -124,7 +138,7 @@ class FirebaseSyncService {
     suspend fun getCodeStatus(code: String): String? {
         return try {
             val snap = withTimeoutOrNull(8_000) {
-                db.reference.child(PATH_ACTIVATION_CODES).child(code).get().await()
+                db.reference.child(PATH_ACTIVATION_CODES).child(code).snapshotWhileActive()
             } ?: return null
 
             if (!snap.exists()) return "DELETED"
@@ -138,6 +152,8 @@ class FirebaseSyncService {
                 "EXPIRED" -> "EXPIRED"
                 else -> "DELETED"
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             null
         }
@@ -147,7 +163,7 @@ class FirebaseSyncService {
         val root = db.reference.child("merchants").child(merchantCode)
 
         val customers = try {
-            root.child("customers").get().await().children.mapNotNull { snap ->
+            root.child("customers").snapshotWhileActive().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 Customer(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
@@ -156,12 +172,14 @@ class FirebaseSyncService {
                     createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
                 )
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
         val paymentMethods = try {
-            root.child("payment_methods").get().await().children.mapNotNull { snap ->
+            root.child("payment_methods").snapshotWhileActive().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 PaymentMethod(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
@@ -171,12 +189,14 @@ class FirebaseSyncService {
                     }.getOrDefault(PaymentType.OTHER)
                 )
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
         val transactions = try {
-            root.child("transactions").get().await().children.mapNotNull { snap ->
+            root.child("transactions").snapshotWhileActive().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 AppTransaction(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
@@ -197,12 +217,14 @@ class FirebaseSyncService {
                     reminderEnabled = m["reminderEnabled"] as? Boolean ?: true
                 )
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
         val invoiceItems = try {
-            root.child("invoice_items").get().await().children.mapNotNull { snap ->
+            root.child("invoice_items").snapshotWhileActive().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 InvoiceItem(
                     id = m["id"] as? String ?: return@mapNotNull null,
@@ -217,12 +239,14 @@ class FirebaseSyncService {
                     merchantId = merchantCode
                 )
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
         val returns = try {
-            root.child("return_invoices").get().await().children.mapNotNull { snap ->
+            root.child("return_invoices").snapshotWhileActive().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 val invoiceId = m["id"] as? String ?: snap.key ?: return@mapNotNull null
                 val originalTxId = m["originalTransactionId"].asLong() ?: m["transactionId"].asLong() ?: return@mapNotNull null
@@ -279,26 +303,33 @@ class FirebaseSyncService {
                 }
                 Pair(invoice, items)
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
         val cashBoxes = try {
-            root.child("cash_boxes").get().await().children.mapNotNull { snap ->
+            root.child("cash_boxes").snapshotWhileActive().children.mapNotNull { snap ->
                 snap.toCashBox(merchantCode)
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
         val cashBoxMovements = try {
-            root.child("cash_box_movements").get().await().children.mapNotNull { snap ->
+            root.child("cash_box_movements").snapshotWhileActive().children.mapNotNull { snap ->
                 snap.toCashBoxMovement(merchantCode)
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
+        currentCoroutineContext().ensureActive()
         return MerchantData(customers, transactions, paymentMethods, returns, invoiceItems, cashBoxes, cashBoxMovements)
     }
 

@@ -4,18 +4,18 @@ Debug JVM tests only. Not device/instrumentation or minified release coverage. C
 
 | Module | Metric | Covered | Missed | Coverage |
 | --- | --- | ---: | ---: | ---: |
-| app | BRANCH | 1642 | 1487 | 52.4768% |
-| app | LINE | 8187 | 2177 | 78.9946% |
-| app | METHOD | 1825 | 697 | 72.3632% |
-| app | CLASS | 580 | 207 | 73.6976% |
-| salesmanager | BRANCH | 8824 | 5988 | 59.5733% |
-| salesmanager | LINE | 15255 | 2712 | 84.9057% |
-| salesmanager | METHOD | 2666 | 558 | 82.6923% |
-| salesmanager | CLASS | 1160 | 121 | 90.5543% |
-| weighted overall | BRANCH | 10466 | 7475 | 58.3357% |
-| weighted overall | LINE | 23442 | 4889 | 82.7433% |
-| weighted overall | METHOD | 4491 | 1255 | 78.1587% |
-| weighted overall | CLASS | 1740 | 328 | 84.1393% |
+| app | BRANCH | 1835 | 1294 | 58.6449% |
+| app | LINE | 8231 | 2157 | 79.2357% |
+| app | METHOD | 1835 | 688 | 72.7309% |
+| app | CLASS | 583 | 204 | 74.0788% |
+| salesmanager | BRANCH | 9356 | 5456 | 63.1650% |
+| salesmanager | LINE | 15365 | 2606 | 85.4989% |
+| salesmanager | METHOD | 2689 | 535 | 83.4057% |
+| salesmanager | CLASS | 1172 | 109 | 91.4910% |
+| weighted overall | BRANCH | 11191 | 6750 | 62.3767% |
+| weighted overall | LINE | 23596 | 4763 | 83.2046% |
+| weighted overall | METHOD | 4524 | 1223 | 78.7193% |
+| weighted overall | CLASS | 1755 | 313 | 84.8646% |
 
 Exact class counters: seller-class-coverage-gaps.csv. Exact source line and branch gaps: seller-coverage-gaps.csv (branch counts per line; no true/false labels in JaCoCo XML). HTML and XML: each module build/reports/jacoco/qaCoverage/. No claim of 100% coverage or absence of defects. Initial production baseline had no tests/reports and was unmeasured; no verified numeric baseline was reduced. Reviewed CI floors in coverage-thresholds.json are based on measured module baselines with a small fixed margin for scheduled/generated paths; they are raised explicitly, never rewritten automatically by a test run.
 
