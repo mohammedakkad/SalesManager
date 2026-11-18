@@ -1,0 +1,13 @@
+{
+  "sourceHostedRun": 44271146848,
+  "sourceSha": "db96831d1b53cb3f8e18c1769422c0835a39e06c",
+  "dependency": "org.bouncycastle:bcprov-jdk18on:1.87",
+  "dependencySha256": "12d2d3dd82a9ec15e92ec7c7943ee64f6097c6dc12c07e984f1693b77565b9aa",
+  "actualClassesChecked": 5924,
+  "instrumentation012Failures": 46,
+  "instrumentation014Failures": 0,
+  "failure": "Unsupported class file major version69 in META-INF/versions/25",
+  "scope": "Public offline Instrumenter compatibility diagnostic; not additional JUnit cases, coverage counters, APK assembly or Android runtime proof",
+  "actualAgpCoverageApkBefore": "FAIL: assembleDebug + assembleDebugAndroidTest with sellerQaDeviceCoverage=true; JacocoTransform unsupported major69",
+  "beforeConfigSha256": "51c407545fb1e5c00e017ddd0fee07bb1773bff96c534b73d30173d993450a75"
+}

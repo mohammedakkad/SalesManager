@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemedReportRefreshUiTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:28:00" hostname="ac8333d6728a" time="2.421">
+  <properties/>
+  <testcase name="monthlyExportReadinessFollowsTheDisplayedMonthAcrossThemeAndDelayedTotals" classname="com.trader.salesmanager.ui.coverage.ThemedReportRefreshUiTest" time="0.36"/>
+  <testcase name="financialRefreshReplacesRankingsAndUpdatesAllAccessibleSeriesAfterThemeChange" classname="com.trader.salesmanager.ui.coverage.ThemedReportRefreshUiTest" time="0.552"/>
+  <testcase name="changingSelectedDayReplacesRowsAndNavigatesToTheCurrentDaysMidnight" classname="com.trader.salesmanager.ui.coverage.ThemedReportRefreshUiTest" time="0.777"/>
+  <testcase name="daySearchKeepsItsQueryWhileLiveDataChangesWhichTransactionMatches" classname="com.trader.salesmanager.ui.coverage.ThemedReportRefreshUiTest" time="0.731"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,15 @@
+{
+  "status": "Canonical clean rebuild pending",
+  "actualReader": "0.8.12",
+  "observedDifference": {
+    "SettingsScreen.kt": {
+      "priorBranches": 482,
+      "laterBranches": 486
+    },
+    "SharedComponents.kt": {
+      "priorBranches": 402,
+      "laterBranches": 410
+    }
+  },
+  "note": "Both source files are unchanged. This is a12branch compiled-output difference, distinct from the rejected0.8.14 report-filter collapse. Final metric will use a clean source build and check raw class identity across Android mode switching."
+}

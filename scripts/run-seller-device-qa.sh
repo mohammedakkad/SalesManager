@@ -59,7 +59,7 @@ for path in Path('salesmanager/build/outputs/code_coverage').rglob('*.ec'):
     path.unlink()
 PYEC
 qa_stage="Android instrumentation"
-gradle -PsellerQaDeviceCoverage=true --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :salesmanager:connectedDebugAndroidTest 2>&1 | tee /tmp/seller-qa-instrumentation.log
+gradle -PsellerQaDeviceCoverage=true --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 :salesmanager:connectedDebugAndroidTest --stacktrace 2>&1 | tee /tmp/seller-qa-instrumentation.log
 qa_stage="instrumentation XML validation"
 python3 scripts/check-device-qa-results.py
 qa_stage="PDF extraction"

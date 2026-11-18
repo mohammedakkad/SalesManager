@@ -1,0 +1,19 @@
+{
+  "app": {
+    "INSTRUCTION": 72484,
+    "BRANCH": 3129,
+    "LINE": 10388,
+    "COMPLEXITY": 4094,
+    "METHOD": 2523,
+    "CLASS": 787
+  },
+  "salesmanager": {
+    "INSTRUCTION": 196539,
+    "BRANCH": 14856,
+    "LINE": 17971,
+    "COMPLEXITY": 10697,
+    "METHOD": 3224,
+    "CLASS": 1281
+  },
+  "scope": "Unchanged JVM/report core0.8.12 must retain these denominators after changing ONLY Android instrumenter version; these include44new generatedbranches from the actual label production change."
+}

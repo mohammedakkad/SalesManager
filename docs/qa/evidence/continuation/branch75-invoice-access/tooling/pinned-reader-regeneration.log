@@ -1,0 +1,32 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+Configuration on demand is an incubating feature.
+
+> Configure project :app
+Unable to initialize metrics, ensure /home/agent/.android is writable, details: /home/agent/.android/analytics.settings (No such file or directory)
+Configuration 'qaPinnedReportAnt' was resolved during configuration time.
+This is a build performance and scalability issue.
+See https://github.com/gradle/gradle/issues/2298
+Run with --info for a stacktrace.
+ACTUAL_GRAPH_REPORT_JARS :app:qaCoverage [asm-9.7.jar, asm-commons-9.7.jar, asm-tree-9.7.jar, org.jacoco.agent-0.8.12.jar, org.jacoco.ant-0.8.12.jar, org.jacoco.core-0.8.12.jar, org.jacoco.report-0.8.12.jar]
+ACTUAL_GRAPH_TOOL_VERSION :app 0.8.14
+Configuration 'qaPinnedReportAnt' was resolved during configuration time.
+This is a build performance and scalability issue.
+See https://github.com/gradle/gradle/issues/2298
+Run with --info for a stacktrace.
+ACTUAL_GRAPH_REPORT_JARS :salesmanager:qaCoverage [asm-9.7.jar, asm-commons-9.7.jar, asm-tree-9.7.jar, org.jacoco.agent-0.8.12.jar, org.jacoco.ant-0.8.12.jar, org.jacoco.core-0.8.12.jar, org.jacoco.report-0.8.12.jar]
+ACTUAL_GRAPH_TOOL_VERSION :salesmanager 0.8.14
+ACTUAL_GRAPH_REPORT_JARS :app:qaAllJvmCoverage [asm-9.7.jar, asm-commons-9.7.jar, asm-tree-9.7.jar, org.jacoco.agent-0.8.12.jar, org.jacoco.ant-0.8.12.jar, org.jacoco.core-0.8.12.jar, org.jacoco.report-0.8.12.jar]
+ACTUAL_GRAPH_TOOL_VERSION :app 0.8.14
+ACTUAL_GRAPH_REPORT_JARS :salesmanager:qaAllJvmCoverage [asm-9.7.jar, asm-commons-9.7.jar, asm-tree-9.7.jar, org.jacoco.agent-0.8.12.jar, org.jacoco.ant-0.8.12.jar, org.jacoco.core-0.8.12.jar, org.jacoco.report-0.8.12.jar]
+ACTUAL_GRAPH_TOOL_VERSION :salesmanager 0.8.14
+
+> Task :app:qaCoverage
+> Task :salesmanager:qaCoverage
+> Task :app:qaAllJvmCoverage
+> Task :salesmanager:qaAllJvmCoverage
+
+BUILD SUCCESSFUL in 16s
+4 actionable tasks: 4 executed
+Couldn't create user preferences directory. User preferences are unusable.
+java.io.IOException: No such file or directory

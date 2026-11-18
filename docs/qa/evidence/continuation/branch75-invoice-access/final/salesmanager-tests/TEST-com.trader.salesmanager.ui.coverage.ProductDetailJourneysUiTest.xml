@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ProductDetailJourneysUiTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:27:04" hostname="ac8333d6728a" time="0.556">
+  <properties/>
+  <testcase name="accessibleHeaderNavigatesBackAndEditsTheExactProduct" classname="com.trader.salesmanager.ui.coverage.ProductDetailJourneysUiTest" time="0.058"/>
+  <testcase name="nonFiniteQuantityCannotEnableTheAdjustmentCommand" classname="com.trader.salesmanager.ui.coverage.ProductDetailJourneysUiTest" time="0.1"/>
+  <testcase name="cartonAndWeightUnitsRetainTheirOwnQuantitiesAndPackSize" classname="com.trader.salesmanager.ui.coverage.ProductDetailJourneysUiTest" time="0.037"/>
+  <testcase name="expandedUnitProvidesTheCorrectAddAndDeductActionsAndCollapses" classname="com.trader.salesmanager.ui.coverage.ProductDetailJourneysUiTest" time="0.08"/>
+  <testcase name="deleteRequiresConfirmationAndWaitsForSuccessfulCompletion" classname="com.trader.salesmanager.ui.coverage.ProductDetailJourneysUiTest" time="0.095"/>
+  <testcase name="allLedgerMovementKindsKeepTheirNotesAndShowOnlyTenRows" classname="com.trader.salesmanager.ui.coverage.ProductDetailJourneysUiTest" time="0.088"/>
+  <testcase name="savingAndInvalidQuantitiesBlockSubmissionWhileValidFiniteInputEnablesIt" classname="com.trader.salesmanager.ui.coverage.ProductDetailJourneysUiTest" time="0.097"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

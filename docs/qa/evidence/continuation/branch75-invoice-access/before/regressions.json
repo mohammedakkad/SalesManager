@@ -1,0 +1,28 @@
+{
+  "count": 5,
+  "productionSource": "db96831d1b53cb3f8e18c1769422c0835a39e06c",
+  "sourcePath": "salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsScreen.kt",
+  "sourceFileSha256": "8a0601624f889f0be12f701b766a1300323ccf73926ee49018f3ce2e17b42efd",
+  "cases": [
+    {
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest",
+      "name": "accessibleEditOpensTheNamedLineAndConfirmationUsesItsEditedQuantityAndPrice"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest",
+      "name": "accessibleBackLeavesTheInvoiceWithoutConfirmingItsDraft"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest",
+      "name": "accessibleDecreaseRemovesTheSelectedLastUnitAndKeepsTheOtherInvoiceLine"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest",
+      "name": "accessibleIncreaseNamesItsLineAndOnlyIncrementsThatLine"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest",
+      "name": "accessibleSearchSelectsTheNamedProductWithoutChangingTheOtherLine"
+    }
+  ]
+}

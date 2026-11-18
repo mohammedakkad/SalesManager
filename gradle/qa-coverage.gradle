@@ -22,7 +22,28 @@ android {
     buildTypes {
         debug { enableAndroidTestCoverage = providers.gradleProperty('sellerQaDeviceCoverage').map { it.toBoolean() }.getOrElse(false) }
     }
-    testCoverage { jacocoVersion = '0.8.12' }
+    // Android's dependency transform must read Java25 multi-release entries in bcprov.
+    // The dedicated report classpath below preserves the original report filters/denominators.
+    testCoverage { jacocoVersion = '0.8.14' }
+}
+
+// AGP replaces the shared Jacoco extension when it realizes test variants, after
+// the initial toolVersion setting above. Pin the actual reader independently.
+def qaPinnedReportAnt = configurations.create('qaPinnedReportAnt') {
+    canBeConsumed = false
+    canBeResolved = true
+}
+dependencies.add(qaPinnedReportAnt.name, 'org.jacoco:org.jacoco.ant:0.8.12')
+tasks.withType(JacocoReport).configureEach {
+    jacocoClasspath = qaPinnedReportAnt
+    doLast {
+        def index = new File(reports.html.outputLocation.get().asFile, 'index.html')
+        def html = index.getText('UTF-8')
+        def footer = html.lastIndexOf('Created with')
+        if (footer < 0 || !html.substring(footer).contains('0.8.12.')) {
+            throw new GradleException('Actual report reader changed; refusing incomparable coverage')
+        }
+    }
 }
 def deviceExecutionData = rootProject.fileTree('salesmanager/build/outputs/code_coverage') { include '**/*.ec' }
 tasks.register('qaCombinedCoverage', JacocoReport) {

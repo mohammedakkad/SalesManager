@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemedCustomerRefreshUiTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:27:50" hostname="ac8333d6728a" time="2.091">
+  <properties/>
+  <testcase name="customerIdentityAndPhoneRefreshReplaceTheVisibleRowAndClickTarget" classname="com.trader.salesmanager.ui.coverage.ThemedCustomerRefreshUiTest" time="0.363"/>
+  <testcase name="customerSearchAndNoResultStateRemainAfterThemeThenRecoverOnLiveMatch" classname="com.trader.salesmanager.ui.coverage.ThemedCustomerRefreshUiTest" time="0.343"/>
+  <testcase name="deletionConfirmationUpdatesTheWarningAndNeverConfirmsOnAThemeChange" classname="com.trader.salesmanager.ui.coverage.ThemedCustomerRefreshUiTest" time="0.354"/>
+  <testcase name="changedCustomerPhoneUsesTheCurrentDialIntentThenRemovesActionsWhenCleared" classname="com.trader.salesmanager.ui.coverage.ThemedCustomerRefreshUiTest" time="0.333"/>
+  <testcase name="customerStatementRefreshReplacesTransactionsAndClearsItsDebtWarning" classname="com.trader.salesmanager.ui.coverage.ThemedCustomerRefreshUiTest" time="0.359"/>
+  <testcase name="settledDebtDisappearsAndReorderedRankingNavigatesToTheCurrentCustomer" classname="com.trader.salesmanager.ui.coverage.ThemedCustomerRefreshUiTest" time="0.339"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

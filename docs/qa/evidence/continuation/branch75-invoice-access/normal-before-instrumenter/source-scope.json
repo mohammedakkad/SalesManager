@@ -1,0 +1,7 @@
+{
+  "scope": "Normal build of the current six-label production repair and21newUIcases, before Android-only instrumenter upgrade;1020JVM PASS,25PythonPASS. No device runtime.",
+  "sourceFilesSha256": {
+    "salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsScreen.kt": "58b8640cd84ab8a5fc6d285c3b7de6a6dca3f166e3ed11fff8e7743f20caccdd",
+    "gradle/qa-coverage.gradle": "51c407545fb1e5c00e017ddd0fee07bb1773bff96c534b73d30173d993450a75"
+  }
+}
