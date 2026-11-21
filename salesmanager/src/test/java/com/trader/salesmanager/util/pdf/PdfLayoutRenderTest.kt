@@ -149,8 +149,8 @@ class PdfLayoutRenderTest {
         val sink = sink("invoice-print-watermark")
         val builder = InvoicePdfGenerator.render(
             InvoicePdfGenerator.InvoicePdfData(
-                Transaction(id = 10, customerId = 7, amount = 45.5, isPaid = true, date = printedAt, paymentType = PaymentType.BANK,
-                    paymentMethodName = "بنك فلسطين"),
+                Transaction(id = 10, customerId = 7, amount = 45.5, isPaid = true, date = printedAt, paymentType = PaymentType.WALLET,
+                    paymentMethodName = "WEIGHT-WALLET محفظة الدفع الإلكتروني للمتجر"),
                 (1..6).map { item(it, "صنف رقم $it") }, Customer(7, "منى"), "متجر الاختبار",
                 options = PdfOptions(printFriendly = true, watermark = "نسخة"), printedAt = printedAt
             ), sink)

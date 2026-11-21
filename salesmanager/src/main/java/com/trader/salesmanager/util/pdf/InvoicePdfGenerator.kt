@@ -185,8 +185,8 @@ object InvoicePdfGenerator {
         // Totals on the left, payment on the right (RTL reading order), never split across pages.
         val columnWidth = (builder.width - PdfSpacing.MD) / 2f
         val height = max(
-            PdfSummaryCard.height(builder, "الإجماليات", totals),
-            PdfSummaryCard.height(builder, paymentTitle, payment)
+            PdfSummaryCard.height(builder, "الإجماليات", totals, columnWidth),
+            PdfSummaryCard.height(builder, paymentTitle, payment, columnWidth)
         )
         builder.ensureSpace(height)
         val top = builder.y
