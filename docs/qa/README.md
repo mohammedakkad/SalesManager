@@ -4,7 +4,7 @@
 
 | البند | الحالة |
 |---|---|
-| اختبارات JVM | `:app` 285 + `:salesmanager` 798 (منها 2 جديدة للمحادثة + 1 للمظهر) — كلها ناجحة محلياً |
+| اختبارات JVM | `:app` 285 + `:salesmanager` 820 (جديد: محادثة 2، مظهر 1، PDF 13، جرد الواجهة 11) — كلها ناجحة محلياً |
 | بوابات التغطية (`scripts/report-seller-coverage.py --check`) | ناجحة |
 | Lint (`:salesmanager:lintDebug`) | 0 أخطاء؛ التحذيرات مفصّلة في [seller-lint-triage.md](seller-lint-triage.md) |
 | البناء | debug / staging / release مصغّر (R8) لـ `:salesmanager`، و release لـ `:admin` — ناجح |

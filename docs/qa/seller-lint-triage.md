@@ -272,7 +272,9 @@ Changes:
 - `ObsoleteLintCustomCheck` (4 → 0): fixed by the Compose/Navigation upgrade; their lint registries now load.
 - Newly *running* Compose checks reported 4 errors, all fixed: `NonObservableLocale` (2, date formatters now
   read `LocalConfiguration`) and `StateFlowValueCalledInComposition` (2, test code).
-- `UseKtx` (10, new detector): 7 fixed in update/customer code; the 3 in `util/pdf` are removed by the PDF refactor.
+- `UseKtx` (10, new detector): all fixed (7 in update/customer code, 3 in the PDF code).
+
+Final on this branch: **0 errors, 55 warnings**.
 - `DefaultLocale` (33, new detector): `String.format` without a locale. Not suppressed: in an Arabic device locale these
   produce Arabic-Indic digits, so they are part of the number-formatting consistency work (central formatter), not a
   mechanical fix.
