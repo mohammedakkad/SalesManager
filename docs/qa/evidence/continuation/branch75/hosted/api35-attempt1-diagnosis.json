@@ -1,0 +1,12 @@
+{
+  "attempt": 1,
+  "result": "CANCELLED",
+  "reason": "30 minute job timeout",
+  "lastTask": "2026-11-15T08:00:50.6331945Z > Task :app:testDebugUnitTest",
+  "lastTaskTimestamp": "2026-11-15T08:00:50.6331945Z",
+  "cancelledAt": "2026-11-15T08:28:01.7679034Z",
+  "instrumentationQualified": false,
+  "pdfBoxQualified": false,
+  "rawLogSha256": "0d2b3455b2be9beda199faad646405e8b86eb437448ed2997f70079004cbfd6d",
+  "diagnosis": "No completed XML or thread dump available for the hanging app JVM test task; root cause unresolved. Same source app tests passed locally and other lanes. One failed-job rerun requested with debug logging."
+}

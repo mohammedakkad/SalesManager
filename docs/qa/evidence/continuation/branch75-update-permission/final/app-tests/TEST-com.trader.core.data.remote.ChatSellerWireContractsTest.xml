@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.remote.ChatSellerWireContractsTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:01:54" hostname="ac8333d6728a" time="4.493">
+  <properties/>
+  <testcase name="deletionPreservesTheDocumentUsingATimestampTombstone" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.753"/>
+  <testcase name="markingReadWritesAnActualTimestampWithoutReplacingMessageContent" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.158"/>
+  <testcase name="unreadSnapshotExcludesTheSellersOwnMessages" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.355"/>
+  <testcase name="editingWritesOnlyTextAndEditTimestamp" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.158"/>
+  <testcase name="bulkReadSplitsAtFourHundredAndWaitsForEveryBatch" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="1.219"/>
+  <testcase name="incomingSnapshotRetainsReadEditAndDeletionMetadataThenUnregisters" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.234"/>
+  <testcase name="blankMerchantCannotSendReadEditDeleteOrSubscribe" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.139"/>
+  <testcase name="invalidReadIdentitiesAndEmptyBulkReadNeverWrite" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.141"/>
+  <testcase name="partialBulkReadFailureStopsBeforeStartingLaterBatches" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.931"/>
+  <testcase name="sendingUsesStableMessageIdentityAndClearsRemoteReadAndEditFlags" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.135"/>
+  <testcase name="cancellingAnActiveMessagesSubscriptionAlwaysUnregisters" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.132"/>
+  <testcase name="rejectedSendPropagatesTheSdkFailure" classname="com.trader.core.data.remote.ChatSellerWireContractsTest" time="0.134"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

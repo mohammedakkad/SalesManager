@@ -1,0 +1,71 @@
+{
+  "failedBeforePassedAfter": [
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockFailureBoundaryTest",
+      "name": "quantityUploadCancellationPropagatesAndKeepsDirtyUnit"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockFailureBoundaryTest",
+      "name": "finiteOperandsWhichOverflowAreRejectedBeforeAnyWrite"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockFailureBoundaryTest",
+      "name": "movementUploadCancellationPropagatesAndPreservesPendingLedger"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockFailureBoundaryTest",
+      "name": "ledgerInsertFaultRollsBackStandaloneQuantityChange"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockFailureBoundaryTest",
+      "name": "infiniteAdjustmentIsRejectedBeforeAnyWrite"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockStandaloneUploadTest",
+      "name": "backgroundMovementCancellationKeepsTheRetryRowPendingAndStopsQuantityUpload"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockStandaloneUploadTest",
+      "name": "backgroundQuantityCancellationPreservesTheCompletedLedgerAndCancelsItsCoroutine"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.worker.StatusCheckWorkerBoundaryTest",
+      "name": "staleExpiredResponseAfterLogoutCannotPostAFalseAccountNotification"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.worker.StatusCheckWorkerBoundaryTest",
+      "name": "staleDisabledResponseCannotClearTheNewMerchantOrNotify"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.detail.ProductAdjustmentRecoveryTest",
+      "name": "ordinaryStorageFailureReleasesBusyStateAndKeepsTheDraft"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.detail.ProductAdjustmentRecoveryTest",
+      "name": "providerCancellationReleasesBusyStateAndPreservesTheEditableDraft"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.detail.ProductAdjustmentRecoveryTest",
+      "name": "cancellationAllowsAnExplicitRetryWithTheNewQuantityAndNote"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.detail.ProductAdjustmentRecoveryTest",
+      "name": "repeatedSubmissionBeforeTheCoroutineStartsCannotAdjustTwice"
+    }
+  ],
+  "count": 13,
+  "scope": "Regression identities, not13 independent bugs. Before-background includes already-applied local/pending fixes and the public coroutine-scope seam; standalone catches remain the original behavior there."
+}

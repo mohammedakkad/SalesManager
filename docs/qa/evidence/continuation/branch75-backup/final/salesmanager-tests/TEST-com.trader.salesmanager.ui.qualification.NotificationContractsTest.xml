@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.NotificationContractsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:44:49" hostname="6d75d821cc71" time="0.17">
+  <properties/>
+  <testcase name="blockedAndStatusMessagesPreserveTheirOwnContent" classname="com.trader.salesmanager.ui.qualification.NotificationContractsTest" time="0.067"/>
+  <testcase name="createsDistinctAccountAndGeneralChannels" classname="com.trader.salesmanager.ui.qualification.NotificationContractsTest" time="0.044"/>
+  <testcase name="expiryWarningDistinguishesUpcomingAndExpiredAccount" classname="com.trader.salesmanager.ui.qualification.NotificationContractsTest" time="0.059"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

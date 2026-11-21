@@ -1,0 +1,116 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+Configuration on demand is an incubating feature.
+
+> Configure project :app
+Unable to initialize metrics, ensure /home/agent/.android is writable, details: /home/agent/.android/analytics.settings (No such file or directory)
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 35
+
+This Android Gradle plugin (8.3.2) was tested up to compileSdk = 34.
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 35.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 35 is available.
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=35
+to this project's gradle.properties.
+Configuration 'jacocoAnt' was resolved during configuration time.
+This is a build performance and scalability issue.
+See https://github.com/gradle/gradle/issues/2298
+Run with --info for a stacktrace.
+ACTUAL_GRAPH_REPORT_JARS :app:qaCoverage [asm-9.9.jar, asm-commons-9.9.jar, asm-tree-9.9.jar, org.jacoco.agent-0.8.14.jar, org.jacoco.ant-0.8.14.jar, org.jacoco.core-0.8.14.jar, org.jacoco.report-0.8.14.jar]
+ACTUAL_GRAPH_TOOL_VERSION :app 0.8.14
+Configuration 'jacocoAnt' was resolved during configuration time.
+This is a build performance and scalability issue.
+See https://github.com/gradle/gradle/issues/2298
+Run with --info for a stacktrace.
+ACTUAL_GRAPH_REPORT_JARS :salesmanager:qaCoverage [asm-9.9.jar, asm-commons-9.9.jar, asm-tree-9.9.jar, org.jacoco.agent-0.8.14.jar, org.jacoco.ant-0.8.14.jar, org.jacoco.core-0.8.14.jar, org.jacoco.report-0.8.14.jar]
+ACTUAL_GRAPH_TOOL_VERSION :salesmanager 0.8.14
+:app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+:app:preBuild SKIPPED
+:app:preDebugBuild SKIPPED
+:app:generateDebugBuildConfig SKIPPED
+:app:generateDebugResValues SKIPPED
+:app:generateDebugResources SKIPPED
+:app:packageDebugResources SKIPPED
+:app:parseDebugLocalResources SKIPPED
+:app:generateDebugRFile SKIPPED
+:app:kspDebugKotlin SKIPPED
+:app:compileDebugKotlin SKIPPED
+:app:javaPreCompileDebug SKIPPED
+:app:compileDebugJavaWithJavac SKIPPED
+:app:bundleLibRuntimeToJarDebug SKIPPED
+:app:bundleLibCompileToJarDebug SKIPPED
+:app:preDebugUnitTestBuild SKIPPED
+:app:writeDebugAarMetadata SKIPPED
+:app:checkDebugUnitTestAarMetadata SKIPPED
+:app:compileDebugLibraryResources SKIPPED
+:app:generateDebugUnitTestResValues SKIPPED
+:app:mapDebugUnitTestSourceSetPaths SKIPPED
+:app:generateDebugUnitTestResources SKIPPED
+:app:mergeDebugUnitTestResources SKIPPED
+:app:extractDeepLinksDebug SKIPPED
+:app:processDebugManifest SKIPPED
+:app:processDebugUnitTestManifest SKIPPED
+:app:processDebugUnitTestResources SKIPPED
+:app:kspDebugUnitTestKotlin SKIPPED
+:app:compileDebugUnitTestKotlin SKIPPED
+:app:javaPreCompileDebugUnitTest SKIPPED
+:app:compileDebugUnitTestJavaWithJavac SKIPPED
+:app:mergeDebugShaders SKIPPED
+:app:compileDebugShaders SKIPPED
+:app:generateDebugAssets SKIPPED
+:app:mergeDebugAssets SKIPPED
+:app:generateDebugUnitTestAssets SKIPPED
+:app:packageDebugAssets SKIPPED
+:app:mergeDebugUnitTestAssets SKIPPED
+:app:packageDebugUnitTestForUnitTest SKIPPED
+:app:generateDebugUnitTestConfig SKIPPED
+:app:processDebugJavaRes SKIPPED
+:app:processDebugUnitTestJavaRes SKIPPED
+:app:testDebugUnitTest SKIPPED
+:app:qaCoverage SKIPPED
+:salesmanager:checkKotlinGradlePluginConfigurationErrors SKIPPED
+:salesmanager:preBuild SKIPPED
+:salesmanager:preDebugBuild SKIPPED
+:salesmanager:generateDebugBuildConfig SKIPPED
+:salesmanager:checkDebugAarMetadata SKIPPED
+:salesmanager:generateDebugResValues SKIPPED
+:salesmanager:injectCrashlyticsMappingFileIdDebug SKIPPED
+:salesmanager:processDebugGoogleServices SKIPPED
+:salesmanager:mapDebugSourceSetPaths SKIPPED
+:salesmanager:generateDebugResources SKIPPED
+:salesmanager:mergeDebugResources SKIPPED
+:salesmanager:packageDebugResources SKIPPED
+:salesmanager:parseDebugLocalResources SKIPPED
+:salesmanager:createDebugCompatibleScreenManifests SKIPPED
+:salesmanager:extractDeepLinksDebug SKIPPED
+:salesmanager:processDebugMainManifest SKIPPED
+:salesmanager:processDebugManifest SKIPPED
+:salesmanager:processDebugManifestForPackage SKIPPED
+:salesmanager:processDebugResources SKIPPED
+:salesmanager:compileDebugKotlin SKIPPED
+:salesmanager:javaPreCompileDebug SKIPPED
+:salesmanager:compileDebugJavaWithJavac SKIPPED
+:salesmanager:bundleDebugClassesToRuntimeJar SKIPPED
+:salesmanager:bundleDebugClassesToCompileJar SKIPPED
+:salesmanager:compileDebugUnitTestKotlin SKIPPED
+:salesmanager:preDebugUnitTestBuild SKIPPED
+:salesmanager:javaPreCompileDebugUnitTest SKIPPED
+:salesmanager:compileDebugUnitTestJavaWithJavac SKIPPED
+:salesmanager:mergeDebugShaders SKIPPED
+:salesmanager:compileDebugShaders SKIPPED
+:salesmanager:generateDebugAssets SKIPPED
+:salesmanager:mergeDebugAssets SKIPPED
+:salesmanager:packageDebugUnitTestForUnitTest SKIPPED
+:salesmanager:generateDebugUnitTestConfig SKIPPED
+:salesmanager:processDebugJavaRes SKIPPED
+:salesmanager:processDebugUnitTestJavaRes SKIPPED
+:salesmanager:testDebugUnitTest SKIPPED
+:salesmanager:qaCoverage SKIPPED
+
+BUILD SUCCESSFUL in 12s

@@ -1,0 +1,143 @@
+diff --git a/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatScreen.kt b/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatScreen.kt
+index c4c1534..d1745f9 100644
+--- a/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatScreen.kt
++++ b/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatScreen.kt
+@@ -194,6 +194,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
+                         pending ->
+                         PendingBubble(
+                             pending = pending,
++                            isSending = pending.tempId in state.sendingIds,
+                             onRetry = {
+                                 viewModel.retryMessage(pending.tempId)
+                             },
+@@ -654,6 +655,7 @@ private fun ReadReceipt(status: MessageStatus) {
+ @Composable
+ private fun PendingBubble(
+     pending: PendingMessageEntity,
++    isSending: Boolean,
+     onRetry: () -> Unit,
+     onDismiss: () -> Unit
+ ) {
+@@ -675,10 +677,10 @@ private fun PendingBubble(
+                     style = MaterialTheme.typography.bodyMedium)
+             }
+             Spacer(Modifier.height(3.dp))
+-            if (pending.isFailed) {
++            if (!isSending) {
+                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+-                    Icon(Icons.Rounded.ErrorOutline, null, tint = DebtRed, modifier = Modifier.size(12.dp))
+-                    Text("فشل الإرسال", style = MaterialTheme.typography.labelSmall, color = DebtRed, fontSize = 10.sp)
++                    Icon(Icons.Rounded.ErrorOutline, null, tint = if (pending.isFailed) DebtRed else appColors.textSubtle, modifier = Modifier.size(12.dp))
++                    Text(if (pending.isFailed) "فشل الإرسال" else "الإرسال غير مؤكد", style = MaterialTheme.typography.labelSmall, color = if (pending.isFailed) DebtRed else appColors.textSubtle, fontSize = 10.sp)
+                     TextButton(onClick = onRetry, contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)) {
+                         Text("إعادة", style = MaterialTheme.typography.labelSmall, color = Emerald500, fontSize = 10.sp)
+                     }
+diff --git a/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatViewModel.kt b/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatViewModel.kt
+index d8abb5c..c83b34a 100644
+--- a/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatViewModel.kt
++++ b/salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatViewModel.kt
+@@ -29,7 +29,8 @@ data class ChatUiState(
+     val isSelectionMode: Boolean = false,
+     val locallyDeletedIds: Set<String> = emptySet(),
+     val pendingOwnDeleteIds: Set<String> = emptySet(),
+-    val showDeleteDialog: Boolean = false
++    val showDeleteDialog: Boolean = false,
++    val sendingIds: Set<String> = emptySet()
+ ) {
+     val visibleMessages: List<ChatMessage>
+         get() = messages.filter { m ->
+@@ -118,47 +119,51 @@ class ChatViewModel(
+         val text = _uiState.value.inputText.trim()
+         val id = _uiState.value.merchantId
+         if (text.isEmpty() || id.isEmpty()) return
+-
+-        // ✅ Unified ID capture
+         val msgId = UUID.randomUUID().toString()
+-
+-        _uiState.update { it.copy(inputText = "") }
+-
++        _uiState.update { it.copy(inputText = "", sendingIds = it.sendingIds + msgId) }
+         viewModelScope.launch {
+-            // ✅ Use same msgId for both
+-            pendingDao.insert(PendingMessageEntity(tempId = msgId, merchantId = id, text = text, senderName = "تاجر"))
+             try {
+-                chatRepo.sendMessage(id, ChatMessage(id = msgId, text = text, senderId = id, senderName = "تاجر"))
+-                pendingDao.delete(msgId)
+-            } catch (cancelled: CancellationException) {
+-                throw cancelled
+-            } catch (e: Exception) {
+-                pendingDao.setFailed(msgId, true)
++                pendingDao.insert(PendingMessageEntity(tempId = msgId, merchantId = id, text = text, senderName = "تاجر"))
++                try {
++                    chatRepo.sendMessage(id, ChatMessage(id = msgId, text = text, senderId = id, senderName = "تاجر"))
++                    pendingDao.delete(msgId)
++                } catch (cancelled: CancellationException) {
++                    throw cancelled
++                } catch (e: Exception) {
++                    pendingDao.setFailed(msgId, true)
++                }
++            } finally {
++                _uiState.update { it.copy(sendingIds = it.sendingIds - msgId) }
+             }
+         }
+     }
+ 
+     fun retryMessage(tempId: String) {
+-        val msg = _uiState.value.pendingMessages.find { it.tempId == tempId } ?: return
+-        val id = _uiState.value.merchantId
++        val state = _uiState.value
++        val msg = state.pendingMessages.find { it.tempId == tempId } ?: return
++        if (tempId in state.sendingIds) return
++        val id = state.merchantId
++        _uiState.update { it.copy(sendingIds = it.sendingIds + tempId) }
+         viewModelScope.launch {
+-            pendingDao.setFailed(tempId, false)
+             try {
+-                // ✅ Pass existing tempId into ChatMessage constructor
+-                chatRepo.sendMessage(id, ChatMessage(id = tempId, text = msg.text, senderId = id, senderName = "تاجر"))
+-                pendingDao.delete(tempId)
+-            } catch (cancelled: CancellationException) {
+-                throw cancelled
+-            } catch (e: Exception) {
+-                pendingDao.setFailed(tempId, true)
++                pendingDao.setFailed(tempId, false)
++                try {
++                    chatRepo.sendMessage(id, ChatMessage(id = tempId, text = msg.text, senderId = id, senderName = "تاجر"))
++                    pendingDao.delete(tempId)
++                } catch (cancelled: CancellationException) {
++                    throw cancelled
++                } catch (e: Exception) {
++                    pendingDao.setFailed(tempId, true)
++                }
++            } finally {
++                _uiState.update { it.copy(sendingIds = it.sendingIds - tempId) }
+             }
+         }
+     }
+ 
+     fun dismissFailedMessage(tempId: String) {
+-        viewModelScope.launch {
+-            pendingDao.delete(tempId)
+-        }
++        if (tempId in _uiState.value.sendingIds) return
++        viewModelScope.launch { pendingDao.delete(tempId) }
+     }
+ 
+     // ── وضع التحديد ──────────────────────────────────────────────
+diff --git a/salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ChatSelectionBoundaryUiTest.kt b/salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ChatSelectionBoundaryUiTest.kt
+index 9198450..a2ca2d8 100644
+--- a/salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ChatSelectionBoundaryUiTest.kt
++++ b/salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ChatSelectionBoundaryUiTest.kt
+@@ -72,10 +72,10 @@ class ChatSelectionBoundaryUiTest:OfflineSellerUiTest() {
+     }
+     @Test fun failedControlsAppearOnlyAfterPendingMessageFailure() {
+         val pending=PendingMessageEntity("stable","tenant","pending body","store")
+-        state.value=state.value.copy(pendingMessages=listOf(pending));render()
++        state.value=state.value.copy(pendingMessages=listOf(pending),sendingIds=setOf("stable"));render()
+         ui.onNodeWithText("pending body").assertExists();ui.onNodeWithText("إعادة").assertDoesNotExist()
+         ui.onNodeWithText("فشل الإرسال").assertDoesNotExist()
+-        ui.runOnIdle { state.value=state.value.copy(pendingMessages=listOf(pending.copy(isFailed=true))) };ui.waitForIdle()
++        ui.runOnIdle { state.value=state.value.copy(pendingMessages=listOf(pending.copy(isFailed=true)),sendingIds=emptySet()) };ui.waitForIdle()
+         ui.onNodeWithText("إعادة").performClick();verify(exactly=1) { vm.retryMessage("stable") }
+     }
+     @Test fun locallyDeletedAndQueuedServerEchoesDoNotRevealDuplicateContent() {

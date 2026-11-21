@@ -1,0 +1,30 @@
+plugins { id 'java' }
+repositories { mavenCentral(); google() }
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.16'
+    testImplementation files('/workspace/.salesmanager-tools/android-sdk/platforms/android-35/android.jar')
+}
+test {
+    maxHeapSize = '1g'
+    systemProperty 'robolectric.dependency.repo.url', 'https://repo.maven.apache.org/maven2'
+    ['https.proxyHost','https.proxyPort','http.proxyHost','http.proxyPort','javax.net.ssl.trustStore'].each { key ->
+        if (System.getProperty(key)) systemProperty key, System.getProperty(key)
+    }
+}
+tasks.register('extractRealAndroidXRuntime') {
+    inputs.files(configurations.testRuntimeClasspath)
+    outputs.dir(layout.buildDirectory.dir('androidx-runtime'))
+    doLast {
+        configurations.testRuntimeClasspath.files.findAll { it.name.endsWith('.aar') }.each { archive ->
+            copy {
+                from(zipTree(archive)) { include 'classes.jar' }
+                into layout.buildDirectory.dir('androidx-runtime/' + archive.name)
+            }
+        }
+    }
+}
+test {
+    dependsOn 'extractRealAndroidXRuntime'
+    classpath += fileTree(layout.buildDirectory.dir('androidx-runtime')) { include '**/*.jar' }
+}

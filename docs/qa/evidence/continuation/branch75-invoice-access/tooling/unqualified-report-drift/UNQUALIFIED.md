@@ -1,0 +1,1 @@
+The denominator integrity guard rejected these results after the Android tooling update. They are not a Branch75 achievement or comparable qualified coverage; preserve reportcore0.8.12 and original generatedbranch population. All1020JVM tests did pass, but these report metrics require correction.

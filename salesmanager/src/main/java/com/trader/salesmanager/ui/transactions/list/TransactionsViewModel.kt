@@ -1,0 +1,44 @@
+package com.trader.salesmanager.ui.transactions.list
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.trader.core.domain.model.Transaction
+import com.trader.core.domain.repository.TransactionRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+
+class TransactionsViewModel(private val repo: TransactionRepository,
+    private val saleCommands: com.trader.salesmanager.sales.SaleCommands,
+    private val activationRepo: com.trader.core.domain.repository.ActivationRepository) : ViewModel() {
+
+    private val _filterPaid = MutableStateFlow<Boolean?>(null)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _transactions: Flow<List<Transaction>> = _filterPaid.flatMapLatest { filter ->
+        when (filter) {
+            null  -> repo.getAllTransactions()
+            false -> repo.getUnpaidTransactions()
+            true  -> repo.getAllTransactions().map { it.filter { t -> t.isPaid } }
+        }
+    }
+
+    val uiState: StateFlow<TransactionsUiState> = combine(_transactions, _filterPaid) { list, filter ->
+        TransactionsUiState(transactions = list, filterPaid = filter)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TransactionsUiState())
+
+    fun setFilter(paid: Boolean?) { _filterPaid.value = paid }
+
+    fun deleteTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            saleCommands.delete(java.util.UUID.randomUUID().toString(), activationRepo.getMerchantCode(), transaction)
+        }
+    }
+}

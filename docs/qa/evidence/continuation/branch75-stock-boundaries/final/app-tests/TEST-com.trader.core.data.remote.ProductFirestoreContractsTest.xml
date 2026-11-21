@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.remote.ProductFirestoreContractsTest" tests="22" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:14:20" hostname="ac8333d6728a" time="3.819">
+  <properties/>
+  <testcase name="uploadUnitPreservesCostAlongsidePriceStockAndWeight" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.186"/>
+  <testcase name="infinitePriceRejectsTheWholeUnitSnapshot" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.276"/>
+  <testcase name="cancelledCatalogReadRemainsCancellation" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.185"/>
+  <testcase name="integerWireAmountsDoNotSilentlyBecomeZero" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.197"/>
+  <testcase name="failedUnitReadCannotMasqueradeAsAProductWithNoUnits" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.166"/>
+  <testcase name="failedDeletionBatchCannotDeleteTheParent" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.165"/>
+  <testcase name="unitDeletionAndRemoteStockUseOnlyTheRequestedMerchantPath" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.194"/>
+  <testcase name="deletingAProductWithNoUnitsSkipsTheBatch" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.192"/>
+  <testcase name="productListenerPermissionErrorClosesAndRemovesItsRegistration" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.175"/>
+  <testcase name="infiniteStockRejectsTheWholeUnitSnapshot" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.163"/>
+  <testcase name="malformedNumericStringCannotBecomeAnImplicitZeroPrice" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.156"/>
+  <testcase name="nonfiniteThresholdRejectsTheWholeUnitSnapshot" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.154"/>
+  <testcase name="legitimateEmptyReadIsStillAnEmptySuccess" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.156"/>
+  <testcase name="invoiceBatchPreservesAmountsAndEmptyBatchDoesNotDispatch" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.145"/>
+  <testcase name="failedCatalogReadCannotMasqueradeAsAnEmptyCatalog" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.147"/>
+  <testcase name="absentCostAndUnknownEnumsKeepLegacyDefaults" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.16"/>
+  <testcase name="deletionCommitsUnitBatchBeforeDeletingItsParent" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.164"/>
+  <testcase name="productFieldsAndLegacyMissingFieldsSurviveFetchAndRealtime" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.16"/>
+  <testcase name="nonfiniteCostRejectsTheWholeUnitSnapshot" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.176"/>
+  <testcase name="productAndLedgerUploadsPreserveStableIdentities" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.154"/>
+  <testcase name="cancelledUnitReadRemainsCancellation" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.169"/>
+  <testcase name="fetchedUnitPreservesCostAndAllPhysicalUnitFields" classname="com.trader.core.data.remote.ProductFirestoreContractsTest" time="0.173"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

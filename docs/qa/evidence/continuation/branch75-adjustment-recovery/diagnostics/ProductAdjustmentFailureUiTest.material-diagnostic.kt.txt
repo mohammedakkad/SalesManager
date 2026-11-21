@@ -1,0 +1,38 @@
+package com.trader.salesmanager.ui.coverage
+
+import androidx.compose.ui.test.*
+import com.trader.core.domain.model.*
+import com.trader.core.domain.repository.*
+import com.trader.salesmanager.ui.inventory.detail.*
+import io.mockk.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.*
+import org.junit.Assert.*
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+
+@RunWith(RobolectricTestRunner::class)
+@Config(qualifiers="w480dp-h900dp")
+class ProductAdjustmentFailureUiTest:OfflineSellerUiTest(){
+    @Test fun failedAdjustmentRetainsInputsExplainsFailureAndAcceptsOneExplicitRetry(){
+        val unit=ProductUnit("u","p",unitLabel="كيس استعادة",quantityInStock=10.0)
+        val products=mockk<ProductRepository>(relaxed=true);val stock=mockk<StockRepository>(relaxed=true)
+        every{products.getAllProducts()} returns MutableStateFlow(listOf(ProductWithUnits(Product("p",name="صنف استعادة"),listOf(unit))))
+        coEvery{stock.manualAdjust(any(),any(),any(),any(),any(),any(),any())} throws java.io.IOException("fixture ledger fault") andThen Unit
+        val vm=owned(ProductDetailViewModel(products,stock,"p"));show{ProductDetailScreen("p",{},{},vm)}
+        ui.waitUntil(5000){ui.waitForIdle();!vm.uiState.value.isLoading}
+        ui.runOnIdle{vm.showAdjust(unit,true)}
+        ui.onNode(hasSetTextAction() and hasText("الكمية")).performTextReplacement("2.5")
+        ui.onNode(hasSetTextAction() and hasText("ملاحظة (اختياري)")).performTextReplacement("جرد محفوظ")
+        ui.onNodeWithText("تطبيق").performClick()
+        ui.onNodeWithText("تعذر تعديل المخزون. حاول مرة أخرى.").assertExists()
+        ui.onNodeWithText("تطبيق").assertIsEnabled();ui.onNode(hasSetTextAction() and hasText("الكمية")).assertTextContains("2.5")
+        coVerify(exactly=1){stock.manualAdjust("p","u",2.5,MovementType.MANUAL_IN,"صنف استعادة","كيس استعادة","جرد محفوظ")}
+        ui.onNode(hasSetTextAction() and hasText("الكمية")).performTextReplacement("3.5")
+        ui.onNodeWithText("تعذر تعديل المخزون. حاول مرة أخرى.").assertDoesNotExist()
+        ui.onNodeWithText("تطبيق").performClick();ui.onNode(isDialog()).assertDoesNotExist()
+        coVerify(exactly=1){stock.manualAdjust("p","u",3.5,MovementType.MANUAL_IN,"صنف استعادة","كيس استعادة","جرد محفوظ")}
+        assertFalse(vm.uiState.value.isSaving)
+    }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:27:48" hostname="ac8333d6728a" time="2.725">
+  <properties/>
+  <testcase name="merchantCopyUsesTheCurrentPreferenceAndDisablesAfterAccountCodeIsCleared" classname="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" time="0.338"/>
+  <testcase name="liveSessionReorderingRevokesTheNewVisibleDeviceIdentity" classname="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" time="0.344"/>
+  <testcase name="settingsThemeSwitchPersistsTheChoiceWithoutChangingStoreOrMerchant" classname="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" time="0.33"/>
+  <testcase name="paymentMethodReplacementDeletesTheCurrentRowAndDoesNotAddARecord" classname="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" time="0.318"/>
+  <testcase name="blockedAccountRetryAppearsOnlyWhenPermittedAndNeverRunsFromThemeChange" classname="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" time="0.352"/>
+  <testcase name="confirmedActivationDoesNotNavigateAgainOnThemeOrUnrelatedStateChange" classname="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" time="0.341"/>
+  <testcase name="sessionRevocationRemainsBusyAcrossThemeAndRequiresExplicitRetryAfterFailure" classname="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" time="0.336"/>
+  <testcase name="pendingActivationKeepsCodeAndSubmitDisabledUntilAnExplicitFailureRetry" classname="com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest" time="0.366"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

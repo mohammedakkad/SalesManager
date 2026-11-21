@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.StockStandaloneUploadTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:22:00" hostname="ac8333d6728a" time="0.205">
+  <properties/>
+  <testcase name="ordinaryQuantityFailureKeepsTheUnitDirtyAfterTheLedgerAcknowledgment" classname="com.trader.core.data.repository.StockStandaloneUploadTest" time="0.046"/>
+  <testcase name="standaloneUploadSeesCommittedQuantityAndLedgerThenAcknowledgesBoth" classname="com.trader.core.data.repository.StockStandaloneUploadTest" time="0.04"/>
+  <testcase name="backgroundMovementCancellationKeepsTheRetryRowPendingAndStopsQuantityUpload" classname="com.trader.core.data.repository.StockStandaloneUploadTest" time="0.048"/>
+  <testcase name="ordinaryMovementFailureKeepsItsRetryRowWhileQuantityUploadCanSucceed" classname="com.trader.core.data.repository.StockStandaloneUploadTest" time="0.035"/>
+  <testcase name="backgroundQuantityCancellationPreservesTheCompletedLedgerAndCancelsItsCoroutine" classname="com.trader.core.data.repository.StockStandaloneUploadTest" time="0.036"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

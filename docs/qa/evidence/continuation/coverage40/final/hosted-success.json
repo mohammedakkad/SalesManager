@@ -1,0 +1,153 @@
+{
+  "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42586688384",
+  "auditedSource": "47148214d22f15097f30e8b7374e735648a597f6",
+  "workflowConclusion": "SUCCESS",
+  "jobs": {
+    "seller": {
+      "url": "https://github.com/mohammedakkad/SalesManager/actions/runs/42586688384/job/129058104011",
+      "conclusion": "SUCCESS",
+      "publicLabels": [
+        "completed successfully: "
+      ],
+      "fullSourceVisible": true,
+      "steps": [
+        {
+          "data-name": "Set up job",
+          "data-conclusion": "success",
+          "data-number": "1"
+        },
+        {
+          "data-name": "Run actions/checkout@v4",
+          "data-conclusion": "success",
+          "data-number": "2"
+        },
+        {
+          "data-name": "Run actions/setup-java@v4",
+          "data-conclusion": "success",
+          "data-number": "3"
+        },
+        {
+          "data-name": "Provision verified isolated Android SDK",
+          "data-conclusion": "success",
+          "data-number": "4"
+        },
+        {
+          "data-name": "Install verified Gradle",
+          "data-conclusion": "success",
+          "data-number": "5"
+        },
+        {
+          "data-name": "Run actions/cache@v4",
+          "data-conclusion": "success",
+          "data-number": "6"
+        },
+        {
+          "data-name": "Generate offline packaging fixture (never production Firebase)",
+          "data-conclusion": "success",
+          "data-number": "7"
+        },
+        {
+          "data-name": "Test, coverage, lint and debug assembly",
+          "data-conclusion": "success",
+          "data-number": "8"
+        },
+        {
+          "data-name": "Build minified unsigned QA release (not distributable)",
+          "data-conclusion": "success",
+          "data-number": "9"
+        },
+        {
+          "data-name": "Preserve reports even on failure",
+          "data-conclusion": "success",
+          "data-number": "10"
+        },
+        {
+          "data-name": "Post Run actions/cache@v4",
+          "data-conclusion": "success",
+          "data-number": "18"
+        },
+        {
+          "data-name": "Post Run actions/setup-java@v4",
+          "data-conclusion": "success",
+          "data-number": "19"
+        },
+        {
+          "data-name": "Post Run actions/checkout@v4",
+          "data-conclusion": "success",
+          "data-number": "20"
+        },
+        {
+          "data-name": "Complete job",
+          "data-conclusion": "success",
+          "data-number": "21"
+        }
+      ]
+    },
+    "compose": {
+      "url": "https://github.com/mohammedakkad/SalesManager/actions/runs/42586688384/job/129058104356",
+      "conclusion": "SUCCESS",
+      "publicLabels": [
+        "completed successfully: "
+      ],
+      "fullSourceVisible": true,
+      "steps": [
+        {
+          "data-name": "Set up job",
+          "data-conclusion": "success",
+          "data-number": "1"
+        },
+        {
+          "data-name": "Run actions/checkout@v4",
+          "data-conclusion": "success",
+          "data-number": "2"
+        },
+        {
+          "data-name": "Run actions/setup-java@v4",
+          "data-conclusion": "success",
+          "data-number": "3"
+        },
+        {
+          "data-name": "Provision verified isolated Android SDK",
+          "data-conclusion": "success",
+          "data-number": "4"
+        },
+        {
+          "data-name": "Install verified Gradle",
+          "data-conclusion": "success",
+          "data-number": "5"
+        },
+        {
+          "data-name": "Enable hosted-runner KVM access",
+          "data-conclusion": "success",
+          "data-number": "6"
+        },
+        {
+          "data-name": "Run reactivecircus/android-emulator-runner@v2",
+          "data-conclusion": "success",
+          "data-number": "7"
+        },
+        {
+          "data-name": "Run actions/upload-artifact@v4",
+          "data-conclusion": "success",
+          "data-number": "8"
+        },
+        {
+          "data-name": "Post Run actions/setup-java@v4",
+          "data-conclusion": "success",
+          "data-number": "15"
+        },
+        {
+          "data-name": "Post Run actions/checkout@v4",
+          "data-conclusion": "success",
+          "data-number": "16"
+        },
+        {
+          "data-name": "Complete job",
+          "data-conclusion": "success",
+          "data-number": "17"
+        }
+      ]
+    }
+  },
+  "evidenceScope": "Public workflow/job/step metadata; raw uploaded XML/PDF artifacts not independently downloaded."
+}

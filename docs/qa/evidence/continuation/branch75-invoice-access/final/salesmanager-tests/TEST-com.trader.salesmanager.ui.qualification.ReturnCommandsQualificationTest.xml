@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" tests="24" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:28:28" hostname="ac8333d6728a" time="1.326">
+  <properties/>
+  <testcase name="positiveInfiniteQuantityCannotBecomeAFullRefund" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.653"/>
+  <testcase name="overflowingRefundCannotEnableConfirmation" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.02"/>
+  <testcase name="negativePriorReturnedQuantityDoesNotInflateAvailableRefund" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.027"/>
+  <testcase name="dismissingPendingConfirmationCannotOpenAnotherSubmission" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.025"/>
+  <testcase name="invoiceReadFailureEndsLoadingAndCanBeRetriedWithoutAnOldDraft" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.019"/>
+  <testcase name="completedReturnCannotBeSubmittedAgainByDismissingItsSheet" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.049"/>
+  <testcase name="nanQuantityCannotCorruptAValidSelection" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.018"/>
+  <testcase name="unchangedQuantityCallbackDoesNotDiscardTheRetryIdentity" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.018"/>
+  <testcase name="pendingSubmissionFreezesItsQuantitySelectionAndNote" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.021"/>
+  <testcase name="missingMerchantCannotSubmitARefund" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.051"/>
+  <testcase name="deselectedReturnableLineMakesReturnPartialAndKeepsItOutOfRefund" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.018"/>
+  <testcase name="missingProductKeepsTheExistingZeroCostFallbackAndAllowsZeroPriceReturns" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.023"/>
+  <testcase name="cancellationDoesNotBecomeAFinancialFailureMessage" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.049"/>
+  <testcase name="cancelledReturnedQuantityReadCannotCreateReturnableLines" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.014"/>
+  <testcase name="invalidOriginalQuantityDoesNotBecomeAReturnDraft" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.094"/>
+  <testcase name="priorReturnsLimitQuantityAndRefundAndFullMeansAllRemainingItems" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.032"/>
+  <testcase name="nonfiniteCostDoesNotEnterProfitOrReturnPayload" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.059"/>
+  <testcase name="duplicateConfirmationIsClaimedBeforeCoroutineDispatch" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.019"/>
+  <testcase name="negativeInfiniteQuantityCannotEraseAValidSelection" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.009"/>
+  <testcase name="failedReturnedQuantityReadNeverInventsZeroReturnedStock" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.01"/>
+  <testcase name="zeroQuantityCannotConfirmAndRepositoryFailureKeepsExplicitRetryState" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.018"/>
+  <testcase name="unchangedRetryKeepsInvoiceAndItemIdentitiesAfterUncertainFailure" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.049"/>
+  <testcase name="failedLoadHasAnExplicitRetryAndOnlyOneReloadCanBePending" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.013"/>
+  <testcase name="overflowingSumOfFiniteRefundLinesCannotEnableConfirmation" classname="com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest" time="0.013"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

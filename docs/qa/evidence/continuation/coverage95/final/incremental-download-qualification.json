@@ -1,0 +1,117 @@
+{
+  "startingSha": "5b2016ca3503abe87136621f4b6b19191096a1e7",
+  "scope": "Executed local JVM suites; Android and PDFBox runtime require separate hosted evidence. No production exclusions or changed thresholds.",
+  "modules": {
+    "app": {
+      "BRANCH": {
+        "covered": 1615,
+        "missed": 1496,
+        "total": 3111,
+        "percent": 51.91256830601093,
+        "additionalCoveredFor95": 1341
+      },
+      "LINE": {
+        "covered": 8134,
+        "missed": 2173,
+        "total": 10307,
+        "percent": 78.91724071019695,
+        "additionalCoveredFor95": 1658
+      },
+      "METHOD": {
+        "covered": 1818,
+        "missed": 697,
+        "total": 2515,
+        "percent": 72.28628230616302,
+        "additionalCoveredFor95": 572
+      }
+    },
+    "salesmanager": {
+      "BRANCH": {
+        "covered": 7163,
+        "missed": 7539,
+        "total": 14702,
+        "percent": 48.7212624132771,
+        "additionalCoveredFor95": 6804
+      },
+      "LINE": {
+        "covered": 13921,
+        "missed": 3977,
+        "total": 17898,
+        "percent": 77.7796401832607,
+        "additionalCoveredFor95": 3083
+      },
+      "METHOD": {
+        "covered": 2391,
+        "missed": 809,
+        "total": 3200,
+        "percent": 74.71875,
+        "additionalCoveredFor95": 649
+      }
+    }
+  },
+  "weighted": {
+    "BRANCH": {
+      "covered": 8778,
+      "missed": 9035,
+      "total": 17813,
+      "percent": 49.27861674058272,
+      "additionalCoveredFor95": 8145
+    },
+    "LINE": {
+      "covered": 22055,
+      "missed": 6150,
+      "total": 28205,
+      "percent": 78.19535543343379,
+      "additionalCoveredFor95": 4740
+    },
+    "METHOD": {
+      "covered": 4209,
+      "missed": 1506,
+      "total": 5715,
+      "percent": 73.64829396325459,
+      "additionalCoveredFor95": 1221
+    }
+  },
+  "jvm": {
+    "app": {
+      "tests": 208,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "salesmanager": {
+      "tests": 393,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "artifacts": {
+    "debug/salesmanager-debug.apk": {
+      "bytes": 51736258,
+      "sha256": "10799cd8c4574db20f500c85fc21c1f8f667ea13d1f0b0b13a0205ee629cc43a"
+    },
+    "androidTest/debug/salesmanager-debug-androidTest.apk": {
+      "bytes": 1077216,
+      "sha256": "ba48461a7d4a434a5bb03988e990e8e6dd2964e11b87fda47daa135b7780033d"
+    },
+    "release/salesmanager-release-unsigned.apk": {
+      "bytes": 26702050,
+      "sha256": "5a25e82b918e2372d1351de14f6126c826e87881bd38b14e5667299a787535e2"
+    }
+  },
+  "targetLinePercent": 95,
+  "releaseReadiness": "FAIL",
+  "newJvmCases": 87,
+  "retainedStartingCases": 514,
+  "totalJvmCases": 601,
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 24
+  },
+  "qualifiedSource": "fda922fb865dabf5633115268d3b4e72ccbb8e4f",
+  "hostedRunUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42863854908",
+  "hostedStatus": "IN PROGRESS",
+  "fullBuild": "PASS: 5m36s; 601 JVM cases; current production source"
+}

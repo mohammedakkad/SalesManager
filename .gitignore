@@ -71,6 +71,12 @@ gradle.properties.user
 .vscode/
 
 schemas/
+/app/google-services.json
+/admin/google-services.json
+/salesmanager/google-services.json
+keystore_base64.txt
+keystore.properties
+.cursorrules
 
-google-services.json
-/app/release
+# Private signing export: retain only in secure local/environment storage.
+/keystore_base64.txt

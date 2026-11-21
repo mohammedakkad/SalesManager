@@ -1,0 +1,7 @@
+{
+  "result": "ORIGINAL DENOMINATORS RESTORED",
+  "cause": "AGP realizes test variants late and overwrites the shared Jacoco extension with0.8.14. The initial standalone task probe did not realize those variants; the real task graph and generated HTML confirmed0.8.14.",
+  "repair": "Dedicated qaPinnedReportAnt configuration on every JacocoReport; actual HTML footer guard enforces0.8.12. Instrumentation remains0.8.14.",
+  "diagnosticScope": "Reports rerendered from the immediately preceding actual1020case run of unchanged production bytecode; this rerender runs no tests. Final qualification reruns both complete JVM suites without test exclusions.",
+  "metricPopulation": "No class/branch exclusions or floor changes.44new generated branches are retained from the actual six-label production change."
+}

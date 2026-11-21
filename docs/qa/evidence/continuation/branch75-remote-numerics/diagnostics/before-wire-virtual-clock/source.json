@@ -1,0 +1,8 @@
+{
+  "startingSha": "d8a7d3e2bcd0397d8d8588f5a7a35f9331b677f1",
+  "productionFileSha256": "6d8e879eeaaab4414123067a06c1844f7c8d36f3c9b7b691e278be83126317e9",
+  "tests": 18,
+  "failed": 16,
+  "passed": 2,
+  "scope": "Canonical before proof: JSON-valid String1e309/Infinity/NaN first, all3Roomcases use string wire values. No claimFirebase accepts numericNaN/Infinity; SDK-fake directNumbervariants are defensive input checks. Same16 regression identities as earlier proof, not16 additional cases."
+}

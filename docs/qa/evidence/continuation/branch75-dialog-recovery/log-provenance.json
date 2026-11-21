@@ -1,0 +1,62 @@
+[
+  {
+    "rawArchive": "final/salesmanager-debug-androidTest.apk.signature.log.gz",
+    "rawBytesSha256": "b0a1af67205efcd284e5bbae691ebf4a0d296b4fcae02cd28e7e0509d0e0efbc",
+    "archiveSha256": "f41a444c308d959b549d6f36253afad8c8bff4d9c8478c7bc494285b27280fea",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "final/dialog-recovery-suite.log.gz",
+    "rawBytesSha256": "3f4fb23a444ec1aab9bfa8ff9eee273b10bfc2bfddac15ea949904e66ce9eac7",
+    "archiveSha256": "e90817e9afdddeefcdb8c6d9a0faff056d7d8803187f85c9cb95af9bfce474fc",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "final/accounts-and-dialog-assembly.log.gz",
+    "rawBytesSha256": "defc5a9b6e36649cf8417065905a13d293d9e5526684bc75f2a1066b8e5d3d5e",
+    "archiveSha256": "1e27747ebb9622dd025bd6844cb0938c500829028cdb962b22c0a3a0221e44dc",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "final/salesmanager-debug.apk.signature.log.gz",
+    "rawBytesSha256": "b0a1af67205efcd284e5bbae691ebf4a0d296b4fcae02cd28e7e0509d0e0efbc",
+    "archiveSha256": "08281233b41b58bcaa88111be56c9a5df0d8c84ccbd9f708df7e4dc29506a39f",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "final/dialog-recovery-android-final.log.gz",
+    "rawBytesSha256": "b75afd7622c490fa3ed4ab8144ccc8418a0eeb60431d9682e6c3d49d5d464dcc",
+    "archiveSha256": "4665320e496865998a2ddcada0a13bc6789512a3aa161a3e21538642f7e3cc97",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "final/dialog-recovery-gates.log.gz",
+    "rawBytesSha256": "e5b7c8ef31d107e32d859316724e836624753a4c933ff7c1066446ae4e960836",
+    "archiveSha256": "5180fc9928d3c194bba523735e471319d2268fb004eb5249e01f59e5b18f7aa0",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "final/device-evidence-after.log.gz",
+    "rawBytesSha256": "aec6fafcfbc1735ae747d8266f7dfc0787f18036fcb95ba5dfeee92886a0f35d",
+    "archiveSha256": "7b55ad4d42aabd64fe0453a88a20e91b17d148dda77535a86618187d4cff04c7",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "final/salesmanager-release-unsigned.apk.signature.log.gz",
+    "rawBytesSha256": "1413af210d1627fde4f14e31934eb5d9d031684e4f7a5c3371a74b3bdeb8764c",
+    "archiveSha256": "38a6b68da675abd9bf628a8e8f0d2547c224f5d33cad34e815b116fe6927d243",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "final/dialog-recovery-full.log.gz",
+    "rawBytesSha256": "56f26b041790ba90f73ff3f33f4fac6507a08d721a3eeed811f5fa05dc4e21ad",
+    "archiveSha256": "3304fdd2a92c827f1f237f3abecb2ff85050edb98b777d2185847296ebe7fcd2",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  },
+  {
+    "rawArchive": "before-reporting/python.log.gz",
+    "rawBytesSha256": "503e18645f6c4bf28c1500b4899e8aac44db0035e5658b04f4b18416b5ac8d97",
+    "archiveSha256": "014a764e95352b081f5ef6a7688a51d82af0768dffd18f9f96158acd5d6b8eb0",
+    "view": "Readable log strips trailing whitespace; exact raw output is in gzip."
+  }
+]

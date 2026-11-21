@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:16:55" hostname="6d75d821cc71" time="1.986">
+  <properties/>
+  <testcase name="editingRejectsNegativeAndNonfiniteGrossAmounts" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.232"/>
+  <testcase name="deletionRequiresAPersistedPositiveTransactionId" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.15"/>
+  <testcase name="editingCannotChangeTheExistingTransactionIdentity" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.193"/>
+  <testcase name="finiteInputsWhoseCashAdditionOverflowsAreRolledBack" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.104"/>
+  <testcase name="missingCashProvisioningRollsBackSaleInvoiceAndStockDeduction" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.106"/>
+  <testcase name="anotherMerchantsCashBoxCannotReceiveTheSaleProceeds" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.127"/>
+  <testcase name="anotherMerchantsProductCannotBeSoldUnderTheCurrentSession" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.115"/>
+  <testcase name="duplicateLineIdsCannotCollapseTwoSoldQuantitiesIntoOneStoredRow" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.093"/>
+  <testcase name="creationRequiresANewTransactionIdentity" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.081"/>
+  <testcase name="creationRejectsNonpositiveAndNonfiniteGrossAmounts" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.117"/>
+  <testcase name="blankOperationIdentityCannotCreateAnyBusinessOrOutboxRows" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.099"/>
+  <testcase name="invoiceLineTotalsCannotExceedTheGrossSaleAmount" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.094"/>
+  <testcase name="editingAMissingSaleDoesNotInventANewAggregate" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.102"/>
+  <testcase name="invalidInvoiceLineFieldsAreRejectedWithoutPartialFinancialEffects" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.19"/>
+  <testcase name="aRemovedUnitRollsBackTheAlreadyInsertedSaleAndInvoiceLines" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.092"/>
+  <testcase name="blankMerchantCannotWriteTheFinancialAggregate" classname="com.trader.salesmanager.sales.SaleCommandInputBoundaryRoomTest" time="0.085"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

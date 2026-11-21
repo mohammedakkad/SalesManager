@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemedDraftUiTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:45:59" hostname="6d75d821cc71" time="1.875">
+  <properties/>
+  <testcase name="reportSelectionAndReadyMonthRemainStableWhenThemeChanges" classname="com.trader.salesmanager.ui.coverage.ThemedDraftUiTest" time="0.436"/>
+  <testcase name="customerDraftSurvivesTwoThemeChangesAndOnlyExplicitSavePersistsIt" classname="com.trader.salesmanager.ui.coverage.ThemedDraftUiTest" time="0.371"/>
+  <testcase name="productDraftKeepsUnitCostsAndStockWithoutSavingOnThemeChange" classname="com.trader.salesmanager.ui.coverage.ThemedDraftUiTest" time="0.714"/>
+  <testcase name="pendingReturnKeepsCancellationDisabledWhileThemeAndFailureStateChange" classname="com.trader.salesmanager.ui.coverage.ThemedDraftUiTest" time="0.354"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-15T13:29:01" hostname="236b99701f27" time="0.698">
+  <properties/>
+  <testcase name="physicalZeroIsAValidCountAndUpdatesOnlyTheSelectedItem" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.127"/>
+  <testcase name="fullyCountedFinishCanBeDismissedWithoutApplyingInventoryChanges" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.074"/>
+  <testcase name="clearSearchAndPendingFilterActionsAreAccessibleAndDispatchTheirOwnChanges" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.078"/>
+  <testcase name="allCountedMessageRequiresNoPendingItemsInTheEntireSession" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.05"/>
+  <testcase name="searchIsCaseInsensitiveAndPendingFilterStillExcludesCountedItems" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.044"/>
+  <testcase name="invalidPhysicalCountsCannotSubmitAndUncountedItemsCannotClearAnAbsentCount" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.11"/>
+  <testcase name="cancellingRequiresAnExplicitConfirmationAndCanBeDismissed" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.102"/>
+  <testcase name="emptySearchAmongPendingItemsCannotClaimThatEveryItemWasCounted" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.048"/>
+  <testcase name="headerBackActionHasAnAccessibleNameAndNavigatesOnce" classname="com.trader.salesmanager.ui.coverage.InventorySessionJourneysUiTest" time="0.062"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

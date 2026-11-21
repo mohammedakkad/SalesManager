@@ -1,0 +1,34 @@
+[
+  {
+    "artifact": "org.jacoco.core",
+    "version": "0.8.14",
+    "source": "https://repo.maven.apache.org/maven2/org/jacoco/org.jacoco.core/0.8.14/org.jacoco.core-0.8.14.jar",
+    "sha1": "5d317827447ab203bb90ecc7597850baae9c8565",
+    "verifiedPublishedSha1": true,
+    "sha256": "28abbf0eea5a08e4f24097f2fbac663ca17c341c25c3a04d90d6cd325943c995"
+  },
+  {
+    "artifact": "asm",
+    "version": "9.9",
+    "source": "https://repo.maven.apache.org/maven2/org/ow2/asm/asm/9.9/asm-9.9.jar",
+    "sha1": "c29635c8a7afa03d74b33c1884df8abb2b3f3dcc",
+    "verifiedPublishedSha1": true,
+    "sha256": "03d99a74ad1ee5c71334ef67437f4ef4fe3488caa7c96d8645abc73c8e2017d4"
+  },
+  {
+    "artifact": "asm-tree",
+    "version": "9.9",
+    "source": "https://repo.maven.apache.org/maven2/org/ow2/asm/asm-tree/9.9/asm-tree-9.9.jar",
+    "sha1": "f8de6eead6d24dd0f45bd065bbe112b2cda6ea21",
+    "verifiedPublishedSha1": true,
+    "sha256": "42178f3775c9c63f9e5e1446747d29b4eca4d91bd6e75e5c43cfa372a47d38c6"
+  },
+  {
+    "artifact": "asm-commons",
+    "version": "9.9",
+    "source": "https://repo.maven.apache.org/maven2/org/ow2/asm/asm-commons/9.9/asm-commons-9.9.jar",
+    "sha1": "db9165a3bf908ded6b08612d583a15d1d0c7bda0",
+    "verifiedPublishedSha1": true,
+    "sha256": "db2f6f26150bbe7c126606b4a1151836bcc22a1e05a423b3585698bece995ff8"
+  }
+]

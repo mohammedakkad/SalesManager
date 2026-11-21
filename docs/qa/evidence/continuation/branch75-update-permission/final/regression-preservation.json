@@ -1,0 +1,16 @@
+{
+  "failedBeforePassedAfter": [
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest",
+      "name": "revokingUnknownAppsPermissionOutsideTheActivityRemovesTheInstallActionOnResume"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest",
+      "name": "grantingUnknownAppsPermissionOutsideTheActivityRefreshesActionsOnResume"
+    }
+  ],
+  "count": 2,
+  "scope": "Two genuine assertion failures on the original b241995 SettingsScreen: externally granted/revoked permission is visible to the public permission adapter but the resumed UI remains stale. Both now pass."
+}

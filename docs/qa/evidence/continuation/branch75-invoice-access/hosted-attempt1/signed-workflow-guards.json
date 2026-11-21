@@ -1,0 +1,17 @@
+{
+  "sourceSha": "a5c402f564669129aacdc745210c4f6a3075352d",
+  "runs": [
+    {
+      "id": 44288325431,
+      "name": "Build SalesManager Release APK",
+      "conclusion": "skipped",
+      "steps": 0
+    },
+    {
+      "id": 44288325782,
+      "name": "Build Admin Release APK",
+      "conclusion": "skipped",
+      "steps": 0
+    }
+  ]
+}

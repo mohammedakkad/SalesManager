@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.SyncStatusUiTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:18:35" hostname="6d75d821cc71" time="0.24">
+  <properties/>
+  <testcase name="syncedSheetShowsNoPendingRecords" classname="com.trader.salesmanager.ui.coverage.SyncStatusUiTest" time="0.093"/>
+  <testcase name="statusIconsDistinguishSyncedPendingAndFailedAndOpenDetails" classname="com.trader.salesmanager.ui.coverage.SyncStatusUiTest" time="0.066"/>
+  <testcase name="failedSheetIdentifiesRecordsAndRetryIsExplicit" classname="com.trader.salesmanager.ui.coverage.SyncStatusUiTest" time="0.081"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

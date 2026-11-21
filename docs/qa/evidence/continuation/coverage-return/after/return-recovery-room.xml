@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.ReturnRecoveryRoomTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-10T13:54:33" hostname="13302589aed6" time="10.187">
+  <properties/>
+  <testcase name="failedOutboxInsertRollsBackTheWholeReturnAndRetryCommitsOnce" classname="com.trader.salesmanager.sales.ReturnRecoveryRoomTest" time="9.189"/>
+  <testcase name="committedReturnSurvivesReopenAndFreshDraftUsesOnlyRemainingQuantity" classname="com.trader.salesmanager.sales.ReturnRecoveryRoomTest" time="0.714"/>
+  <testcase name="cancellationAfterActualCommitRetriesTheSameRefundWithoutAnotherCashOrStockEffect" classname="com.trader.salesmanager.sales.ReturnRecoveryRoomTest" time="0.283"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

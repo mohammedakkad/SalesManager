@@ -1,0 +1,86 @@
+{
+  "failedBeforePassedAfter": [
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.NonfiniteCacheIntegrityRoomTest",
+      "name": "infiniteRemoteCashBalanceCannotPartiallyImportEarlierCustomerAndSaleRows"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.NonfiniteCacheIntegrityRoomTest",
+      "name": "infiniteRemoteSaleCannotOverwriteAnyStagedCacheOrDerivedDebt"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.NonfiniteCacheIntegrityRoomTest",
+      "name": "invalidRealtimeReturnBatchCannotReplaceOrDeleteExistingRefundRows"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "realtimeCashMovementsRejectNonfiniteDeltaAndBalance"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "bulkReturnRefundCannotTurnIntoInfiniteMoney"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "realtimeReturnRefundRejectsTheWholeSnapshot"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "realtimeTransactionAmountsCannotPublishAPartialReplacement"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "realtimeCashBalancesRejectAllRowsWhenOneIsNonfinite"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "bulkInvoiceQuantityAndPricesCannotImportNonfiniteValues"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "realtimeNestedReturnAmountsCannotBecomeADeletedOrZeroedReturn"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "bulkCashBalancesCannotBePartiallyImportedWhenOneIsNonfinite"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "realtimeInvoiceQuantitiesAndPricesCannotPublishNonfiniteValues"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "returnFallbackInvoiceCannotSupplyANonfiniteOriginalQuantityOrUnitPrice"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "bulkNestedReturnItemsRejectNonfiniteQuantitiesCostsAndRefunds"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "bulkCashMovementsRejectNonfiniteDeltaOrResult"
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "name": "bulkTransactionAmountsRejectNonfiniteWireNumbersAsACompleteSnapshot"
+    }
+  ],
+  "count": 16,
+  "scope": "Canonical before proof uses JSON-valid nonfinite numeric strings first, including all3Roomcases. Same identities as earlier proofs, not additional failures. Not16 independent bugs."
+}

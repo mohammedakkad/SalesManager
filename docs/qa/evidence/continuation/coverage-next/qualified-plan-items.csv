@@ -1,0 +1,4 @@
+kind,id,status,scenario,blocker_or_next_action
+Logic boundary,LOG-05,PASS,Out-of-order barcode conflict replies after editing a product,Actual failing-before/passing-after client regressions; barcode/draft unit contracts and real Room session UI with deterministic Firebase task fakes. See coverage-next evidence.
+Logic boundary,LOG-07,PASS,Empty/malformed/obsolete invoice draft JSON has an explicit user-visible recovery policy,Actual failing-before/passing-after client regressions; barcode/draft unit contracts and real Room session UI with deterministic Firebase task fakes. See coverage-next evidence.
+Logic boundary,LOG-08,PASS,Session revoke rejection preserves local session and reports failure,Actual failing-before/passing-after client regressions; barcode/draft unit contracts and real Room session UI with deterministic Firebase task fakes. See coverage-next evidence.

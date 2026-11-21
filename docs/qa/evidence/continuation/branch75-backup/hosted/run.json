@@ -1,0 +1,11 @@
+{
+  "id": 44059871127,
+  "name": "Seller QA",
+  "head_sha": "69ef00b3d60ab2919861aa7c98efae0668f0cbb0",
+  "status": "completed",
+  "conclusion": "success",
+  "html_url": "https://github.com/mohammedakkad/SalesManager/actions/runs/44059871127",
+  "run_attempt": 2,
+  "created_at": "2026-11-17T09:54:30Z",
+  "updated_at": "2026-11-17T10:19:26Z"
+}

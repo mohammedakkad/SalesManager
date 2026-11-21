@@ -1,0 +1,84 @@
+[
+  {
+    "source": "com/trader/salesmanager/ui/boxes/BoxesScreen.kt",
+    "differences": [
+      {
+        "line": 573,
+        "prior": [
+          2,
+          0
+        ],
+        "fresh": [
+          1,
+          1
+        ]
+      },
+      {
+        "line": 584,
+        "prior": [
+          2,
+          0
+        ],
+        "fresh": [
+          1,
+          1
+        ]
+      },
+      {
+        "line": 602,
+        "prior": [
+          2,
+          0
+        ],
+        "fresh": [
+          1,
+          1
+        ]
+      },
+      {
+        "line": 616,
+        "prior": [
+          5,
+          3
+        ],
+        "fresh": [
+          3,
+          5
+        ]
+      },
+      {
+        "line": 624,
+        "prior": [
+          4,
+          2
+        ],
+        "fresh": [
+          3,
+          3
+        ]
+      },
+      {
+        "line": 629,
+        "prior": [
+          7,
+          3
+        ],
+        "fresh": [
+          4,
+          6
+        ]
+      },
+      {
+        "line": 630,
+        "prior": [
+          5,
+          3
+        ],
+        "fresh": [
+          3,
+          5
+        ]
+      }
+    ]
+  }
+]

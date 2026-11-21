@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:29:59" hostname="ac8333d6728a" time="1.61">
+  <properties/>
+  <testcase name="roleChipsReflectModelSelectionAndDelegateBothRoles" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.384"/>
+  <testcase name="cancellingSheetResetsTheFormWithoutSubmitting" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.219"/>
+  <testcase name="blankLegacyEmployeeNameUsesAFallbackAvatarWithoutDroppingTheRecord" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.081"/>
+  <testcase name="saveGatesFollowBothNameAndPinAcrossModelUpdates" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.185"/>
+  <testcase name="failureEventKeepsTheDraftSheetOpenAndDisplaysTheReason" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.112"/>
+  <testcase name="distinctValidationErrorsReplaceTheirPredecessorAndClearOnRecovery" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.271"/>
+  <testcase name="emptyEmployeeListExplainsCreationAndBackNavigates" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.043"/>
+  <testcase name="addedEventClosesTheSheetAndShowsItsSpecificOutcome" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.126"/>
+  <testcase name="submissionInProgressShowsADisabledProgressControl" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.125"/>
+  <testcase name="deletedEventReportsDeletionWithoutStartingAnotherDelete" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.061"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

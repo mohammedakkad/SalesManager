@@ -1,0 +1,2 @@
+Command: PyYAML BaseLoader parse of .github/workflows/seller-qa.yml; assert production PR target and seller/compose jobs
+PASS local structure review; NOT TESTED remote GitHub Actions execution

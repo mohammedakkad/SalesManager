@@ -1,0 +1,250 @@
+{
+  "startingSha": "1165187b12f208d2ba2d33130e4132b6277611fa",
+  "sourceSha": "d53b248b6091ca16d6df2a0c06debfac41af86ef",
+  "newJvmCases": 39,
+  "preservedStartingCases": 802,
+  "preservedIntermediateCases": 836,
+  "failingBeforeFinalRegressionCases": 15,
+  "jvm": {
+    "app": 208,
+    "seller": 633,
+    "total": 841,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "python": {
+    "passed": 22,
+    "failures": 0,
+    "skipped": 0
+  },
+  "androidPerLane": 7,
+  "pdfBoxPerLane": 5,
+  "pdfFilesPerLane": 5,
+  "independentPassedCases": 875,
+  "migrationCases": 7,
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "builds": {
+    "debug": "PASS",
+    "androidTestAssembly": "PASS",
+    "minifiedUnsignedRelease": "PASS"
+  },
+  "workflowRun": 43722488513,
+  "workflowResult": "SUCCESS",
+  "workflowAttempt": 1,
+  "jobs": {
+    "seller": "SUCCESS",
+    "compose API24": "SUCCESS",
+    "compose API28": "SUCCESS",
+    "compose API33": "SUCCESS",
+    "compose API35": "SUCCESS"
+  },
+  "localCoverage": {
+    "qaCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1615,
+          "total": 3111
+        },
+        "LINE": {
+          "covered": 8134,
+          "total": 10307
+        },
+        "METHOD": {
+          "covered": 1818,
+          "total": 2515
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8179,
+          "total": 14796
+        },
+        "LINE": {
+          "covered": 15130,
+          "total": 17957
+        },
+        "METHOD": {
+          "covered": 2633,
+          "total": 3223
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23264,
+          "total": 28264
+        },
+        "METHOD": {
+          "covered": 4451,
+          "total": 5738
+        },
+        "BRANCH": {
+          "covered": 9794,
+          "total": 17907
+        }
+      }
+    },
+    "qaAllJvmCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1728,
+          "total": 3111
+        },
+        "LINE": {
+          "covered": 8467,
+          "total": 10307
+        },
+        "METHOD": {
+          "covered": 1954,
+          "total": 2515
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8179,
+          "total": 14796
+        },
+        "LINE": {
+          "covered": 15130,
+          "total": 17957
+        },
+        "METHOD": {
+          "covered": 2633,
+          "total": 3223
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23597,
+          "total": 28264
+        },
+        "METHOD": {
+          "covered": 4587,
+          "total": 5738
+        },
+        "BRANCH": {
+          "covered": 9907,
+          "total": 17907
+        }
+      }
+    }
+  },
+  "androidApi28Coverage": {
+    "bothJvm": {
+      "BRANCH": {
+        "app": {
+          "covered": 1728,
+          "missed": 1383
+        },
+        "salesmanager": {
+          "covered": 8328,
+          "missed": 6468
+        },
+        "weighted overall": {
+          "covered": 10056,
+          "missed": 7851
+        }
+      },
+      "LINE": {
+        "app": {
+          "covered": 8471,
+          "missed": 1836
+        },
+        "salesmanager": {
+          "covered": 16134,
+          "missed": 1823
+        },
+        "weighted overall": {
+          "covered": 24605,
+          "missed": 3659
+        }
+      },
+      "METHOD": {
+        "app": {
+          "covered": 1958,
+          "missed": 557
+        },
+        "salesmanager": {
+          "covered": 2703,
+          "missed": 520
+        },
+        "weighted overall": {
+          "covered": 4661,
+          "missed": 1077
+        }
+      }
+    },
+    "historical": {
+      "branches": {
+        "app": {
+          "covered": 1615,
+          "missed": 1496
+        },
+        "salesmanager": {
+          "covered": 8328,
+          "missed": 6468
+        },
+        "weighted overall": {
+          "covered": 9943,
+          "missed": 7964
+        }
+      },
+      "lines": {
+        "app": {
+          "covered": 8151,
+          "missed": 2156
+        },
+        "salesmanager": {
+          "covered": 16134,
+          "missed": 1823
+        },
+        "weighted overall": {
+          "covered": 24285,
+          "missed": 3979
+        }
+      },
+      "methods": {
+        "app": {
+          "covered": 1836,
+          "missed": 679
+        },
+        "salesmanager": {
+          "covered": 2703,
+          "missed": 520
+        },
+        "weighted overall": {
+          "covered": 4539,
+          "missed": 1199
+        }
+      },
+      "nativePdfLines": {
+        "InvoicePdfGenerator.kt": {
+          "covered": 489,
+          "missed": 48
+        },
+        "PdfCanvas.kt": {
+          "covered": 68,
+          "missed": 2
+        },
+        "ReportPdfGenerator.kt": {
+          "covered": 438,
+          "missed": 19
+        }
+      }
+    }
+  },
+  "rawArtifactArchivesDownloaded": true,
+  "advertisedArchiveDigestsVerifiedWhenPresent": true,
+  "allFivePublishedPdfHashesVerifiedPerLane": true,
+  "branch75": "NOT ACHIEVED",
+  "line95": "NOT ACHIEVED",
+  "release": "FAIL",
+  "remainingWorkItems": {
+    "NOT TESTED": 22,
+    "BLOCKED": 32,
+    "PARTIAL": 2
+  }
+}

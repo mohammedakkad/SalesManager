@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemedStaffAndBoxesRefreshUiTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:45:11" hostname="ac8333d6728a" time="2.17">
+  <properties/>
+  <testcase name="employeeRemovalAndReplacementUseCurrentIdentityForDeletionAfterThemeChange" classname="com.trader.salesmanager.ui.coverage.ThemedStaffAndBoxesRefreshUiTest" time="0.341"/>
+  <testcase name="initializingABoxExternallyReplacesTheInitialActionWithTheAdjustmentAction" classname="com.trader.salesmanager.ui.coverage.ThemedStaffAndBoxesRefreshUiTest" time="0.337"/>
+  <testcase name="removingAllBoxesRemovesTheirAdjustmentControlsAcrossThemeChanges" classname="com.trader.salesmanager.ui.coverage.ThemedStaffAndBoxesRefreshUiTest" time="0.34"/>
+  <testcase name="employeeDraftAndSelectedRoleSurviveThemeWhileValidationFailureIsReplaced" classname="com.trader.salesmanager.ui.coverage.ThemedStaffAndBoxesRefreshUiTest" time="0.424"/>
+  <testcase name="expandedBoxLedgerRefreshKeepsOtherBoxesMovementsOutOfItsDetails" classname="com.trader.salesmanager.ui.coverage.ThemedStaffAndBoxesRefreshUiTest" time="0.359"/>
+  <testcase name="delayedEmployeeAddedEventClosesTheThemedSheetWithoutResubmitting" classname="com.trader.salesmanager.ui.coverage.ThemedStaffAndBoxesRefreshUiTest" time="0.369"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

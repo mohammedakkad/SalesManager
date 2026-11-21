@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.CashBoxIntegrityTest" tests="17" skipped="0" failures="0" errors="0" timestamp="2026-11-10T14:15:24" hostname="13302589aed6" time="9.197">
+  <properties/>
+  <testcase name="nanInitialBalanceIsRejectedAsInputRatherThanASqlConstraintFailure" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="7.896"/>
+  <testcase name="failedRecordsRetryWithoutReapplyingBalancesOrConflicts" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.204"/>
+  <testcase name="paidTransferReconcilesBalancesAndLedger" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.133"/>
+  <testcase name="infiniteInitialBalanceIsRejectedBeforeAnyRoomWrite" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.062"/>
+  <testcase name="offlineRetryKeepsDurableRecordsWithoutRemoteRequests" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.085"/>
+  <testcase name="cancelledBoxUploadPropagatesWithoutMarkingFailed" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.083"/>
+  <testcase name="cancelledMovementUploadPropagatesWithoutMarkingFailed" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.061"/>
+  <testcase name="unchangedPaymentDoesNotCreateLedgerNoise" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.052"/>
+  <testcase name="logoutCancelsBothRemoteSubscriptions" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.049"/>
+  <testcase name="overflowingCorrectionDeltaCannotMutateAFiniteExistingBalance" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.055"/>
+  <testcase name="unpaidSaleDoesNotAffectCash" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.056"/>
+  <testcase name="overflowingCashEffectRollsBackItsBalanceAndLedger" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.049"/>
+  <testcase name="manualCorrectionRecordsOnlyDifferenceAndKeepsInitialHistory" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.076"/>
+  <testcase name="partialBatchFailureDoesNotBlockOthersAndRetryUsesSameLedgerId" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.093"/>
+  <testcase name="initialBalanceCanBeSetOnlyOnce" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.079"/>
+  <testcase name="infiniteCorrectionCannotCorruptACashBoxOrItsLedger" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.096"/>
+  <testcase name="secondBoxFailureRollsBackWholePaymentTransfer" classname="com.trader.core.data.repository.CashBoxIntegrityTest" time="0.06"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,122 @@
+{
+  "startingSha": "5ce08486e4d2fbc0aab8ecd739b66bd8439981a6",
+  "productionTestSourceFingerprint": "08ff04bd09ddd1e607f50d8d860821aeb113fd1368e3ae81847bb84edd0843f4",
+  "qualification": "LOCAL PASS; Android runtime pending for this source",
+  "jvmCases": 956,
+  "moduleCounts": {
+    "app": 225,
+    "salesmanager": 731
+  },
+  "newJvmCases": 8,
+  "preservedStartingCases": 948,
+  "pythonCases": 25,
+  "newPythonCases": 3,
+  "newReportingRegressionIdentities": 2,
+  "androidCasesRequired": 10,
+  "pdfBoxCasesRequired": 5,
+  "androidRuntime": "NOT EXECUTED locally",
+  "coverage": {
+    "qaCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1642,
+          "total": 3129
+        },
+        "LINE": {
+          "covered": 8187,
+          "total": 10364
+        },
+        "METHOD": {
+          "covered": 1825,
+          "total": 2522
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8824,
+          "total": 14812
+        },
+        "LINE": {
+          "covered": 15255,
+          "total": 17967
+        },
+        "METHOD": {
+          "covered": 2666,
+          "total": 3224
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23442,
+          "total": 28331
+        },
+        "METHOD": {
+          "covered": 4491,
+          "total": 5746
+        },
+        "BRANCH": {
+          "covered": 10466,
+          "total": 17941
+        }
+      }
+    },
+    "qaAllJvmCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1749,
+          "total": 3129
+        },
+        "LINE": {
+          "covered": 8520,
+          "total": 10364
+        },
+        "METHOD": {
+          "covered": 1961,
+          "total": 2522
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 8824,
+          "total": 14812
+        },
+        "LINE": {
+          "covered": 15255,
+          "total": 17967
+        },
+        "METHOD": {
+          "covered": 2666,
+          "total": 3224
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23775,
+          "total": 28331
+        },
+        "METHOD": {
+          "covered": 4627,
+          "total": 5746
+        },
+        "BRANCH": {
+          "covered": 10573,
+          "total": 17941
+        }
+      }
+    }
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "builds": {
+    "Debug": "PASS",
+    "AndroidTestAssembly": "PASS (not runtime)",
+    "minifiedUnsignedRelease": "PASS; mapping upload excluded"
+  },
+  "schema": "Room2.6.1/schema25;7 authentic migrations PASS;1\u201321 BLOCKED",
+  "branch75": "NOT ACHIEVED",
+  "priorLine95": "NOT ACHIEVED",
+  "release": "FAIL",
+  "productRepairs": "None in this follow-up. Password display oracle and async readiness fixed; exact retention is now required through a real encrypted export/decrypt/share-intent path on actual Android. No host substitute archive or PDF is generated."
+}

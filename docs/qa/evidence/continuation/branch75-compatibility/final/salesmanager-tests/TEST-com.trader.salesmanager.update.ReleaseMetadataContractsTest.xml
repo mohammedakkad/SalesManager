@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.update.ReleaseMetadataContractsTest" tests="24" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:45:48" hostname="ac8333d6728a" time="0.634">
+  <properties/>
+  <testcase name="absentAssetsCannotInventAnApk" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.029"/>
+  <testcase name="prereleaseNeverBecomesAnUpdateOffer" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.019"/>
+  <testcase name="patchBeyondTwoDigitEncodingCannotAliasTheNextMinor" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.017"/>
+  <testcase name="matchingAssetWithoutUrlIsNotAnOffer" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.022"/>
+  <testcase name="blankAssetUrlIsNotAnOffer" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.018"/>
+  <testcase name="unprefixedVersionRemainsCompatible" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.033"/>
+  <testcase name="malformedJsonIsUnavailableRatherThanAnException" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.017"/>
+  <testcase name="missingVersionTagCannotOfferAnUpdate" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.017"/>
+  <testcase name="loopbackRequestUsesGithubHeadersAndParsesTheActualHttpBody" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.021"/>
+  <testcase name="negativeMinorCannotBeOffered" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.017"/>
+  <testcase name="transportFailureDisconnectsTheConnection" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.023"/>
+  <testcase name="draftNeverBecomesAnUpdateOffer" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.016"/>
+  <testcase name="cancellationPropagatesAndDisconnectsTheConnection" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.017"/>
+  <testcase name="negativePatchCannotBeOffered" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.034"/>
+  <testcase name="minorBeyondTwoDigitEncodingCannotAliasTheNextMajor" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.028"/>
+  <testcase name="malformedVersionComponentsAreNotOffers" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.027"/>
+  <testcase name="deniedHttpResponseDisconnectsTheConnection" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.018"/>
+  <testcase name="negativeMajorCannotBeOffered" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.019"/>
+  <testcase name="overflowedVersionCodeCannotBeOffered" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.053"/>
+  <testcase name="otherApkNameCannotBeInstalledAsSellerRelease" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.027"/>
+  <testcase name="publishedReleaseUsesEncodedVersionExactAssetAndTrimmedChangelog" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.019"/>
+  <testcase name="plainVPrefixRemainsCompatible" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.055"/>
+  <testcase name="emptyAssetsCannotInventAnApk" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.021"/>
+  <testcase name="absentNotesProduceAnEmptyChangelog" classname="com.trader.salesmanager.update.ReleaseMetadataContractsTest" time="0.059"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

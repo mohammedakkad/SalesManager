@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.SaleDraftRefreshUiTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:05:13" hostname="ac8333d6728a" time="2.726">
+  <properties/>
+  <testcase name="pendingInvoiceRestorationKeepsSubmissionBlockedAcrossThemeAndRecoversExplicitly" classname="com.trader.salesmanager.ui.coverage.SaleDraftRefreshUiTest" time="0.606"/>
+  <testcase name="paymentSelectionChangesAcrossThemeWithoutResettingTheAmountOrNote" classname="com.trader.salesmanager.ui.coverage.SaleDraftRefreshUiTest" time="0.603"/>
+  <testcase name="delayedSaveCompletionNavigatesOnceAndThemeChangesCannotRepeatIt" classname="com.trader.salesmanager.ui.coverage.SaleDraftRefreshUiTest" time="0.514"/>
+  <testcase name="invoiceEditorReceivesTheUpdatedCustomerAndCurrentSerializedDraftAfterThemeChange" classname="com.trader.salesmanager.ui.coverage.SaleDraftRefreshUiTest" time="0.505"/>
+  <testcase name="replacingInvoiceLinesReplacesTheirPreviewAndKeepsTheAmountLinkedToTheNewTotal" classname="com.trader.salesmanager.ui.coverage.SaleDraftRefreshUiTest" time="0.496"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

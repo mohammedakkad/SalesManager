@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "qaCoverage",
+    "module": "salesmanager",
+    "covered": 4127,
+    "total": 5475,
+    "percent": 75.37899543378995,
+    "additionalBranchesFor75Percent": 0
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "weighted",
+    "covered": 5970,
+    "total": 8576,
+    "percent": 69.61287313432835,
+    "additionalBranchesFor75Percent": 462
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "salesmanager",
+    "covered": 4127,
+    "total": 5475,
+    "percent": 75.37899543378995,
+    "additionalBranchesFor75Percent": 0
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "weighted",
+    "covered": 6076,
+    "total": 8576,
+    "percent": 70.84888059701493,
+    "additionalBranchesFor75Percent": 356
+  }
+]

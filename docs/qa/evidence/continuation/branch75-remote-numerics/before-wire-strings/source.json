@@ -1,0 +1,74 @@
+{
+  "startingSha": "d8a7d3e2bcd0397d8d8588f5a7a35f9331b677f1",
+  "productionFileSha256": "6d8e879eeaaab4414123067a06c1844f7c8d36f3c9b7b691e278be83126317e9",
+  "canonicalCases": 18,
+  "genuineAssertionFailures": 16,
+  "passedCompatibilityCases": 2,
+  "failedIdentities": [
+    [
+      "com.trader.core.data.local.NonfiniteCacheIntegrityRoomTest",
+      "infiniteRemoteCashBalanceCannotPartiallyImportEarlierCustomerAndSaleRows"
+    ],
+    [
+      "com.trader.core.data.local.NonfiniteCacheIntegrityRoomTest",
+      "infiniteRemoteSaleCannotOverwriteAnyStagedCacheOrDerivedDebt"
+    ],
+    [
+      "com.trader.core.data.local.NonfiniteCacheIntegrityRoomTest",
+      "invalidRealtimeReturnBatchCannotReplaceOrDeleteExistingRefundRows"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "realtimeCashMovementsRejectNonfiniteDeltaAndBalance"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "bulkReturnRefundCannotTurnIntoInfiniteMoney"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "realtimeReturnRefundRejectsTheWholeSnapshot"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "realtimeTransactionAmountsCannotPublishAPartialReplacement"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "realtimeCashBalancesRejectAllRowsWhenOneIsNonfinite"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "bulkInvoiceQuantityAndPricesCannotImportNonfiniteValues"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "realtimeNestedReturnAmountsCannotBecomeADeletedOrZeroedReturn"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "bulkCashBalancesCannotBePartiallyImportedWhenOneIsNonfinite"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "realtimeInvoiceQuantitiesAndPricesCannotPublishNonfiniteValues"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "returnFallbackInvoiceCannotSupplyANonfiniteOriginalQuantityOrUnitPrice"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "bulkNestedReturnItemsRejectNonfiniteQuantitiesCostsAndRefunds"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "bulkCashMovementsRejectNonfiniteDeltaOrResult"
+    ],
+    [
+      "com.trader.core.data.remote.FinancialSnapshotValidationTest",
+      "bulkTransactionAmountsRejectNonfiniteWireNumbersAsACompleteSnapshot"
+    ]
+  ],
+  "scope": "SDK15cases from original string-first run; Room3cases from corrected IO wall-clock run. Both use exact original D8 production service. Old virtual Room timeout is unqualified, retained in diagnostics, and never counted. No EC is merged. Inputs start with JSON-valid numeric strings; direct numericNaN/Inf are defensive SDK-fake variants, not claimed server-supported values."
+}

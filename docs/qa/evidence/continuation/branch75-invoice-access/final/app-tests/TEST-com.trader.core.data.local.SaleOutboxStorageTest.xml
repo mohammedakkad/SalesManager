@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.SaleOutboxStorageTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:23:30" hostname="ac8333d6728a" time="0.717">
+  <properties/>
+  <testcase name="concurrentClaimsHaveOneOwnerAndExpiredOwnerCannotAcknowledge" classname="com.trader.core.data.local.SaleOutboxStorageTest" time="0.188"/>
+  <testcase name="merchantsAreClaimedSeparately" classname="com.trader.core.data.local.SaleOutboxStorageTest" time="0.13"/>
+  <testcase name="duplicateIdentityAndRevisionAreRejected" classname="com.trader.core.data.local.SaleOutboxStorageTest" time="0.168"/>
+  <testcase name="eventSurvivesDatabaseRestart" classname="com.trader.core.data.local.SaleOutboxStorageTest" time="0.101"/>
+  <testcase name="transactionFailureRollsBackEvent" classname="com.trader.core.data.local.SaleOutboxStorageTest" time="0.128"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

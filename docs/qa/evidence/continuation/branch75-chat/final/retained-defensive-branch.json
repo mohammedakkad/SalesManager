@@ -1,0 +1,14 @@
+{
+  "source": "salesmanager/src/main/java/com/trader/salesmanager/ui/chat/ChatViewModel.kt",
+  "line": 203,
+  "jacocoLine": {
+    "nr": "203",
+    "mi": "2",
+    "ci": "7",
+    "mb": "1",
+    "cb": "1"
+  },
+  "classification": "Defensive null return dominated by state.canEdit for a supported immutable snapshot. No reflection or adversarial mutation of the exposed read-only collections is used to force it.",
+  "exclusionAdded": false,
+  "limits": "Does not assert that all generated/Compose branches are unreachable; the Branch75 goal remains unachieved."
+}

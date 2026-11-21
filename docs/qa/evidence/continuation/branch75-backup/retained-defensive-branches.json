@@ -1,0 +1,45 @@
+{
+  "source": "salesmanager/src/main/java/com/trader/salesmanager/ui/settings/backup/BackupMigrator.kt",
+  "denominatorPolicy": "Retain all generated/defensive production branches. No exclusions or reflective private calls. XML reports missed branch counts per source line, not true/false labels.",
+  "sourceLevelDominance": [
+    {
+      "lines": [
+        54,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        82,
+        93,
+        102,
+        111,
+        112,
+        120,
+        127,
+        132,
+        133,
+        134,
+        140
+      ],
+      "arm": "Null fallback of orEmpty in private migration steps",
+      "reason": "migrateToCurrent normalizes every collection before the first private step. Every subsequent bump normalizes again; all step copies preserve non-null lists. Public JSON null-collection parsing is exercised; it cannot pass a null list into these private steps."
+    },
+    {
+      "lines": [
+        83
+      ],
+      "arm": "Blank transaction sync status inside migrateV8ToV9",
+      "reason": "normalizeTransaction replaces blank syncStatus with SYNCED before any private migration step; intervening steps do not make it blank."
+    },
+    {
+      "lines": [
+        24
+      ],
+      "arm": "Unsupported version else in private migrateOneStep",
+      "reason": "Public version guard accepts1..22; the loop calls the step only for1..21, all explicitly handled. No concurrent mutation of immutable payload is supported."
+    }
+  ],
+  "limits": "These narrow source-level observations do not establish that all other missing branches, Kotlin data-class defaults or Compose paths are unreachable."
+}

@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "previousSource": "4cee8203736132816bfa2b38f59b330d9bdbbcc8",
+  "productionClassesCompared": 2338,
+  "changed": 0,
+  "added": 0,
+  "removed": 0,
+  "scope": "All original production bytes after fresh clean compilation match the previously qualified4cee820 bytes. No product PDF source is changed in this test-only stage."
+}

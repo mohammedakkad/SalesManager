@@ -1,0 +1,17 @@
+[
+  {
+    "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+    "bytes": 51144298,
+    "sha256": "51f31c45a51452859e406dd0f5a3a3d07e8bf93ae22d521a37e2f042c1e0d451"
+  },
+  {
+    "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
+    "bytes": 26718434,
+    "sha256": "60123a4eb6c03a334da8ac032e43cf2c61ab8579883e06419fe9a279d271f567"
+  },
+  {
+    "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+    "bytes": 1060477,
+    "sha256": "a9f4571d5893e7d272a8cd41d9ff8540244dcfd892e21e59f4258be655e3c31a"
+  }
+]

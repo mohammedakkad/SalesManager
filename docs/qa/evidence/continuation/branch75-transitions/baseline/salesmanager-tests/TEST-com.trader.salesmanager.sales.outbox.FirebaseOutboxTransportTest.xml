@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-17T13:52:29" hostname="6d75d821cc71" time="1.522">
+  <properties/>
+  <testcase name="numericCompareDoesNotRoundDistinctLongIdentifiersIntoOneValue" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.486"/>
+  <testcase name="completedEventFromOlderRestoreCannotAcknowledgeNewerRemoteRevision" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.507"/>
+  <testcase name="foreignMerchantPayloadIsRejectedBeforeAnySdkWrite" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.031"/>
+  <testcase name="conditionalUpsertPreservesUnrelatedRemoteFields" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.062"/>
+  <testcase name="repeatedDeliveryUsesBothReceiptsWithoutReapplyingFinancialEffects" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.097"/>
+  <testcase name="conflictingFirestoreValueIsNotOverwritten" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.047"/>
+  <testcase name="staleRevisionAndEventIdentityCollisionCannotOverwriteRemoteData" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.09"/>
+  <testcase name="bothConditionalBackendPhasesCompleteBeforeFullAcknowledgment" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.062"/>
+  <testcase name="sdkWrappedConflictRemainsExplicitAndDoesNotBecomeInfiniteTransientRetry" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.038"/>
+  <testcase name="secondBackendConflictIsExplicitRatherThanClaimedAtomicSuccess" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.053"/>
+  <testcase name="failureBetweenBackendsRetainsCompletedPhaseForIdempotentRetry" classname="com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest" time="0.049"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

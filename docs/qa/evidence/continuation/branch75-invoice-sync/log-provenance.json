@@ -1,0 +1,32 @@
+[
+  {
+    "rawArchive": "query-contract-diagnostic/gradle.log.gz",
+    "rawBytesSha256": "1dbf38eadc66508e562d8d145d8efa2722aac03fbc42dc25addab546a5b5bbd1",
+    "archiveSha256": "0a04b27495f30fe6fe11b10dcc335c556683e1f792019652c12698a69f7fdd3c",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "before/gradle.log.gz",
+    "rawBytesSha256": "4059125fd51ff09837622746eb6ddcebc52888dd723a047805ecbb24b5b7a21f",
+    "archiveSha256": "0613fa50df382dd780d562fd25f4c1f1a20a217fc0d1909326db868af32067d0",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "before-job-cancellation/gradle.log.gz",
+    "rawBytesSha256": "c3c2f4089dad6944bfe729215d36c26de0dca547ee36aa34d60cfef1148ce052",
+    "archiveSha256": "ad05959fdcebe0fc2f5e08a99048f4d6c31059fe0605452066eedc0ace132d00",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "before-inflight/gradle.log.gz",
+    "rawBytesSha256": "4fcb9716fba0f13010b14c5da7ac249bd3be9789b98ef2f632ec5ef589eae294",
+    "archiveSha256": "1d601fbfa71a398f2312d4717d687a5fff88a24e38e4c68c125109dc5d30a388",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "after-targeted/gradle.log.gz",
+    "rawBytesSha256": "b25a0d2cfd8d1ed53bb181eab9ecc74162cb17bb1d6d6c91637a146d324ee61f",
+    "archiveSha256": "9adba030e29faafee9d3e01b0c6f4bd09c3e0d3569adf93e3a9edd03ed5483f4",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  }
+]

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.InvoiceStockRefreshUiTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:16:54" hostname="ac8333d6728a" time="2.114">
+  <properties/>
+  <testcase name="increasingPastAvailableStockShowsAWarningAndDecreasingClearsItWithoutAStockWrite" classname="com.trader.salesmanager.ui.coverage.InvoiceStockRefreshUiTest" time="0.419"/>
+  <testcase name="explicitCustomPriceSurvivesUnrelatedCatalogReplacementAndThemeChanges" classname="com.trader.salesmanager.ui.coverage.InvoiceStockRefreshUiTest" time="0.328"/>
+  <testcase name="activeSearchReplacesCatalogResultsAndSelectionUsesTheNewUnitPrice" classname="com.trader.salesmanager.ui.coverage.InvoiceStockRefreshUiTest" time="0.368"/>
+  <testcase name="weightDisplayConversionPreservesKilogramsAndInvoiceTotalAcrossThemeChanges" classname="com.trader.salesmanager.ui.coverage.InvoiceStockRefreshUiTest" time="0.331"/>
+  <testcase name="zeroAvailableStockExplainsTheDraftWarningAndThemeCannotConfirmTheInvoice" classname="com.trader.salesmanager.ui.coverage.InvoiceStockRefreshUiTest" time="0.297"/>
+  <testcase name="changingSelectedUnitResetsCustomPriceAndRecalculatesTheDraftWarning" classname="com.trader.salesmanager.ui.coverage.InvoiceStockRefreshUiTest" time="0.371"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,4901 @@
+{
+  "summary": {
+    "jvmCases": 409,
+    "result": {
+      "passed": 409
+    },
+    "primaryCategories": {
+      "Room/SQLite on JVM": 188,
+      "Room migration": 7,
+      "Firebase SDK/protocol fake": 22,
+      "Unit/model with deterministic fakes": 100,
+      "Compose UI on JVM": 63,
+      "Loopback HTTP": 4,
+      "WorkManager lifecycle": 6,
+      "Android notification component on JVM": 3,
+      "Native bitmap graphics": 2,
+      "Backup format/crypto": 10,
+      "Real XLSX file content": 4
+    },
+    "overlappingTags": {
+      "Room/SQLite on JVM": 195,
+      "Firebase SDK/protocol fake": 46,
+      "Room migration": 7,
+      "Restart/recovery in test harness": 19,
+      "WorkManager lifecycle": 13,
+      "Compose UI on JVM": 63,
+      "Loopback HTTP": 4,
+      "Android notification component on JVM": 3,
+      "Native bitmap graphics": 2,
+      "Backup format/crypto": 15,
+      "Real XLSX file content": 4
+    },
+    "remainingDefinedWorkItems": 69,
+    "remainingByStatus": {
+      "BLOCKED": 32,
+      "NOT TESTED": 36,
+      "PARTIAL": 1
+    },
+    "remainingByKind": {
+      "Historical migration": 21,
+      "Logic boundary": 4,
+      "SDK failure contract": 8,
+      "Firebase/server integration": 8,
+      "Android API matrix": 3,
+      "Device/end-to-end": 10,
+      "Performance benchmark": 5,
+      "Security qualification": 5,
+      "Mutation campaign": 5
+    },
+    "scope": "Categories partition actual JVM cases; tags overlap. Remaining work items are an explicit plan, not a count of all possible tests."
+  },
+  "cases": [
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "localImportFailureRollsBackEveryEarlierWrite",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "cancellationDuringCashInsertRollsBackEveryImportedRow",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "managedOperationCommittedDuringFetchBlocksLateImport",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "successfulImportPreservesExpectedBalancesAndDerivedDebt",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "successfulCatalogImportDoesNetworkOutsideRoomAndPreservesStock",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "unitInsertFailureRollsBackCustomerTransactionAndProductWrites",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "cancelledUnitDownloadDoesNotPersistAnyStagedRows",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "failedUnitDownloadLeavesAllLocalRowsUnchanged",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "accountSwitchDuringFetchCannotApplyPreviousMerchantReply",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ActivationImportIntegrityTest",
+      "name": "logoutDuringFetchBlocksLateImport",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ActivationImportIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+      "name": "foreignCashRowsAreNotRetargetedOnAccountSwitch",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/OutboxLegacyFenceTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+      "name": "pendingOutboxPreventsIndependentLegacyStockUpload",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/OutboxLegacyFenceTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+      "name": "foreignPendingInvoiceIsNotRetargetedOnAccountSwitch",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/OutboxLegacyFenceTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+      "name": "standaloneCashEffectUploadsAfterCommitAndSeesCommittedBalance",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/OutboxLegacyFenceTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+      "name": "foreignStockAndUnitsAreNotUploadedUnderTheNextMerchant",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/OutboxLegacyFenceTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.OutboxLegacyFenceTest",
+      "name": "nestedCashEffectRemainsPendingForItsOwningOutbox",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/OutboxLegacyFenceTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ReturnMigrationTest",
+      "name": "upgradePreservesFinancialRecordsForeignKeysAndPendingWrites",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ReturnMigrationTest.kt",
+      "primary": "Room migration",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Room migration"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ReturnMigrationTest",
+      "name": "failedUpgradeRollsBackSchemaAndData",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ReturnMigrationTest.kt",
+      "primary": "Room migration",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Room migration"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ReturnMigrationTest",
+      "name": "backfillsPartialFullUnreturnedAndMissingLineStates",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ReturnMigrationTest.kt",
+      "primary": "Room migration",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Room migration"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ReturnPersistenceTest",
+      "name": "partialReturnSurvivesDatabaseCloseAndReopenWithoutChangingDebt",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ReturnPersistenceTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.ReturnPersistenceTest",
+      "name": "fullReturnSurvivesRestartWithOriginalInvoiceValue",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/ReturnPersistenceTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.RoomIntegrityTest",
+      "name": "foreignKeyRejectsOrphanSale",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/RoomIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.RoomIntegrityTest",
+      "name": "customerUpsertPreservesSalesAndDebt",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/RoomIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleOutboxMigrationTest",
+      "name": "injectedMigrationFailureRollsBackSchemaAndData",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleOutboxMigrationTest.kt",
+      "primary": "Room migration",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Room migration"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleOutboxMigrationTest",
+      "name": "migrationPreservesAllFinancialRowsAndValidatesRoomSchema",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleOutboxMigrationTest.kt",
+      "primary": "Room migration",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Room migration"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+      "name": "concurrentClaimsHaveOneOwnerAndExpiredOwnerCannotAcknowledge",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleOutboxStorageTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+      "name": "merchantsAreClaimedSeparately",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleOutboxStorageTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+      "name": "duplicateIdentityAndRevisionAreRejected",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleOutboxStorageTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+      "name": "eventSurvivesDatabaseRestart",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleOutboxStorageTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleOutboxStorageTest",
+      "name": "transactionFailureRollsBackEvent",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleOutboxStorageTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleReceiptMigrationTest",
+      "name": "injectedMigrationFailureRollsBackSchemaAndData",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleReceiptMigrationTest.kt",
+      "primary": "Room migration",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Room migration"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SaleReceiptMigrationTest",
+      "name": "migrationPreservesAllFinancialRowsAndValidatesRoomSchema",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SaleReceiptMigrationTest.kt",
+      "primary": "Room migration",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Room migration"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerLedgerQueriesTest",
+      "name": "stockLedgerQueriesKeepChronologyTransactionAndUnitIdentity",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerLedgerQueriesTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerLedgerQueriesTest",
+      "name": "lowStockNotificationsRememberAcknowledgmentAndDropOnlyOrphans",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerLedgerQueriesTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerLedgerQueriesTest",
+      "name": "cashLedgerFailedRowsRemainRetryableAndBoxDeletionIsScoped",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerLedgerQueriesTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerLedgerQueriesTest",
+      "name": "cashBoxInitialBalanceDeltaAndSyncStatusDoNotChangeOtherBox",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerLedgerQueriesTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerLedgerQueriesTest",
+      "name": "syncObserverIncludesLedgerFailuresAndReturnsSyncedOnlyAfterAcknowledgment",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerLedgerQueriesTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerLedgerQueriesTest",
+      "name": "invoiceQueriesRetainSnapshotValuesAndReportRankLimits",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerLedgerQueriesTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerLedgerQueriesTest",
+      "name": "physicalCountSessionsKeepItemsScopedAndCompletionStopsActiveSession",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerLedgerQueriesTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "transactionStatusQueriesTrackConflictsAndRemoval",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "reportTotalsDebtAndHistoricalBalanceDoNotDoubleCountPaidRows",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "pendingMessagesRetryStateAndCleanupStayMerchantScoped",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "transactionListsRespectRangePaidStatusCustomerAndLimit",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "paymentMethodsRoundTripTypesUpdatesAndDeletion",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "employeeQueriesPartitionMerchantPinsAndAcknowledgments",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "debtAgingBoundariesAndCountsAreDisjoint",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "sessionLatestLoginAndLastActiveUseDifferentOrdering",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "productRelationsSearchBarcodeAndValuationKeepUnitIdentity",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "sevenDayBucketsUseHalfOpenBoundariesAndIncludeEmptyDays",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "catalogEditsAndPendingAcknowledgmentsPreserveRetainedUnits",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.local.SellerQueryContractTest",
+      "name": "customerSearchPhoneExclusionAndDeletePreserveVisitor",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/local/SellerQueryContractTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.ReturnPushTest",
+      "name": "uploadPreservesReturnedProfitForOtherDevices",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/ReturnPushTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.ReturnPushTest",
+      "name": "timeoutCannotBeAcknowledgedAsSuccessfulUpload",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/ReturnPushTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cashPaymentTypeSurvivesUploadFetchAndRealtimeSnapshots",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "currentSessionListenerClosesOnPermissionFailureAndUnregisters",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "legacyTransactionsWithoutPaymentTypeKeepExistingDebtDefault",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cashSnapshotsKeepMerchantIdentityInitialBalanceAndMovementType",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "bulkAndRealtimeReturnSnapshotsPreserveLegacyUnitFallbackAndRefunds",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "invoiceAndEmployeeSnapshotsKeepIdsAndSkipUnusableRecords",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "activationUnknownDisabledExpiredAndTimeoutAreDistinct",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "uploadAndDeleteUseOnlyRequestedMerchantAndPreserveInvoiceAmounts",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "numericWireFormsPreserveDebtReturnAndCustomerFieldsAndRejectMalformedRows",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/remote/SellerFirebaseWireContractsTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "failedRecordsRetryWithoutReapplyingBalancesOrConflicts",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "paidTransferReconcilesBalancesAndLedger",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "offlineRetryKeepsDurableRecordsWithoutRemoteRequests",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "cancelledBoxUploadPropagatesWithoutMarkingFailed",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "cancelledMovementUploadPropagatesWithoutMarkingFailed",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "unchangedPaymentDoesNotCreateLedgerNoise",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "logoutCancelsBothRemoteSubscriptions",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "unpaidSaleDoesNotAffectCash",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "manualCorrectionRecordsOnlyDifferenceAndKeepsInitialHistory",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "partialBatchFailureDoesNotBlockOthersAndRetryUsesSameLedgerId",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "initialBalanceCanBeSetOnlyOnce",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CashBoxIntegrityTest",
+      "name": "secondBoxFailureRollsBackWholePaymentTransfer",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CashBoxIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+      "name": "remoteSnapshotPreservesEveryUnsyncedCustomerStatus",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CustomerSyncIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+      "name": "visitorCannotBeOverwrittenByRemoteSnapshot",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CustomerSyncIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+      "name": "syncedRemoteEditsPreserveCustomerTransactionHistory",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CustomerSyncIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.CustomerSyncIntegrityTest",
+      "name": "logoutCancelsCustomerSubscription",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/CustomerSyncIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.DashboardCalendarQualificationTest",
+      "name": "realDashboardSeparatesTodayMonthDebtAndSevenDayWindows",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/DashboardCalendarQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+      "name": "repeatedFinalizationAppliesEachAdjustmentOnce",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/InventoryIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+      "name": "finishPreservesOriginalStartTimeAndMerchant",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/InventoryIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+      "name": "cancellationPreservesHistoryWithoutChangingStock",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/InventoryIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+      "name": "failureOnSecondUnitRollsBackFirstQuantityAndSession",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/InventoryIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+      "name": "wrongMerchantCannotFinalizeLocalSession",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/InventoryIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+      "name": "invalidNegativeCountNeverPersists",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/InventoryIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+      "name": "newSessionCapturesCurrentProductUnits",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/InventoryIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.InventoryIntegrityTest",
+      "name": "uncountedAndUnchangedItemsDoNotAdjustStock",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/InventoryIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ProductUnitDeletionTest",
+      "name": "deletingUnitDispatchesItsActualParentProductId",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ProductUnitDeletionTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "processInterruptionBeforeUploadRetainsReturnForNextRepository",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "sameReturnIdCannotApplyRefundAndStockTwice",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "staleRemoteUpdateDoesNotOverwritePendingRefundOrItsItems",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "aggregateQuantityCannotExceedSoldStockInOneBatch",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "concurrentRetriesSerializeOneAcknowledgement",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "fractionalReturnsConserveCashAndStockAtFloatingPointBoundary",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "successfulPartialReturnMaintainsCashStockInvoiceAndReturnSummary",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "cancellationLeavesReturnUnacknowledgedAndRetryable",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "emptyRemoteSnapshotPreservesPendingFailedAndConflictingReturns",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "failedUploadRetriesSameDurableIdWithoutReplayingCashOrStock",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "stockFailureRollsBackReturnLedgerAndFinancialChanges",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "retryNeverPushesAnotherMerchantOrConflict",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "logoutCancelsPreviousMerchantListener",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.ReturnRepositoryTest",
+      "name": "duplicateIdWithDifferentPayloadIsRejectedWithoutChangingBalances",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/ReturnRepositoryTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.SellerCatalogQualificationTest",
+      "name": "offlineProductCreationAssignsParentDefaultUnitAndPendingIntent",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/SellerCatalogQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.SellerCatalogQualificationTest",
+      "name": "stockFiltersAndSearchUseActualUnitsWithoutMixingProducts",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/SellerCatalogQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.SellerCatalogQualificationTest",
+      "name": "pendingUploadFailureKeepsRowsAndLaterSuccessAcknowledgesEachRecord",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/SellerCatalogQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.SellerCatalogQualificationTest",
+      "name": "lowStockCooldownEscalationAndRestockRecoveryFollowPersistedState",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/SellerCatalogQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.SellerCatalogQualificationTest",
+      "name": "unitAndProductEditsPersistLocallyWhenTransportFails",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/SellerCatalogQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StaleTransactionAckTest",
+      "name": "oldFailureCannotMarkNewEditFailed",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StaleTransactionAckTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StaleTransactionAckTest",
+      "name": "unchangedSuccessAcknowledges",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StaleTransactionAckTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StaleTransactionAckTest",
+      "name": "unchangedFailureRemainsRetryable",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StaleTransactionAckTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StaleTransactionAckTest",
+      "name": "oldSuccessCannotAcknowledgeNewEdit",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StaleTransactionAckTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockOperationsQualificationTest",
+      "name": "conflictsAreReportedAndOnlyExplicitChoiceChangesLocalOrRemoteQuantity",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StockOperationsQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockOperationsQualificationTest",
+      "name": "failedStockLedgerRetriesWithoutRewritingItsPendingState",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StockOperationsQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockOperationsQualificationTest",
+      "name": "localMovementHelpersParticipateInCallerTransactionWithoutUploading",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StockOperationsQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockOperationsQualificationTest",
+      "name": "failedStockRetryDoesNotUploadAnotherMerchantsLedger",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StockOperationsQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.StockOperationsQualificationTest",
+      "name": "callerRollbackRestoresStockAndLedgerTogether",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/StockOperationsQualificationTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.TransactionSyncTest",
+      "name": "interruptedUploadPropagatesCancellationWithoutFalseFailureAck",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/TransactionSyncTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.TransactionSyncTest",
+      "name": "deletingPartiallyReturnedSaleRestoresOnlyRemainingUnitsAndCash",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/TransactionSyncTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.TransactionSyncTest",
+      "name": "reconnectRetriesFailedAndPendingButNeverConflicts",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/TransactionSyncTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.TransactionSyncTest",
+      "name": "failedFirstUploadDoesNotPreventLaterPendingUpload",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/TransactionSyncTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.TransactionSyncTest",
+      "name": "transactionListenerStopsOnLogout",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/TransactionSyncTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.TransactionSyncTest",
+      "name": "remoteAbsenceMustNotDeleteUnsyncedSales",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/TransactionSyncTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.data.repository.TransactionSyncTest",
+      "name": "deletingFullyReturnedSaleDoesNotRestoreStockAgain",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/data/repository/TransactionSyncTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ProductStockTest",
+      "name": "explicitDefaultWinsOtherwiseFirst",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ProductStockTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ProductStockTest",
+      "name": "aggregateAttentionIncludesOutOfStockUnits",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ProductStockTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ProductStockTest",
+      "name": "stockBoundaryClassification",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ProductStockTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ProductStockTest",
+      "name": "profitIncludesLossButUnspecifiedCostIsUnknown",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ProductStockTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ReturnItemTest",
+      "name": "partialRefundPreservesFinancialAmounts",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ReturnItemTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ReturnItemTest",
+      "name": "invalidOriginalQuantityIsRejected",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ReturnItemTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ReturnItemTest",
+      "name": "blankIdentityIsRejected",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ReturnItemTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ReturnItemTest",
+      "name": "invalidQuantitiesAreRejected",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ReturnItemTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ReturnItemTest",
+      "name": "fullReturnIsAllowed",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ReturnItemTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ReturnItemTest",
+      "name": "freeReturnWithoutCostIsAllowed",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ReturnItemTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.domain.model.ReturnItemTest",
+      "name": "invalidPricesAreRejected",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/domain/model/ReturnItemTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "app",
+      "class": "com.trader.core.sync.ReturnRetryCoordinatorTest",
+      "name": "reconnectRetriesReturnsEvenWhenStockUploadFails",
+      "result": "passed",
+      "source": "app/src/test/java/com/trader/core/sync/ReturnRetryCoordinatorTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "lateInvoiceLoadKeepsPreviewEqualToCommittedGrossAmount",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "unrecognizedLegacyWeightUnitUsesExistingKilogramFallback",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "arabicAmountCustomerPreselectionAndPaymentChangesReachSaleCommand",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "repeatedLoadAndEditedLinesDoNotAccumulateBaseAmountOrReplaceOriginalItemId",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "gramsRoundTripAndPersistAsKilogramsWithStableRetryIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.InvoiceEditorContractsTest",
+      "name": "delayedPaymentMethodsResolvePersistedSelectionAndUnchangedEditPreservesItems",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/InvoiceEditorContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductSubmissionTest",
+      "name": "failedSavePreservesDraftAndAllowsOneControlledRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductSubmissionTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.ProductSubmissionTest",
+      "name": "rapidSaveAndSaveAfterSuccessSubmitOnlyOnce",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/ProductSubmissionTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "invoiceFailureRollsBackEverything",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "debtIsDerivedFromCommittedUnpaidSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "staleEditIsRejectedAndReplayCannotOverwriteLaterEdit",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "deleteCashFailureRestoresEveryRow",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "editInvoiceFailureRollsBackRestoredStock",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "cancellationDuringDrainRollsBackEarlierStatusesAndCanRetryAfterRestart",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "deleteSaleFailureRestoresEveryRow",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "editStockFailureRollsBackEverything",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "deleteFailurePreservesPartialReturnLedgerAndRefundState",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "unversionedTransactionEchoCannotOverwriteOrResurrectManagedSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "unpaidDeletionClearsDerivedDebtWithoutCashEffect",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "idleRecoveryDoesNotRewriteAlreadyAcknowledgedRows",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "restartKeepsCommittedOutboxPayloadUnchanged",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "successfulEditChangesInvoiceStockCashAndDebtTogether",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "backupRoundTripPreservesReceiptAndDoesNotReplaySale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "invoiceIdentityCannotOverwriteAnotherSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "operationIdCannotBeReusedWithDifferentPayload",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "relatedReturnAndPartialDeletionAreDurableAndDeliverableInOneSequence",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "fullReturnDeletionDoesNotRestoreOrRefundTwice",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "successfulCreation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "duplicateSubmissionHasExactlyOneLocalEffect",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "idleRecoveryUpdatesOnlyTheMatchingUnsynchronizedRow",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "acknowledgedBackupRevalidatesLatestRevisionWithoutReplayingHistoricalEffects",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "oldAcknowledgedRestoreBecomesConflictIfRemoteRevisionHasAdvanced",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "createThenEditDeliversBothImmutableRevisionsInOrder",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "idleRestartRepairsRowsStrandedByPreviouslyAcknowledgedReceipts",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "successfulDeletionRestoresAllNetEffects",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "actualReturnRepositoryRollsBackAllEffectsIfOutboxCannotPersist",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "actualReturnRepositoryJournalsStockCashAndReturnBeforeLegacyUploads",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "failedBackupRestorePreservesReceiptAndSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "cancelledDeleteRestoresAllRows",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "wrongMerchantCannotEditOrDeleteExistingSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "failedDrainRollsBackAllStatusesAndReceiptThenReusesRemoteCompletion",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "concurrentIdenticalSubmissionsApplyOnce",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "reopenCommittedSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "reopenRolledBackSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "editAndDeletionCreateVersionedOutboxTombstone",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "failedIdleRecoveryRollsBackEarlierStatusesWithoutLosingReceipts",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "realEditDuringOldUploadKeepsNewFinancialRowsPendingUntilItsOwnReceipt",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "cancelledIdleRecoveryPreservesReceiptsAndEveryLocalStatusUntilRestart",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "cashFailureRollsBackEverything",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "commitCreatesExactlyOneOutboxEventAndReplayDoesNotDuplicateIt",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "restartBetweenReceiptsDoesNotStrandEarlierSaleAsPending",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "unversionedInvoiceEchoCannotResurrectDeletedManagedLines",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "identicalContentRevisionIsNotAcknowledgedByAnOlderEventReceipt",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "staleUiMerchantCannotCreateAnEventUnderThePreviousSession",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "cancellationAfterWritesRollsBackAllTables",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "restoreCannotRewriteExistingImmutablePayloadUnderTheSameEventId",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "editCashFailureRollsBackInvoiceStockAndSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "committedDeletionConflictRemainsVisibleAndNeverDisappears",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "addingStockToFullyReturnedInvoiceMakesItPartiallyReturned",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "outboxInsertFailureRollsBackSaleStockCashAndReceipt",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "drainingMultipleSalesAcknowledgesEveryMatchingSaleAndLedger",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "partialReturnDeletionRestoresOnlyRemainingStockAndCash",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "returnedSaleEditPreservesRefundAndUsesRemainingQuantities",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "freshRestoreDoesNotReuseADeletedAggregateIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "repeatedDeletionDoesNotApplyStockOrCashAgain",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "createThenDeleteDeliversTombstoneAndNetZeroCashAndStock",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "cancelledEditRestoresAllRows",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "deleteInvoiceFailureRestoresStockAndReturnLedger",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "olderBackupCannotEraseAnUncertainDeletionTombstone",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "unversionedRemoteDeletionIsQuarantinedWithoutGuessingFinancialEffects",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "concurrentLastStockAllowsOnlyOneSale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "stockFailureRollsBackEverything",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleCommandsTest",
+      "name": "restoreDuringDispatchInvalidatesOldLeaseAndReplaysRemoteReceiptSafely",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleCommandsTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleSessionViewModelTest",
+      "name": "restoredDraftCannotRetargetMerchantAndOriginalAccountRetryIsIdempotent",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleSessionViewModelTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.SaleSessionViewModelTest",
+      "name": "viewModelCreatedBeforeActivationUsesCurrentMerchantWhenSaving",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/SaleSessionViewModelTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.StockReportDayBoundaryTest",
+      "name": "todayIncludesLastMillisecondAndExcludesAdjacentDays",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/StockReportDayBoundaryTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "walkInAndMissingTransactionsHaveNoCustomerDebtQueries",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "invoiceSortAndTransientEmptyEmissionPreserveLoadedItemsUntilSaleHasNoItems",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "cancellationWhileDeletingDoesNotSetSuccessFlag",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "deletionReportsSuccessOnlyAfterAggregateCommandCompletes",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "refundStreamAndExplicitRefreshUseFreshRepositorySummary",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.TransactionDetailsContractsTest",
+      "name": "liveTransactionRecomputesDerivedBalancesWithoutChangingDebtFormula",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/TransactionDetailsContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "numericCompareDoesNotRoundDistinctLongIdentifiersIntoOneValue",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "completedEventFromOlderRestoreCannotAcknowledgeNewerRemoteRevision",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "foreignMerchantPayloadIsRejectedBeforeAnySdkWrite",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "conditionalUpsertPreservesUnrelatedRemoteFields",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "repeatedDeliveryUsesBothReceiptsWithoutReapplyingFinancialEffects",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "conflictingFirestoreValueIsNotOverwritten",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "staleRevisionAndEventIdentityCollisionCannotOverwriteRemoteData",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "bothConditionalBackendPhasesCompleteBeforeFullAcknowledgment",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "sdkWrappedConflictRemainsExplicitAndDoesNotBecomeInfiniteTransientRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "secondBackendConflictIsExplicitRatherThanClaimedAtomicSuccess",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.FirebaseOutboxTransportTest",
+      "name": "failureBetweenBackendsRetainsCompletedPhaseForIdempotentRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/FirebaseOutboxTransportTest.kt",
+      "primary": "Firebase SDK/protocol fake",
+      "tags": [
+        "Firebase SDK/protocol fake"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "newEditDuringFlightDoesNotLoseNewRevisionOrHoldDatabaseLock",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "remoteFailureRetainsIdentityAndRetriesAfterBackoff",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "conflictIsRetainedAndBlocksLaterFinancialEvents",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "cancellationReleasesClaimWithoutAcknowledging",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "logoutDuringDispatchCancelsOldMerchantAndRetainsIntent",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "merchantSwitchNeverClaimsAnotherTenant",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "expiredOwnershipRejectsOldNetworkCompletion",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "timeoutAndRestartKeepDeletionIntent",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "failedLocalAcknowledgmentKeepsUncertainRemoteCompletionRetryable",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.OutboxDispatcherTest",
+      "name": "concurrentDispatchersDoNotClaimOneEventTwice",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/OutboxDispatcherTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+      "name": "workerDoesNotDispatchPreviousMerchantAfterSwitch",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/SaleOutboxWorkerTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+      "name": "workerRecoversDurableDeletionAfterDatabaseRestart",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/SaleOutboxWorkerTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+      "name": "workerReturnsRetryAndKeepsDeletionAfterNetworkFailure",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/SaleOutboxWorkerTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest",
+      "name": "cancelledWorkerPreservesRetryIntent",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/sales/outbox/SaleOutboxWorkerTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+      "name": "validCodeIsTrimmedAndSavedOnlyAfterRemoteValidation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/activation/ActivationViewModelTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+      "name": "activeAccountProceeds",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/activation/ActivationViewModelTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+      "name": "disabledAndExpiredAccountsAreBlocked",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/activation/ActivationViewModelTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+      "name": "blankCodeDoesNotCallRemoteOrSaveActivation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/activation/ActivationViewModelTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+      "name": "networkFailureOffersRetryWithoutActivating",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/activation/ActivationViewModelTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.activation.ActivationViewModelTest",
+      "name": "rejectedCodesNeverPersistActivation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/activation/ActivationViewModelTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.AccountToolsUiTest",
+      "name": "activeDeviceRevokeUsesSessionIdAndBackIsPreserved",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/AccountToolsUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.AccountToolsUiTest",
+      "name": "blockedAccountDisplaysReasonAndOnlyExplicitRetryInvokesCallback",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/AccountToolsUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.AccountToolsUiTest",
+      "name": "paymentMethodDialogAddsOnlyAfterConfirmation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/AccountToolsUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ActivationUiTest",
+      "name": "activationFailureIsVisibleAndDoesNotNavigate",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ActivationUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ActivationUiTest",
+      "name": "emptyCodeCannotActivateAndSuccessNavigatesOnlyAfterStateConfirms",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ActivationUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.BackupUiFlowTest",
+      "name": "restoringRequiresExplicitReplacementConfirmation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/BackupUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.BackupUiFlowTest",
+      "name": "exportingRequiresPasswordAndConfirmationBeforeDelegation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/BackupUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.BoxesUiFlowTest",
+      "name": "initializedBalanceAndMovementDetailsCanBeExpanded",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/BoxesUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.BoxesUiFlowTest",
+      "name": "initialBalanceDialogPassesArabicAmountToCorrectBox",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/BoxesUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ChatJourneysUiTest",
+      "name": "failedPendingMessageProvidesRetryAndDismissWithStableId",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ChatJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ChatJourneysUiTest",
+      "name": "ownMessageDeletionOffersDistinctLocalAndEveryoneActions",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ChatJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ChatJourneysUiTest",
+      "name": "inputAndSendAreDelegatedWithoutNetwork",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ChatJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ChatJourneysUiTest",
+      "name": "deliveredReadEditedAndDeletedMessagesPreserveVisibilityRules",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ChatJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest",
+      "name": "actualCustomerFormRejectsReservedNameThenSavesTrimmedIdentityOnce",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CustomerJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest",
+      "name": "debtsNavigateToCorrectCustomerRatherThanDisplayedRank",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CustomerJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest",
+      "name": "linkedCustomerDeletionRequiresExplicitConfirmation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CustomerJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest",
+      "name": "customerListSearchAndIdentityNavigationAreDelegated",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CustomerJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest",
+      "name": "editCustomerFormPreservesLoadedPhoneAndRoutesSave",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/CustomerJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DayReportUiTest",
+      "name": "activeFiltersCanBeClearedWithoutChangingDayTotals",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/DayReportUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DayReportUiTest",
+      "name": "dayCardsUseTransactionIdentityAndSearchIsDelegated",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/DayReportUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DetailUiFlowTest",
+      "name": "deletionNavigatesBackOnlyAfterStateConfirmsDeletion",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/DetailUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DetailUiFlowTest",
+      "name": "partiallyReturnedInvoiceKeepsNetItemsAndCustomerDebtVisible",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/DetailUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.DetailUiFlowTest",
+      "name": "customerDetailsShowsDerivedDebtAndRealTransactionNavigation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/DetailUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.EmployeeJourneysUiTest",
+      "name": "employeeSheetForwardsNamePinRoleAndSubmit",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/EmployeeJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.EmployeeJourneysUiTest",
+      "name": "deletingCashierRequiresDialogAndCancellationDoesNotDelete",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/EmployeeJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ExportStateUiTest",
+      "name": "actualExcelSuccessOffersSharingDownloadAndCloseWithoutPrint",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ExportStateUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ExportStateUiTest",
+      "name": "loadingBlocksRepeatedExportAndFailureOffersExplicitRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ExportStateUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.HomeDashboardUiTest",
+      "name": "dashboardShowsProductDebtAndRecentSaleWithCorrectNavigation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/HomeDashboardUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.HomeDashboardUiTest",
+      "name": "emptyDashboardDoesNotInventRankingsOrRecentSales",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/HomeDashboardUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventoryCompletionUiTest",
+      "name": "countedItemCanBeClearedWithoutChangingOtherItem",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventoryCompletionUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventoryCompletionUiTest",
+      "name": "finishingWarnsAboutUncountedItemsAndRequiresExplicitApply",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventoryCompletionUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventoryCountUiFlowTest",
+      "name": "enteringPhysicalCountUpdatesOnlyTheSelectedInventoryItem",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventoryCountUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventoryCountUiFlowTest",
+      "name": "startingCountDoesNotPretendItIsAlreadyFinished",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventoryCountUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventoryListUiFlowTest",
+      "name": "stockFiltersKeepLowAndOutOfStockProductsSeparate",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventoryListUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InventoryListUiFlowTest",
+      "name": "emptyStockOffersAnAddProductAction",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InventoryListUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceAdvancedUiTest",
+      "name": "searchAddsChosenUnitAndCustomPriceIsIncludedInConfirmation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InvoiceAdvancedUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceAdvancedUiTest",
+      "name": "weightEditorConvertsGramsAndRemovingLineRestoresEmptyInvoice",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InvoiceAdvancedUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceUiFlowTest",
+      "name": "editingArabicQuantityRecalculatesConfirmation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InvoiceUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceUiFlowTest",
+      "name": "emptyInvoiceShowsCustomerAndDisablesConfirmation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InvoiceUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceUiFlowTest",
+      "name": "zeroQuantityCannotBeApplied",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InvoiceUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.InvoiceUiFlowTest",
+      "name": "confirmationReturnsActualLinesAndCalculatedTotal",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InvoiceUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationJourneysUiTest",
+      "name": "mainTabsNavigateAndReselectionDoesNotDuplicateDestination",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationJourneysUiTest",
+      "name": "startupCheckingThenBlockedDoesNotExposeMainTabs",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.NavigationJourneysUiTest",
+      "name": "merchantDisabledEventRequiresAcknowledgmentThenRoutesToActivation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/NavigationJourneysUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductFormUiFlowTest",
+      "name": "validProductSavesTheUnitPriceCostAndQuantity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductFormUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ProductFormUiFlowTest",
+      "name": "blankProductCannotBeSubmitted",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ProductFormUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportCalendarUiTest",
+      "name": "selectedDayDetailRoutesCorrectMidnightAndKeepsFullTransactionCount",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportCalendarUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportCalendarUiTest",
+      "name": "calendarMonthArrowsAndDaySelectionUseViewModelActions",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportCalendarUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportsCalculationsTest",
+      "name": "periodChangesAndLiveRowsRecomputeTotalsWithoutLosingAnalytics",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportsCalculationsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportsCalculationsTest",
+      "name": "paidDebtProfitAndCustomerRanksRemainConsistent",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportsCalculationsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportsCalculationsTest",
+      "name": "selectingDayBuildsCorrectPaidAndUnpaidBreakdownAndCanDeselect",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportsCalculationsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportsCalculationsTest",
+      "name": "changingMonthClearsSelectionAndProducesReadyMonthlyExport",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportsCalculationsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportsUiFlowTest",
+      "name": "pendingMonthlyTotalsDisablePdfUntilReady",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportsUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReportsUiFlowTest",
+      "name": "financialSectionsPresentAllSalesProfitAndDebtAnalytics",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportsUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest",
+      "name": "alreadyReturnedLineCannotOfferAnotherRefund",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReturnsUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest",
+      "name": "partialReturnShowsRemainingQuantityAndCorrectRefund",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReturnsUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SaleFormUiTest",
+      "name": "amountNoteAndDebtSelectionReachApplicationModelBeforeSave",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SaleFormUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SaleFormUiTest",
+      "name": "invoiceEditorReceivesSelectedCustomerAndExistingLines",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SaleFormUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SettingsUiFlowTest",
+      "name": "editingStoreNameRequiresExplicitSave",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SettingsUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SettingsUiFlowTest",
+      "name": "paymentCashAndSupportSettingsNavigateToTheRequestedDestination",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SettingsUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.StockDetailUiFlowTest",
+      "name": "manualStockDeductionUsesTheSelectedUnitAndNegativeQuantity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/StockDetailUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.StockDetailUiFlowTest",
+      "name": "stockReportTabsShowCashDebtAndInventoryAlerts",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/StockDetailUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SyncStatusUiTest",
+      "name": "syncedSheetShowsNoPendingRecords",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SyncStatusUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SyncStatusUiTest",
+      "name": "statusIconsDistinguishSyncedPendingAndFailedAndOpenDetails",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SyncStatusUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.SyncStatusUiTest",
+      "name": "failedSheetIdentifiesRecordsAndRetryIsExplicit",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/SyncStatusUiTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.TransactionsUiFlowTest",
+      "name": "paidFilterAndRowNavigationPreserveTransactionIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/TransactionsUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.TransactionsUiFlowTest",
+      "name": "emptyTransactionsRemainVisibleWithoutInventingARecord",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/TransactionsUiFlowTest.kt",
+      "primary": "Compose UI on JVM",
+      "tags": [
+        "Compose UI on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+      "name": "conflictingPhoneBlocksSave",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/customers/addedit/CustomerFormTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+      "name": "editUpdatesExistingCustomerRatherThanInserting",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/customers/addedit/CustomerFormTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+      "name": "rapidDoubleSaveCannotCreateDuplicateCustomer",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/customers/addedit/CustomerFormTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+      "name": "shortAndReservedNamesNeverPersist",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/customers/addedit/CustomerFormTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+      "name": "creationTrimsNameAndPreservesArabic",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/customers/addedit/CustomerFormTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.customers.addedit.CustomerFormTest",
+      "name": "phoneInputKeepsOnlyTenDigits",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/customers/addedit/CustomerFormTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+      "name": "arabicDecimalAndGroupingSeparatorsAreParsed",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceInputTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+      "name": "supportedWeightConversionsRoundTrip",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceInputTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+      "name": "amountFormattingIsIndependentOfDeviceLocale",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceInputTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+      "name": "quantityFormattingKeepsFractionalStock",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceInputTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+      "name": "latinAndPersianDigitsAreParsed",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceInputTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.invoice.InvoiceInputTest",
+      "name": "nonFiniteAndMalformedFinancialInputsAreRejected",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/inventory/invoice/InvoiceInputTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.inventory.session.InventorySessionViewModelTest",
+      "name": "validCountsAndClearingPersistWhileInvalidCountsNeverReachRepository",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/inventory/session/InventorySessionViewModelTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.BackupCommandsTest",
+      "name": "corruptWrongPasswordEmptyAndVersionFailuresDoNotReachRestore",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/BackupCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.BackupCommandsTest",
+      "name": "encryptedImportAsksPasswordAndRequiresSeparateRestoreConfirmation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/BackupCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.BackupCommandsTest",
+      "name": "cancellingEncryptedOrParsedImportDoesNotRestoreAnything",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/BackupCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.BackupCommandsTest",
+      "name": "exportRequiresMatchingNonblankPasswordBeforeManagerIsCalled",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/BackupCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.BackupCommandsTest",
+      "name": "successfulExportClearsPasswordArrayAndPersistsTimestamp",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/BackupCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.BackupCommandsTest",
+      "name": "restoreFailureClearsPendingPayloadAndStopsProgress",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/BackupCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.BackupCommandsTest",
+      "name": "pickerFailuresSurfaceSpecificMessagesAndConfirmWithoutPayloadIsNoOp",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/BackupCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.BackupCommandsTest",
+      "name": "exportStorageFailureClearsSensitiveBufferAndLeavesRetryAvailable",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/BackupCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ChatCommandsTest",
+      "name": "deletionOfOtherSenderIsLocalAndOwnDeletionWaitsForExplicitChoice",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ChatCommandsTest",
+      "name": "loadMarksOnlyUnreadAdminMessagesAndHidesPendingEcho",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ChatCommandsTest",
+      "name": "selectionCopiesChronologicallyAndNeverCopiesDeletedContent",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ChatCommandsTest",
+      "name": "sendingPersistsBeforeDispatchAndDeletesOnlySameStableId",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ChatCommandsTest",
+      "name": "editOwnMessageTrimsChangedTextAndCannotEditOtherSender",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ChatCommandsTest",
+      "name": "remoteDeleteFailureKeepsMessageHiddenAndSuccessRemovesTemporaryHide",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ChatCommandsTest",
+      "name": "failedSendRetainsPendingAndRetryUsesOriginalIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.DebtRefreshRoomTest",
+      "name": "openDebtScreenReflectsSalePaymentAndDeletionWithoutCustomerMutation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/DebtRefreshRoomTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.DownloadTransportTest",
+      "name": "cancelledDownloadPropagatesCancellationAndRemovesPartialArtifact",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/DownloadTransportTest.kt",
+      "primary": "Loopback HTTP",
+      "tags": [
+        "Loopback HTTP"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.DownloadTransportTest",
+      "name": "unknownContentLengthIsSupportedAndHttpFailureDoesNotSucceed",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/DownloadTransportTest.kt",
+      "primary": "Loopback HTTP",
+      "tags": [
+        "Loopback HTTP"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.DownloadTransportTest",
+      "name": "truncatedDownloadIsRejectedAndPartialArtifactRemoved",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/DownloadTransportTest.kt",
+      "primary": "Loopback HTTP",
+      "tags": [
+        "Loopback HTTP"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.DownloadTransportTest",
+      "name": "completeDownloadPreservesBytesAndMonotonicProgress",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/DownloadTransportTest.kt",
+      "primary": "Loopback HTTP",
+      "tags": [
+        "Loopback HTTP"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeCommandsTest",
+      "name": "seededManagerCannotBeDeletedButCashierCan",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/EmployeeCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeCommandsTest",
+      "name": "duplicatePinIsRejectedWithoutOverwritingExistingEmployee",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/EmployeeCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeCommandsTest",
+      "name": "persistenceFailureKeepsFormForRetryAndShowsFailure",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/EmployeeCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeCommandsTest",
+      "name": "successfulSubmissionTrimsNamePreservesRoleAndResetsForm",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/EmployeeCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.EmployeeCommandsTest",
+      "name": "invalidNameAndPinNeverPersistAndInputIsSanitized",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/EmployeeCommandsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerBehaviorTest",
+      "name": "unavailableSettingsOrInventoryRequestsRetryWithoutAcknowledgment",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerBehaviorTest.kt",
+      "primary": "WorkManager lifecycle",
+      "tags": [
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerBehaviorTest",
+      "name": "disabledSettingsDoNotQueryOrAcknowledgeCandidates",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerBehaviorTest.kt",
+      "primary": "WorkManager lifecycle",
+      "tags": [
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerBehaviorTest",
+      "name": "notificationCountsDistinctProductsAndOnlyThenMarksCandidates",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerBehaviorTest.kt",
+      "primary": "WorkManager lifecycle",
+      "tags": [
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.NotificationContractsTest",
+      "name": "blockedAndStatusMessagesPreserveTheirOwnContent",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/NotificationContractsTest.kt",
+      "primary": "Android notification component on JVM",
+      "tags": [
+        "Android notification component on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.NotificationContractsTest",
+      "name": "createsDistinctAccountAndGeneralChannels",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/NotificationContractsTest.kt",
+      "primary": "Android notification component on JVM",
+      "tags": [
+        "Android notification component on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.NotificationContractsTest",
+      "name": "expiryWarningDistinguishesUpcomingAndExpiredAccount",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/NotificationContractsTest.kt",
+      "primary": "Android notification component on JVM",
+      "tags": [
+        "Android notification component on JVM"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.PdfCanvasNativeTest",
+      "name": "roundedCardHasFillBorderAndLeavesOutsidePixelsUntouched",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/PdfCanvasNativeTest.kt",
+      "primary": "Native bitmap graphics",
+      "tags": [
+        "Native bitmap graphics"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.PdfCanvasNativeTest",
+      "name": "arabicTextLayoutWrapsAndCellDrawingStaysWithinItsClip",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/PdfCanvasNativeTest.kt",
+      "primary": "Native bitmap graphics",
+      "tags": [
+        "Native bitmap graphics"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest",
+      "name": "deselectedReturnableLineMakesReturnPartialAndKeepsItOutOfRefund",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ReturnCommandsQualificationTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest",
+      "name": "priorReturnsLimitQuantityAndRefundAndFullMeansAllRemainingItems",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ReturnCommandsQualificationTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.ReturnCommandsQualificationTest",
+      "name": "zeroQuantityCannotConfirmAndRepositoryFailureKeepsExplicitRetryState",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ReturnCommandsQualificationTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.SellerReadModelsTest",
+      "name": "merchantWatcherUnsubscribesWhenInactiveAndEmitsExactBlockedReason",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/SellerReadModelsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.SellerReadModelsTest",
+      "name": "inactiveHomeDoesNotSubscribeToAnotherMerchantsChat",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/SellerReadModelsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.SellerReadModelsTest",
+      "name": "syncModelMirrorsErrorsAndRetryDelegatesToCoordinator",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/SellerReadModelsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.SellerReadModelsTest",
+      "name": "homeProjectsLiveAnalyticsRecentSalesAndMerchantUnreadCount",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/SellerReadModelsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.SellerReadModelsTest",
+      "name": "paymentMethodsIgnoreBlankInputAndKeepSelectedIdentityForDelete",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/SellerReadModelsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.SellerReadModelsTest",
+      "name": "customerSearchDebouncesAndDeleteRequiresCurrentConfirmation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/SellerReadModelsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.SellerReadModelsTest",
+      "name": "stockReportSeparatesPaidCashUnpaidDebtAndActualUnitValue",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/SellerReadModelsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest",
+      "name": "paidAndRecentTransactionsDoNotProduceDebtNotifications",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UnpaidDebtWorkerRoomTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest",
+      "name": "overdueInvoicesAreGroupedByCustomerWithCorrectTotalAndNavigation",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UnpaidDebtWorkerRoomTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UnpaidDebtWorkerRoomTest",
+      "name": "repeatExecutionUpdatesExistingNotificationsWithoutChangingDebt",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UnpaidDebtWorkerRoomTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UpdateLifecycleTest",
+      "name": "backgroundDownloadSuccessPersistsPathAndPostsReadyNotification",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UpdateLifecycleTest.kt",
+      "primary": "WorkManager lifecycle",
+      "tags": [
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UpdateLifecycleTest",
+      "name": "checkerFailureAndCurrentVersionNeverOfferAnUpdate",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UpdateLifecycleTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UpdateLifecycleTest",
+      "name": "downloadedPathSurvivesViewModelRestartAndInstallUsesThatExactFile",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UpdateLifecycleTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": [
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UpdateLifecycleTest",
+      "name": "backgroundDownloadFailureDoesNotPersistAnInstallPath",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UpdateLifecycleTest.kt",
+      "primary": "WorkManager lifecycle",
+      "tags": [
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UpdateLifecycleTest",
+      "name": "backgroundCheckNotifiesOnlyForNewerRelease",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UpdateLifecycleTest.kt",
+      "primary": "WorkManager lifecycle",
+      "tags": [
+        "WorkManager lifecycle"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UpdateLifecycleTest",
+      "name": "overlappingChecksAreSuppressedAndNewerVersionIsPresented",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UpdateLifecycleTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.qualification.UpdateLifecycleTest",
+      "name": "failedDownloadClearsProgressAndCanBeRetried",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/UpdateLifecycleTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+      "name": "randomSaltAndIvPreventIdenticalCiphertexts",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupCryptoTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+      "name": "encryptedRoundTripPreservesArabicBytesAndHeader",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupCryptoTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+      "name": "emptyArchiveRoundTrips",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupCryptoTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+      "name": "wrongPasswordRejected",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupCryptoTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+      "name": "ciphertextTamperingRejected",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupCryptoTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+      "name": "unknownEncryptionVersionRejected",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupCryptoTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoTest",
+      "name": "truncatedHeaderRejected",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupCryptoTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+      "name": "exportReadsTablesInsideOneDatabaseSnapshot",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+      "name": "encryptedExportImportRoundTripPreservesAmountsAndReturnState",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+      "name": "malformedFilesAreRejectedWithoutTouchingDatabase",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+      "name": "failedRestoreRollsBackExistingMerchantData",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest",
+      "name": "legacyBackupRestoresReturnStateFromItsDurableLedger",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupIntegrityTest.kt",
+      "primary": "Room/SQLite on JVM",
+      "tags": [
+        "Room/SQLite on JVM",
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupMigratorTest",
+      "name": "futurePayloadIsRejectedRatherThanRestored",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupMigratorTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupMigratorTest",
+      "name": "unsupportedOldPayloadIsRejectedRatherThanRestored",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupMigratorTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto",
+        "Restart/recovery in test harness"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupMigratorTest",
+      "name": "allSupportedPayloadVersionsPreserveFinancialRecords",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/settings/backup/BackupMigratorTest.kt",
+      "primary": "Backup format/crypto",
+      "tags": [
+        "Backup format/crypto"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "salesExportDelegatesToRealWorkbookAndPreservesItsPublicFileName",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "exportClaimsLoadingSynchronouslyBeforeAnotherTapCanQueueWork",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "resetDuringWriteCannotResurrectAStaleSuccess",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "ioFailureRetainsCauseAndDismissAllowsSuccessfulRetry",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "timedOutGeneratorRemainsCancellationAndAllowsNewExport",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "invoiceAndMonthlyEntryPointsPreserveGeneratorFailureAndTheirPublicNames",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "memoryFailureDuringCustomerStatementIsVisibleWithoutSuccessOrAFakePdf",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "generatorCancellationRemainsCancellationRatherThanAnError",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.ExportLifecycleContractsTest",
+      "name": "rapidRepeatedRequestsProduceOneRealWorkbookAndTypedSuccess",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/ExportLifecycleContractsTest.kt",
+      "primary": "Unit/model with deterministic fakes",
+      "tags": []
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
+      "name": "inventoryWorkbookPreservesQuantitiesValuesAndStockStatus",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/WorkbookExportIntegrityTest.kt",
+      "primary": "Real XLSX file content",
+      "tags": [
+        "Real XLSX file content"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
+      "name": "salesWorkbookContainsCorrectPaidDebtAndCustomerIdentity",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/WorkbookExportIntegrityTest.kt",
+      "primary": "Real XLSX file content",
+      "tags": [
+        "Real XLSX file content"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
+      "name": "styleCountsAndFillReferencesMatchActualXmlElements",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/WorkbookExportIntegrityTest.kt",
+      "primary": "Real XLSX file content",
+      "tags": [
+        "Real XLSX file content"
+      ]
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.util.export.WorkbookExportIntegrityTest",
+      "name": "workbookRoundTripsArabicEscapingAndLiteralFormulaText",
+      "result": "passed",
+      "source": "salesmanager/src/test/java/com/trader/salesmanager/util/export/WorkbookExportIntegrityTest.kt",
+      "primary": "Real XLSX file content",
+      "tags": [
+        "Real XLSX file content"
+      ]
+    }
+  ],
+  "remainingPlan": [
+    {
+      "kind": "Historical migration",
+      "id": "MIG-01",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 1 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-02",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 2 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-03",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 3 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-04",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 4 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-05",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 5 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-06",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 6 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-07",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 7 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-08",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 8 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-09",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 9 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-10",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 10 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-11",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 11 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-12",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 12 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-13",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 13 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-14",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 14 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-15",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 15 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-16",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 16 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-17",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 17 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-18",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 18 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-19",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 19 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-20",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 20 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Historical migration",
+      "id": "MIG-21",
+      "status": "BLOCKED",
+      "scenario": "Authentic populated database 21 to current version25, preserving monetary/stock/return links",
+      "blocker_or_next_action": "Owner-provenance historical schema and sanitized offline database fixture required; never reverse-engineer a golden fixture"
+    },
+    {
+      "kind": "Logic boundary",
+      "id": "LOG-03",
+      "status": "NOT TESTED",
+      "scenario": "Nonfinite numeric input through cash/product/return UI boundaries",
+      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
+    },
+    {
+      "kind": "Logic boundary",
+      "id": "LOG-05",
+      "status": "NOT TESTED",
+      "scenario": "Out-of-order barcode conflict replies after editing a product",
+      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
+    },
+    {
+      "kind": "Logic boundary",
+      "id": "LOG-07",
+      "status": "NOT TESTED",
+      "scenario": "Empty/malformed/obsolete invoice draft JSON has an explicit user-visible recovery policy",
+      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
+    },
+    {
+      "kind": "Logic boundary",
+      "id": "LOG-08",
+      "status": "NOT TESTED",
+      "scenario": "Session revoke rejection preserves local session and reports failure",
+      "blocker_or_next_action": "Add behavioral regression and repair only after actual failing evidence"
+    },
+    {
+      "kind": "SDK failure contract",
+      "id": "SDK-CUSTOMERS",
+      "status": "NOT TESTED",
+      "scenario": "customers listener permission/network cancellation becomes an explicit error rather than hanging",
+      "blocker_or_next_action": "Current session permission-close test does not qualify these other listener families"
+    },
+    {
+      "kind": "SDK failure contract",
+      "id": "SDK-TRANSACTIONS",
+      "status": "NOT TESTED",
+      "scenario": "transactions listener permission/network cancellation becomes an explicit error rather than hanging",
+      "blocker_or_next_action": "Current session permission-close test does not qualify these other listener families"
+    },
+    {
+      "kind": "SDK failure contract",
+      "id": "SDK-PAYMENT-METHODS",
+      "status": "NOT TESTED",
+      "scenario": "payment methods listener permission/network cancellation becomes an explicit error rather than hanging",
+      "blocker_or_next_action": "Current session permission-close test does not qualify these other listener families"
+    },
+    {
+      "kind": "SDK failure contract",
+      "id": "SDK-CASH-BOXES",
+      "status": "NOT TESTED",
+      "scenario": "cash boxes listener permission/network cancellation becomes an explicit error rather than hanging",
+      "blocker_or_next_action": "Current session permission-close test does not qualify these other listener families"
+    },
+    {
+      "kind": "SDK failure contract",
+      "id": "SDK-CASH-MOVEMENTS",
+      "status": "NOT TESTED",
+      "scenario": "cash movements listener permission/network cancellation becomes an explicit error rather than hanging",
+      "blocker_or_next_action": "Current session permission-close test does not qualify these other listener families"
+    },
+    {
+      "kind": "SDK failure contract",
+      "id": "SDK-INVOICE-ITEMS",
+      "status": "NOT TESTED",
+      "scenario": "invoice items listener permission/network cancellation becomes an explicit error rather than hanging",
+      "blocker_or_next_action": "Current session permission-close test does not qualify these other listener families"
+    },
+    {
+      "kind": "SDK failure contract",
+      "id": "SDK-RETURNS",
+      "status": "NOT TESTED",
+      "scenario": "returns listener permission/network cancellation becomes an explicit error rather than hanging",
+      "blocker_or_next_action": "Current session permission-close test does not qualify these other listener families"
+    },
+    {
+      "kind": "SDK failure contract",
+      "id": "SDK-EMPLOYEES",
+      "status": "NOT TESTED",
+      "scenario": "employees listener permission/network cancellation becomes an explicit error rather than hanging",
+      "blocker_or_next_action": "Current session permission-close test does not qualify these other listener families"
+    },
+    {
+      "kind": "Firebase/server integration",
+      "id": "SRV-01",
+      "status": "BLOCKED",
+      "scenario": "Unauthenticated RTDB reads and writes denied",
+      "blocker_or_next_action": "Authentic deployed rules and UID-to-merchant authorization contract"
+    },
+    {
+      "kind": "Firebase/server integration",
+      "id": "SRV-02",
+      "status": "BLOCKED",
+      "scenario": "Cross-merchant Firestore reads and writes denied",
+      "blocker_or_next_action": "Authentic Firestore rules and membership/claim contract"
+    },
+    {
+      "kind": "Firebase/server integration",
+      "id": "SRV-03",
+      "status": "BLOCKED",
+      "scenario": "Revoked staff/account switch denies late writes server-side",
+      "blocker_or_next_action": "Server authorization lifecycle and rules fixtures"
+    },
+    {
+      "kind": "Firebase/server integration",
+      "id": "SRV-04",
+      "status": "BLOCKED",
+      "scenario": "Two real Firebase clients race identical event receipts",
+      "blocker_or_next_action": "Official emulator binary is network-blocked at storage.googleapis.com; never run against production"
+    },
+    {
+      "kind": "Firebase/server integration",
+      "id": "SRV-05",
+      "status": "BLOCKED",
+      "scenario": "Concurrent stale revisions cannot acknowledge or overwrite newer server state",
+      "blocker_or_next_action": "Official emulator access plus actual server revision protocol"
+    },
+    {
+      "kind": "Firebase/server integration",
+      "id": "SRV-06",
+      "status": "BLOCKED",
+      "scenario": "Firestore-success/RTDB-failure reconciliation after a real backend restart",
+      "blocker_or_next_action": "Defined cross-backend recovery protocol and server-side support"
+    },
+    {
+      "kind": "Firebase/server integration",
+      "id": "SRV-07",
+      "status": "BLOCKED",
+      "scenario": "Catalog deletion survives restart until remote tombstone acknowledged",
+      "blocker_or_next_action": "Durable catalog tombstone/outbox is not implemented; current deletion transport is best effort"
+    },
+    {
+      "kind": "Firebase/server integration",
+      "id": "SRV-08",
+      "status": "BLOCKED",
+      "scenario": "Legacy manual stock/cash writers cannot overwrite managed sale revisions",
+      "blocker_or_next_action": "Complete tenant/aggregate ownership protocol across all writers"
+    },
+    {
+      "kind": "Android API matrix",
+      "id": "API-24",
+      "status": "NOT TESTED",
+      "scenario": "Run the full six instrumentation cases and four Android-PDF verifications on API24",
+      "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
+    },
+    {
+      "kind": "Android API matrix",
+      "id": "API-33",
+      "status": "NOT TESTED",
+      "scenario": "Run the full six instrumentation cases and four Android-PDF verifications on API33",
+      "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
+    },
+    {
+      "kind": "Android API matrix",
+      "id": "API-35",
+      "status": "NOT TESTED",
+      "scenario": "Run the full six instrumentation cases and four Android-PDF verifications on API35",
+      "blocker_or_next_action": "Current hosted qualification is API28 only; reuse tests on a separate emulator lane"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-01",
+      "status": "NOT TESTED",
+      "scenario": "Cold start and notification intents through the real MainActivity",
+      "blocker_or_next_action": "Two local JVM lifecycle approaches stalled; requires a stable device-level MainActivity fixture"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-02",
+      "status": "NOT TESTED",
+      "scenario": "Camera permission grant/deny plus real offline barcode decoding",
+      "blocker_or_next_action": "Camera/model-capable emulator or physical device with known image fixtures"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-03",
+      "status": "NOT TESTED",
+      "scenario": "Process kill during sale and recovery after relaunch",
+      "blocker_or_next_action": "Device process harness; Room reopen tests do not prove OS process kill"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-04",
+      "status": "NOT TESTED",
+      "scenario": "Process kill during outbox claim/network completion",
+      "blocker_or_next_action": "Multi-process device harness and deterministic backend"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-05",
+      "status": "NOT TESTED",
+      "scenario": "Disk full and WAL recovery during mutation/restore",
+      "blocker_or_next_action": "Disposable device storage fault fixture"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-06",
+      "status": "NOT TESTED",
+      "scenario": "Foreground/background notification denial and channel suppression on API33+",
+      "blocker_or_next_action": "Actual API33+ device permission lifecycle"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-07",
+      "status": "NOT TESTED",
+      "scenario": "RTL large-font/tablet layouts and keyboard navigation across all screens",
+      "blocker_or_next_action": "Screen matrix and accessibility assertions"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-08",
+      "status": "NOT TESTED",
+      "scenario": "TalkBack semantics and focus order for unlabeled icon controls",
+      "blocker_or_next_action": "Accessibility/device qualification"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-09",
+      "status": "NOT TESTED",
+      "scenario": "Long customer statement over25 rows retains all required history or explicitly approved truncation",
+      "blocker_or_next_action": "Existing statement implementation limits rows; clarify report completeness and add real PDF regression"
+    },
+    {
+      "kind": "Device/end-to-end",
+      "id": "DEV-10",
+      "status": "BLOCKED",
+      "scenario": "Real signed APK upgrade from previous releases with data preserved",
+      "blocker_or_next_action": "Authorized offline APK fixtures and public certificate fingerprints; no production private signing material"
+    },
+    {
+      "kind": "Performance benchmark",
+      "id": "PERF-01",
+      "status": "NOT TESTED",
+      "scenario": "Sale commit latency with10k customers and100k invoice items",
+      "blocker_or_next_action": "Controlled device datasets, repeatable baseline, and explicit latency/memory budgets required; JVM suite timing is not a product benchmark"
+    },
+    {
+      "kind": "Performance benchmark",
+      "id": "PERF-02",
+      "status": "NOT TESTED",
+      "scenario": "Outbox drain throughput and bounded-memory reconciliation",
+      "blocker_or_next_action": "Controlled device datasets, repeatable baseline, and explicit latency/memory budgets required; JVM suite timing is not a product benchmark"
+    },
+    {
+      "kind": "Performance benchmark",
+      "id": "PERF-03",
+      "status": "NOT TESTED",
+      "scenario": "Large backup export/restore memory and cancellation latency",
+      "blocker_or_next_action": "Controlled device datasets, repeatable baseline, and explicit latency/memory budgets required; JVM suite timing is not a product benchmark"
+    },
+    {
+      "kind": "Performance benchmark",
+      "id": "PERF-04",
+      "status": "NOT TESTED",
+      "scenario": "Long invoice/monthly PDF memory and page-render latency",
+      "blocker_or_next_action": "Controlled device datasets, repeatable baseline, and explicit latency/memory budgets required; JVM suite timing is not a product benchmark"
+    },
+    {
+      "kind": "Performance benchmark",
+      "id": "PERF-05",
+      "status": "NOT TESTED",
+      "scenario": "Scrolling startup and report jank on representative low-memory hardware",
+      "blocker_or_next_action": "Controlled device datasets, repeatable baseline, and explicit latency/memory budgets required; JVM suite timing is not a product benchmark"
+    },
+    {
+      "kind": "Security qualification",
+      "id": "SEC-01",
+      "status": "BLOCKED",
+      "scenario": "APK authenticity and certificate/package validation before installation",
+      "blocker_or_next_action": "Authorized signed release fixture and approved public certificate policy"
+    },
+    {
+      "kind": "Security qualification",
+      "id": "SEC-02",
+      "status": "BLOCKED",
+      "scenario": "Backend abuse and privilege-escalation rule tests",
+      "blocker_or_next_action": "Authentic rules/identity contract; no production probing"
+    },
+    {
+      "kind": "Security qualification",
+      "id": "SEC-03",
+      "status": "NOT TESTED",
+      "scenario": "Malicious backup ZIP/JSON fuzz campaign with resource limits",
+      "blocker_or_next_action": "Bounded fuzz corpus plus crash/memory assertions"
+    },
+    {
+      "kind": "Security qualification",
+      "id": "SEC-04",
+      "status": "NOT TESTED",
+      "scenario": "Sensitive data leakage across logs/backups/account switching",
+      "blocker_or_next_action": "Offline security fixtures and lifecycle audit beyond targeted secret policy"
+    },
+    {
+      "kind": "Security qualification",
+      "id": "SEC-05",
+      "status": "NOT TESTED",
+      "scenario": "Dependency/static security analysis with triaged actionable findings",
+      "blocker_or_next_action": "Dedicated security scan and reviewed findings; lint/secret policy does not substitute"
+    },
+    {
+      "kind": "Mutation campaign",
+      "id": "MUT-SALECOMMANDS",
+      "status": "PARTIAL",
+      "scenario": "Mutation score for high-risk SaleCommands invariants",
+      "blocker_or_next_action": "Bounded manual sample detects8 of8 preselected faults with real Room tests; original source/coverage unchanged. Comprehensive generated mutation score remains untested; see coverage100/sale-mutation-sample."
+    },
+    {
+      "kind": "Mutation campaign",
+      "id": "MUT-OUTBOXDISPATCHER",
+      "status": "NOT TESTED",
+      "scenario": "Mutation score for high-risk OutboxDispatcher invariants",
+      "blocker_or_next_action": "One campaign can produce many mutants; do not count it as one exhaustive test case"
+    },
+    {
+      "kind": "Mutation campaign",
+      "id": "MUT-RETURNREPOSITORY",
+      "status": "NOT TESTED",
+      "scenario": "Mutation score for high-risk ReturnRepository invariants",
+      "blocker_or_next_action": "One campaign can produce many mutants; do not count it as one exhaustive test case"
+    },
+    {
+      "kind": "Mutation campaign",
+      "id": "MUT-CASHBOXREPOSITORY",
+      "status": "NOT TESTED",
+      "scenario": "Mutation score for high-risk CashBoxRepository invariants",
+      "blocker_or_next_action": "One campaign can produce many mutants; do not count it as one exhaustive test case"
+    },
+    {
+      "kind": "Mutation campaign",
+      "id": "MUT-BACKUPCRYPTO",
+      "status": "NOT TESTED",
+      "scenario": "Mutation score for high-risk BackupCrypto invariants",
+      "blocker_or_next_action": "One campaign can produce many mutants; do not count it as one exhaustive test case"
+    }
+  ]
+}

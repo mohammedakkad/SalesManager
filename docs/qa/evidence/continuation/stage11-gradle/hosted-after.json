@@ -1,0 +1,209 @@
+{
+  "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42573505456",
+  "state": {
+    "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+    "conclusion": "WORKFLOW_RUN_CONCLUSION_SUCCESS"
+  },
+  "headVisible": true,
+  "seller": [
+    "completed successfully: "
+  ],
+  "compose": [
+    "completed successfully: "
+  ],
+  "auditedHead": "129490d0d1ec4eabe2dd6157323adb7d46809e93",
+  "jobs": {
+    "seller": {
+      "url": "https://github.com/mohammedakkad/SalesManager/actions/runs/42573505456/job/129015981409",
+      "steps": [
+        {
+          "data-name": "Set up job",
+          "data-number": "1",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:04Z",
+          "data-completed-at": "2026-11-09T06:31:05Z"
+        },
+        {
+          "data-name": "Run actions/checkout@v4",
+          "data-number": "2",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:05Z",
+          "data-completed-at": "2026-11-09T06:31:06Z"
+        },
+        {
+          "data-name": "Run actions/setup-java@v4",
+          "data-number": "3",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:06Z",
+          "data-completed-at": "2026-11-09T06:31:06Z"
+        },
+        {
+          "data-name": "Provision verified isolated Android SDK",
+          "data-number": "4",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:06Z",
+          "data-completed-at": "2026-11-09T06:31:17Z"
+        },
+        {
+          "data-name": "Install verified Gradle",
+          "data-number": "5",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:17Z",
+          "data-completed-at": "2026-11-09T06:31:19Z"
+        },
+        {
+          "data-name": "Run actions/cache@v4",
+          "data-number": "6",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:19Z",
+          "data-completed-at": "2026-11-09T06:31:29Z"
+        },
+        {
+          "data-name": "Generate offline packaging fixture (never production Firebase)",
+          "data-number": "7",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:29Z",
+          "data-completed-at": "2026-11-09T06:31:29Z"
+        },
+        {
+          "data-name": "Test, coverage, lint and debug assembly",
+          "data-number": "8",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:29Z",
+          "data-completed-at": "2026-11-09T06:35:46Z"
+        },
+        {
+          "data-name": "Build minified unsigned QA release (not distributable)",
+          "data-number": "9",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:35:46Z",
+          "data-completed-at": "2026-11-09T06:40:59Z"
+        },
+        {
+          "data-name": "Preserve reports even on failure",
+          "data-number": "10",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:40:59Z",
+          "data-completed-at": "2026-11-09T06:41:02Z"
+        },
+        {
+          "data-name": "Post Run actions/cache@v4",
+          "data-number": "18",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:41:02Z",
+          "data-completed-at": "2026-11-09T06:41:03Z"
+        },
+        {
+          "data-name": "Post Run actions/setup-java@v4",
+          "data-number": "19",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:41:03Z",
+          "data-completed-at": "2026-11-09T06:41:03Z"
+        },
+        {
+          "data-name": "Post Run actions/checkout@v4",
+          "data-number": "20",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:41:03Z",
+          "data-completed-at": "2026-11-09T06:41:03Z"
+        },
+        {
+          "data-name": "Complete job",
+          "data-number": "21",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:41:03Z",
+          "data-completed-at": "2026-11-09T06:41:03Z"
+        }
+      ],
+      "htmlSha256": "3e22a4384cd5523792195ff40a1aa89a3659a24b13e447c33049ef76015a205e"
+    },
+    "compose": {
+      "url": "https://github.com/mohammedakkad/SalesManager/actions/runs/42573505456/job/129015981594",
+      "steps": [
+        {
+          "data-name": "Set up job",
+          "data-number": "1",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:04Z",
+          "data-completed-at": "2026-11-09T06:31:05Z"
+        },
+        {
+          "data-name": "Run actions/checkout@v4",
+          "data-number": "2",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:05Z",
+          "data-completed-at": "2026-11-09T06:31:06Z"
+        },
+        {
+          "data-name": "Run actions/setup-java@v4",
+          "data-number": "3",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:06Z",
+          "data-completed-at": "2026-11-09T06:31:06Z"
+        },
+        {
+          "data-name": "Provision verified isolated Android SDK",
+          "data-number": "4",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:06Z",
+          "data-completed-at": "2026-11-09T06:31:19Z"
+        },
+        {
+          "data-name": "Install verified Gradle",
+          "data-number": "5",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:19Z",
+          "data-completed-at": "2026-11-09T06:31:22Z"
+        },
+        {
+          "data-name": "Enable hosted-runner KVM access",
+          "data-number": "6",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:22Z",
+          "data-completed-at": "2026-11-09T06:31:22Z"
+        },
+        {
+          "data-name": "Run reactivecircus/android-emulator-runner@v2",
+          "data-number": "7",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:31:22Z",
+          "data-completed-at": "2026-11-09T06:38:27Z"
+        },
+        {
+          "data-name": "Run actions/upload-artifact@v4",
+          "data-number": "8",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:38:27Z",
+          "data-completed-at": "2026-11-09T06:38:28Z"
+        },
+        {
+          "data-name": "Post Run actions/setup-java@v4",
+          "data-number": "15",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:38:28Z",
+          "data-completed-at": "2026-11-09T06:38:28Z"
+        },
+        {
+          "data-name": "Post Run actions/checkout@v4",
+          "data-number": "16",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:38:28Z",
+          "data-completed-at": "2026-11-09T06:38:28Z"
+        },
+        {
+          "data-name": "Complete job",
+          "data-number": "17",
+          "data-conclusion": "success",
+          "data-started-at": "2026-11-09T06:38:28Z",
+          "data-completed-at": "2026-11-09T06:38:29Z"
+        }
+      ],
+      "htmlSha256": "5f01398aba8957824d0c3aa6c0b102b6cb173bcd416f13ec873519e4dad41c29"
+    }
+  },
+  "limits": [
+    "Public interface requires login for raw logs/artifacts; XML/PDF bytes not downloaded",
+    "Local215 JVM count is not an independently extracted hosted count",
+    "Future documentation-only HEAD run is not covered by this evidence"
+  ]
+}

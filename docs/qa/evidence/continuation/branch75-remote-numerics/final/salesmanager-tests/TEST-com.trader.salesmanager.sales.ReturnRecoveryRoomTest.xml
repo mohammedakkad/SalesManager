@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.ReturnRecoveryRoomTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:29:15" hostname="ac8333d6728a" time="1.461">
+  <properties/>
+  <testcase name="failedOutboxInsertRollsBackTheWholeReturnAndRetryCommitsOnce" classname="com.trader.salesmanager.sales.ReturnRecoveryRoomTest" time="0.986"/>
+  <testcase name="committedReturnSurvivesReopenAndFreshDraftUsesOnlyRemainingQuantity" classname="com.trader.salesmanager.sales.ReturnRecoveryRoomTest" time="0.212"/>
+  <testcase name="cancellationAfterActualCommitRetriesTheSameRefundWithoutAnotherCashOrStockEffect" classname="com.trader.salesmanager.sales.ReturnRecoveryRoomTest" time="0.263"/>
+  <system-out><![CDATA[RETURN_STATE invoices=1 amount=25.0 cash=125.0 stock=3.0 events=[CREATE, RETURN]
+RETURN_STATE invoices=1 amount=25.0 cash=125.0 stock=3.0 events=[CREATE, RETURN]
+RETURN_STATE invoices=1 amount=25.0 cash=125.0 stock=3.0 events=[CREATE, RETURN]
+RETURN_STATE invoices=1 amount=25.0 cash=125.0 stock=3.0 events=[CREATE, RETURN]
+RETURN_STATE invoices=1 amount=25.0 cash=125.0 stock=3.0 events=[CREATE, RETURN]
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

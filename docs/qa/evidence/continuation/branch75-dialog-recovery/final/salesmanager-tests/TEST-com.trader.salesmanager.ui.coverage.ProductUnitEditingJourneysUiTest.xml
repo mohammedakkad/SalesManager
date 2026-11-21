@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:45:17" hostname="6d75d821cc71" time="0.998">
+  <properties/>
+  <testcase name="removingAPersistedUnitUsesItsAccessibleActionAndKeepsTheOtherUnit" classname="com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest" time="0.099"/>
+  <testcase name="switchingFromCartonToWeightClearsPackSizeAndStoresKilograms" classname="com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest" time="0.177"/>
+  <testcase name="cartonEditorPreservesPackSizePriceCostQuantityAndExplicitZeroThreshold" classname="com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest" time="0.257"/>
+  <testcase name="failedSaveRetainsEditedFieldsAndAllowsAnExplicitSuccessfulRetry" classname="com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest" time="0.097"/>
+  <testcase name="secondUnitCanBecomeTheOnlyDefaultWithoutReplacingItsIdentity" classname="com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest" time="0.101"/>
+  <testcase name="initialBarcodeConflictPreventsSavingAndShowsTheConflictingProduct" classname="com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest" time="0.1"/>
+  <testcase name="marginFeedbackDistinguishesProfitAndLossFromActualEditedPrices" classname="com.trader.salesmanager.ui.coverage.ProductUnitEditingJourneysUiTest" time="0.166"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.ProductSessionRoomTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:15:32" hostname="6d75d821cc71" time="0.247">
+  <properties/>
+  <testcase name="logoutCancelsTheCatalogListenerInsteadOfFilteringOutTheSignal" classname="com.trader.core.data.repository.ProductSessionRoomTest" time="0.11"/>
+  <testcase name="failedUnitReadCannotCommitAProductWithoutItsRequestedUnits" classname="com.trader.core.data.repository.ProductSessionRoomTest" time="0.036"/>
+  <testcase name="successfulSnapshotKeepsTheCostStockAndParentInOneDatabase" classname="com.trader.core.data.repository.ProductSessionRoomTest" time="0.044"/>
+  <testcase name="lateNonCooperativeUnitReadCannotWriteAfterLogout" classname="com.trader.core.data.repository.ProductSessionRoomTest" time="0.057"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

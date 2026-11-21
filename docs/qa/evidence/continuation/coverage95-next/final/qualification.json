@@ -1,0 +1,349 @@
+{
+  "startingSha": "68e99a76286faada1fcaedfba41749785789d7bb",
+  "qualifiedSource": "ee1fcc2ecf41ebba24884e366d6f8abf9748c467",
+  "jvm": {
+    "app": {
+      "tests": 208,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "salesmanager": {
+      "tests": 424,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "projectLocal": {
+    "app": {
+      "BRANCH": {
+        "covered": 1615,
+        "missed": 1496,
+        "total": 3111,
+        "percent": 51.91256830601093,
+        "additionalCoveredFor95": 1341
+      },
+      "LINE": {
+        "covered": 8134,
+        "missed": 2173,
+        "total": 10307,
+        "percent": 78.91724071019695,
+        "additionalCoveredFor95": 1658
+      },
+      "METHOD": {
+        "covered": 1818,
+        "missed": 697,
+        "total": 2515,
+        "percent": 72.28628230616302,
+        "additionalCoveredFor95": 572
+      }
+    },
+    "salesmanager": {
+      "BRANCH": {
+        "covered": 7402,
+        "missed": 7306,
+        "total": 14708,
+        "percent": 50.326353005167256,
+        "additionalCoveredFor95": 6571
+      },
+      "LINE": {
+        "covered": 14223,
+        "missed": 3680,
+        "total": 17903,
+        "percent": 79.44478579009105,
+        "additionalCoveredFor95": 2785
+      },
+      "METHOD": {
+        "covered": 2463,
+        "missed": 738,
+        "total": 3201,
+        "percent": 76.94470477975632,
+        "additionalCoveredFor95": 578
+      }
+    }
+  },
+  "projectLocalWeighted": {
+    "BRANCH": {
+      "covered": 9017,
+      "missed": 8802,
+      "total": 17819,
+      "percent": 50.603288624501936,
+      "additionalCoveredFor95": 7912
+    },
+    "LINE": {
+      "covered": 22357,
+      "missed": 5853,
+      "total": 28210,
+      "percent": 79.25203828429635,
+      "additionalCoveredFor95": 4443
+    },
+    "METHOD": {
+      "covered": 4281,
+      "missed": 1435,
+      "total": 5716,
+      "percent": 74.89503149055284,
+      "additionalCoveredFor95": 1150
+    }
+  },
+  "wholeJvm": {
+    "scope": "Both JVM suites",
+    "executionData": [
+      {
+        "path": "app/build/jacoco/testDebugUnitTest.exec",
+        "bytes": 490661
+      },
+      {
+        "path": "salesmanager/build/jacoco/testDebugUnitTest.exec",
+        "bytes": 1052151
+      }
+    ],
+    "modules": {
+      "app": {
+        "projectLocalJvm": {
+          "BRANCH": {
+            "covered": 1615,
+            "missed": 1496
+          },
+          "LINE": {
+            "covered": 8134,
+            "missed": 2173
+          },
+          "METHOD": {
+            "covered": 1818,
+            "missed": 697
+          },
+          "CLASS": {
+            "covered": 577,
+            "missed": 207
+          }
+        },
+        "allSuites": {
+          "BRANCH": {
+            "covered": 1725,
+            "missed": 1386
+          },
+          "LINE": {
+            "covered": 8448,
+            "missed": 1859
+          },
+          "METHOD": {
+            "covered": 1936,
+            "missed": 579
+          },
+          "CLASS": {
+            "covered": 605,
+            "missed": 179
+          }
+        }
+      },
+      "salesmanager": {
+        "projectLocalJvm": {
+          "BRANCH": {
+            "covered": 7402,
+            "missed": 7306
+          },
+          "LINE": {
+            "covered": 14223,
+            "missed": 3680
+          },
+          "METHOD": {
+            "covered": 2463,
+            "missed": 738
+          },
+          "CLASS": {
+            "covered": 1096,
+            "missed": 184
+          }
+        },
+        "allSuites": {
+          "BRANCH": {
+            "covered": 7402,
+            "missed": 7306
+          },
+          "LINE": {
+            "covered": 14223,
+            "missed": 3680
+          },
+          "METHOD": {
+            "covered": 2463,
+            "missed": 738
+          },
+          "CLASS": {
+            "covered": 1096,
+            "missed": 184
+          }
+        }
+      }
+    },
+    "weighted overall": {
+      "LINE": {
+        "covered": 22671,
+        "missed": 5539
+      },
+      "METHOD": {
+        "covered": 4399,
+        "missed": 1317
+      },
+      "BRANCH": {
+        "covered": 9127,
+        "missed": 8692
+      },
+      "CLASS": {
+        "covered": 1701,
+        "missed": 363
+      }
+    }
+  },
+  "artifacts": {
+    "debug/salesmanager-debug.apk": {
+      "bytes": 51009702,
+      "sha256": "3ba9e553e34accd0c7793beba9eebf2af1fef3971fdf1764f50d78bf8ae1c994"
+    },
+    "androidTest/debug/salesmanager-debug-androidTest.apk": {
+      "bytes": 1060465,
+      "sha256": "46507a6bdf4a1458a72e9b2521ac17bc7db2af5bb6dffb9781e8750e4a63d8b0"
+    },
+    "release/salesmanager-release-unsigned.apk": {
+      "bytes": 26702050,
+      "sha256": "30151d8937cc3ca10a35d4bbc9f73525d36394a99a9d03f55c2e1dd91582d7ec"
+    }
+  },
+  "pythonPassingCases": 22,
+  "hostedRunUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42983779778",
+  "hostedStatus": "SUCCESS: seller and all compose API24/28/33/35",
+  "releaseReadiness": "FAIL",
+  "fullLocalBuild": "PASS in6m40s, after clean Seller build; actual R8, Debug/AndroidTest APK, Lint and both JVM reports",
+  "scope": "Historical project-local reports/gates remain unchanged; whole-suite reports use both actual JVM execution streams. No exclusions or gate reductions.",
+  "totalJvmCases": 632,
+  "newJvmCases": 31,
+  "retainedStartingCases": 601,
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 24
+  },
+  "preservedLocalApks": "/workspace/.salesmanager-tools/artifacts/coverage95-next",
+  "hostedApi28OriginalCombined": {
+    "branches": {
+      "app": {
+        "covered": 1615,
+        "missed": 1496
+      },
+      "salesmanager": {
+        "covered": 7567,
+        "missed": 7141
+      },
+      "weighted overall": {
+        "covered": 9182,
+        "missed": 8637
+      }
+    },
+    "lines": {
+      "app": {
+        "covered": 8151,
+        "missed": 2156,
+        "total": 10307,
+        "percent": 79.08217716115261
+      },
+      "salesmanager": {
+        "covered": 15228,
+        "missed": 2675,
+        "total": 17903,
+        "percent": 85.0583701055689
+      },
+      "weighted overall": {
+        "covered": 23379,
+        "missed": 4831,
+        "total": 28210,
+        "percent": 82.87486706841545
+      }
+    },
+    "methods": {
+      "app": {
+        "covered": 1836,
+        "missed": 679
+      },
+      "salesmanager": {
+        "covered": 2533,
+        "missed": 668
+      },
+      "weighted overall": {
+        "covered": 4369,
+        "missed": 1347
+      }
+    },
+    "nativePdfLines": {
+      "InvoicePdfGenerator.kt": {
+        "covered": 489,
+        "missed": 48
+      },
+      "PdfCanvas.kt": {
+        "covered": 68,
+        "missed": 2
+      },
+      "ReportPdfGenerator.kt": {
+        "covered": 438,
+        "missed": 19
+      }
+    }
+  },
+  "hostedApi28AllSuiteCombined": {
+    "BRANCH": {
+      "app": {
+        "covered": 1725,
+        "missed": 1386
+      },
+      "salesmanager": {
+        "covered": 7567,
+        "missed": 7141
+      },
+      "weighted overall": {
+        "covered": 9292,
+        "missed": 8527
+      }
+    },
+    "LINE": {
+      "app": {
+        "covered": 8452,
+        "missed": 1855
+      },
+      "salesmanager": {
+        "covered": 15228,
+        "missed": 2675
+      },
+      "weighted overall": {
+        "covered": 23680,
+        "missed": 4530
+      }
+    },
+    "METHOD": {
+      "app": {
+        "covered": 1940,
+        "missed": 575
+      },
+      "salesmanager": {
+        "covered": 2533,
+        "missed": 668
+      },
+      "weighted overall": {
+        "covered": 4473,
+        "missed": 1243
+      }
+    }
+  },
+  "hostedEvidence": "../hosted/run-42983779778.json",
+  "distinctPassingCasesAcrossSuites": 666,
+  "room": {
+    "version": "2.6.1",
+    "schema": 25,
+    "migrationCases": 7,
+    "authenticFixtures": [
+      22,
+      23,
+      24,
+      25
+    ],
+    "historicalVersions1To21": "BLOCKED"
+  }
+}

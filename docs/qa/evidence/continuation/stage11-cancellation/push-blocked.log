@@ -1,0 +1,4 @@
+Normal push of verified local commit c02ba3f to existing audit branch failed.
+remote: Permission to mohammedakkad/SalesManager.git denied to mohammedakkad.
+fatal: unable to access 'https://github.com/mohammedakkad/SalesManager.git/': The requested URL returned error: 403
+No force push, new branch, PR or merge was attempted.

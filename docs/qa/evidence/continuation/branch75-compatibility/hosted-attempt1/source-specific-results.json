@@ -1,0 +1,402 @@
+{
+  "seller": {
+    "job": "seller",
+    "status": "completed",
+    "conclusion": "success",
+    "evidenceJobId": 134687769961,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134687769961
+  },
+  "33": {
+    "job": "compose (API 33)",
+    "status": "completed",
+    "conclusion": "failure",
+    "evidenceJobId": 134687770504,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134687770504,
+    "actualApi": 33,
+    "exit": "stage=Android instrumentation exit=1",
+    "paths": [],
+    "cases": [
+      {
+        "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateCustomerStatementForHostBalanceVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateSingleInvoiceForHostContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      }
+    ]
+  },
+  "35": {
+    "job": "compose (API 35)",
+    "status": "completed",
+    "conclusion": "failure",
+    "evidenceJobId": 134687770556,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134687770556,
+    "actualApi": 35,
+    "exit": "stage=Android instrumentation exit=1",
+    "paths": [],
+    "cases": [
+      {
+        "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateCustomerStatementForHostBalanceVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateSingleInvoiceForHostContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      }
+    ]
+  },
+  "24": {
+    "job": "compose (API 24)",
+    "status": "completed",
+    "conclusion": "failure",
+    "evidenceJobId": 134687770579,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134687770579,
+    "actualApi": 24,
+    "exit": "stage=Android instrumentation exit=1",
+    "paths": [],
+    "cases": [
+      {
+        "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateCustomerStatementForHostBalanceVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateSingleInvoiceForHostContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      }
+    ]
+  },
+  "28": {
+    "job": "compose (API 28)",
+    "status": "completed",
+    "conclusion": "failure",
+    "evidenceJobId": 134687770598,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134687770598,
+    "actualApi": 28,
+    "exit": "stage=Android instrumentation exit=1",
+    "paths": [],
+    "cases": [
+      {
+        "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateCustomerStatementForHostBalanceVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateSingleInvoiceForHostContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      }
+    ]
+  }
+}
