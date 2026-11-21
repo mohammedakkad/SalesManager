@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -97,7 +98,7 @@ fun DashboardScreen(
                     onClick = onNavigateToMerchants
                 )
                 ActionCard(
-                    icon = Icons.Rounded.ReceiptLong, title = "طلبات الاشتراك",
+                    icon = Icons.AutoMirrored.Rounded.ReceiptLong, title = "طلبات الاشتراك",
                     subtitle = "مراجعة واعتماد اشتراكات البائعين", color = Emerald500,
                     onClick = onNavigateToRequests
                 )

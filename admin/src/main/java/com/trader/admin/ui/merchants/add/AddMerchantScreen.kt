@@ -16,8 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
+import com.trader.core.util.rememberPlainTextCopier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +32,7 @@ fun AddMerchantScreen(
     viewModel: AddMerchantViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val clipboard = LocalClipboardManager.current
+    val copyText = rememberPlainTextCopier()
 
     // عند الحفظ الناجح اعرض الكود ثم ارجع
     var showCodeDialog by remember { mutableStateOf(false) }
@@ -79,7 +78,7 @@ fun AddMerchantScreen(
             confirmButton = {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TextButton(onClick = {
-                        clipboard.setText(AnnotatedString(state.generatedCode!!))
+                        copyText(state.generatedCode!!)
                     }) {
                         Icon(Icons.Rounded.ContentCopy, null, tint = Indigo400,
                             modifier = Modifier.size(16.dp))

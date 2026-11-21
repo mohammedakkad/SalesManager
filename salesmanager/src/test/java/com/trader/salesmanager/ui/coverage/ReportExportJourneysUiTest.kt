@@ -100,11 +100,11 @@ class ReportExportJourneysUiTest:OfflineSellerUiTest() {
         verify(exactly=1){export.reset()};verify(exactly=1){ExportManager.saveToDownloads(any(),file,file.name)}
     }
     @Test fun sharedExportButtonKeepsAFailedWorkbookDownloadRetryable(){
-        successfulFile();show{ExportActionButton(ExportTarget.INVENTORY_EXCEL,out.value,{}, {})};retryDownload("جاهز للمشاركة",false)
+        successfulFile();val exported=out.value;show{ExportActionButton(ExportTarget.INVENTORY_EXCEL,exported,{}, {})};retryDownload("جاهز للمشاركة",false)
     }
     @Test fun sharedExportButtonClosesOnlyAfterASuccessfulDownload(){
         successfulFile();every{ExportManager.saveToDownloads(any(),file,file.name)} returns true
-        show{ExportActionButton(ExportTarget.INVENTORY_EXCEL,out.value,{}, {})};ui.onNodeWithText("تنزيل").performClick()
+        val exported=out.value;show{ExportActionButton(ExportTarget.INVENTORY_EXCEL,exported,{}, {})};ui.onNodeWithText("تنزيل").performClick()
         ui.onNodeWithText("جاهز للمشاركة").assertDoesNotExist();verify(exactly=1){ExportManager.saveToDownloads(any(),file,file.name)}
     }
     @Test fun customerStatementDownloadFailureRetainsItsExportForRetry(){

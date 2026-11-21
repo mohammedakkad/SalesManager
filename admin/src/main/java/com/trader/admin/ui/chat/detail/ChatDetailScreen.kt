@@ -19,9 +19,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalClipboardManager
+import com.trader.core.util.rememberPlainTextCopier
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,7 +44,7 @@ fun ChatDetailScreen(
 ) {
 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 val listState = rememberLazyListState()
-val clipboard = LocalClipboardManager.current
+val copyText = rememberPlainTextCopier()
 
 LaunchedEffect(uiState.visibleMessages.size) {
     if (uiState.visibleMessages.isNotEmpty())
@@ -89,7 +88,7 @@ Scaffold(
                     canCopy = uiState.canCopy,
                     onClose = viewModel::cancelSelection,
                     onCopy = {
-                        clipboard.setText(AnnotatedString(viewModel.buildCopyText()))
+                        copyText(viewModel.buildCopyText())
                         viewModel.cancelSelection()
                     },
                     onEdit = viewModel::startEditSelected,
