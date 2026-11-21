@@ -41,7 +41,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.Send
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
@@ -54,7 +55,6 @@ import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Forum
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PersonRemove
-import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material.icons.rounded.SupportAgent
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -248,7 +248,7 @@ private fun NormalChatAppBar(onNavigateUp: () -> Unit) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onNavigateUp) {
-                Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
             }
             Spacer(Modifier.width(8.dp))
             Box(
@@ -613,7 +613,7 @@ private fun ChatInputBar(
                 shape = RoundedCornerShape(14.dp),
                 modifier = Modifier.size(52.dp)
             ) {
-                Icon(if (state.editingMessage != null) Icons.Rounded.Check else Icons.Rounded.Send, null)
+                Icon(if (state.editingMessage != null) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.Send, null)
             }
         }
     }

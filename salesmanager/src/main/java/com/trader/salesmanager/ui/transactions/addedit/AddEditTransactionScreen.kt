@@ -18,11 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Notes
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AttachMoney
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.CreditCard
-import androidx.compose.material.icons.rounded.Notes
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.ShoppingCart
@@ -297,7 +297,7 @@ fun AddEditTransactionScreen(
                 },
                 modifier = Modifier.fillMaxWidth(), maxLines = 3,
                 leadingIcon = {
-                    Icon(Icons.Rounded.Notes, null)
+                    Icon(Icons.AutoMirrored.Rounded.Notes, null)
                 }
             )
 

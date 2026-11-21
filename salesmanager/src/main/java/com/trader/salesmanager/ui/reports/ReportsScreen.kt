@@ -27,17 +27,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.EventBusy
-import androidx.compose.material.icons.rounded.OpenInNew
 import androidx.compose.material.icons.rounded.Print
 import androidx.compose.material.icons.rounded.Schedule
 import androidx.compose.material.icons.rounded.Share
-import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -796,7 +796,7 @@ private fun SelectedDayDetail(
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
                 ) {
-                    Icon(Icons.Rounded.OpenInNew, null, modifier = Modifier.size(16.dp))
+                    Icon(Icons.AutoMirrored.Rounded.OpenInNew, null, modifier = Modifier.size(16.dp))
                     Spacer(Modifier.width(8.dp))
                     Text(
                         "عرض كل العمليات (${transactions.size})",
@@ -1008,7 +1008,7 @@ private fun SummaryCard(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Rounded.TrendingUp,
+                                imageVector = Icons.AutoMirrored.Rounded.TrendingUp,
                                 contentDescription = null,
                                 tint = color,
                                 modifier = Modifier.size(20.dp)

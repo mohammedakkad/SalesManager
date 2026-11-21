@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Inbox
 import androidx.compose.material3.*
@@ -58,7 +58,7 @@ fun AdminRequestsScreen(
                 title = { Text("طلبات الاشتراك", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Rounded.ArrowBack, contentDescription = null, tint = Slate100)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Slate100)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

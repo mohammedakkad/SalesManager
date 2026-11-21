@@ -28,7 +28,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Card
@@ -277,7 +277,7 @@ fun GradientTopBar(
         navigationIcon = {
             if (onNavigateUp != null) {
                 IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
                 }
             }
         },

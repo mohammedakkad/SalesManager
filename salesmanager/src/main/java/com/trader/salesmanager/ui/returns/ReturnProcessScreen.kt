@@ -37,15 +37,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Notes
+import androidx.compose.material.icons.automirrored.rounded.TrendingDown
+import androidx.compose.material.icons.automirrored.rounded.Undo
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Inventory2
-import androidx.compose.material.icons.rounded.Notes
 import androidx.compose.material.icons.rounded.Remove
-import androidx.compose.material.icons.rounded.TrendingDown
-import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -124,7 +124,7 @@ fun ReturnProcessScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Column(Modifier.weight(1f)) {
                             Text(
@@ -144,12 +144,12 @@ fun ReturnProcessScreen(
                         SummaryPill("${state.selectedLines.size} أصناف", Icons.Rounded.Inventory2)
                         SummaryPill(
                             "₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
-                            Icons.Rounded.Undo
+                            Icons.AutoMirrored.Rounded.Undo
                         )
                         if (state.totalLostProfit > 0) {
                             SummaryPill(
                                 "خسارة ₪${String.format(Locale.US, "%.2f", state.totalLostProfit)}",
-                                Icons.Rounded.TrendingDown
+                                Icons.AutoMirrored.Rounded.TrendingDown
                             )
                         }
                     }
@@ -213,7 +213,7 @@ fun ReturnProcessScreen(
                             Text("سبب الإرجاع (اختياري)")
                         },
                         leadingIcon = {
-                            Icon(Icons.Rounded.Notes, null, tint = Violet500)
+                            Icon(Icons.AutoMirrored.Rounded.Notes, null, tint = Violet500)
                         },
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier.fillMaxWidth(),
@@ -252,7 +252,7 @@ fun ReturnProcessScreen(
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Violet500)
                     ) {
-                        Icon(Icons.Rounded.Undo, null, modifier = Modifier.size(20.dp))
+                        Icon(Icons.AutoMirrored.Rounded.Undo, null, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(
                             "تأكيد الإرجاع · ₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
@@ -359,7 +359,7 @@ private fun ReturnLineCard(
                         Crossfade(targetState = isSelected, animationSpec = tween(250), label = "icon") {
                             selected ->
                             Icon(
-                                if (selected) Icons.Rounded.Check else Icons.Rounded.Undo,
+                                if (selected) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.Undo,
                                 null,
                                 tint = if (selected) Color.White else appColors.textSubtle,
                                 modifier = Modifier.size(18.dp)
@@ -430,7 +430,7 @@ private fun ReturnLineCard(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(2.dp)
                                 ) {
-                                    Icon(Icons.Rounded.TrendingDown, null,
+                                    Icon(Icons.AutoMirrored.Rounded.TrendingDown, null,
                                         tint = DebtRed, modifier = Modifier.size(10.dp))
                                     Text(
                                         "₪${String.format(Locale.US, "%.2f", line.lostProfit)}",
@@ -587,7 +587,7 @@ private fun ConfirmReturnBottomSheet(
                 .align(Alignment.CenterHorizontally),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Rounded.Undo, null, tint = Violet500, modifier = Modifier.size(32.dp))
+                Icon(Icons.AutoMirrored.Rounded.Undo, null, tint = Violet500, modifier = Modifier.size(32.dp))
             }
 
             Text(

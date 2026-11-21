@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -155,7 +155,7 @@ private fun SessionCard(
 
             IconButton(onClick = onRevokeSession, enabled = !isRevoking) {
                 Icon(
-                    imageVector = Icons.Rounded.Logout,
+                    imageVector = Icons.AutoMirrored.Rounded.Logout,
                     contentDescription = "إنهاء الجلسة",
                     tint = MaterialTheme.colorScheme.error
                 )

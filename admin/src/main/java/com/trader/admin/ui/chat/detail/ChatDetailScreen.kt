@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Send
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -103,7 +105,7 @@ Scaffold(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.width(8.dp))
                         Box(Modifier.size(38.dp).clip(CircleShape).background(Color.White.copy(0.2f)), Alignment.Center) {
@@ -425,7 +427,7 @@ unfocusedBorderColor = Slate700, focusedTextColor = Slate100, unfocusedTextColor
 FloatingActionButton(onClick = onSend,
 containerColor = if (uiState.editingMessage != null) Cyan400 else Indigo500,
 contentColor = Color.White, shape = RoundedCornerShape(14.dp), modifier = Modifier.size(52.dp)) {
-Icon(if (uiState.editingMessage != null) Icons.Rounded.Check else Icons.Rounded.Send, null)
+Icon(if (uiState.editingMessage != null) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.Send, null)
 }
 }
 }
