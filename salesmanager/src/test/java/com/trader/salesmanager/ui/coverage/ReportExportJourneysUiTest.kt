@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.runner.RunWith
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 import org.robolectric.RobolectricTestRunner
