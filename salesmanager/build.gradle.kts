@@ -68,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation("org.bouncycastle:bcprov-jdk18on:1.87")
+    implementation(libs.bouncycastle.bcprov)
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.test.compose.junit)
     testImplementation(libs.test.workmanager)
@@ -78,12 +78,12 @@ dependencies {
     androidTestImplementation(libs.test.androidx.runner)
     androidTestImplementation(libs.test.androidx.junit)
     androidTestImplementation(libs.test.compose.junit)
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+    androidTestImplementation(libs.test.espresso.intents)
     debugImplementation(libs.test.compose.manifest)
     testImplementation(libs.test.junit)
     testImplementation(libs.test.mockk)
     testImplementation(libs.test.coroutines)
-    testImplementation("com.squareup.okhttp3:mockwebserver:${libs.versions.okhttp.get()}")
+    testImplementation(libs.test.mockwebserver)
     implementation(project(":app"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
