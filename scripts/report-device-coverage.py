@@ -7,6 +7,12 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
+# Production PDF code that must show executed lines from the real Android run. AndroidPdfPageSink
+# wraps android.graphics.pdf.PdfDocument and is never used by the JVM render tests.
+NATIVE_PDF_SOURCES = {
+    'com/trader/salesmanager/util/pdf': ('InvoicePdfGenerator.kt', 'ReportPdfGenerator.kt', 'CustomerStatementPdfGenerator.kt'),
+    'com/trader/salesmanager/util/pdf/core': ('AndroidPdfPageSink.kt', 'PdfDocumentBuilder.kt'),
+}
 
 
 def counters(report):
@@ -38,10 +44,10 @@ def measured():
                 totals[kind][key] += values[key]
         result['modules'][module] = {'jvm': old, 'combined': new}
         if module == 'salesmanager':
-            native = {s.get('name'): counters(s).get('LINE', {}) for p in combined.findall('package')
-                      if p.get('name') == 'com/trader/salesmanager/util/pdf' for s in p.findall('sourcefile')
-                      if s.get('name') in ('InvoicePdfGenerator.kt', 'ReportPdfGenerator.kt', 'PdfCanvas.kt')}
-            if len(native) != 3 or any(c.get('covered', 0) == 0 for c in native.values()):
+            native = {f"{p.get('name')}/{s.get('name')}": counters(s).get('LINE', {}) for p in combined.findall('package')
+                      for s in p.findall('sourcefile') if s.get('name') in NATIVE_PDF_SOURCES.get(p.get('name'), ())}
+            expected = sum(len(names) for names in NATIVE_PDF_SOURCES.values())
+            if len(native) != expected or any(c.get('covered', 0) == 0 for c in native.values()):
                 raise ValueError('Native PDF production execution not recorded; refusing coverage claim')
             result['nativePdfLines'] = native
     result['weighted overall'] = totals

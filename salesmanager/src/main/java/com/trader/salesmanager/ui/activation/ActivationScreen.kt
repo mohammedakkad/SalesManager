@@ -24,9 +24,9 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Stars
-import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -118,7 +118,7 @@ fun ActivationScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        Icons.Rounded.TrendingUp, null,
+                        Icons.AutoMirrored.Rounded.TrendingUp, null,
                         tint = Color.White, modifier = Modifier.size(52.dp)
                     )
                 }

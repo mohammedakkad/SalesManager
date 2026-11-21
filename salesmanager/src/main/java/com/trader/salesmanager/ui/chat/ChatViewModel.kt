@@ -12,6 +12,9 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -80,7 +83,9 @@ class ChatViewModel(
             _uiState.update {
                 it.copy(merchantId = id)
             }
-            chatRepo.getMessages(id)
+            // Built lazily so a rejected merchant code or a listener failure (e.g. permission
+            // denied after deactivation) ends loading instead of crashing viewModelScope.
+            flow { emitAll(chatRepo.getMessages(id)) }
             .onEach {
                 msgs ->
                 _uiState.update {
@@ -94,6 +99,10 @@ class ChatViewModel(
                 .forEach {
                     chatRepo.markAsRead(id, it.id)
                 }
+            }
+            .catch { e ->
+                if (e is CancellationException) throw e
+                _uiState.update { it.copy(isLoading = false) }
             }
             .launchIn(viewModelScope)
             pendingDao.getAll(id)

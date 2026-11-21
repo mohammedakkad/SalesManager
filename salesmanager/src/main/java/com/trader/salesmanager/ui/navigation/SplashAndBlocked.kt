@@ -20,10 +20,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.SupportAgent
-import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -70,7 +70,7 @@ fun SplashCheckScreen() {
                     .background(Color.White.copy(0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Rounded.TrendingUp, null,
+                Icon(Icons.AutoMirrored.Rounded.TrendingUp, null,
                     tint = Color.White, modifier = Modifier.size(48.dp))
             }
             Spacer(Modifier.height(24.dp))

@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.boxes
 
+import androidx.compose.ui.platform.LocalConfiguration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -729,7 +730,7 @@ private fun formatRelativeTime(millis: Long): String {
         diff < 60_000L -> stringResource(R.string.boxes_time_now)
         diff < 3_600_000L -> stringResource(R.string.boxes_time_minutes, diff / 60_000)
         diff < 86_400_000L -> stringResource(R.string.boxes_time_hours, diff / 3_600_000)
-        else -> SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(millis))
+        else -> SimpleDateFormat("dd/MM", LocalConfiguration.current.locales[0]).format(Date(millis))
     }
 }
 

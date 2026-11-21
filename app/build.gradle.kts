@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     jacoco
@@ -8,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.trader.core"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         minSdk = 24
     }
@@ -16,9 +15,6 @@ android {
     testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -63,7 +59,10 @@ dependencies {
     api(libs.okhttp3)
     api(libs.gson)
     api(libs.coil.compose)
+    api(libs.coil.network.okhttp)
 }
 apply(from = rootProject.file("gradle/qa-coverage.gradle"))
 
 ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+
+kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11) } }

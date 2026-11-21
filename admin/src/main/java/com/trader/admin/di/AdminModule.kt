@@ -14,7 +14,7 @@ import com.trader.admin.ui.merchants.add.AddMerchantViewModel
 import com.trader.admin.ui.merchants.detail.MerchantDetailViewModel
 import com.trader.admin.ui.chat.list.ChatListViewModel
 import com.trader.admin.ui.chat.detail.ChatDetailViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import com.trader.admin.ui.notifications.NotificationsViewModel
 import com.trader.admin.ui.requests.AdminRequestsViewModel

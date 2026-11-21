@@ -14,10 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.trader.core.data.local.appDataStore
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 // ══════════════════════════════════════════════════════════════════
 //  DataStore key
@@ -151,20 +151,16 @@ fun SalesManagerTheme(
 ) {
     val scope = rememberCoroutineScope()
 
-    // ✅ Fix 1: قراءة القيمة الأولى بشكل متزامن لتجنب الوميض في أول Frame
-    // محاط بـ remember(context) → يعمل مرة واحدة فقط طوال عمر الـ Activity
-    // DataStore تحتفظ بـ cache في الذاكرة → first() تكتمل فوراً بدون I/O حقيقي
-    val initialDark = remember(context) {
-        runBlocking {
-            context.appDataStore.data
-                .map { it[DARK_MODE_KEY] == true }
-                .first()
-        }
+    // قراءة التفضيل بشكل غير متزامن (بدون حجب الـ Main thread).
+    // null = لم تصل القيمة المحفوظة بعد: لا نرسم المحتوى حتى لا يظهر إطار بالمظهر المعاكس.
+    // خطأ القراءة يعود للمظهر الفاتح الافتراضي بدل إيقاف التطبيق.
+    val storedDarkFlow: Flow<Boolean?> = remember(context) {
+        context.appDataStore.data
+            .map<_, Boolean?> { it[DARK_MODE_KEY] == true }
+            .catch { emit(false) }
     }
-
-    // بعد أول Frame، نتابع التغييرات بشكل reactive
-    val isDarkFlow = remember(context) { context.appDataStore.data.map { it[DARK_MODE_KEY] == true } }
-    val isDark by isDarkFlow.collectAsState(initial = initialDark)  // ✅ initial صحيح الآن
+    val storedDark by storedDarkFlow.collectAsState(initial = null)
+    val isDark = storedDark ?: return
 
     val colorScheme = if (isDark) DarkColorScheme else LightColorScheme
     val tokens = if (isDark) DarkTokens else LightTokens

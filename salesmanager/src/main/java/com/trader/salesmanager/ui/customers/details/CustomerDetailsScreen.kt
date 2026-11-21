@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.customers.details
 
+import androidx.core.net.toUri
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -26,10 +27,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Call
-import androidx.compose.material.icons.rounded.Chat
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Edit
@@ -239,7 +240,7 @@ Scaffold(
                         onClick = {
                             val intent = Intent(
                                 Intent.ACTION_DIAL,
-                                Uri.parse("tel:$phone")
+                                "tel:$phone".toUri()
                             )
                             context.startActivity(intent)
                         },
@@ -279,7 +280,7 @@ Scaffold(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val url = "https://wa.me/972$rawPhone"
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
                         }
                     )
                     WhatsAppButton(
@@ -287,7 +288,7 @@ Scaffold(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val url = "https://wa.me/970$rawPhone"
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
                         }
                     )
                 }
@@ -463,7 +464,7 @@ modifier = modifier.height(44.dp),
 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF25D366)),
 shape = RoundedCornerShape(12.dp)
 ) {
-Icon(Icons.Rounded.Chat, null, modifier = Modifier.size(16.dp))
+Icon(Icons.AutoMirrored.Rounded.Chat, null, modifier = Modifier.size(16.dp))
 Spacer(Modifier.width(6.dp))
 Text(label, style = MaterialTheme.typography.labelMedium)
 }

@@ -24,7 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Chat
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
@@ -215,7 +215,7 @@ private fun ExportSuccessSheet(
             HorizontalDivider(color = appColors.divider)
 
             SheetAction(Icons.Rounded.Share, Cyan500, "مشاركة", "عبر أي تطبيق", onShare)
-            SheetAction(Icons.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
+            SheetAction(Icons.AutoMirrored.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
             onPrint?.let {
                 SheetAction(Icons.Rounded.Print, Emerald500, "طباعة", "عبر خدمة الطباعة", it)
             }
@@ -309,7 +309,7 @@ fun ExportSuccessBottomSheet(
             }
             HorizontalDivider(color = appColors.divider)
             SheetAction(Icons.Rounded.Share, Cyan500, "مشاركة", "عبر أي تطبيق", onShare)
-            SheetAction(Icons.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
+            SheetAction(Icons.AutoMirrored.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
             onPrint?.let {
                 SheetAction(Icons.Rounded.Print, Emerald500, "طباعة", "عبر خدمة الطباعة", it)
             }

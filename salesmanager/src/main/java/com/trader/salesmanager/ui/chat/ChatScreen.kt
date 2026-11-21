@@ -41,7 +41,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.Send
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
@@ -54,7 +55,6 @@ import androidx.compose.material.icons.rounded.ErrorOutline
 import androidx.compose.material.icons.rounded.Forum
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.PersonRemove
-import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material.icons.rounded.SupportAgent
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -82,9 +82,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalClipboardManager
+import com.trader.core.util.rememberPlainTextCopier
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -112,7 +111,7 @@ import java.util.Locale
 fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
-    val clipboard = LocalClipboardManager.current
+    val copyText = rememberPlainTextCopier()
 
     // تمرير تلقائي للأسفل عند رسالة جديدة
     LaunchedEffect(state.visibleMessages.size + state.pendingMessages.size) {
@@ -166,7 +165,7 @@ fun ChatScreen(onNavigateUp: () -> Unit, viewModel: ChatViewModel = koinViewMode
                         canCopy = state.canCopy,
                         onClose = viewModel::cancelSelection,
                         onCopy = {
-                            clipboard.setText(AnnotatedString(viewModel.buildCopyText()))
+                            copyText(viewModel.buildCopyText())
                             viewModel.cancelSelection()
                         },
                         onEdit = viewModel::startEditSelected,
@@ -249,7 +248,7 @@ private fun NormalChatAppBar(onNavigateUp: () -> Unit) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onNavigateUp) {
-                Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
             }
             Spacer(Modifier.width(8.dp))
             Box(
@@ -614,7 +613,7 @@ private fun ChatInputBar(
                 shape = RoundedCornerShape(14.dp),
                 modifier = Modifier.size(52.dp)
             ) {
-                Icon(if (state.editingMessage != null) Icons.Rounded.Check else Icons.Rounded.Send, null)
+                Icon(if (state.editingMessage != null) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.Send, null)
             }
         }
     }

@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Send
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,9 +21,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalClipboardManager
+import com.trader.core.util.rememberPlainTextCopier
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,7 +46,7 @@ fun ChatDetailScreen(
 ) {
 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 val listState = rememberLazyListState()
-val clipboard = LocalClipboardManager.current
+val copyText = rememberPlainTextCopier()
 
 LaunchedEffect(uiState.visibleMessages.size) {
     if (uiState.visibleMessages.isNotEmpty())
@@ -89,7 +90,7 @@ Scaffold(
                     canCopy = uiState.canCopy,
                     onClose = viewModel::cancelSelection,
                     onCopy = {
-                        clipboard.setText(AnnotatedString(viewModel.buildCopyText()))
+                        copyText(viewModel.buildCopyText())
                         viewModel.cancelSelection()
                     },
                     onEdit = viewModel::startEditSelected,
@@ -104,7 +105,7 @@ Scaffold(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.width(8.dp))
                         Box(Modifier.size(38.dp).clip(CircleShape).background(Color.White.copy(0.2f)), Alignment.Center) {
@@ -426,7 +427,7 @@ unfocusedBorderColor = Slate700, focusedTextColor = Slate100, unfocusedTextColor
 FloatingActionButton(onClick = onSend,
 containerColor = if (uiState.editingMessage != null) Cyan400 else Indigo500,
 contentColor = Color.White, shape = RoundedCornerShape(14.dp), modifier = Modifier.size(52.dp)) {
-Icon(if (uiState.editingMessage != null) Icons.Rounded.Check else Icons.Rounded.Send, null)
+Icon(if (uiState.editingMessage != null) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.Send, null)
 }
 }
 }

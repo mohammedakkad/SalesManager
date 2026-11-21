@@ -13,7 +13,7 @@ import org.junit.*
 import org.junit.rules.TestRule
 import org.junit.rules.ExternalResource
 import org.junit.runners.model.Statement
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -43,6 +43,6 @@ abstract class OfflineSellerUiTest {
     private var key=0
     protected fun <T:ViewModel> owned(vm:T):T = vm.also { activity.viewModelStore.put("fixture-${key++}",it) }
     protected fun show(content:@Composable () -> Unit) {
-        ui.setContent { org.koin.compose.KoinContext { MaterialTheme { content() } } }
+        ui.setContent { MaterialTheme { content() } }
     }
 }

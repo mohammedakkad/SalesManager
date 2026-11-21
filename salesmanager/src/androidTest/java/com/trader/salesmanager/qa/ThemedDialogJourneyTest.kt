@@ -45,7 +45,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.runner.RunWith
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -79,12 +79,10 @@ class ThemedDialogJourneyTest {
     }
     private fun show(content:@Composable ()->Unit) {
         compose.setContent {
-            org.koin.compose.KoinContext {
-                SalesManagerTheme(context=context) {
-                    val dark=isDarkTheme
-                    SideEffect{observedDark=dark}
-                    content()
-                }
+            SalesManagerTheme(context=context) {
+                val dark=isDarkTheme
+                SideEffect{observedDark=dark}
+                content()
             }
         }
         compose.waitUntil(5000){observedDark==false}

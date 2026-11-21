@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -124,7 +125,7 @@ fun MerchantDetailScreen(
                         Column {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = onNavigateUp) {
-                                    Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                                 }
                                 Spacer(Modifier.weight(1f))
                                 IconButton(onClick = { showDelete = true }) {

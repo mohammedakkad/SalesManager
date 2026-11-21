@@ -14,7 +14,7 @@ Starting SHA `1165187b12f208d2ba2d33130e4132b6277611fa`; qualified production/te
 - A transient per-ViewModel sendingIds set reserves attempts before dispatch, releases them in finally and hides retry/dismiss controls while sending. Same-ID simultaneous retry and stale dismissal during send are rejected. Dismissal of IDs outside the model's current pending snapshot is rejected; a foreign merchant row survives while the owned row remains dismissible. This is not a durable lease, global tenant-storage isolation or exactly-once delivery guarantee.
 - Employee PIN lookup errors fail closed. Lookup/save/delete cancellation propagates without a false failure event; finally releases submitting while preserving the draft. Submit reserves before coroutine dispatch: controlled scheduling previously created two UUID rows with one PIN; the same scenario now creates one. This is a per-ViewModel UI-call guard, not database/server global uniqueness or real-device double-tap qualification. Role/default-admin deletion rules and default-admin initialization remain unchanged.
 
-No Admin app logic, financial formula, Room schema/migration or financial SaleCommands/Outbox protocol changes. The local chat queue contract is documented in [chat-pending-recovery-contract.md](chat-pending-recovery-contract.md). Uncertain remote completion and cross-instance/server reconciliation remain limitations.
+No Admin app logic, financial formula, Room schema/migration or financial SaleCommands/Outbox protocol changes. The local chat queue contract is documented in [chat-pending-recovery-contract.md](../chat-pending-recovery-contract.md). Uncertain remote completion and cross-instance/server reconciliation remain limitations.
 
 ## Cases actually executed
 
