@@ -22,6 +22,7 @@ okhttp = "5.4.0"
 gson = "2.15.0"
 coil = "3.5.0"
 vico = "1.15.0"
+startup = "1.2.0"
 bouncycastle = "1.87"
 espresso = "3.7.0"
 
@@ -81,6 +82,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+androidx-startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 bouncycastle-bcprov = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncycastle" }
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
 

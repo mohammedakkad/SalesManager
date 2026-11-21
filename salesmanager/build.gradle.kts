@@ -69,6 +69,7 @@ android {
 
 dependencies {
     implementation(libs.bouncycastle.bcprov)
+    implementation(libs.androidx.startup)
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.test.compose.junit)
     testImplementation(libs.test.workmanager)
