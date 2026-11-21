@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.trader.core"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         minSdk = 24
     }

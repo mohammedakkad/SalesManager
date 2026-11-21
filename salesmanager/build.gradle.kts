@@ -16,11 +16,11 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace  = "com.trader.salesmanager"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         testInstrumentationRunner = "com.trader.salesmanager.qa.OfflineQaRunner"
         applicationId = "com.trader.salesmanager"
-        minSdk = 24; targetSdk = 35
+        minSdk = 24; targetSdk = 36
         versionCode = 10205; versionName = "1.2.5"
     }
     signingConfigs {
