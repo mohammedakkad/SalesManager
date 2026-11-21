@@ -74,9 +74,13 @@ object AppNumberFormat {
 
     fun integer(value: Int): String = integer(value.toLong())
 
-    /** Document identifiers such as INV-000008: the Latin prefix is kept, digits are localized. */
-    fun documentNumber(prefix: String, id: Long, width: Int = 6): String =
-        isolate(prefix + localizeDigits(id.toString().padStart(width, '0')))
+    /**
+     * Document identifiers, e.g. "#٠٠٠٠٠٨". A single script per token: mixing a Latin prefix with
+     * Arabic-Indic digits ("INV-٠٠٠٠٠٨") is reordered by PDF text extraction/search, so the
+     * document type is carried by the surrounding label instead.
+     */
+    fun documentNumber(id: Long, width: Int = 6): String =
+        isolate("#" + localizeDigits(id.toString().padStart(width, '0')))
 
     /** Reference to a record, e.g. "#٢١٠٠١". */
     fun reference(id: Long): String = isolate("#" + localizeDigits(id.toString()))

@@ -78,7 +78,7 @@ object InvoicePdfGenerator {
             PdfHeaderContent(
                 storeName = data.storeName.ifBlank { "المتجر" },
                 documentTitle = if (isDebt) "فاتورة بيع آجل" else "فاتورة مبيعات",
-                documentNumber = AppNumberFormat.documentNumber("INV-", tx.id),
+                documentNumber = AppNumberFormat.documentNumber(tx.id),
                 details = listOf("التاريخ $date"),
                 logo = data.logo,
                 printedAt = data.printedAt
@@ -108,7 +108,7 @@ object InvoicePdfGenerator {
         PdfInfoCard.draw(
             builder,
             listOf(
-                "رقم الفاتورة" to AppNumberFormat.documentNumber("INV-", tx.id),
+                "رقم الفاتورة" to AppNumberFormat.documentNumber(tx.id),
                 "التاريخ" to date,
                 "العميل" to (data.customer?.name ?: tx.customerName).ifBlank { "زبون زائر" },
                 "الهاتف" to if (phone.isBlank()) "—" else AppNumberFormat.isolate(phone),

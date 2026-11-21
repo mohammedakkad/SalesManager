@@ -33,21 +33,21 @@ public class FinancialPdfBoundaryContentTest {
     }
     @Test public void paidManualBankInvoiceKeepsIdentityPaymentAndEmptyItemExplanation() throws Exception {
         try(var pdf=open("invoice-manual-bank.pdf")){
-            String text=text(pdf);contains(text,"INV-"+ar("000301"),"MANUAL-CUSTOMER",ar("31.25"),"BOUNDARY-BANK","MANUAL-PAYMENT-END");
+            String text=text(pdf);contains(text,"#"+ar("000301"),"MANUAL-CUSTOMER",ar("31.25"),"BOUNDARY-BANK","MANUAL-PAYMENT-END");
             // RTL extraction may reorder words; require the manual-item explanation's key words.
             contains(text,"يدوي","أصناف",ar("0.00"));assertFalse(text.contains("بعد الإرجاع"));
         }
     }
     @Test public void fullyReturnedInvoiceKeepsOriginalRefundAndZeroNetWithoutNegativeQuantity() throws Exception {
         try(var pdf=open("invoice-full-return.pdf")){
-            String text=text(pdf);contains(text,"INV-"+ar("000302"),"FULL-RETURN-ITEM","FULL-RETURN-CUSTOMER","FULL-RETURN-END",ar("80.00"),ar("0.00"),"RETURN-CASH");
+            String text=text(pdf);contains(text,"#"+ar("000302"),"FULL-RETURN-ITEM","FULL-RETURN-CUSTOMER","FULL-RETURN-END",ar("80.00"),ar("0.00"),"RETURN-CASH");
             refund(text,ar("80.00"));assertFalse("Fully returned quantity4 must not survive as a standalone printed quantity",
                 Pattern.compile("(?<!["+ArabicDigits.NUMBER_CHARS+"])(?:4|\u0664)(?:[.\u066B][0\u0660]+)?(?!["+ArabicDigits.NUMBER_CHARS+"])").matcher(text).find());
         }
     }
     @Test public void fractionalReturnPreservesNetWeightRefundRoundingAndActualLogoImage() throws Exception {
         try(var pdf=open("invoice-fractional-logo.pdf")){
-            String text=text(pdf);contains(text,"INV-"+ar("000303"),"FRACTIONAL-KG","FRACTIONAL-CUSTOMER","WEIGHT-WALLET","KG",ar("2.25"),ar("15.00"),ar("39.38"),ar("5.63"),ar("33.75"),ar("0.00"));
+            String text=text(pdf);contains(text,"#"+ar("000303"),"FRACTIONAL-KG","FRACTIONAL-CUSTOMER","WEIGHT-WALLET","KG",ar("2.25"),ar("15.00"),ar("39.38"),ar("5.63"),ar("33.75"),ar("0.00"));
             refund(text,ar("5.63"));boolean image=false;
             for(var page:pdf.getPages())for(var name:page.getResources().getXObjectNames())
                 if(page.getResources().getXObject(name) instanceof PDImageXObject)image=true;

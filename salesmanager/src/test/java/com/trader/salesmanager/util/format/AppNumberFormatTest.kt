@@ -31,7 +31,7 @@ class AppNumberFormatTest {
         assertEquals("٢٫٢٥", bare(AppNumberFormat.quantity(2.25)))
         assertEquals("٤", bare(AppNumberFormat.quantity(4.0)))
         assertEquals("٠", bare(AppNumberFormat.quantity(0.0)))
-        assertEquals("INV-٠٠٠٣٠١", bare(AppNumberFormat.documentNumber("INV-", 301)))
+        assertEquals("#٠٠٠٣٠١", bare(AppNumberFormat.documentNumber(301)))
         assertEquals("#٢١٠٠١", bare(AppNumberFormat.reference(21001)))
         assertEquals("٠١/٠١/٢٠٢٦", bare(AppNumberFormat.date(1767225600000, TimeZone.getTimeZone("UTC"))))
         assertEquals("صفحة ${AppNumberFormat.integer(2)} من ${AppNumberFormat.integer(5)}", AppNumberFormat.pageOf(2, 5))
@@ -40,7 +40,7 @@ class AppNumberFormatTest {
     @Test fun singleSwitchRestoresLatinDigitsEverywhere() {
         AppNumberFormat.digits = AppNumberFormat.DigitSystem.LATIN
         assertEquals("12,345.67", bare(AppNumberFormat.amount(12345.67)))
-        assertEquals("INV-000008", bare(AppNumberFormat.documentNumber("INV-", 8)))
+        assertEquals("#000008", bare(AppNumberFormat.documentNumber(8)))
         assertEquals("abc 123", AppNumberFormat.localizeDigits("abc 123"))
     }
 }

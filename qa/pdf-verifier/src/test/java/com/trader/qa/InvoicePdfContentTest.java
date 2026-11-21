@@ -24,7 +24,7 @@ public class InvoicePdfContentTest {
         try (var pdf=Loader.loadPDF(file)) {
             assertEquals(1,pdf.getNumberOfPages());
             String text=ArabicDigits.stripBidiControls(Normalizer.normalize(new PDFTextStripper().getText(pdf),Normalizer.Form.NFKC));
-            assertTrue(text.contains("INV-"+ar("000008")));
+            assertTrue(text.contains("#"+ar("000008")));
             assertTrue(text.contains(ar("100.00")));
             assertTrue("Arabic text must survive real PDF generation/extraction",Pattern.compile("[\\u0600-\\u06ff]").matcher(text).find());
         }
@@ -60,7 +60,7 @@ public class InvoicePdfContentTest {
         try (var pdf=Loader.loadPDF(fixture("invoice-return-viewmodel.pdf"))) {
             assertTrue(pdf.getNumberOfPages()>=1);
             String text=ArabicDigits.stripBidiControls(Normalizer.normalize(new PDFTextStripper().getText(pdf),Normalizer.Form.NFKC));
-            for (String expected:new String[]{"INV-"+ar("000009"),"RETURN-ITEM","RETURN-CUSTOMER","VM-RETURN-END",ar("100.00"),ar("25.00"),ar("75.00"),ar("10.00"),ar("85.00")})
+            for (String expected:new String[]{"#"+ar("000009"),"RETURN-ITEM","RETURN-CUSTOMER","VM-RETURN-END",ar("100.00"),ar("25.00"),ar("75.00"),ar("10.00"),ar("85.00")})
                 assertTrue("Missing actual partial-return invoice content: "+expected,text.contains(expected));
             // PDF text extraction can reverse the glyph order of mixed RTL currency/numbers.
             String n=Pattern.quote(ar("25.00"));
