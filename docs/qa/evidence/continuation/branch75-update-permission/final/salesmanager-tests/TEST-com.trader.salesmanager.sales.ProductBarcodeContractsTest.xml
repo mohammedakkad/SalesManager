@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.ProductBarcodeContractsTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:03:45" hostname="ac8333d6728a" time="0.509">
+  <properties/>
+  <testcase name="nonCooperativeOldReplyCannotOverwriteNewBarcodeResult" classname="com.trader.salesmanager.sales.ProductBarcodeContractsTest" time="0.33"/>
+  <testcase name="failedCheckCanBeRetriedAndConflictClearsWhenBarcodeIsRemoved" classname="com.trader.salesmanager.sales.ProductBarcodeContractsTest" time="0.009"/>
+  <testcase name="queryFailureEndsCheckingAndSurfacesAnExplicitRetryableError" classname="com.trader.salesmanager.sales.ProductBarcodeContractsTest" time="0.004"/>
+  <testcase name="loadingExistingProductInvalidatesAnEarlierCheckOfTheSameBarcode" classname="com.trader.salesmanager.sales.ProductBarcodeContractsTest" time="0.09"/>
+  <testcase name="editingExcludesThePersistedProductFromItsOwnBarcodeCheck" classname="com.trader.salesmanager.sales.ProductBarcodeContractsTest" time="0.046"/>
+  <testcase name="typingDebouncesToLatestValueAndClearingCancelsPendingCheck" classname="com.trader.salesmanager.sales.ProductBarcodeContractsTest" time="0.022"/>
+  <testcase name="barcodeCheckingIsClaimedBeforeDebounceSoDraftCannotSubmitPrematurely" classname="com.trader.salesmanager.sales.ProductBarcodeContractsTest" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

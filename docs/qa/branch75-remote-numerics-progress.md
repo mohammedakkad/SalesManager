@@ -1,0 +1,41 @@
+# Nonfinite financial snapshots and cache integrity
+
+Starting source `d8a7d3e2bcd0397d8d8588f5a7a35f9331b677f1`, same branch and Draft PR51/base production. Exact production/test/build/QA fingerprint `afe04cbcb5c060d25a5c2b440313b2318316c0f74cc9d257dc97837432ae62cb` ([manifest](evidence/continuation/branch75-remote-numerics/final/source-manifest.json)). **Branch75 and prior Line95 NOT ACHIEVED; Release FAIL.** Published source `b241995f2fd26c085606a8bceea12507d2b87e3a`: [CI44350521568](https://github.com/mohammedakkad/SalesManager/actions/runs/44350521568) completed FAILURE. Seller PASS. API24/28/33 each13 Android PASS,1 export-reopen FAILURE,5 PDFBox NOT EXECUTED; each captured5 actual PDF paths/hashes. API35 failed to fetch a Robolectric Maven dependency in JVM coverage before all19 runtime cases (NOT EXECUTED,0 PDF paths). No new combined measurement is qualified. [Source-specific annotations](evidence/continuation/branch75-remote-numerics/hosted-attempt1/source-specific-results.json).
+
+**1074 JVM PASS (app285/Seller789), zero failures/errors/skips.** All1056 prior identities preserved.18 new cases:15 public SDK-fake bulk/listener contracts and3 real Room cache-integrity cases.31 Python guards PASS; no new Python case is counted for the additional diagnostic-format proof.16 final regression identities genuinely fail on the exact original d8a7d3e service and pass after repair; they describe one class of financial input failure, not16 independent defects.
+
+Canonical before evidence starts with JSON-valid strings1e309/Infinity/NaN, which the legacy parser converts to nonfinite Double values. These strings are serializable Firebase values. Direct numericNaN/Infinity variants are defensive SDK-fake inputs; this does not claim the Firebase server accepts nonfinite JSON numbers. The Room cases demonstrate changed cached customer/sale/cash data, infinite derived debt, and replaced/deleted refund rows before repair. Every affected business/cache table is compared after rejection.
+
+## Corrected behavior and limits
+
+Validate all known financial fields in a complete transactions/invoice-items/returns/cash-boxes/cash-movements snapshot before constructing or emitting its replacement list. Return-item aliases, quantities/cost/profit/refund fields and fallback invoice quantities/prices are included. Bulk reads propagate the specific validation failure instead of converting that family to an empty list; activation staging therefore writes no partial cache. Realtime listeners close with SellerRealtimeException(OPERATION_FAILED), never an empty/partial replacement, and existing recovery preserves the last local rows. The same-session user-visible failure/retry feature remains unimplemented; a terminal listener can resubscribe on a new merchant session.
+
+Finite negative cash balances, supported numeric strings/Number forms, optional defaults, unknown metadata and legacy coercions retain their existing meaning. No monetary formula, Room2.6.1/schema25, migration, versioned Outbox protocol or Admin business change. Single-box reads, malformed identities/shapes/unparseable fields, aggregate overflow, persistent quarantine and other legacy streams remain outside this bounded repair; LOG-REMOTE-NUMERICS stays PARTIAL. This is client cache protection, not server validation, authorization or exactly-once proof.
+
+An early original-source Room return proof failed by virtual timeout while SQLite used a real executor. That is unqualified fixture evidence. The corrected fixture uses the same10-second limit on the IO wall clock, then genuinely fails its row comparison on the original source. Canonical before XML contains16 assertion failures, combining15 SDK cases with the corrected3 Room cases under the same production file hash. The old timeout attempt and all raw logs remain preserved in diagnostics; duplicates are not new cases. After correcting the fixture, the entire clean qualification was repeated.
+
+## Current measurement
+
+|Scope|Line|Method|Branch|More branches for75%|
+|---|---:|---:|---:|---:|
+|Seller JVM|15479/17982 = 86.0805%|2702/3225 = 83.7829%|9547/14816 = 64.4371%|1565|
+|Historical weighted module JVM|23897/28452 = 83.9906%|4570/5745 = 79.5474%|11506/18015 = 63.8690%|2006|
+|Additional weighted both JVM|24223/28452 = 85.1364%|4702/5745 = 81.8451%|11613/18015 = 64.4629%|1899|
+
+Historical scope uses each module's own JVM EC; additional scope unions both JVM suites. Weighted counters sum numerators and denominators. All actual compiled/generated branches remain; report reader0.8.12, instrumenters0.8.14 and all gates are retained. No older Android EC is merged. The unchanged BoxesScreen11-branch runtime variation remains explicit; raw class comparisons and actual class deltas are recorded in final evidence. Any Seller-only variation is not credited to the new financial SDK cases.
+
+The final clean full build passes in13m 14s: both JVM suites, four reports, lint, normal Debug/AndroidTest and minified unsigned Release, mapping upload excluded. Lint0 errors/27 warnings; debug/test signatures verify and unsigned Release rejection is expected. Coverage-enabled main/test APK assembly also passes. Tooling evidence verifies all original production class hashes normal→covered→normal and0.8.12/0.8.14 probe layouts after normalizing only the injected runtime package. No class, EC or APK is rewritten for a result. Assembly is not runtime.
+
+## Source-specific runtime status
+
+Required new-source runtime remains14 Android +5 PDFBox cases per API24/28/33/35, five real Android-generated PDF files with paths/hashes matched to actual pulled bytes, and API28 reference combined reports. No stand-in PDFs. The extended export-reopen check now waits for public UI state and both input nodes, retaining its assertions and adding a bounded5-second wait using the same readiness budget as the other dialog cases; diagnostic booleans are included if it still fails. This is a fixture readiness correction awaiting real device validation, not a claimed product repair.
+
+The previous [d8a7d3e run44337453411](https://github.com/mohammedakkad/SalesManager/actions/runs/44337453411) FAIL: seller PASS; API24/28/35 each13 Android PASS/1 extended reopen assertion FAIL and5 PDFBox NOT EXECUTED, with all5 actual PDF path/hash notices captured. Both new import and stock-error Android cases PASS in those three lanes. API33 fails in JVM coverage at DashboardChartNativeUiTest CalledFromWrongThreadException before all19 runtime identities; full root cause is unproven. New annotations expose the beginnings of actual JUnit failure stack text, rather than the message attribute or only a Gradle tail. An isolated check using actual before-failure XML verifies10 bounded notices under4096bytes and keeps all19 absent device cases NOT EXECUTED; it is diagnostic proof, not extra test cases or hosted success.
+
+Both d8a7d3e signed workflows are verified SKIPPED with0 steps. Raw API28 artifact14443376702 retrieval is blocked by proxy CONNECT403 at productionresultssa6.blob.core.windows.net; bytes/content are not claimed verified. New-source guard/runtime results remain pending.
+
+Seven authentic migration cases PASS;1–21 remain BLOCKED without authentic fixtures. The56 defined remaining items stay22 NOT TESTED/32 BLOCKED/2 PARTIAL. Server fencing/permissions, cross-store reconciliation, legacy ownership, APK/update authenticity, security/performance and device qualification still block release. **Release FAIL.**
+
+## Final hosted outcome for b241995
+
+The bounded wait did not repair export reopening: all three executing lanes report requested=true and fields=0. The later continuation diagnoses the Compose test collection caching old node IDs; this source itself still fails. API35 reports Failed to fetch maven artifact org.robolectric:android-all-instrumented:9-robolectric-4913185-2-i7; deeper network cause remains unproven. Neither failure establishes a new financial-input product defect. Both signed workflows44350503061/44350503108 are verified SKIPPED with0 steps. Canonical API28 artifact access is blocked by proxy CONNECT403 at productionresultssa32.blob.core.windows.net; no raw archive/PDF/EC byte verification or combined coverage is claimed.

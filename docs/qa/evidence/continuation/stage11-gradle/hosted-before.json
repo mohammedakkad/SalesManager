@@ -1,0 +1,63 @@
+{
+  "url": "https://github.com/mohammedakkad/SalesManager/actions/runs/42572865642/job/129013987208",
+  "head": "2abd4b09068bc100185d6d6cb03596f4bfc3790d",
+  "annotation": "Install verified Gradle: Process completed with exit code22",
+  "steps": [
+    {
+      "data-name": "Set up job",
+      "data-number": "1",
+      "data-conclusion": "success"
+    },
+    {
+      "data-name": "Run actions/checkout@v4",
+      "data-number": "2",
+      "data-conclusion": "success"
+    },
+    {
+      "data-name": "Run actions/setup-java@v4",
+      "data-number": "3",
+      "data-conclusion": "success"
+    },
+    {
+      "data-name": "Provision verified isolated Android SDK",
+      "data-number": "4",
+      "data-conclusion": "success"
+    },
+    {
+      "data-name": "Install verified Gradle",
+      "data-number": "5",
+      "data-conclusion": "failure"
+    },
+    {
+      "data-name": "Enable hosted-runner KVM access",
+      "data-number": "6",
+      "data-conclusion": "skipped"
+    },
+    {
+      "data-name": "Run reactivecircus/android-emulator-runner@v2",
+      "data-number": "7",
+      "data-conclusion": "skipped"
+    },
+    {
+      "data-name": "Run actions/upload-artifact@v4",
+      "data-number": "8",
+      "data-conclusion": "success"
+    },
+    {
+      "data-name": "Post Run actions/setup-java@v4",
+      "data-number": "15",
+      "data-conclusion": "success"
+    },
+    {
+      "data-name": "Post Run actions/checkout@v4",
+      "data-number": "16",
+      "data-conclusion": "success"
+    },
+    {
+      "data-name": "Complete job",
+      "data-number": "17",
+      "data-conclusion": "success"
+    }
+  ],
+  "limit": "Individual failing download URL/status not visible; raw logs require login"
+}

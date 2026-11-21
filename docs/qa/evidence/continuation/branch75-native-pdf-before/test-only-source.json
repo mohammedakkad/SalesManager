@@ -1,0 +1,58 @@
+{
+  "startingSha": "4cee8203736132816bfa2b38f59b330d9bdbbcc8",
+  "oldAndroidCases": 14,
+  "oldPdfBoxCases": 5,
+  "requiredAndroidCases": 19,
+  "requiredPdfBoxCases": 10,
+  "missingOldCases": [],
+  "newAndroidCases": [
+    [
+      "com.trader.salesmanager.qa.FinancialPdfBoundaryTest",
+      "generateEmptyMonthWithoutInventingFinancialActivityForActualHostVerification"
+    ],
+    [
+      "com.trader.salesmanager.qa.FinancialPdfBoundaryTest",
+      "generateFractionalWeightReturnWithLogoForActualHostVerification"
+    ],
+    [
+      "com.trader.salesmanager.qa.FinancialPdfBoundaryTest",
+      "generateFullyReturnedCashInvoiceWithZeroNetForActualHostVerification"
+    ],
+    [
+      "com.trader.salesmanager.qa.FinancialPdfBoundaryTest",
+      "generatePaidManualBankInvoiceWithoutItemsForActualHostVerification"
+    ],
+    [
+      "com.trader.salesmanager.qa.LongCustomerStatementTest",
+      "generateSixtyRowCustomerStatementForActualHostHistoryVerification"
+    ]
+  ],
+  "newPdfBoxCases": [
+    [
+      "com.trader.qa.FinancialPdfBoundaryContentTest",
+      "emptyMonthKeepsZeroTotalsAndExplicitNoSalesMessage"
+    ],
+    [
+      "com.trader.qa.FinancialPdfBoundaryContentTest",
+      "fractionalReturnPreservesNetWeightRefundRoundingAndActualLogoImage"
+    ],
+    [
+      "com.trader.qa.FinancialPdfBoundaryContentTest",
+      "fullyReturnedInvoiceKeepsOriginalRefundAndZeroNetWithoutNegativeQuantity"
+    ],
+    [
+      "com.trader.qa.FinancialPdfBoundaryContentTest",
+      "paidManualBankInvoiceKeepsIdentityPaymentAndEmptyItemExplanation"
+    ],
+    [
+      "com.trader.qa.LongCustomerStatementContentTest",
+      "completeStatementKeepsAllSixtyRowsAndUnchangedFinancialTotalsAcrossPages"
+    ]
+  ],
+  "productionPdfFiles": {
+    "salesmanager/src/main/java/com/trader/salesmanager/util/export/ExportManager.kt": "3278b4ba035b5e6c8a7cc6e604f4434e29e206590a406753874f68a0cd40f1de",
+    "salesmanager/src/main/java/com/trader/salesmanager/util/pdf/InvoicePdfGenerator.kt": "9390f45c7a78b53b79e3a142cc2cbf76780207569352b88ce1807cf9b8a47348",
+    "salesmanager/src/main/java/com/trader/salesmanager/util/pdf/ReportPdfGenerator.kt": "79d41c770c119938ae5c1e48b78b3dd834e025f4d763a6c7cd327a0e45088782"
+  },
+  "scope": "Test-only extension before actual long-statement regression proof. No native runtime, before failure, or PDF content success is yet claimed."
+}

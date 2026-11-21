@@ -115,6 +115,7 @@ class AddEditCustomerViewModel(private val repo: CustomerRepository) : ViewModel
 
     fun save() {
         val state = _uiState.value
+        if (state.isLoading || state.isSaved) return
         val name = state.name.trim()
         if (name.length < 2) {
             _uiState.update {
@@ -124,6 +125,7 @@ class AddEditCustomerViewModel(private val repo: CustomerRepository) : ViewModel
         }
         if (state.isReservedName) return // ✅ حماية أخيرة
         if (!state.canSave) return
+        _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)

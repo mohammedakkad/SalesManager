@@ -1,0 +1,14 @@
+{
+  "status": "NOT QUALIFIED on Robolectric",
+  "result": "Two newly drafted dialog cases time out waiting for layout/idleness; not counted as product regressions or successful tests.",
+  "action": "Replaced by actual-Android ThemedDialogJourneyTest cases. No pre-existing test was removed or skipped. Android runtime must pass independently.",
+  "attempts": [
+    "API28 legacy graphics",
+    "API28 native graphics",
+    "API35 native graphics",
+    "manual Compose clock",
+    "normal and nested app theme roots",
+    "default typography diagnostic"
+  ],
+  "limitation": "No product repair is inferred from these host-only failures. Root cause unresolved."
+}

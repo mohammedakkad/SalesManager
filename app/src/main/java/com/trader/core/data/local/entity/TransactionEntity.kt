@@ -3,6 +3,7 @@ package com.trader.core.data.local.entity
 import androidx.room.*
 import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.model.SyncStatus
+import com.trader.core.domain.model.TransactionReturnStatus
 import com.trader.core.domain.model.Transaction
 
 @Entity(
@@ -32,11 +33,15 @@ data class TransactionEntity(
     val hasItems: Boolean = false,
     val dueDate: Long? = null,
     val reminderEnabled: Boolean = true,
-    val syncStatus: String = SyncStatus.SYNCED.name
+    val syncStatus: String = SyncStatus.SYNCED.name,
+    val originalAmount: Double? = null,
+    val returnStatus: String? = null
 ) {
     fun toDomain(customerName: String = "", paymentMethodName: String = "") = Transaction(
         id = id, customerId = customerId, customerName = customerName,
         amount = amount, isPaid = isPaid,
+        originalAmount = originalAmount ?: amount,
+        returnStatus = runCatching { TransactionReturnStatus.valueOf(returnStatus ?: "NONE") }.getOrDefault(TransactionReturnStatus.NONE),
         paymentMethodId = paymentMethodId, paymentMethodName = paymentMethodName,
         paymentType = runCatching {
             PaymentType.valueOf(paymentType)
@@ -54,7 +59,8 @@ data class TransactionEntity(
             note = t.note, date = t.date, paidAt = t.paidAt,
             paymentType = t.paymentType.name, hasItems = t.hasItems,
             dueDate = t.dueDate, reminderEnabled = t.reminderEnabled,
-            syncStatus = t.syncStatus.name
+            syncStatus = t.syncStatus.name,
+            originalAmount = t.originalAmount, returnStatus = t.returnStatus.name
         )
     }
 }

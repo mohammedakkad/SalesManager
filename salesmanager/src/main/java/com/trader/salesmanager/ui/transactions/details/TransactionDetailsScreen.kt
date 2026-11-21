@@ -84,6 +84,7 @@ import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
 import com.trader.salesmanager.ui.theme.appColors
 import com.trader.salesmanager.util.InvoiceSharer
+import com.trader.salesmanager.util.export.saveExportToDownloads
 import com.trader.salesmanager.util.export.ExportManager
 import com.trader.salesmanager.util.export.ExportState
 import com.trader.salesmanager.util.export.ExportSuccessBottomSheet
@@ -164,10 +165,11 @@ fun TransactionDetailsScreen(
                 exportVm.reset()
             },
             onDownload = {
-                ExportManager.saveToDownloads(context, file, success.fileName)
-                showExportSheet = false
-                pendingExportAction = null
-                exportVm.reset()
+                if (saveExportToDownloads(context, file, success.fileName)) {
+                    showExportSheet = false
+                    pendingExportAction = null
+                    exportVm.reset()
+                }
             },
             onPrint = {
                 PdfPrintManager.print(context, file, success.fileName)
@@ -286,7 +288,7 @@ fun TransactionDetailsScreen(
                         IconButton(onClick = {
                             onEdit(transactionId)
                         }) {
-                            Icon(Icons.Rounded.Edit, null, tint = Color.White)
+                            Icon(Icons.Rounded.Edit, "تعديل العملية", tint = Color.White)
                         }
                         IconButton(onClick = {
                             showDeleteDialog = true

@@ -1,0 +1,48 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0  172M    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 10  172M   10 18.0M    0     0  15.4M      0  0:00:11  0:00:01  0:00:10 15.4M
+ 22  172M   22 39.2M    0     0  18.2M      0  0:00:09  0:00:02  0:00:07 18.2M
+ 34  172M   34 60.1M    0     0  19.0M      0  0:00:09  0:00:03  0:00:06 19.0M
+ 47  172M   47 81.5M    0     0  19.6M      0  0:00:08  0:00:04  0:00:04 19.6M
+ 59  172M   59  103M    0     0  19.9M      0  0:00:08  0:00:05  0:00:03 20.8M
+ 71  172M   71  123M    0     0  20.0M      0  0:00:08  0:00:06  0:00:02 21.1M
+ 83  172M   83  145M    0     0  20.2M      0  0:00:08  0:00:07  0:00:01 21.0M
+ 93  172M   93  161M    0     0  19.7M      0  0:00:08  0:00:08 --:--:-- 20.2M
+100  172M  100  172M    0     0  19.4M      0  0:00:08  0:00:08 --:--:-- 19.3M
+/tmp/tmp.5iPJYrizkq: OK
+openjdk version "17.0.17" 2025-10-21
+OpenJDK Runtime Environment Temurin-17.0.17+10 (build 17.0.17+10)
+OpenJDK 64-Bit Server VM Temurin-17.0.17+10 (build 17.0.17+10, mixed mode, sharing)
+WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Android CLI will be used instead.
+The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.
+To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)
+
+1.1.16717390 (Android CLI)
+WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Android CLI will be used instead.
+The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.
+To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)
+
+Warning: The --licenses option is no longer needed.
+WARNING: The SDK Manager CLI tool (sdkmanager) is deprecated. Android CLI will be used instead.
+The 'android' binary can also be found in the cmdline-tools directory, and 'android sdk' is the replacement for 'sdkmanager'.
+To learn more about the Android CLI and how to use it, see the documentation (https://d.android.com/tools/agents/android-cli)
+
+
+https://dl.google.com/android/repository/platform-35_r02.zip...
+
+https://dl.google.com/android/repository/build-tools_r34-linux.zip...
+
+https://dl.google.com/android/repository/platform-tools_r37.0.1-linux.zip...
+
+Unzipping platforms/android-35......
+
+Unzipping build-tools/34.0.0......
+
+Unzipping platform-tools......
+Android Debug Bridge version 1.0.41
+Version 37.0.1-15733141
+Installed as /workspace/setup/stage8-sdk/platform-tools/adb
+Running on Linux 6.18.57 (x86_64)

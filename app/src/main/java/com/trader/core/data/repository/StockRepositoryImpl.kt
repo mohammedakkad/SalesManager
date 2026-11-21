@@ -12,16 +12,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import androidx.room.withTransaction
 import java.util.UUID
 
 class StockRepositoryImpl(
     private val productDao: ProductDao,
     private val movementDao: StockMovementDao,
     private val remote: ProductFirestoreService,
-    private val merchantId: String
+    private val merchantId: String,
+    private val outboxDatabase: com.trader.core.data.local.db.AppDatabase? = null,
+    private val activation: com.trader.core.domain.repository.ActivationRepository? = null,
+    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) : StockRepository {
-
-    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
 
     override fun getMovementsForProduct(productId: String, unitId: String): Flow<List<StockMovement>> =
@@ -54,23 +57,36 @@ class StockRepositoryImpl(
     ) = applyMovement(productId, unitId, quantity, type, null, productName, unitLabel, note)
 
     override suspend fun syncPendingMovements() {
+        val merchantId = activation?.getMerchantCode() ?: this.merchantId
+        if (activation != null && (merchantId.isBlank() || activation.getMerchantCode() != merchantId)) return
+        if (outboxDatabase?.saleOutboxDao()?.hasOutstandingFor(merchantId) == true) return
         movementDao.getPending().forEach { entity ->
+            if (activation != null && entity.merchantId != merchantId) return@forEach
+            if (entity.relatedTransactionId?.let { outboxDatabase?.saleOutboxDao()?.manages(it) } == true) return@forEach
             runCatching { remote.uploadMovement(merchantId, entity.toDomain()) }
                 .onSuccess { movementDao.markSynced(entity.id) }
-                .onFailure { movementDao.markFailed(entity.id) }
+                .onFailure {
+                    if (it is CancellationException) throw it
+                    movementDao.markFailed(entity.id)
+                }
         }
         productDao.getPendingUnits().forEach { unit ->
             runCatching {
                 val pid = productDao.getProductIdForUnit(unit.id)
                 if (pid != null) {
+                    if (outboxDatabase != null && productDao.getById(pid)?.product?.merchantId != merchantId) return@runCatching
                     remote.updateRemoteQuantity(merchantId, unit.id, unit.quantityInStock, pid)
                     productDao.markUnitSynced(unit.id)
                 }
-            }.onFailure { android.util.Log.e("StockSync", "syncPendingMovements unit failed", it) }
+            }.onFailure {
+                if (it is CancellationException) throw it
+                android.util.Log.e("StockSync", "syncPendingMovements unit failed", it)
+            }
         }
     }
 
     suspend fun detectConflicts(): List<StockConflict> {
+        val merchantId = activation?.getMerchantCode() ?: this.merchantId
         val conflicts = mutableListOf<StockConflict>()
         productDao.getPendingUnits().forEach { unitEntity ->
             try {
@@ -86,6 +102,8 @@ class StockRepositoryImpl(
     }
 
     suspend fun resolveConflictWithServer(unitId: String) {
+        val merchantId = activation?.getMerchantCode() ?: this.merchantId
+        if (outboxDatabase?.saleOutboxDao()?.hasOutstandingFor(merchantId) == true) return
         try {
             val pid = productDao.getProductIdForUnit(unitId) ?: return
             remote.getRemoteQuantity(merchantId, unitId, pid)?.let {
@@ -95,6 +113,8 @@ class StockRepositoryImpl(
     }
 
     suspend fun resolveConflictWithLocal(unitId: String) {
+        val merchantId = activation?.getMerchantCode() ?: this.merchantId
+        if (outboxDatabase?.saleOutboxDao()?.hasOutstandingFor(merchantId) == true) return
         try {
             val pid = productDao.getProductIdForUnit(unitId) ?: return
             productDao.getQuantity(unitId)?.let {
@@ -108,35 +128,57 @@ class StockRepositoryImpl(
         type: MovementType, relatedTransactionId: Long? = null,
         productName: String, unitLabel: String, note: String = ""
     ) {
-        val currentQty = productDao.getQuantity(unitId) ?: 0.0
-        val newQty = (currentQty + delta).coerceAtLeast(0.0)
+        val merchantId = activation?.getMerchantCode() ?: this.merchantId
+        if (activation != null) require(merchantId.isNotBlank()) { "Merchant session ended" }
+        require(delta.isFinite()) { "Stock adjustment must be finite" }
+        val callerTransaction = outboxDatabase?.inTransaction() == true
+        suspend fun persistMovement(): StockMovement {
+            val currentQty = productDao.getQuantity(unitId) ?: 0.0
+            val sum = currentQty + delta
+            require(currentQty.isFinite() && sum.isFinite()) { "Stock quantity must remain finite" }
+            val newQty = sum.coerceAtLeast(0.0)
+            productDao.updateQuantity(unitId, newQty)
+            val movement = StockMovement(
+                id = UUID.randomUUID().toString(),
+                productId = productId, productName = productName,
+                unitId = unitId, unitLabel = unitLabel,
+                movementType = type, quantity = delta,
+                quantityBefore = currentQty, quantityAfter = newQty,
+                relatedTransactionId = relatedTransactionId,
+                note = note, merchantId = merchantId,
+                syncStatus = SyncStatus.PENDING
+            )
+            movementDao.insert(movement.toEntity())
+            return movement
+        }
+        // Seller supplies this database: serialize the read/modify/ledger write,
+        // including standalone manual adjustments. Existing caller transactions nest.
+        val movement = if (outboxDatabase != null) {
+            outboxDatabase.withTransaction { persistMovement() }
+        } else {
+            persistMovement()
+        }
 
-        // ✅ Local first — فوري
-        productDao.updateQuantity(unitId, newQty)
-        val movement = StockMovement(
-            id = UUID.randomUUID().toString(),
-            productId = productId, productName = productName,
-            unitId = unitId, unitLabel = unitLabel,
-            movementType = type, quantity = delta,
-            quantityBefore = currentQty, quantityAfter = newQty,
-            relatedTransactionId = relatedTransactionId,
-            note = note, merchantId = merchantId,
-            syncStatus = SyncStatus.PENDING
-        )
-        movementDao.insert(movement.toEntity())
-
-        syncScope.launch {
+        if (!callerTransaction) syncScope.launch {
+            if (activation != null && (merchantId.isBlank() || activation.getMerchantCode() != merchantId)) return@launch
+            if (outboxDatabase?.saleOutboxDao()?.hasOutstandingFor(merchantId) == true || relatedTransactionId?.let { outboxDatabase?.saleOutboxDao()?.manages(it) } == true) return@launch
             runCatching { remote.uploadMovement(merchantId, movement) }
                 .onSuccess { movementDao.markSynced(movement.id) }
-                .onFailure { movementDao.markFailed(movement.id) }
+                .onFailure {
+                    if (it is CancellationException) throw it
+                    movementDao.markFailed(movement.id)
+                }
 
             runCatching {
                 val pid = productDao.getProductIdForUnit(unitId)
                 if (pid != null) {
-                    remote.updateRemoteQuantity(merchantId, unitId, newQty, pid)
+                    remote.updateRemoteQuantity(merchantId, unitId, movement.quantityAfter, pid)
                     productDao.markUnitSynced(unitId)
                 }
-            }.onFailure { android.util.Log.e("StockSync", "quantity sync failed for unit=$unitId", it) }
+            }.onFailure {
+                if (it is CancellationException) throw it
+                android.util.Log.e("StockSync", "quantity sync failed for unit=$unitId", it)
+            }
         }
     }
 }

@@ -1,0 +1,25 @@
+{
+  "count": 5,
+  "cases": [
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cancellationDuringFinalSnapshotParsingCannotDeliverThePayload"
+    },
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cancelledCodeStatusReadNeverReturnsAFalseMissingStatusToTheConsumer"
+    },
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cancellingEachSnapshotReadNeverReturnsAnAuthoritativePayloadToItsConsumer"
+    },
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cancelledActivationValidationNeverReturnsANetworkErrorToTheConsumer"
+    },
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cachedSnapshotCompletionStillHonorsCancellationBeforeDeliveringData"
+    }
+  ]
+}

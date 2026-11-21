@@ -1,0 +1,26 @@
+[
+  {
+    "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+    "bytes": 63841854,
+    "sha256": "288d3790309b4e7160a55924af6180d47e7c55c1b8ba3c2177c0c0620390a326",
+    "signatureExit": 0,
+    "actualCoverageOfflinePrefixes": [
+      "org/jacoco/agent/rt/internal_29a6edd"
+    ],
+    "runtimeExpected014": [
+      "org/jacoco/agent/rt/internal_29a6edd"
+    ],
+    "scope": "Actual coverage-enabled debug/test APK assembly; Android runtime NOT EXECUTED locally"
+  },
+  {
+    "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+    "bytes": 1118858,
+    "sha256": "584b2b288810c38fb6f4f4067cc5ebdf403ada3e0d85451616b0466e0c58082c",
+    "signatureExit": 0,
+    "actualCoverageOfflinePrefixes": [],
+    "runtimeExpected014": [
+      "org/jacoco/agent/rt/internal_29a6edd"
+    ],
+    "scope": "Actual coverage-enabled debug/test APK assembly; Android runtime NOT EXECUTED locally"
+  }
+]

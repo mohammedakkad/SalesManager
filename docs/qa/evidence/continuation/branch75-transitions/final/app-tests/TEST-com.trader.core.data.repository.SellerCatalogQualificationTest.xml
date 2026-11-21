@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.SellerCatalogQualificationTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:15:35" hostname="6d75d821cc71" time="0.315">
+  <properties/>
+  <testcase name="offlineProductCreationAssignsParentDefaultUnitAndPendingIntent" classname="com.trader.core.data.repository.SellerCatalogQualificationTest" time="0.078"/>
+  <testcase name="stockFiltersAndSearchUseActualUnitsWithoutMixingProducts" classname="com.trader.core.data.repository.SellerCatalogQualificationTest" time="0.079"/>
+  <testcase name="pendingUploadFailureKeepsRowsAndLaterSuccessAcknowledgesEachRecord" classname="com.trader.core.data.repository.SellerCatalogQualificationTest" time="0.061"/>
+  <testcase name="lowStockCooldownEscalationAndRestockRecoveryFollowPersistedState" classname="com.trader.core.data.repository.SellerCatalogQualificationTest" time="0.047"/>
+  <testcase name="unitAndProductEditsPersistLocallyWhenTransportFails" classname="com.trader.core.data.repository.SellerCatalogQualificationTest" time="0.049"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

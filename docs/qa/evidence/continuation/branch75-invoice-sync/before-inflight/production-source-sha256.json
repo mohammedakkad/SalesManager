@@ -1,0 +1,7 @@
+{
+  "note": "Intermediate source: cancellation/retry/account repairs applied; stale in-flight completion guard absent.",
+  "files": {
+    "app/src/main/java/com/trader/core/data/repository/InvoiceItemRepositoryImpl.kt": "a534904494d1c399e06b9f79e1b488c38e88598fbbe3896cbe7c4793d263b646",
+    "app/src/main/java/com/trader/core/data/local/dao/InventoryDao.kt": "af829fbb27a20ccb6c3d461ca4ef9a56c54663836739767e89e19c284580037a"
+  }
+}

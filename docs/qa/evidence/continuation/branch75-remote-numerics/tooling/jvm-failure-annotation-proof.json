@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "input": "Actual canonical failed-before XML in isolated metadata fixture; no synthetic failure XML or PDF",
+  "actualBeforeCases": 18,
+  "actualBeforeAssertionFailures": 16,
+  "emittedFullStackHeads": 10,
+  "perModuleLimit": 10,
+  "maxNoticeUtf8Bytes": 2061,
+  "deviceRuntime": "NOT EXECUTED; all19 missing cases remain NOT EXECUTED",
+  "scope": "Diagnostic formatting proof only; not additional test cases or hosted CI success"
+}

@@ -48,6 +48,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -396,6 +398,12 @@ fun SalesChartCard(
     val entries = remember(sales) {
         sales.mapIndexed { index, day -> entryOf(index, day.totalSales) }
     }
+    val accessibleValues = remember(sales, labels) {
+        "المبيعات خلال 7 أيام: " + if (sales.isEmpty()) "لا توجد بيانات" else
+            sales.mapIndexed { index, day ->
+                "${labels[index]}: ${String.format(Locale.US, "%.2f", day.totalSales)}"
+            }.joinToString("; ")
+    }
     LaunchedEffect(entries) {
         modelProducer.setEntriesSuspending(entries)
     }
@@ -450,7 +458,8 @@ fun SalesChartCard(
                 chartModelProducer = modelProducer,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(210.dp),
+                    .height(210.dp)
+                    .semantics { contentDescription = accessibleValues },
                 startAxis = rememberStartAxis(
                     valueFormatter = startFormatter,
                     tickLength = 0.dp

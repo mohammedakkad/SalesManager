@@ -10,6 +10,8 @@ import com.trader.core.domain.model.PaymentType
 
 @Database(
     entities = [
+        SaleOutboxEntity::class,
+        SaleOperationEntity::class,
         CustomerEntity::class,
         TransactionEntity::class,
         PaymentMethodEntity::class,
@@ -28,10 +30,12 @@ import com.trader.core.domain.model.PaymentType
         CashBoxMovementEntity::class,
         LowStockAlertStateEntity::class
     ],
-    version = 22,
-    exportSchema = false
+    version = 25,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun saleOutboxDao(): SaleOutboxDao
+    abstract fun saleOperationDao(): SaleOperationDao
     abstract fun customerDao(): CustomerDao
     abstract fun transactionDao(): TransactionDao
     abstract fun paymentMethodDao(): PaymentMethodDao
@@ -48,6 +52,24 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun lowStockAlertDao(): LowStockAlertDao
 
     companion object {
+        val MIGRATION_24_25 = object : Migration(24, 25) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS sale_outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, eventId TEXT NOT NULL, operationId TEXT NOT NULL, merchantId TEXT NOT NULL, aggregateId INTEGER NOT NULL, aggregateRevision INTEGER NOT NULL, eventType TEXT NOT NULL, payloadVersion INTEGER NOT NULL, payload TEXT NOT NULL, state TEXT NOT NULL, retryCount INTEGER NOT NULL, nextAttemptAt INTEGER NOT NULL, leaseOwner TEXT, leaseExpiresAt INTEGER, createdAt INTEGER NOT NULL, updatedAt INTEGER NOT NULL, acknowledgedAt INTEGER, remoteReceipt TEXT, lastError TEXT)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_sale_outbox_eventId ON sale_outbox(eventId)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_sale_outbox_merchantId_operationId ON sale_outbox(merchantId, operationId)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_sale_outbox_merchantId_aggregateId_aggregateRevision ON sale_outbox(merchantId, aggregateId, aggregateRevision)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_sale_outbox_merchantId_state_sequence ON sale_outbox(merchantId, state, sequence)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_sale_outbox_leaseExpiresAt ON sale_outbox(leaseExpiresAt)")
+            }
+        }
+
+        val MIGRATION_23_24 = object : Migration(23, 24) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS sale_operations (merchantId TEXT NOT NULL, operationId TEXT NOT NULL, kind TEXT NOT NULL, requestHash TEXT NOT NULL, transactionId INTEGER NOT NULL, PRIMARY KEY(merchantId, operationId))")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_sale_operations_transactionId ON sale_operations(transactionId)")
+            }
+        }
+
         const val DB_NAME = "sales_manager.db"
 
         // ===================== MAIGRATIONS =====================
@@ -501,6 +523,37 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Additive upgrade: preserve all existing records and reconstruct only state
+        // supported by the durable return ledger. Missing historical returns cannot
+        // be recovered locally; a later remote snapshot may provide that state.
+        val MIGRATION_22_23 = object : Migration(22, 23) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE transactions ADD COLUMN originalAmount REAL")
+                db.execSQL("ALTER TABLE transactions ADD COLUMN returnStatus TEXT")
+                db.execSQL("""
+                    UPDATE transactions SET originalAmount = amount + (
+                        SELECT COALESCE(SUM(totalRefund), 0.0) FROM return_invoices
+                        WHERE originalTransactionId = transactions.id
+                    ), returnStatus = CASE
+                        WHEN NOT EXISTS (SELECT 1 FROM return_invoices
+                            WHERE originalTransactionId = transactions.id) THEN 'NONE'
+                        WHEN EXISTS (SELECT 1 FROM invoice_items WHERE transactionId = transactions.id)
+                            AND NOT EXISTS (
+                                SELECT unitId FROM invoice_items
+                                WHERE transactionId = transactions.id GROUP BY unitId
+                                HAVING SUM(quantity) > COALESCE((
+                                    SELECT SUM(ri.returnedQuantity) FROM return_items ri
+                                    JOIN return_invoices inv ON inv.id = ri.returnInvoiceId
+                                    WHERE inv.originalTransactionId = transactions.id
+                                        AND ri.unitId = invoice_items.unitId
+                                ), 0.0)
+                            ) THEN 'FULLY_RETURNED'
+                        ELSE 'PARTIALLY_RETURNED'
+                    END
+                """.trimIndent())
+            }
+        }
+
         // ===================== BUILD DATABASE =====================
         fun build(context: Context) =
         Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
@@ -525,7 +578,10 @@ abstract class AppDatabase : RoomDatabase() {
             MIGRATION_18_19,
             MIGRATION_19_20,
             MIGRATION_20_21,
-            MIGRATION_21_22
+            MIGRATION_21_22,
+            MIGRATION_22_23,
+            MIGRATION_23_24,
+            MIGRATION_24_25
         )
         .addCallback(object : Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
@@ -663,6 +719,9 @@ suspend fun AppDatabase.recordCashBoxBalanceChange(
     markAsInitial: Boolean = false
 ) {
     withTransaction {
+        require(delta.isFinite() && absoluteBalance?.isFinite() != false && movement.amountDelta.isFinite()) {
+            "Cash change must be finite"
+        }
         when {
             markAsInitial && absoluteBalance != null ->
                 cashBoxDao().setInitialBalanceFields(boxId, absoluteBalance, updatedAt, updatedAt)
@@ -672,6 +731,9 @@ suspend fun AppDatabase.recordCashBoxBalanceChange(
                 cashBoxDao().applyDelta(boxId, delta, updatedAt)
         }
         val box = cashBoxDao().getById(boxId) ?: return@withTransaction
+        // Validate after SQL arithmetic, within the same transaction, so overflow
+        // rolls back the balance and every enclosing transfer/ledger mutation.
+        require(box.currentBalance.isFinite()) { "Cash balance overflow" }
         cashBoxMovementDao().insert(
             movement.copy(balanceAfter = box.currentBalance)
         )

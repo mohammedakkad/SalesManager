@@ -1,0 +1,8 @@
+{
+  "startingSha": "a5c402f564669129aacdc745210c4f6a3075352d",
+  "productionFileSha256": "7221c8739d80d4704c31ec6b61c453073b1652081f1087c312c5383e013fc51b",
+  "tests": 8,
+  "passed": 3,
+  "failed": 5,
+  "scope": "Real Room; public repository entry points. Test source added; production exactly starting source."
+}

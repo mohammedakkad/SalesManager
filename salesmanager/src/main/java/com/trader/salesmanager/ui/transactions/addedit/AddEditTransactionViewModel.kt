@@ -44,7 +44,8 @@ data class AddEditTransactionUiState(
     val userEditedLines: Boolean = false,
     val baseAmount: Double = 0.0,
     // ✅ مشكلة 3: نحفظ ID طريقة الدفع هنا حتى يتم ربطها بعد تحميل القائمة
-    val pendingPaymentMethodId: Long? = null
+    val pendingPaymentMethodId: Long? = null,
+    val isRestoringLines: Boolean = false
 )
 
 class AddEditTransactionViewModel(
@@ -53,13 +54,22 @@ class AddEditTransactionViewModel(
     private val productRepo: ProductRepository,
     private val stockRepo: StockRepository,
     private val invoiceRepo: InvoiceItemRepository,
-    private val merchantId: String
+    private val activationRepo: com.trader.core.domain.repository.ActivationRepository,
+    private val saleCommands: com.trader.salesmanager.sales.SaleCommands,
+    private val savedState: androidx.lifecycle.SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddEditTransactionUiState())
     val uiState: StateFlow<AddEditTransactionUiState> = _uiState.asStateFlow()
+    private var commandMerchant: String? = savedState.get<String>("saleCommandMerchant")
+    private val operationId: String = savedState.get<String>("saleOperationId") ?: UUID.randomUUID().toString().also { savedState["saleOperationId"] = it }
+    private val commandDate: Long = savedState.get<Long>("saleCommandDate") ?: System.currentTimeMillis().also { savedState["saleCommandDate"] = it }
+    private var loadedSale: Transaction? = null
+    private var loadedItems: List<InvoiceItem> = emptyList()
     private var editingId: Long? = null
     private var isSavingInProgress = false
+    private var invoiceDraftRevision = 0L
+    private var invoiceDraftJob: kotlinx.coroutines.Job? = null
 
     init {
         viewModelScope.launch {
@@ -111,6 +121,7 @@ class AddEditTransactionViewModel(
         editingId = transactionId
         viewModelScope.launch {
             val t = transactionRepo.getTransactionById(transactionId) ?: return@launch
+            if (loadedSale?.id != t.id) loadedSale = t
             val customer = if (t.customerId == WALK_IN_CUSTOMER.id) WALK_IN_CUSTOMER
             else customerRepo.getCustomerById(t.customerId)
 
@@ -133,6 +144,7 @@ class AddEditTransactionViewModel(
             }
 
             val items = invoiceRepo.getItemsForTransactionOnce(transactionId)
+            loadedItems = items
             val lines = items.mapNotNull { item ->
                 val productWithUnits = productRepo.getProductById(item.productId)
                     ?: return@mapNotNull null
@@ -158,7 +170,7 @@ class AddEditTransactionViewModel(
             val itemsTotal = lines.sumOf {
                 it.totalPrice
             }
-            val baseAmount = (t.amount - itemsTotal).coerceAtLeast(0.0)
+            val baseAmount = (t.originalAmount - itemsTotal).coerceAtLeast(0.0)
 
             _uiState.update { state ->
                 if (state.userEditedLines) return@update state
@@ -167,7 +179,7 @@ class AddEditTransactionViewModel(
                     hasItems = lines.isNotEmpty(),
                     amount = String.format(
                         Locale.US, "%.2f",
-                        if (lines.isNotEmpty()) itemsTotal else t.amount
+                        if (lines.isNotEmpty()) itemsTotal + baseAmount else t.originalAmount
                     ),
                     baseAmount = baseAmount
                 )
@@ -175,26 +187,27 @@ class AddEditTransactionViewModel(
 
             // إذا المستخدم لم يعدّل بعد، نُحدِّث baseAmount فقط حتى تستخدمه applyInvoiceLinesFromJson
             if (_uiState.value.userEditedLines) {
-                _uiState.update {
-                    it.copy(baseAmount = baseAmount)
+                _uiState.update { state ->
+                    state.copy(
+                        baseAmount = baseAmount,
+                        amount = String.format(Locale.US, "%.2f",
+                            state.pendingLines.sumOf { it.totalPrice } + baseAmount)
+                    )
                 }
             }
         }
     }
 
     fun applyInvoiceLinesFromJson(json: String) {
-        // ✅ حل race condition:
-        // نُعيِّن userEditedLines=true و hasItems=true فوراً (synchronously) قبل الـ coroutine.
-        // هكذا إذا انتهى loadTransaction بعدنا، يرى userEditedLines=true ولا يمسح شيئاً.
-        _uiState.update {
-            it.copy(userEditedLines = true, hasItems = true)
-        }
-
-        viewModelScope.launch {
+        val revision = ++invoiceDraftRevision
+        invoiceDraftJob?.cancel()
+        _uiState.update { it.copy(isRestoringLines = true) }
+        invoiceDraftJob = viewModelScope.launch {
             try {
                 val arr = org.json.JSONArray(json)
-                if (arr.length() == 0) return@launch
-
+                // The item editor cannot confirm an empty selection. Preserve the current
+                // invoice when a missing/obsolete navigation draft cannot be restored.
+                require(arr.length() > 0) { "Empty invoice draft" }
                 val rebuilt = mutableListOf<InvoiceLineItem>()
                 for (i in 0 until arr.length()) {
                     val obj = arr.getJSONObject(i)
@@ -205,34 +218,40 @@ class AddEditTransactionViewModel(
                     val weightUnit = runCatching {
                         SaleWeightUnit.valueOf(obj.optString("displayWeightUnit", "KG"))
                     }.getOrDefault(SaleWeightUnit.KG)
-                    val productWithUnits = productRepo.getProductById(productId) ?: continue
-                    val unit = productWithUnits.units.firstOrNull {
-                        it.id == unitId
-                    } ?: continue
-                    rebuilt += InvoiceLineItem(
-                        product = productWithUnits,
+                    val product = productRepo.getProductById(productId) ?: error("Draft product is unavailable")
+                    val unit = product.units.firstOrNull { it.id == unitId } ?: error("Draft unit is unavailable")
+                    val line = InvoiceLineItem(
+                        product = product,
                         selectedUnit = unit,
                         displayQty = displayQty,
                         displayWeightUnit = weightUnit,
                         customPrice = if (price != unit.price) price else null
                     )
+                    require(price.isFinite() && price >= 0 && displayQty.isFinite() && displayQty > 0 &&
+                        line.quantity.isFinite() && line.quantity > 0 && line.totalPrice.isFinite())
+                    rebuilt += line
                 }
-
-                // ✅ المبلغ = الأصناف + المبلغ الأصلي (إذا كانت العملية بدون أصناف في الأصل)
-                val newTotal = rebuilt.sumOf {
-                    it.totalPrice
-                } + _uiState.value.baseAmount
-                _uiState.update {
-                    it.copy(
+                if (revision != invoiceDraftRevision) return@launch
+                _uiState.update { state ->
+                    if (revision != invoiceDraftRevision) return@update state
+                    val total = rebuilt.sumOf { it.totalPrice } + state.baseAmount
+                    require(total.isFinite())
+                    state.copy(
                         pendingLines = rebuilt,
                         hasItems = rebuilt.isNotEmpty(),
-                        amount = String.format(Locale.US, "%.2f", newTotal)
+                        userEditedLines = true,
+                        amount = String.format(Locale.US, "%.2f", total),
+                        error = null
                     )
                 }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(error = "فشل استعادة البيانات: ${e.message}")
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                if (revision == invoiceDraftRevision) {
+                    _uiState.update { it.copy(error = "تعذر استعادة أصناف الفاتورة، أعد اختيار الأصناف") }
                 }
+            } finally {
+                if (revision == invoiceDraftRevision) _uiState.update { it.copy(isRestoringLines = false) }
             }
         }
     }
@@ -262,7 +281,7 @@ class AddEditTransactionViewModel(
     }
 
     fun save() {
-        if (isSavingInProgress || _uiState.value.isLoading) return
+        if (isSavingInProgress || _uiState.value.isLoading || _uiState.value.isSaved || _uiState.value.isRestoringLines) return
         val state = _uiState.value
         val customer = state.selectedCustomer ?: WALK_IN_CUSTOMER
 
@@ -281,56 +300,52 @@ class AddEditTransactionViewModel(
             return
         }
 
+        isSavingInProgress = true
         viewModelScope.launch {
             try {
-                isSavingInProgress = true
+                val merchantId = activationRepo.getMerchantCode()
+                require(merchantId.isNotBlank()) { "Merchant is not activated" }
+                if (commandMerchant == null) { commandMerchant = merchantId; savedState["saleCommandMerchant"] = merchantId }
+                check(commandMerchant == merchantId) { "Merchant changed; reopen the sale" }
                 _uiState.update {
                     it.copy(isLoading = true, error = null)
                 }
 
                 val transaction = Transaction(
                     id = editingId ?: 0,
+                    date = loadedSale?.date ?: commandDate,
                     customerId = customer.id,
                     amount = amount, // ✅ المبلغ الصحيح دائماً
                     isPaid = state.isPaid,
                     paymentType = state.paymentType,
                     paymentMethodId = state.selectedPaymentMethod?.id,
                     note = state.note,
-                    paidAt = if (state.isPaid) System.currentTimeMillis() else null,
+                    paidAt = if (state.isPaid) loadedSale?.paidAt ?: commandDate else null,
+                    dueDate = loadedSale?.dueDate,
+                    reminderEnabled = loadedSale?.reminderEnabled ?: true,
                     hasItems = state.pendingLines.isNotEmpty()
                 )
 
                 if (editingId == null) {
-                    val savedId = transactionRepo.insertTransaction(transaction)
-                    if (state.pendingLines.isNotEmpty()) {
-                        saveItemsAndDeductStock(savedId, state.pendingLines)
-                    }
+                    val savedId = saleCommands.create(operationId, merchantId, transaction,
+                        buildItems(0, state.pendingLines))
+                    // Dispatch is driven by durable outbox observation after commit.
                     _uiState.update {
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = savedId)
                     }
                 } else {
                     val txId = editingId!!
-                    transactionRepo.updateTransaction(transaction)
-
-                    if (state.userEditedLines) {
-                        val oldItems = invoiceRepo.getItemsForTransactionOnce(txId)
-                        oldItems.forEach { old ->
-                            stockRepo.returnStock(
-                                productId = old.productId, unitId = old.unitId,
-                                quantity = old.quantity, transactionId = txId,
-                                productName = old.productName, unitLabel = old.unitLabel
-                            )
-                        }
-                        invoiceRepo.deleteItemsForTransaction(txId)
-                        // ✅ نُمرِّر oldItems لإعادة استخدام نفس UUID للأصناف الموجودة
-                        // يمنع Firebase Sync من إعادة إدراج الصنف القديم (duplicate)
-                        saveItemsAndDeductStock(txId, state.pendingLines, oldItems)
-                    }
+                    val expected = loadedSale ?: error("Sale has not loaded")
+                    saleCommands.edit(operationId, merchantId, expected, transaction,
+                        if (state.userEditedLines) buildItems(txId, state.pendingLines, loadedItems) else null)
+                    // Dispatch is driven by durable outbox observation after commit.
 
                     _uiState.update {
                         it.copy(isLoading = false, isSaved = true, savedTransactionId = txId)
                     }
                 }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 isSavingInProgress = false
                 _uiState.update {
@@ -356,22 +371,16 @@ class AddEditTransactionViewModel(
         return arr.toString()
     }
 
-    // ── حفظ الأصناف + خصم المخزون + مزامنة ──────────────────────
-    private suspend fun saveItemsAndDeductStock(
-        transactionId: Long,
-        lines: List<InvoiceLineItem>,
-        oldItems: List<InvoiceItem> = emptyList()
-    ) {
+    private fun buildItems(transactionId: Long, lines: List<InvoiceLineItem>, oldItems: List<InvoiceItem> = emptyList()): List<InvoiceItem> {
         // ✅ خريطة productId:unitId → UUID القديم
         // إذا وجد نفس الصنف + الوحدة في العملية القديمة → نُعيد استخدام UUID
         // هذا يجعل Firebase يرى UPDATE بدل DELETE+INSERT → لا تكرار
-        val oldIdMap = oldItems.associate {
-            "${it.productId}:${it.unitId}" to it.id
-        }
+        val oldIds = oldItems.groupBy { "${it.productId}:${it.unitId}" }
+            .mapValues { (_, items) -> java.util.ArrayDeque(items.map { it.id }) }
 
-        val items = lines.map { line ->
+        return lines.mapIndexed { index, line ->
             val key = "${line.product.product.id}:${line.selectedUnit.id}"
-            val itemId = oldIdMap[key] ?: UUID.randomUUID().toString()
+            val itemId = oldIds[key]?.pollFirst() ?: UUID.nameUUIDFromBytes("$operationId:$index:$key".toByteArray()).toString()
 
             val unitLabelDisplay = if (
                 line.selectedUnit.unitType == UnitType.WEIGHT &&
@@ -389,23 +398,12 @@ class AddEditTransactionViewModel(
                 quantity = line.quantity,
                 pricePerUnit = line.effectivePrice,
                 totalPrice = line.totalPrice,
-                merchantId = merchantId
+                merchantId = commandMerchant.orEmpty()
             )
         }
 
-        invoiceRepo.saveItems(items)
-
-        lines.forEach { line ->
-            stockRepo.deductStock(
-                productId = line.product.product.id,
-                unitId = line.selectedUnit.id,
-                quantity = line.quantity,
-                transactionId = transactionId,
-                productName = line.product.product.name,
-                unitLabel = line.selectedUnit.unitLabel
-            )
-        }
     }
+
 }
 
 private fun String.toLatinDigits(): String = this

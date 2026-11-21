@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.NavigationJourneysUiTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-15T13:29:10" hostname="236b99701f27" time="0.409">
+  <properties/>
+  <testcase name="mainTabsNavigateAndReselectionDoesNotDuplicateDestination" classname="com.trader.salesmanager.ui.coverage.NavigationJourneysUiTest" time="0.258"/>
+  <testcase name="startupCheckingThenBlockedDoesNotExposeMainTabs" classname="com.trader.salesmanager.ui.coverage.NavigationJourneysUiTest" time="0.044"/>
+  <testcase name="merchantDisabledEventRequiresAcknowledgmentThenRoutesToActivation" classname="com.trader.salesmanager.ui.coverage.NavigationJourneysUiTest" time="0.107"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -5,6 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -20,45 +23,53 @@ object AppUpdateDownloader {
         url: String,
         onProgress: (Int) -> Unit
     ): File? = withContext(Dispatchers.IO) {
+        var connection: HttpURLConnection? = null
+        var apkFile: File? = null
+        var completed = false
         try {
             val updateDir = File(context.cacheDir, "update").apply { mkdirs() }
-            val apkFile = File(updateDir, APK_FILE_NAME)
-            if (apkFile.exists()) apkFile.delete()
+            val destination = File(updateDir, APK_FILE_NAME)
+            apkFile = destination
+            if (destination.exists()) check(destination.delete()) { "Cannot replace previous download" }
 
-            val connection = URL(url).openConnection() as HttpURLConnection
-            connection.connectTimeout = 15_000
-            connection.readTimeout = 15_000
-            connection.connect()
-
-            val totalBytes = connection.contentLength
-            val input = connection.inputStream.buffered()
-            val output = apkFile.outputStream().buffered()
-
+            val activeConnection = URL(url).openConnection() as HttpURLConnection
+            connection = activeConnection
+            activeConnection.connectTimeout = 15_000
+            activeConnection.readTimeout = 15_000
+            activeConnection.connect()
+            val totalBytes = activeConnection.contentLength
             var downloaded = 0L
-            val buffer = ByteArray(8192)
-
-            while (true) {
-                val bytes = input.read(buffer)
-                if (bytes == -1) break
-                output.write(buffer, 0, bytes)
-                downloaded += bytes
-                val percent = if (totalBytes > 0) {
-                    ((downloaded * 100) / totalBytes).toInt().coerceIn(0, 100)
-                } else {
-                    0
+            activeConnection.inputStream.buffered().use { input ->
+                destination.outputStream().buffered().use { output ->
+                    val buffer = ByteArray(8192)
+                    while (true) {
+                        currentCoroutineContext().ensureActive()
+                        val bytes = input.read(buffer)
+                        if (bytes == -1) break
+                        output.write(buffer, 0, bytes)
+                        downloaded += bytes
+                        val percent = if (totalBytes > 0) {
+                            ((downloaded * 100) / totalBytes).toInt().coerceIn(0, 100)
+                        } else 0
+                        onProgress(percent)
+                    }
                 }
-                onProgress(percent)
             }
-
-            output.flush()
-            output.close()
-            input.close()
-            connection.disconnect()
-
+            if (totalBytes >= 0 && downloaded != totalBytes.toLong()) {
+                throw java.io.IOException("Incomplete update download")
+            }
+            currentCoroutineContext().ensureActive()
             onProgress(100)
-            apkFile
+            currentCoroutineContext().ensureActive()
+            completed = true
+            destination
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (_: Exception) {
             null
+        } finally {
+            connection?.disconnect()
+            if (!completed) runCatching { apkFile?.delete() }
         }
     }
 
@@ -68,15 +79,7 @@ object AppUpdateDownloader {
             return
         }
 
-        val uri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.provider",
-                file
-            )
-        } else {
-            Uri.fromFile(file)
-        }
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
 
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, "application/vnd.android.package-archive")

@@ -1,0 +1,14 @@
+{
+  "app": {
+    "tests": 85,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "salesmanager": {
+    "tests": 119,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

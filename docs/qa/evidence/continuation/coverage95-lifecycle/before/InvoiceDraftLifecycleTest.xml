@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" tests="21" skipped="0" failures="1" errors="0" timestamp="2026-11-11T10:02:08" hostname="13302589aed6" time="5.139">
+  <properties/>
+  <testcase name="changingWeightDisplayPreservesStoredKilogramsAndTheLocalCommercialPoundRule" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="3.53"/>
+  <testcase name="clearLinesRemovesTotalsAndStockWarningsTogether" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.119"/>
+  <testcase name="nullCustomPriceRestoresCatalogPriceAndZeroCustomPriceRemainsValid" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.082"/>
+  <testcase name="missingCatalogRecordsCannotCreateInventedInvoiceItems" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.107"/>
+  <testcase name="weightLabelsDistinguishCommercialDisplayFromKilograms" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.093"/>
+  <testcase name="zeroAndNegativeQuantitiesRemoveTheChosenLineWithoutChangingOthers" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.096"/>
+  <testcase name="validPersistedWeightDraftRestoresPriceStockAndKilograms" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.087"/>
+  <testcase name="unknownLegacyWeightLabelUsesTheExistingKilogramFallback" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.09"/>
+  <testcase name="stockWarningComparesConvertedKgAndAllowsTheExactBoundary" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.077"/>
+  <testcase name="matchingCatalogPriceRestoresWithoutRedundantOverride" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.072"/>
+  <testcase name="searchIncludesNameBarcodeAndCategoryAndCapsVisibleResultsAtTen" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.079"/>
+  <testcase name="pieceProjectionDoesNotApplyAWeightConversionOrLabel" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.067"/>
+  <testcase name="projectionUsesConvertedQuantityPriceMerchantAndTransactionIdentity" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.078"/>
+  <testcase name="unitChangeUsesItsOwnStockAndResetsCustomPrice" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.07"/>
+  <testcase name="duplicateDefaultProductIncrementsOneLineAndClearsSearch" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.072"/>
+  <testcase name="malformedDraftPreservesThePreviousBasketInsteadOfPartiallyReplacingIt" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.07"/>
+  <testcase name="legacyDraftWithoutWeightKeyDefaultsToKilograms" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.071"/>
+  <testcase name="matchingBarcodeAddsTheRealProductAndUnknownBarcodeReturnsItsExactText" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.064"/>
+  <testcase name="productWithoutUnitsCannotInventAnInvoiceLine" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.058"/>
+  <testcase name="catalogueLookupCancellationCancelsTheLoadJobAndPreservesTheDraft" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.088">
+    <failure message="java.lang.AssertionError: Cancellation was swallowed by draft restoration" type="java.lang.AssertionError">java.lang.AssertionError: Cancellation was swallowed by draft restoration
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest$catalogueLookupCancellationCancelsTheLoadJobAndPreservesTheDraft$1.invokeSuspend(InvoiceDraftLifecycleTest.kt:94)
+	at com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest$catalogueLookupCancellationCancelsTheLoadJobAndPreservesTheDraft$1.invoke(InvoiceDraftLifecycleTest.kt)
+	at com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest$catalogueLookupCancellationCancelsTheLoadJobAndPreservesTheDraft$1.invoke(InvoiceDraftLifecycleTest.kt)
+	at kotlinx.coroutines.test.TestBuildersKt__TestBuildersKt$runTest$2$1$1.invokeSuspend(TestBuilders.kt:318)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.test.TestDispatcher.processEvent$kotlinx_coroutines_test(TestDispatcher.kt:24)
+	at kotlinx.coroutines.test.TestCoroutineScheduler.tryRunNextTaskUnless$kotlinx_coroutines_test(TestCoroutineScheduler.kt:99)
+	at kotlinx.coroutines.test.TestBuildersKt__TestBuildersKt$runTest$2$1$workRunner$1.invokeSuspend(TestBuilders.kt:327)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:95)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:69)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:47)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+	at kotlinx.coroutines.test.TestBuildersJvmKt.createTestResult(TestBuildersJvm.kt:10)
+	at kotlinx.coroutines.test.TestBuildersKt__TestBuildersKt.runTest-8Mi8wO0(TestBuilders.kt:310)
+	at kotlinx.coroutines.test.TestBuildersKt.runTest-8Mi8wO0(Unknown Source)
+	at kotlinx.coroutines.test.TestBuildersKt__TestBuildersKt.runTest-8Mi8wO0(TestBuilders.kt:168)
+	at kotlinx.coroutines.test.TestBuildersKt.runTest-8Mi8wO0(Unknown Source)
+	at kotlinx.coroutines.test.TestBuildersKt__TestBuildersKt.runTest-8Mi8wO0$default(TestBuilders.kt:160)
+	at kotlinx.coroutines.test.TestBuildersKt.runTest-8Mi8wO0$default(Unknown Source)
+	at com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest.catalogueLookupCancellationCancelsTheLoadJobAndPreservesTheDraft(InvoiceDraftLifecycleTest.kt:90)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.robolectric.RobolectricTestRunner$HelperTestRunner$1.evaluate(RobolectricTestRunner.java:502)
+	at org.robolectric.internal.SandboxTestRunner$2.lambda$evaluate$2(SandboxTestRunner.java:285)
+	at org.robolectric.internal.bytecode.Sandbox.lambda$runOnMainThread$0(Sandbox.java:104)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+</failure>
+  </testcase>
+  <testcase name="explicitUnitsRemainSeparateAndDuplicateChosenUnitIncrementsOnlyThatLine" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.066"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

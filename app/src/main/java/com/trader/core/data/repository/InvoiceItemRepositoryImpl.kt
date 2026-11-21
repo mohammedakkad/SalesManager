@@ -1,23 +1,30 @@
 package com.trader.core.data.repository
 
+import androidx.room.withTransaction
 import com.trader.core.data.local.dao.InvoiceItemDao
 import com.trader.core.data.local.entity.toEntity
 import com.trader.core.data.remote.ProductFirestoreService
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.repository.InvoiceItemRepository
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 
 class InvoiceItemRepositoryImpl(
     private val dao: InvoiceItemDao,
     private val remote: ProductFirestoreService,
     private val sync: FirebaseSyncService,
-    private val merchantId: String
+    private val merchantId: String,
+    private val outboxDatabase: com.trader.core.data.local.db.AppDatabase? = null,
+    private val activation: com.trader.core.domain.repository.ActivationRepository? = null
 ) : InvoiceItemRepository {
 
 
@@ -30,23 +37,31 @@ class InvoiceItemRepositoryImpl(
     // ✅ مزامنة الأصناف من Firebase Realtime Database
     private fun startRealtimeSync() {
         syncScope.launch {
-            try {
-                sync.observeInvoiceItems(merchantId).collect {
-                    items ->
-                    items.forEach {
-                        item ->
-                        try {
-                            dao.insertAll(listOf(item.toEntity()))
-                        } catch (_: Exception) {}
+          try {
+            (activation?.observeMerchantCode() ?: kotlinx.coroutines.flow.flowOf(merchantId))
+                .collectLatest { code ->
+                    if (code.isBlank() || (activation == null && code != merchantId)) return@collectLatest
+                    sync.observeInvoiceItems(code).recoverSellerRealtime().collect { items ->
+                        items.forEach { item ->
+                            if (activation != null && activation.getMerchantCode() != code) return@forEach
+                            if (outboxDatabase == null) dao.insertAll(listOf(item.toEntity()))
+                            else outboxDatabase.withTransaction {
+                                if (!outboxDatabase.saleOutboxDao().manages(item.transactionId)) dao.insertAll(listOf(item.toEntity()))
+                            }
+                        }
                     }
                 }
-            } catch (_: Exception) {}
+          } catch (cancelled: kotlinx.coroutines.CancellationException) { throw cancelled }
+          catch (error: Exception) { android.util.Log.e("InvoiceSync", "Legacy invoice listener stopped: ${error.javaClass.simpleName}") }
         }
     }
 
     override suspend fun saveItems(items: List<InvoiceItem>) {
+        val merchantId = activation?.getMerchantCode() ?: this.merchantId
         dao.insertAll(items.map { it.toEntity() })
-        syncScope.launch {
+        if (outboxDatabase?.inTransaction() != true) syncScope.launch {
+            if (activation != null && activation.getMerchantCode() != merchantId) return@launch
+            if (items.any { outboxDatabase?.saleOutboxDao()?.manages(it.transactionId) == true }) return@launch
             var firestoreOk = false
             var realtimeOk = false
             runCatching { remote.uploadInvoiceItems(merchantId, items) }
@@ -60,8 +75,11 @@ class InvoiceItemRepositoryImpl(
     }
 
     override suspend fun deleteItemsForTransaction(transactionId: Long) {
+        val merchantId = activation?.getMerchantCode() ?: this.merchantId
         dao.deleteForTransaction(transactionId)
-        syncScope.launch {
+        if (outboxDatabase?.inTransaction() != true) syncScope.launch {
+            if (activation != null && activation.getMerchantCode() != merchantId) return@launch
+            if (outboxDatabase?.saleOutboxDao()?.manages(transactionId) == true) return@launch
             try {
                 sync.deleteInvoiceItemsForTransaction(merchantId, transactionId)
             } catch (_: Exception) {}
@@ -85,23 +103,41 @@ class InvoiceItemRepositoryImpl(
 
 
     override suspend fun syncPendingItems() {
-        val pending = dao.getPending()
+        currentCoroutineContext().ensureActive()
+        val merchantId = activation?.getMerchantCode() ?: this.merchantId
+        if (activation != null && activation.getMerchantCode() != merchantId) return
+        val pending = dao.getRetryable().filter { (activation == null || it.merchantId == merchantId) && outboxDatabase?.saleOutboxDao()?.manages(it.transactionId) != true }
         if (pending.isEmpty()) return
 
         val items = pending.map { it.toDomain() }
-
         var firestoreSynced = false
         var realtimeSynced = false
 
-        runCatching { remote.uploadInvoiceItems(merchantId, items) }
-            .onSuccess { firestoreSynced = true }
-        runCatching { sync.pushInvoiceItems(merchantId, items) }
-            .onSuccess { realtimeSynced = true }
+        try {
+            remote.uploadInvoiceItems(merchantId, items)
+            firestoreSynced = true
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (_: Exception) { }
+        currentCoroutineContext().ensureActive()
+        if (activation != null && activation.getMerchantCode() != merchantId) return
+        try {
+            sync.pushInvoiceItems(merchantId, items)
+            realtimeSynced = true
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (_: Exception) { }
+        currentCoroutineContext().ensureActive()
+        if (activation != null && activation.getMerchantCode() != merchantId) return
 
-        if (firestoreSynced && realtimeSynced) {
-            pending.forEach { dao.markSynced(it.id) }
-        } else {
-            pending.forEach { dao.markFailed(it.id) }
+        pending.forEach { snapshot ->
+            if (outboxDatabase == null) {
+                dao.finishUpload(snapshot, firestoreSynced && realtimeSynced)
+            } else outboxDatabase.withTransaction {
+                if (!outboxDatabase.saleOutboxDao().manages(snapshot.transactionId)) {
+                    dao.finishUpload(snapshot, firestoreSynced && realtimeSynced)
+                }
+            }
         }
     }
 }

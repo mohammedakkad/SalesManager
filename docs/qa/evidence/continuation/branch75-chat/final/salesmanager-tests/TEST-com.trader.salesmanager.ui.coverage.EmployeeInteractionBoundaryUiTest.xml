@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-15T14:09:58" hostname="236b99701f27" time="1.324">
+  <properties/>
+  <testcase name="roleChipsReflectModelSelectionAndDelegateBothRoles" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.297"/>
+  <testcase name="cancellingSheetResetsTheFormWithoutSubmitting" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.177"/>
+  <testcase name="blankLegacyEmployeeNameUsesAFallbackAvatarWithoutDroppingTheRecord" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.069"/>
+  <testcase name="saveGatesFollowBothNameAndPinAcrossModelUpdates" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.143"/>
+  <testcase name="failureEventKeepsTheDraftSheetOpenAndDisplaysTheReason" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.126"/>
+  <testcase name="distinctValidationErrorsReplaceTheirPredecessorAndClearOnRecovery" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.186"/>
+  <testcase name="emptyEmployeeListExplainsCreationAndBackNavigates" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.053"/>
+  <testcase name="addedEventClosesTheSheetAndShowsItsSpecificOutcome" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.105"/>
+  <testcase name="submissionInProgressShowsADisabledProgressControl" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.1"/>
+  <testcase name="deletedEventReportsDeletionWithoutStartingAnotherDelete" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.068"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -155,7 +155,7 @@ fun CustomersScreen(
                 contentColor = Color.White,
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Icon(Icons.Rounded.PersonAdd, null)
+                Icon(Icons.Rounded.PersonAdd, "إضافة زبون")
             }
         }
     ) { padding ->

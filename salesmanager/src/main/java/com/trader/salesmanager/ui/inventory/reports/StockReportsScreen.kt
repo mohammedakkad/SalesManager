@@ -87,7 +87,7 @@ fun StockReportsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, "رجوع", tint = Color.White)
                         }
                         Text("تقارير المخزن والكاش",
                             fontWeight = FontWeight.Bold, color = Color.White,

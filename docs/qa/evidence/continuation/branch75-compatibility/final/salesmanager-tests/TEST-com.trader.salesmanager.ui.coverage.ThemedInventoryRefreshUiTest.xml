@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemedInventoryRefreshUiTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:45:05" hostname="ac8333d6728a" time="2.005">
+  <properties/>
+  <testcase name="liveCountsReplacePendingRowsAndNeverApplyTheInventoryAutomatically" classname="com.trader.salesmanager.ui.coverage.ThemedInventoryRefreshUiTest" time="0.331"/>
+  <testcase name="stockReportReplacesUnitTypesAndQuantitiesWithoutKeepingTheOldRow" classname="com.trader.salesmanager.ui.coverage.ThemedInventoryRefreshUiTest" time="0.315"/>
+  <testcase name="finishingStateBlocksTheExistingConfirmationUntilTheCommandCanBeSubmitted" classname="com.trader.salesmanager.ui.coverage.ThemedInventoryRefreshUiTest" time="0.375"/>
+  <testcase name="pendingFilterShowsCompletionThenReopensWhenACountIsClearedExternally" classname="com.trader.salesmanager.ui.coverage.ThemedInventoryRefreshUiTest" time="0.336"/>
+  <testcase name="expandedProductUnitRefreshesItsStockWhileKeepingItsMovementLedgerVisible" classname="com.trader.salesmanager.ui.coverage.ThemedInventoryRefreshUiTest" time="0.33"/>
+  <testcase name="stockReportKeepsTheAlertTabAndRemovesARecoveredProductsWarning" classname="com.trader.salesmanager.ui.coverage.ThemedInventoryRefreshUiTest" time="0.313"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

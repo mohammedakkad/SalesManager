@@ -70,7 +70,7 @@ class ProductFirestoreService {
     // ── سحب كامل عند إعادة التثبيت / التفعيل ────────────────────
 
     suspend fun fetchAllProducts(merchantId: String): List<Product> {
-        return try {
+        return run {
             merchantRef(merchantId).collection("products")
             .get().await()
             .documents.mapNotNull {
@@ -90,42 +90,40 @@ class ProductFirestoreService {
                     )
                 }.getOrNull()
             }
-        } catch (_: Exception) {
-            emptyList()
         }
     }
 
     // ✅ جلب وحدات منتج معين من subcollection
     suspend fun fetchUnitsForProduct(merchantId: String, productId: String): List<ProductUnit> {
-        return try {
-            unitsRef(merchantId, productId).get().await()
-            .documents.mapNotNull {
-                doc ->
-                runCatching {
-                    val d = doc.data ?: return@mapNotNull null
-                    ProductUnit(
-                        id = doc.id,
-                        productId = d["productId"] as? String ?: return@mapNotNull null,
-                        unitType = runCatching {
-                            UnitType.valueOf(d["unitType"] as? String ?: "")
-                        }.getOrDefault(UnitType.PIECE),
-                        unitLabel = d["unitLabel"] as? String ?: "",
-                        price = (d["price"] as? Double) ?: 0.0,
-                        quantityInStock = (d["quantityInStock"] as? Double) ?: 0.0,
-                        itemsPerCarton = (d["itemsPerCarton"] as? Long)?.toInt(),
-                        lowStockThreshold = (d["lowStockThreshold"] as? Double) ?: 0.0,
-                        isDefault = d["isDefault"] as? Boolean ?: false,
-                        weightUnit = runCatching {
-                            WeightUnit.valueOf(d["weightUnit"] as? String ?: "")
-                        }.getOrDefault(WeightUnit.KG),
-                        createdAt = (d["createdAt"] as? Long) ?: 0L,
-                        updatedAt = (d["updatedAt"] as? Long) ?: 0L,
-                        syncStatus = SyncStatus.SYNCED
-                    )
-                }.getOrNull()
+        val documents = unitsRef(merchantId, productId).get().await().documents
+        // Reject a malformed monetary/stock snapshot as a whole. Dropping only one
+        // unit could make reconciliation interpret that missing row as a deletion.
+        return documents.mapNotNull { doc ->
+            val d = doc.data ?: return@mapNotNull null
+            val parent = d["productId"] as? String ?: return@mapNotNull null
+            fun number(field: String): Double {
+                val raw = d[field]
+                val value = if (raw == null) 0.0 else (raw as? Number)?.toDouble()
+                    ?: throw IllegalArgumentException("Catalog unit numeric field is invalid: $field")
+                require(value.isFinite()) { "Catalog unit numeric field is nonfinite: $field" }
+                return value
             }
-        } catch (_: Exception) {
-            emptyList()
+            ProductUnit(
+                id = doc.id,
+                productId = parent,
+                unitType = runCatching { UnitType.valueOf(d["unitType"] as? String ?: "") }.getOrDefault(UnitType.PIECE),
+                unitLabel = d["unitLabel"] as? String ?: "",
+                price = number("price"),
+                costPrice = number("costPrice"),
+                quantityInStock = number("quantityInStock"),
+                itemsPerCarton = (d["itemsPerCarton"] as? Long)?.toInt(),
+                lowStockThreshold = number("lowStockThreshold"),
+                isDefault = d["isDefault"] as? Boolean ?: false,
+                weightUnit = runCatching { WeightUnit.valueOf(d["weightUnit"] as? String ?: "") }.getOrDefault(WeightUnit.KG),
+                createdAt = (d["createdAt"] as? Long) ?: 0L,
+                updatedAt = (d["updatedAt"] as? Long) ?: 0L,
+                syncStatus = SyncStatus.SYNCED
+            )
         }
     }
 
@@ -135,7 +133,11 @@ class ProductFirestoreService {
         val listener = merchantRef(merchantId).collection("products")
         .addSnapshotListener {
             snapshot, error ->
-            if (error != null || snapshot == null) return@addSnapshotListener
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+            if (snapshot == null) return@addSnapshotListener
             val list = snapshot.documents.mapNotNull {
                 doc ->
                 runCatching {
@@ -184,7 +186,7 @@ class ProductFirestoreService {
 
     private fun ProductUnit.toMap() = mapOf(
         "id" to id, "productId" to productId, "unitType" to unitType.name,
-        "unitLabel" to unitLabel, "price" to price,
+        "unitLabel" to unitLabel, "price" to price, "costPrice" to costPrice,
         "quantityInStock" to quantityInStock, "itemsPerCarton" to itemsPerCarton,
         "lowStockThreshold" to lowStockThreshold, "isDefault" to isDefault,
         "weightUnit" to weightUnit.name, "createdAt" to createdAt,

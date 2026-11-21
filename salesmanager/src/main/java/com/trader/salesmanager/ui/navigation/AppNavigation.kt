@@ -173,7 +173,10 @@ fun AppNavigation(
         else -> Screen.Home.route
     }
 
-    LaunchedEffect(pendingNavigation, startupState) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val isNavigationReady = currentBackStackEntry != null
+    LaunchedEffect(pendingNavigation, startupState, isNavigationReady) {
+        if (!isNavigationReady) return@LaunchedEffect
         if (startupState == StartupState.Proceed || startupState is StartupState.ProceedFree) {
             when (pendingNavigation) {
                 com.trader.salesmanager.MainActivity.NAV_SETTINGS -> {
@@ -192,7 +195,6 @@ fun AppNavigation(
         }
     }
 
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
     val showBottomNavigation = isMainBottomNavRoute(currentRoute)
 
@@ -657,10 +659,8 @@ fun AppNavigation(
                 type = NavType.StringType
             })
         ) { back ->
-            val customerName = back.arguments?.getString("customerName")
-                ?.let {
-                    java.net.URLDecoder.decode(it, "UTF-8")
-                } ?: ""
+            // NavType.StringType already decodes the route argument once.
+            val customerName = back.arguments?.getString("customerName") ?: ""
             val existingLinesJson = navController.previousBackStackEntry
                 ?.savedStateHandle?.get<String>("existing_lines_json")
             InvoiceItemsScreen(

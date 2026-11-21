@@ -1,0 +1,6 @@
+{
+  "classesCompared": 2338,
+  "identicalAfterRuntimePackageNormalization": 2338,
+  "differences": 0,
+  "scope": "Actual original production bytes; in-memory instrumentation only, normalize only7hex injected runtime package. No original class, EC or APK modified. Same public helper/provenance as branch75-invoice-access tooling."
+}

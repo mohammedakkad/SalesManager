@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-11T07:42:46" hostname="13302589aed6" time="5.057">
+  <properties/>
+  <testcase name="excelActionPassesTheSelectedPeriodTransactionsAndAnalytics" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.916"/>
+  <testcase name="sharedExportButtonClosesOnlyAfterASuccessfulDownload" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.385"/>
+  <testcase name="sharedExportButtonKeepsAFailedWorkbookDownloadRetryable" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.246"/>
+  <testcase name="successfulReportDownloadClosesTheSheetAndResetsOnlyOnce" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.299"/>
+  <testcase name="activeExportDisablesMonthlyShareAndPrintAndCannotQueueAnotherExcel" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.222"/>
+  <testcase name="inventoryDownloadFailureRetainsItsExportForRetry" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.456"/>
+  <testcase name="monthlyShareDelegatesTheReadySnapshotAndCacheDirectory" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.271"/>
+  <testcase name="closingAnExcelResultResetsOnceWithoutOfferingPdfPrinting" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.272"/>
+  <testcase name="generationFailureDisplaysItsErrorAndDismissesTheFailedState" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.206"/>
+  <testcase name="reportShareUsesTheActualWorkbookAndMimeTypeThenResets" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.26"/>
+  <testcase name="customerStatementDownloadFailureRetainsItsExportForRetry" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.373"/>
+  <testcase name="invoiceDownloadFailureRetainsItsExportForRetry" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.397"/>
+  <testcase name="monthlyPrintRequestsTheSameFinancialSnapshotBeforePrinting" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.22"/>
+  <testcase name="reportWhatsAppUsesTheActualWorkbookAndMimeTypeThenResets" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.278"/>
+  <testcase name="failedReportDownloadKeepsTheFileAvailableForAnExplicitRetry" classname="com.trader.salesmanager.ui.coverage.ReportExportJourneysUiTest" time="0.255"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

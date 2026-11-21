@@ -40,12 +40,13 @@ object InvoiceSharer {
         return buildString {
             appendLine("🧾 *فاتورة من $displayName*")
             appendLine("━━━━━━━━━━━━━━━━━━━━")
+            if (transaction.id > 0) appendLine("🔢 *رقم الفاتورة:* ${transaction.id}")
             appendLine("📅 *التاريخ:* $dateStr")
             appendLine("👤 *الزبون:* ${transaction.customerName}")
             appendLine()
 
             if (items.isNotEmpty()) {
-                appendLine("*الأصناف:*")
+                appendLine(if (transaction.amountChanged) "*الأصناف قبل الإرجاع:*" else "*الأصناف:*")
                 items.forEach { item ->
                     appendLine(
                         "• ${item.productName} (${item.unitLabel}) × ${item.quantity.formatQty()} = ₪${item.totalPrice.formatAmount()}"
@@ -54,7 +55,14 @@ object InvoiceSharer {
                 appendLine("━━━━━━━━━━━━━━━━━━━━")
             }
 
-            appendLine("💰 *الإجمالي:* ₪${transaction.amount.formatAmount()}")
+            if (transaction.amountChanged) {
+                // Presentation of persisted values only; the transaction amount is already net.
+                appendLine("💰 *المبلغ الأصلي:* ₪${transaction.originalAmount.formatAmount()}")
+                appendLine("↩ *المرتجع:* ₪${(transaction.originalAmount - transaction.amount).formatAmount()}")
+                appendLine("💰 *الإجمالي الصافي:* ₪${transaction.amount.formatAmount()}")
+            } else {
+                appendLine("💰 *الإجمالي:* ₪${transaction.amount.formatAmount()}")
+            }
             val paymentStr = when (transaction.paymentType) {
                 PaymentType.CASH   -> "✅ كاش"
                 PaymentType.DEBT   -> "📋 دين"

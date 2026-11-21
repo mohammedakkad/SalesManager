@@ -15,13 +15,15 @@ fun String.toLatinDigits(): String = this
 .replace('۲', '2').replace('۳', '3').replace('۴', '4')
 .replace('۵', '5').replace('۶', '6').replace('۷', '7')
 .replace('۸', '8').replace('۹', '9')
+.replace("٬", "")
+.replace('٫', '.').replace('،', '.')
 .replace(',', '.') // ✅ الفاصلة العربية → نقطة عشرية
 
 /**
  * تحويل String → Double بأمان مع دعم الأرقام العربية والفاصلة العربية.
  * يجب استخدام هذه الدالة بدلاً من toDoubleOrNull() في كل مكان.
  */
-fun String.toSafeDouble(): Double? = this.toLatinDigits().toDoubleOrNull()
+fun String.toSafeDouble(): Double? = this.toLatinDigits().toDoubleOrNull()?.takeIf { it.isFinite() }
 
 /**
  * تنسيق Double → String بـ Locale.US دائماً (أرقام لاتينية، نقطة عشرية).

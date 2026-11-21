@@ -1,0 +1,21 @@
+test_class_exclusions_cannot_hide_in_combined_report (test_device_coverage_report.DeviceCoverageReportTest.test_class_exclusions_cannot_hide_in_combined_report) ... ok
+test_combined_report_cannot_lose_unit_test_coverage (test_device_coverage_report.DeviceCoverageReportTest.test_combined_report_cannot_lose_unit_test_coverage) ... ok
+test_missing_real_device_file_is_rejected (test_device_coverage_report.DeviceCoverageReportTest.test_missing_real_device_file_is_rejected) ... ok
+test_preserves_weighted_denominator_and_retains_both_measurements (test_device_coverage_report.DeviceCoverageReportTest.test_preserves_weighted_denominator_and_retains_both_measurements) ... ok
+test_public_summary_exposes_line_method_and_branch_counters_without_changing_gates (test_device_coverage_report.DeviceCoverageReportTest.test_public_summary_exposes_line_method_and_branch_counters_without_changing_gates) ... ERROR
+test_reduced_denominator_cannot_inflate_coverage (test_device_coverage_report.DeviceCoverageReportTest.test_reduced_denominator_cannot_inflate_coverage) ... ok
+test_unrecorded_native_pdf_execution_is_rejected (test_device_coverage_report.DeviceCoverageReportTest.test_unrecorded_native_pdf_execution_is_rejected) ... ok
+
+======================================================================
+ERROR: test_public_summary_exposes_line_method_and_branch_counters_without_changing_gates (test_device_coverage_report.DeviceCoverageReportTest.test_public_summary_exposes_line_method_and_branch_counters_without_changing_gates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/SalesManager/scripts/tests/test_device_coverage_report.py", line 90, in test_public_summary_exposes_line_method_and_branch_counters_without_changing_gates
+    self.assertEqual({'covered': 160, 'missed': 40}, payload[metric]['weighted overall'])
+                                                     ~~~~~~~^^^^^^^^
+KeyError: 'methods'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.009s
+
+FAILED (errors=1)

@@ -1,0 +1,158 @@
+{
+  "startingSha": "e517cafe4fb00dccb56f9f3bac4131c10ae22054",
+  "productionTestSourceFingerprint": "8a1ef88e1d0b338794d9e8050cb49b44d3f782fa9045ec06d59e1eeee5f713d0",
+  "qualification": "LOCAL PASS; hosted seller PASS; Android lanes fail before runtime at dependency coverage instrumentation",
+  "jvmCases": 999,
+  "moduleCounts": {
+    "app": 239,
+    "salesmanager": 760
+  },
+  "newJvmCases": 43,
+  "preservedStartingCases": 956,
+  "pythonCases": 25,
+  "newProductRegressionIdentities": 7,
+  "androidCasesRequired": 12,
+  "pdfBoxCasesRequired": 5,
+  "androidRuntime": "NOT EXECUTED locally",
+  "coverage": {
+    "qaCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1835,
+          "total": 3129
+        },
+        "LINE": {
+          "covered": 8231,
+          "total": 10388
+        },
+        "METHOD": {
+          "covered": 1835,
+          "total": 2523
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 9356,
+          "total": 14812
+        },
+        "LINE": {
+          "covered": 15365,
+          "total": 17971
+        },
+        "METHOD": {
+          "covered": 2689,
+          "total": 3224
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23596,
+          "total": 28359
+        },
+        "METHOD": {
+          "covered": 4524,
+          "total": 5747
+        },
+        "BRANCH": {
+          "covered": 11191,
+          "total": 17941
+        }
+      }
+    },
+    "qaAllJvmCoverage": {
+      "app": {
+        "BRANCH": {
+          "covered": 1942,
+          "total": 3129
+        },
+        "LINE": {
+          "covered": 8564,
+          "total": 10388
+        },
+        "METHOD": {
+          "covered": 1969,
+          "total": 2523
+        }
+      },
+      "salesmanager": {
+        "BRANCH": {
+          "covered": 9356,
+          "total": 14812
+        },
+        "LINE": {
+          "covered": 15365,
+          "total": 17971
+        },
+        "METHOD": {
+          "covered": 2689,
+          "total": 3224
+        }
+      },
+      "weighted": {
+        "LINE": {
+          "covered": 23929,
+          "total": 28359
+        },
+        "METHOD": {
+          "covered": 4658,
+          "total": 5747
+        },
+        "BRANCH": {
+          "covered": 11298,
+          "total": 17941
+        }
+      }
+    }
+  },
+  "branch75Goal": "NOT ACHIEVED",
+  "line95PriorGoal": "NOT ACHIEVED",
+  "release": "FAIL",
+  "remainingPlan": {
+    "total": 56,
+    "NOT TESTED": 22,
+    "BLOCKED": 32,
+    "PARTIAL": 2
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 27
+  },
+  "builds": {
+    "Debug": "PASS",
+    "AndroidTestAssembly": "PASS",
+    "MinifiedUnsignedRelease": "PASS",
+    "CrashlyticsMappingUpload": "EXCLUDED for QA"
+  },
+  "fullBuildElapsedSeconds": 621,
+  "qualifiedSourceSha": "db96831d1b53cb3f8e18c1769422c0835a39e06c",
+  "hostedRun": 44271146848,
+  "hostedStatus": "FAILURE",
+  "hostedSeller": "PASS",
+  "hostedRuntime": {
+    "24": {
+      "result": "NOT EXECUTED",
+      "requiredCases": 17,
+      "pdfPaths": 0,
+      "stage": "Android instrumentation/build: JacocoTransform bcprov1.87"
+    },
+    "28": {
+      "result": "NOT EXECUTED",
+      "requiredCases": 17,
+      "pdfPaths": 0,
+      "stage": "Android instrumentation/build: JacocoTransform bcprov1.87"
+    },
+    "33": {
+      "result": "NOT EXECUTED",
+      "requiredCases": 17,
+      "pdfPaths": 0,
+      "stage": "Android instrumentation/build: JacocoTransform bcprov1.87"
+    },
+    "35": {
+      "result": "NOT EXECUTED",
+      "requiredCases": 17,
+      "pdfPaths": 0,
+      "stage": "Android instrumentation/build: JacocoTransform bcprov1.87"
+    }
+  },
+  "rawHostedArchiveVerification": "BLOCKED: proxy CONNECT403 to productionresultssa2.blob.core.windows.net; raw bytes not verified"
+}

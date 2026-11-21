@@ -1,0 +1,11 @@
+# API24 export failure and portable binary verification
+
+Source4575cea, run42761236105 reached actual instrumentation. XML-derived notices record two customer tests PASS, two PDF cases FAILURE and the remaining required cases NOT EXECUTED. Gradle reports an incomplete run, including `Shell export failed` with an empty hash result. The crash buffer records UiAutomationConnection Runtime.exec error13 Permission denied and subsequent `UiAutomation not connected`. Storage reports10,236,476KiB available; the post-failure non-streaming APK probe succeeds. This attempt differs from the earlier42757328279/42759200717 installer failures. Do not collapse them into one cause.
+
+The source previously executed bare `mkdir`, `cp`, `sha256sum` through UiAutomation (which tokenizes arguments rather than interpreting a shell). The repair uses absolute Android system mkdir/cp/cat, reads the actual shell-owned destination as binary, compares every byte against the Android-generated source, then compares SHA256 digests computed using Android Java MessageDigest. This removes dependence on the shell hash utility while strengthening verification to full byte equality. No PDF content assertion, generation, runtime case, coverage instrumentation or gate is removed. No UTP backend change is made; the latest attempt already installed and started instrumentation.
+
+Compilation is a separate check, not evidence of passing device execution. Follow-up hosted API24/28/33/35 runtime must prove all7+5 named cases, actual SDK identity, five preserved Android-generated PDFs and measured coverage. Preserve the failed attempt as evidence; do not mark API24 qualified before that proof.
+
+Verified follow-up: source53ba5722ffe485f1ebcda55316e96830ac849b3b, hosted42762481171 actual API24 has all7 named instrumentation cases and5 actual PDFBox cases PASS, stagecomplete/exit0, five Context/export path hashes, EC measurement and API24 artifact upload observed. This is device execution, not compilation. The full workflow conclusion and other API lanes are recorded separately in run-42762481171.json.
+
+Full follow-up workflow42762481171 is now COMPLETED/SUCCESS: sellerSUCCESS and all four compose lanesAPI24/28/33/35 each7 instrumentation+5 PDFBoxPASS, five expected artifact names observed. Final structured run evidence is run-42762481171.json.

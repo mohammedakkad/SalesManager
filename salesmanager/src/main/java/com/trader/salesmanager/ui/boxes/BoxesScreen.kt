@@ -125,9 +125,9 @@ fun BoxesScreen(
     initDialogBox?.let { box ->
         InitialBalanceDialog(
             box = box,
+            isSaving = uiState.isSaving,
             onConfirm = { amount ->
-                viewModel.setInitialBalance(box.id, amount)
-                initDialogBox = null
+                viewModel.setInitialBalance(box.id, amount) { initDialogBox = null }
             },
             onDismiss = { initDialogBox = null }
         )
@@ -136,9 +136,9 @@ fun BoxesScreen(
     adjustDialogBox?.let { box ->
         AdjustBalanceDialog(
             box = box,
+            isSaving = uiState.isSaving,
             onConfirm = { amount, note, reason ->
-                viewModel.adjustBalance(box.id, amount, note, reason)
-                adjustDialogBox = null
+                viewModel.adjustBalance(box.id, amount, note, reason) { adjustDialogBox = null }
             },
             onDismiss = { adjustDialogBox = null }
         )
@@ -180,7 +180,7 @@ fun BoxesScreen(
                                 .clip(CircleShape)
                                 .background(Color.White.copy(0.2f))
                         ) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, "رجوع", tint = Color.White)
                         }
                         Spacer(Modifier.width(12.dp))
                         Column {
@@ -548,6 +548,7 @@ private fun MovementRow(
 @Composable
 private fun AdjustBalanceDialog(
     box: CashBox,
+    isSaving: Boolean,
     onConfirm: (String, String?, AdjustmentReason) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -557,11 +558,11 @@ private fun AdjustBalanceDialog(
     val reasons = AdjustmentReason.entries
 
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { if (!isSaving) onDismiss() },
         icon = { Icon(Icons.Rounded.Edit, null, tint = Cyan500) },
         title = { Text(stringResource(R.string.boxes_adjust_dialog_title), fontWeight = FontWeight.Bold) },
         text = {
-            Column {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
                 Text(
                     stringResource(R.string.boxes_adjust_dialog_body, box.paymentMethodName),
                     style = MaterialTheme.typography.bodySmall,
@@ -569,6 +570,7 @@ private fun AdjustBalanceDialog(
                 )
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
+                    enabled = !isSaving,
                     value = amountInput,
                     onValueChange = { amountInput = it },
                     label = { Text(stringResource(R.string.boxes_amount_label)) },
@@ -579,6 +581,7 @@ private fun AdjustBalanceDialog(
                 )
                 Spacer(Modifier.height(10.dp))
                 OutlinedTextField(
+                    enabled = !isSaving,
                     value = noteInput,
                     onValueChange = { noteInput = it },
                     label = { Text(stringResource(R.string.boxes_note_label)) },
@@ -596,6 +599,7 @@ private fun AdjustBalanceDialog(
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     reasons.forEach { reason ->
                         FilterChip(
+                            enabled = !isSaving,
                             selected = selectedReason == reason,
                             onClick = { selectedReason = reason },
                             label = { Text(reasonLabel(reason)) },
@@ -617,12 +621,12 @@ private fun AdjustBalanceDialog(
                         selectedReason
                     )
                 },
-                enabled = amountInput.isNotBlank(),
+                enabled = !isSaving && amountInput.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(containerColor = Cyan500)
             ) { Text(stringResource(R.string.boxes_save)) }
         },
         dismissButton = {
-            OutlinedButton(onClick = onDismiss) {
+            OutlinedButton(onClick = onDismiss, enabled = !isSaving) {
                 Text(stringResource(R.string.boxes_cancel))
             }
         },
@@ -633,16 +637,17 @@ private fun AdjustBalanceDialog(
 @Composable
 private fun InitialBalanceDialog(
     box: CashBox,
+    isSaving: Boolean,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     var input by remember { mutableStateOf("") }
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = { if (!isSaving) onDismiss() },
         icon = { Icon(Icons.Rounded.Savings, null, tint = Emerald500) },
         title = { Text(stringResource(R.string.boxes_initial_dialog_title), fontWeight = FontWeight.Bold) },
         text = {
-            Column {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
                 Text(
                     stringResource(R.string.boxes_initial_dialog_body, box.paymentMethodName),
                     style = MaterialTheme.typography.bodySmall,
@@ -650,6 +655,7 @@ private fun InitialBalanceDialog(
                 )
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
+                    enabled = !isSaving,
                     value = input,
                     onValueChange = { input = it },
                     label = { Text(stringResource(R.string.boxes_amount_label)) },
@@ -663,12 +669,12 @@ private fun InitialBalanceDialog(
         confirmButton = {
             Button(
                 onClick = { onConfirm(input.trim()) },
-                enabled = input.isNotBlank(),
+                enabled = !isSaving && input.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(containerColor = Emerald500)
             ) { Text(stringResource(R.string.boxes_save)) }
         },
         dismissButton = {
-            OutlinedButton(onClick = onDismiss) {
+            OutlinedButton(onClick = onDismiss, enabled = !isSaving) {
                 Text(stringResource(R.string.boxes_cancel))
             }
         },

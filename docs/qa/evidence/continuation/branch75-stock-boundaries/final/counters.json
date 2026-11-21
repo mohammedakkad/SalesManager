@@ -1,0 +1,90 @@
+{
+  "qaCoverage": {
+    "app": {
+      "BRANCH": {
+        "covered": 1929,
+        "total": 3169
+      },
+      "LINE": {
+        "covered": 8353,
+        "total": 10408
+      },
+      "METHOD": {
+        "covered": 1858,
+        "total": 2515
+      }
+    },
+    "salesmanager": {
+      "BRANCH": {
+        "covered": 9547,
+        "total": 14816
+      },
+      "LINE": {
+        "covered": 15479,
+        "total": 17982
+      },
+      "METHOD": {
+        "covered": 2702,
+        "total": 3225
+      }
+    },
+    "weighted": {
+      "LINE": {
+        "covered": 23832,
+        "total": 28390
+      },
+      "METHOD": {
+        "covered": 4560,
+        "total": 5740
+      },
+      "BRANCH": {
+        "covered": 11476,
+        "total": 17985
+      }
+    }
+  },
+  "qaAllJvmCoverage": {
+    "app": {
+      "BRANCH": {
+        "covered": 2036,
+        "total": 3169
+      },
+      "LINE": {
+        "covered": 8679,
+        "total": 10408
+      },
+      "METHOD": {
+        "covered": 1990,
+        "total": 2515
+      }
+    },
+    "salesmanager": {
+      "BRANCH": {
+        "covered": 9547,
+        "total": 14816
+      },
+      "LINE": {
+        "covered": 15479,
+        "total": 17982
+      },
+      "METHOD": {
+        "covered": 2702,
+        "total": 3225
+      }
+    },
+    "weighted": {
+      "LINE": {
+        "covered": 24158,
+        "total": 28390
+      },
+      "METHOD": {
+        "covered": 4692,
+        "total": 5740
+      },
+      "BRANCH": {
+        "covered": 11583,
+        "total": 17985
+      }
+    }
+  }
+}

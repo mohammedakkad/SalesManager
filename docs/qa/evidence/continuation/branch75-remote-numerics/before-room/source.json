@@ -1,0 +1,7 @@
+{
+  "startingSha": "d8a7d3e2bcd0397d8d8588f5a7a35f9331b677f1",
+  "productionFileSha256": "6d8e879eeaaab4414123067a06c1844f7c8d36f3c9b7b691e278be83126317e9",
+  "tests": 3,
+  "failed": 3,
+  "scope": "Real in-memory Room, actual FirebaseSyncService parser and repository import/listener, fully offline SDK. Complete cache row snapshots and derived debt/balance; no production Firebase."
+}

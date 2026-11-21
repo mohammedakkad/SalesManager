@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:31:15" hostname="ac8333d6728a" time="2.078">
+  <properties/>
+  <testcase name="stockReportSelectedCashTabSurvivesThemeAndRefreshesLiveTotals" classname="com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest" time="0.353"/>
+  <testcase name="selectedChatMessageKeepsItsIdentityAfterThemeChangeAndLiveReordering" classname="com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest" time="0.332"/>
+  <testcase name="chatDeletionAfterThemeChangeRemovesTheOriginalTextFromTheUi" classname="com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest" time="0.329"/>
+  <testcase name="paidInvoiceFilterSurvivesThemeAndAnInvoiceChangingPaymentStatus" classname="com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest" time="0.357"/>
+  <testcase name="invoiceDeletionNavigatesOnceEvenWhenThemeChangesBeforeAndAfterCompletion" classname="com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest" time="0.364"/>
+  <testcase name="inventoryLowStockSelectionSurvivesThemeWhileLiveQuantitiesChangeMembership" classname="com.trader.salesmanager.ui.coverage.ThemedLiveDataUiTest" time="0.342"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

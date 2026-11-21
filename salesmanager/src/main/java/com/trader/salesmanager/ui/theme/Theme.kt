@@ -163,11 +163,8 @@ fun SalesManagerTheme(
     }
 
     // بعد أول Frame، نتابع التغييرات بشكل reactive
-    val isDark by context.appDataStore.data
-    .map {
-        it[DARK_MODE_KEY] == true
-    }
-    .collectAsState(initial = initialDark)  // ✅ initial صحيح الآن
+    val isDarkFlow = remember(context) { context.appDataStore.data.map { it[DARK_MODE_KEY] == true } }
+    val isDark by isDarkFlow.collectAsState(initial = initialDark)  // ✅ initial صحيح الآن
 
     val colorScheme = if (isDark) DarkColorScheme else LightColorScheme
     val tokens = if (isDark) DarkTokens else LightTokens

@@ -12,6 +12,8 @@ import com.trader.salesmanager.ui.reports.DaySalesEntry
 import com.trader.salesmanager.ui.reports.PaymentShare
 import com.trader.salesmanager.util.pdf.ReportPdfGenerator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,6 +36,8 @@ class ExportViewModel : ViewModel() {
 
     private val _state = MutableStateFlow<ExportState>(ExportState.Idle)
     val state: StateFlow<ExportState> = _state.asStateFlow()
+    private var exportJob: Job? = null
+    private var exportGeneration = 0L
 
     // ── API عام ───────────────────────────────────────────────
 
@@ -97,36 +101,49 @@ class ExportViewModel : ViewModel() {
         ExportManager.generateInventoryExcel(cacheDir, products, storeName)
     }
 
-    fun dismissError() { _state.value = ExportState.Idle }
-    fun reset()        { _state.value = ExportState.Idle }
+    fun dismissError() = reset()
 
-    // ── منطق داخلي ───────────────────────────────────────────
+    fun reset() {
+        // Invalidate the result before cancelling work that may still finish an IO write.
+        exportGeneration += 1
+        exportJob?.cancel()
+        exportJob = null
+        _state.value = ExportState.Idle
+    }
 
     private fun runExport(fileName: String, block: suspend () -> File) {
-        if (_state.value is ExportState.Loading) return  // منع التكرار
-        viewModelScope.launch {
-            _state.value = ExportState.Loading("جارٍ تحضير $fileName...")
-            runCatching { withContext(Dispatchers.IO) { block() } }
-                .fold(
-                    onSuccess = { file ->
-                        val type = if (fileName.endsWith(".pdf")) ExportType.PDF else ExportType.XLSX
-                        _state.value = ExportState.Success(
-                            fileName = fileName,
-                            filePath = file.absolutePath,
-                            type     = type
-                        )
-                    },
-                    onFailure = { e ->
-                        _state.value = ExportState.Error(
-                            message = when (e) {
-                                is OutOfMemoryError  -> "لا توجد ذاكرة كافية"
-                                is java.io.IOException -> "خطأ في الكتابة: ${e.message}"
-                                else                 -> "فشل التصدير: ${e.message}"
-                            },
-                            cause = e
-                        )
-                    }
-                )
+        if (_state.value is ExportState.Loading) return
+        val generation = ++exportGeneration
+        // Claim before launch: successive UI calls must observe an active export.
+        _state.value = ExportState.Loading("جارٍ تحضير $fileName...")
+        val job = viewModelScope.launch {
+            try {
+                val file = withContext(Dispatchers.IO) { block() }
+                if (generation == exportGeneration) {
+                    val type = if (fileName.endsWith(".pdf")) ExportType.PDF else ExportType.XLSX
+                    _state.value = ExportState.Success(fileName, file.absolutePath, type)
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                if (generation == exportGeneration) {
+                    _state.value = ExportState.Error(
+                        message = when (e) {
+                            is OutOfMemoryError -> "لا توجد ذاكرة كافية"
+                            is java.io.IOException -> "خطأ في الكتابة: ${e.message}"
+                            else -> "فشل التصدير: ${e.message}"
+                        },
+                        cause = e
+                    )
+                }
+            }
+        }
+        exportJob = job
+        job.invokeOnCompletion { cause ->
+            if (generation == exportGeneration) {
+                exportJob = null
+                if (cause is CancellationException) _state.value = ExportState.Idle
+            }
         }
     }
 }

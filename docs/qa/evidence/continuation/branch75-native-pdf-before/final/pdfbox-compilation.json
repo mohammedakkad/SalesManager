@@ -1,0 +1,20 @@
+{
+  "result": "PASS compileTestJava only, NOT runtime",
+  "classes": [
+    {
+      "source": "qa/pdf-verifier/src/test/java/com/trader/qa/FinancialPdfBoundaryContentTest.java",
+      "sourceSha256": "e9283fc98b62a49f57ebd12a01270c055782a15dc7025284ab8349c2b664ef80",
+      "compiledClassSha256": "3e75fb2fa281130bfe852aaf4c4b67a16c341641b206466b1d99e4d70c48e8b9"
+    },
+    {
+      "source": "qa/pdf-verifier/src/test/java/com/trader/qa/InvoicePdfContentTest.java",
+      "sourceSha256": "54354bba21ab3603980e4cd91df9a2a8aa6adb7322003af479c4d80c7c2b5ea1",
+      "compiledClassSha256": "5899ab90b494fab6f99af7a97c443b5bc2185a317918fe2ad43b798219de2c33"
+    },
+    {
+      "source": "qa/pdf-verifier/src/test/java/com/trader/qa/LongCustomerStatementContentTest.java",
+      "sourceSha256": "aef57d85c37eeca5bcc729c0e03c5804d9e0b258727f540d16060f8fe1c3a565",
+      "compiledClassSha256": "a9586362f0d08bacf0f9c816b7d7badaad3c5d6969bf37948d3127f448404836"
+    }
+  ]
+}

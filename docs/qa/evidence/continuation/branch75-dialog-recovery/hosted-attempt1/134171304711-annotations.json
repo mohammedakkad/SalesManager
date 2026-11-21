@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Seller device QA exit [API 33]",
+    "message": "stage=JVM coverage exit=1",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller Android storage [API 33]",
+    "message": "\"Filesystem       1K-blocks   Used Available Use% Mounted on\\n/dev/block/dm-32  10167132 195400   9824276   2% /storage/emulated/0/Android/obb\\n/dev/block/dm-32  10167132 195400   9824276   2% /storage/emulated/0/Android/obb\\n\"",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller Android installer log [API 33]",
+    "message": "\"paring app data for com.android.sdksandbox\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /data\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /data/user/0\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /mnt/pass_through/0/emulated\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /mnt/androidwritable/0/emulated/0/Android/data\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /mnt/installer/0/emulated/0/Android/data\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /mnt/user/0/emulated/0/Android/data\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /storage/emulated/0/Android/data\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /mnt/androidwritable/0/emulated/0/Android/obb\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /mnt/installer/0/emulated/0/Android/obb\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /mnt/user/0/emulated/0/Android/obb\\n11-17 16:02:03.341   500   503 D installd: Found quota mount /dev/block/dm-32 at /storage/emulated/0/Android/obb\\n11-17 16:02:03.341   500   503 D installd: Found storage mount /dev/block/dm-32 at /mnt/pass_through/0/emulated\\n11-17 16:02:04.564   556   787 W PackageManager: Intent does not match component's intent filter: Intent { act=android.telephony.action.CARRIER_SIGNAL_RESET cmp=com.android.carrierdefaultapp/.CarrierDefaultBroadcastReceiver }\\n11-17 16:02:04.564   556   787 W PackageManager: Access blocked: ComponentInfo{com.android.carrierdefaultapp/com.android.carrierdefaultapp.CarrierDefaultBroadcastReceiver}\\n11-17 16:02:04.564   556   787 W PackageManager: Intent does not match component's intent filter: Intent { act=android.telephony.action.CARRIER_SIGNAL_RESET cmp=com.android.carrierdefaultapp/.CarrierDefaultBroadcastReceiver }\\n11-17 16:02:04.564   556   787 W PackageManager: Access blocked: ComponentInfo{com.android.carrierdefaultapp/com.android.carrierdefaultapp.CarrierDefaultBroadcastReceiver}\\n\"",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller Android crash buffer [API 33]",
+    "message": "\"\"",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller actual Android PDF paths [API 33]",
+    "message": "[]",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller actual device and PDFBox XML [API 33]",
+    "message": "[{\"test\": \"createArabicCustomerValidatesFormSavesOnceAndNavigatesBack\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"editCustomerPreservesIdAndDoesNotCreateDuplicate\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"generateCustomerStatementForHostBalanceVerification\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"generateLongInvoiceForHostPaginationAndContentVerification\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"generateMonthlyReportForHostPaginationAndFinancialVerification\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"generateSingleInvoiceForHostContentVerification\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"longInvoicePaginatesWithoutDroppingFinalItemOrTotal\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}, {\"test\": \"viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances\", \"result\": \"NOT EXECUTED\", \"detail\": \"\"}]",
+    "annotation_level": "notice"
+  }
+]

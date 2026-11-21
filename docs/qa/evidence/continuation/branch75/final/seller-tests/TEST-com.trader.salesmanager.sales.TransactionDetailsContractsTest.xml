@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.TransactionDetailsContractsTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-15T07:58:13" hostname="236b99701f27" time="0.577">
+  <properties/>
+  <testcase name="walkInAndMissingTransactionsHaveNoCustomerDebtQueries" classname="com.trader.salesmanager.sales.TransactionDetailsContractsTest" time="0.517"/>
+  <testcase name="invoiceSortAndTransientEmptyEmissionPreserveLoadedItemsUntilSaleHasNoItems" classname="com.trader.salesmanager.sales.TransactionDetailsContractsTest" time="0.012"/>
+  <testcase name="cancellationWhileDeletingDoesNotSetSuccessFlag" classname="com.trader.salesmanager.sales.TransactionDetailsContractsTest" time="0.013"/>
+  <testcase name="deletionReportsSuccessOnlyAfterAggregateCommandCompletes" classname="com.trader.salesmanager.sales.TransactionDetailsContractsTest" time="0.013"/>
+  <testcase name="refundStreamAndExplicitRefreshUseFreshRepositorySummary" classname="com.trader.salesmanager.sales.TransactionDetailsContractsTest" time="0.014"/>
+  <testcase name="liveTransactionRecomputesDerivedBalancesWithoutChangingDebtFormula" classname="com.trader.salesmanager.sales.TransactionDetailsContractsTest" time="0.008"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

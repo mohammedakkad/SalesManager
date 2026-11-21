@@ -1,0 +1,7 @@
+[
+  {
+    "title": "Seller measured all-jvm suite coverage",
+    "message": "{\"BRANCH\": {\"app\": {\"covered\": 1749, \"missed\": 1380}, \"salesmanager\": {\"covered\": 8824, \"missed\": 5988}, \"weighted overall\": {\"covered\": 10573, \"missed\": 7368}}, \"LINE\": {\"app\": {\"covered\": 8520, \"missed\": 1844}, \"salesmanager\": {\"covered\": 15255, \"missed\": 2712}, \"weighted overall\": {\"covered\": 23775, \"missed\": 4556}}, \"METHOD\": {\"app\": {\"covered\": 1961, \"missed\": 561}, \"salesmanager\": {\"covered\": 2666, \"missed\": 558}, \"weighted overall\": {\"covered\": 4627, \"missed\": 1119}}}",
+    "annotation_level": "notice"
+  }
+]

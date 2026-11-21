@@ -365,7 +365,7 @@ private fun UnitEditor(
             }
             if (canDelete) {
                 IconButton(onClick = onDelete, modifier = Modifier.size(36.dp)) {
-                    Icon(Icons.Rounded.Delete, null, tint = DebtRed, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.Delete, "حذف الوحدة ${index + 1}", tint = DebtRed, modifier = Modifier.size(18.dp))
                 }
             }
         }

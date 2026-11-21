@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:31:22" hostname="ac8333d6728a" time="2.812">
+  <properties/>
+  <testcase name="queuedRestoreConfirmationsReserveOneAttemptBeforeDispatch" classname="com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest" time="1.067"/>
+  <testcase name="queuedExportConfirmationsReserveOneAttemptBeforeDispatch" classname="com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest" time="0.442"/>
+  <testcase name="restoreCancellationKeepsPreparedPayloadWithoutFalseFailure" classname="com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest" time="0.325"/>
+  <testcase name="plainImportCancellationDoesNotOfferRestoreOrPublishFailure" classname="com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest" time="0.369"/>
+  <testcase name="exportCancellationCancelsAttemptClearsPasswordAndDoesNotPublishFailure" classname="com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest" time="0.307"/>
+  <testcase name="encryptedImportCancellationClearsPasswordWithoutFalseFailure" classname="com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest" time="0.3"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

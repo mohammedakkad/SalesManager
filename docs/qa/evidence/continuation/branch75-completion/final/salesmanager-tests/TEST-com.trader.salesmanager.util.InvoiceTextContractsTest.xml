@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.util.InvoiceTextContractsTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-15T09:30:52" hostname="236b99701f27" time="0.206">
+  <properties/>
+  <testcase name="ordinaryInvoicePreservesCustomerAmountPaymentStatusAndStore" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.021"/>
+  <testcase name="absentShareHandlersDoNotCrashTheSeller" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.021"/>
+  <testcase name="unsavedTransactionDoesNotInventAPersistedInvoiceNumber" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.017"/>
+  <testcase name="blankStoreUsesTheExistingGenericName" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.016"/>
+  <testcase name="absentWhatsappUsesAnUnrestrictedChooserWithTheSameText" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.017"/>
+  <testcase name="whatsappIntentContainsExactlyTheBuiltTextAndNewTaskFlag" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.024"/>
+  <testcase name="itemQuantityTotalAndNoteArePreservedWithoutRecomputingLedgerValues" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.017"/>
+  <testcase name="partialReturnDistinguishesOriginalItemsRefundAndNet" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.017"/>
+  <testcase name="eachPaymentKindUsesItsOwnArabicLabel" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.018"/>
+  <testcase name="sharedTextIdentifiesTheActualPersistedInvoice" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.017"/>
+  <testcase name="fullReturnKeepsTheOriginalAmountAndShowsZeroNet" classname="com.trader.salesmanager.util.InvoiceTextContractsTest" time="0.021"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,6 @@
+{
+  "qualifiedFailingRegressions": 5,
+  "class": "DashboardChartNativeUiTest",
+  "rawRun": "11 drafted cases: 5 missing accessible chart-description failures plus 2 unqualified Robolectric dialog layout failures. Four other draft cases passed. Only the five chart identities are regression evidence here.",
+  "deviceTransfer": "The two dialog scenarios were transferred to actual Android; host-only timeouts are not declared product defects."
+}

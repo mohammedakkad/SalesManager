@@ -13,7 +13,6 @@ import androidx.work.*
 import com.trader.core.data.local.appDataStore
 import com.trader.core.data.remote.FirebaseSyncService
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit
 
 class StatusCheckWorker(
@@ -25,13 +24,11 @@ class StatusCheckWorker(
         val ctx       = applicationContext
         val dataStore = ctx.appDataStore
 
-        val isActivated = dataStore.data.map { prefs ->
-            prefs[booleanPreferencesKey("is_activated")] ?: false
-        }.first()
-
-        val code = dataStore.data.map { prefs ->
-            prefs[stringPreferencesKey("merchant_code")] ?: ""
-        }.first()
+        val snapshot = dataStore.data.first()
+        val activatedKey = booleanPreferencesKey("is_activated")
+        val codeKey = stringPreferencesKey("merchant_code")
+        val isActivated = snapshot[activatedKey] ?: false
+        val code = snapshot[codeKey] ?: ""
 
         if (!isActivated || code.isEmpty()) return Result.success()
 
@@ -41,12 +38,17 @@ class StatusCheckWorker(
         when (status) {
             "DISABLED", "EXPIRED", "DELETED" -> {
                 // Clear local activation
+                var invalidated = false
                 dataStore.edit { prefs ->
-                    prefs[booleanPreferencesKey("is_activated")] = false
-                    prefs[stringPreferencesKey("merchant_code")]  = ""
+                    // A network result belongs to the activation snapshot that requested it.
+                    // Compare inside the atomic edit so a different merchant is preserved.
+                    if (prefs[activatedKey] == true && prefs[codeKey] == code) {
+                        prefs[activatedKey] = false
+                        prefs[codeKey] = ""
+                        invalidated = true
+                    }
                 }
-                // Show notification — defined locally to avoid cross-module dep
-                showBlockedNotification(ctx, status)
+                if (invalidated) showBlockedNotification(ctx, status)
             }
         }
         return Result.success()

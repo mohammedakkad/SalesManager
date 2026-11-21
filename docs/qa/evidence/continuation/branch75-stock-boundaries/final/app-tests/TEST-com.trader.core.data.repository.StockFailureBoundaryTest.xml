@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.StockFailureBoundaryTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:14:36" hostname="ac8333d6728a" time="0.352">
+  <properties/>
+  <testcase name="quantityUploadCancellationPropagatesAndKeepsDirtyUnit" classname="com.trader.core.data.repository.StockFailureBoundaryTest" time="0.035"/>
+  <testcase name="finiteOperandsWhichOverflowAreRejectedBeforeAnyWrite" classname="com.trader.core.data.repository.StockFailureBoundaryTest" time="0.039"/>
+  <testcase name="sessionSwitchDuringStartupCheckSkipsAllUploads" classname="com.trader.core.data.repository.StockFailureBoundaryTest" time="0.043"/>
+  <testcase name="movementUploadCancellationPropagatesAndPreservesPendingLedger" classname="com.trader.core.data.repository.StockFailureBoundaryTest" time="0.038"/>
+  <testcase name="blankSessionSkipsAllUploadsAndLeavesPendingRows" classname="com.trader.core.data.repository.StockFailureBoundaryTest" time="0.066"/>
+  <testcase name="ledgerInsertFaultRollsBackStandaloneQuantityChange" classname="com.trader.core.data.repository.StockFailureBoundaryTest" time="0.036"/>
+  <testcase name="oneOrdinaryUploadFailureDoesNotBlockNextPersistedMovement" classname="com.trader.core.data.repository.StockFailureBoundaryTest" time="0.061"/>
+  <testcase name="infiniteAdjustmentIsRejectedBeforeAnyWrite" classname="com.trader.core.data.repository.StockFailureBoundaryTest" time="0.034"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

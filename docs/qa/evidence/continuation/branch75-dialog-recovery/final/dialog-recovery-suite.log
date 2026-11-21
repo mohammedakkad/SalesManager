@@ -1,0 +1,15 @@
+## Additional whole-suite coverage
+
+Both JVM suites; original reports and gates unchanged.
+
+| Scope | Metric | Covered | Total | Coverage |
+| --- | --- | ---: | ---: | ---: |
+| app | LINE | 8520 | 10364 | 82.2076% |
+| salesmanager | LINE | 15255 | 17967 | 84.9057% |
+| weighted overall | LINE | 23775 | 28331 | 83.9187% |
+| app | METHOD | 1961 | 2522 | 77.7557% |
+| salesmanager | METHOD | 2666 | 3224 | 82.6923% |
+| weighted overall | METHOD | 4627 | 5746 | 80.5256% |
+| app | BRANCH | 1749 | 3129 | 55.8965% |
+| salesmanager | BRANCH | 8824 | 14812 | 59.5733% |
+| weighted overall | BRANCH | 10573 | 17941 | 58.9321% |

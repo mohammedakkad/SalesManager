@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.remote.SellerRealtimeRecoveryTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:43:00" hostname="ac8333d6728a" time="0.285">
+  <properties/>
+  <testcase name="cancellationDuringBackoffCannotResubscribe" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.039"/>
+  <testcase name="firestoreUnavailableReadUsesTheBoundedRetryBudget" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.024"/>
+  <testcase name="firestoreDeniedReadDoesNotRetryOrProduceAnEmptySnapshot" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.024"/>
+  <testcase name="permanentDisconnectionStopsAfterThreeAttemptsWithoutDeletingLocalRows" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.04"/>
+  <testcase name="unavailableBackendUsesTheSameFiniteRetryBudget" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.023"/>
+  <testcase name="permissionDeniedDoesNotRetryOrInventAnEmptySnapshot" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.022"/>
+  <testcase name="expiredCredentialsDoNotEnterANetworkRetryLoop" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.022"/>
+  <testcase name="switchingMerchantDuringRetryCancelsThePreviousAccount" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.041"/>
+  <testcase name="callerCancellationAndProgrammingErrorsAreNotHiddenAsSdkFailures" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.022"/>
+  <testcase name="transientFailuresUseTwoBoundedDelaysThenDeliverTheActualSnapshot" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.026"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

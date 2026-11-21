@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:45:53" hostname="6d75d821cc71" time="0.503">
+  <properties/>
+  <testcase name="clearingAfterParentChangesTheQueryUsesTheLatestVisibleValue" classname="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" time="0.089"/>
+  <testcase name="paidStatusChangesBothWaysWithoutLeavingTheOldLabelOnScreen" classname="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" time="0.03"/>
+  <testcase name="animatedMoneyCounterSettlesOnNewPositiveNegativeAndZeroAmounts" classname="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" time="0.145"/>
+  <testcase name="finiteDoubleAmountsOutsideFloatRangeDoNotBecomeInfinity" classname="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" time="0.029"/>
+  <testcase name="searchEditsUseTheCurrentCallbackAndClearingRemovesTheQuery" classname="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" time="0.076"/>
+  <testcase name="emptySearchHasNoClearActionAndShowsTheProvidedHint" classname="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" time="0.054"/>
+  <testcase name="settledMoneyCounterPreservesCentsBeyondFloatPrecision" classname="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" time="0.037"/>
+  <testcase name="countFormattingChangesPrecisionAndCurrencyAffixesWithItsInputs" classname="com.trader.salesmanager.ui.coverage.SharedComponentTransitionsUiTest" time="0.038"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

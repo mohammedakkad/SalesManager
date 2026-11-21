@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:45:46" hostname="ac8333d6728a" time="1.331">
+  <properties/>
+  <testcase name="exportReadsTablesInsideOneDatabaseSnapshot" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.685"/>
+  <testcase name="encryptedExportImportRoundTripPreservesAmountsAndReturnState" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.564"/>
+  <testcase name="malformedFilesAreRejectedWithoutTouchingDatabase" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.031"/>
+  <testcase name="failedRestoreRollsBackExistingMerchantData" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.032"/>
+  <testcase name="legacyBackupRestoresReturnStateFromItsDurableLedger" classname="com.trader.salesmanager.ui.settings.backup.BackupIntegrityTest" time="0.019"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

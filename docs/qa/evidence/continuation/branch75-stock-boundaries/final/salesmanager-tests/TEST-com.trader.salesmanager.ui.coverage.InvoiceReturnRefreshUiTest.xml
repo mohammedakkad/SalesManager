@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.InvoiceReturnRefreshUiTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:16:52" hostname="ac8333d6728a" time="1.671">
+  <properties/>
+  <testcase name="partialThenFullReturnReplacesTheDisplayedQuantitiesRefundAndHeaderBadge" classname="com.trader.salesmanager.ui.coverage.InvoiceReturnRefreshUiTest" time="0.445"/>
+  <testcase name="changedPaymentDetailsReplaceTheOldNoteAndKeepAllFivePaymentTypesDistinct" classname="com.trader.salesmanager.ui.coverage.InvoiceReturnRefreshUiTest" time="0.314"/>
+  <testcase name="returnSummaryUsesUnitIdentityWhenTwoUnitsBelongToTheSameProduct" classname="com.trader.salesmanager.ui.coverage.InvoiceReturnRefreshUiTest" time="0.294"/>
+  <testcase name="exportControlsFollowDelayedItemReadinessAcrossThemeWithoutCreatingAFile" classname="com.trader.salesmanager.ui.coverage.InvoiceReturnRefreshUiTest" time="0.287"/>
+  <testcase name="realLoadedItemsExposeReturnNavigationDespiteALegacyFalseHasItemsFlag" classname="com.trader.salesmanager.ui.coverage.InvoiceReturnRefreshUiTest" time="0.331"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -45,6 +45,8 @@ class XlsxWriter {
     fun setColWidth(col: Int, width: Double) { colWidths[col] = width }
 
     fun write(file: File) {
+        // Register every shared string before serializing the shared-string table.
+        val sheet = sheetXml()
         ZipOutputStream(FileOutputStream(file)).use { zip ->
             zip.putNextEntry(ZipEntry("[Content_Types].xml")); zip.write(contentTypes().toByteArray(Charsets.UTF_8)); zip.closeEntry()
             zip.putNextEntry(ZipEntry("_rels/.rels"));         zip.write(rels().toByteArray(Charsets.UTF_8));        zip.closeEntry()
@@ -52,7 +54,7 @@ class XlsxWriter {
             zip.putNextEntry(ZipEntry("xl/_rels/workbook.xml.rels")); zip.write(workbookRels().toByteArray(Charsets.UTF_8)); zip.closeEntry()
             zip.putNextEntry(ZipEntry("xl/sharedStrings.xml")); zip.write(sharedStringsXml().toByteArray(Charsets.UTF_8)); zip.closeEntry()
             zip.putNextEntry(ZipEntry("xl/styles.xml"));       zip.write(stylesXml().toByteArray(Charsets.UTF_8));  zip.closeEntry()
-            zip.putNextEntry(ZipEntry("xl/worksheets/sheet1.xml")); zip.write(sheetXml().toByteArray(Charsets.UTF_8)); zip.closeEntry()
+            zip.putNextEntry(ZipEntry("xl/worksheets/sheet1.xml")); zip.write(sheet.toByteArray(Charsets.UTF_8)); zip.closeEntry()
         }
     }
 
@@ -107,7 +109,7 @@ class XlsxWriter {
 
     private fun sharedStringsXml(): String {
         val sb = StringBuilder("""<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="${sharedStrings.size}" uniqueCount="${sharedStrings.size}">""")
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="${rows.sumOf { row -> row.count { (value, _) -> value != null && value !is Number } }}" uniqueCount="${sharedStrings.size}">""")
         sharedStrings.forEach { s ->
             sb.append("<si><t xml:space=\"preserve\">${s.xmlEscape()}</t></si>")
         }
@@ -117,14 +119,14 @@ class XlsxWriter {
 
     private fun stylesXml(): String {
         // Build fills
-        val fills = StringBuilder("""<fills count="${styles.count { it.bgColor != null } + 2}">
+        val fills = StringBuilder("""<fills count="${styles.mapNotNull { it.bgColor }.distinct().size + 2}">
   <fill><patternFill patternType="none"/></fill>
   <fill><patternFill patternType="gray125"/></fill>""")
         val fillIdMap = mutableMapOf<String?, Int>()
         fillIdMap[null] = 0
         styles.forEach { style ->
             if (style.bgColor != null && !fillIdMap.containsKey(style.bgColor)) {
-                val id = fillIdMap.size
+                val id = fillIdMap.size + 1
                 fillIdMap[style.bgColor] = id
                 fills.append("""<fill><patternFill patternType="solid"><fgColor rgb="${style.bgColor}"/></patternFill></fill>""")
             }

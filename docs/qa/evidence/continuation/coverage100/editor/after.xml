@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.InvoiceEditorContractsTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T15:13:50" hostname="13302589aed6" time="5.717">
+  <properties/>
+  <testcase name="lateInvoiceLoadKeepsPreviewEqualToCommittedGrossAmount" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="5.22"/>
+  <testcase name="unrecognizedLegacyWeightUnitUsesExistingKilogramFallback" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.101"/>
+  <testcase name="arabicAmountCustomerPreselectionAndPaymentChangesReachSaleCommand" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.08"/>
+  <testcase name="repeatedLoadAndEditedLinesDoNotAccumulateBaseAmountOrReplaceOriginalItemId" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.085"/>
+  <testcase name="gramsRoundTripAndPersistAsKilogramsWithStableRetryIdentity" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.093"/>
+  <testcase name="delayedPaymentMethodsResolvePersistedSelectionAndUnchangedEditPreservesItems" classname="com.trader.salesmanager.sales.InvoiceEditorContractsTest" time="0.137"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,49 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   169  100   169    0     0    755      0 --:--:-- --:--:-- --:--:--   757
+
+  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:03 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:04 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:05 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:06 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:06 --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:06 --:--:--     0
+
+  2  129M    2 3208k    0     0   440k      0  0:05:01  0:00:07  0:04:54  440k
+ 19  129M   19 25.3M    0     0  3132k      0  0:00:42  0:00:08  0:00:34 22.2M
+ 38  129M   38 49.9M    0     0  5508k      0  0:00:24  0:00:09  0:00:15 23.4M
+ 55  129M   55 72.2M    0     0  7191k      0  0:00:18  0:00:10  0:00:08 23.0M
+ 79  129M   79  103M    0     0  9395k      0  0:00:14  0:00:11  0:00:03 25.1M
+ 97  129M   97  126M    0     0  10.3M      0  0:00:12  0:00:12 --:--:-- 24.7M
+100  129M  100  129M    0     0  10.4M      0  0:00:12  0:00:12 --:--:-- 25.3M
+/tmp/seller-qa-gradle.25OevN/gradle-8.9-bin.zip: OK
+
+Welcome to Gradle 8.9!
+
+Here are the highlights of this release:
+ - Enhanced Error and Warning Messages
+ - IDE Integration Improvements
+ - Daemon JVM Information
+
+For more details see https://docs.gradle.org/8.9/release-notes.html
+
+
+------------------------------------------------------------
+Gradle 8.9
+------------------------------------------------------------
+
+Build time:    2024-07-11 14:37:41 UTC
+Revision:      d536ef36a19186ccc596d8817123e5445f30fef8
+
+Kotlin:        1.9.23
+Groovy:        3.0.21
+Ant:           Apache Ant(TM) version 1.10.13 compiled on January 4 2023
+Launcher JVM:  17.0.17 (Eclipse Adoptium 17.0.17+10)
+Daemon JVM:    /workspace/.salesmanager-tools/jdk-17.0.17+10 (no JDK specified, using current Java home)
+OS:            Linux 6.18.57 amd64
+
+Verified Gradle bin: /tmp/seller-qa-gradle.25OevN/gradle-8.9/bin

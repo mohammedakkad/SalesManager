@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ReportCalendarUiTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:30:09" hostname="6d75d821cc71" time="0.187">
+  <properties/>
+  <testcase name="selectedDayDetailRoutesCorrectMidnightAndKeepsFullTransactionCount" classname="com.trader.salesmanager.ui.coverage.ReportCalendarUiTest" time="0.1"/>
+  <testcase name="calendarMonthArrowsAndDaySelectionUseViewModelActions" classname="com.trader.salesmanager.ui.coverage.ReportCalendarUiTest" time="0.087"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

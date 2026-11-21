@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-15T13:30:19" hostname="236b99701f27" time="3.296">
+  <properties/>
+  <testcase name="salesExportDelegatesToRealWorkbookAndPreservesItsPublicFileName" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.378"/>
+  <testcase name="exportClaimsLoadingSynchronouslyBeforeAnotherTapCanQueueWork" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.318"/>
+  <testcase name="resetDuringWriteCannotResurrectAStaleSuccess" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.338"/>
+  <testcase name="ioFailureRetainsCauseAndDismissAllowsSuccessfulRetry" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.364"/>
+  <testcase name="timedOutGeneratorRemainsCancellationAndAllowsNewExport" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.423"/>
+  <testcase name="invoiceAndMonthlyEntryPointsPreserveGeneratorFailureAndTheirPublicNames" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.378"/>
+  <testcase name="memoryFailureDuringCustomerStatementIsVisibleWithoutSuccessOrAFakePdf" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.355"/>
+  <testcase name="generatorCancellationRemainsCancellationRatherThanAnError" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.338"/>
+  <testcase name="rapidRepeatedRequestsProduceOneRealWorkbookAndTypedSuccess" classname="com.trader.salesmanager.util.export.ExportLifecycleContractsTest" time="0.4"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

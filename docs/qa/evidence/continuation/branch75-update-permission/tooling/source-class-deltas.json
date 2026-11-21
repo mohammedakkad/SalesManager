@@ -1,0 +1,48 @@
+{
+  "previousSource": "b241995f2fd26c085606a8bceea12507d2b87e3a",
+  "changed": [
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-1$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-10$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-11$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-2$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-3$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-4$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-5$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-6$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-7$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-8$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt$lambda-9$1.class",
+    "2/com/trader/salesmanager/ui/settings/ComposableSingletons$SettingsScreenKt.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$DarkModeSettingItem$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$LowStockAlertsSettingItem$1$1$2$2$1$2.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$LowStockAlertsSettingItem$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$MerchantCodeCard$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingItem$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$lambda$10$$inlined$map$1$2.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$lambda$13$$inlined$map$1$2.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$lambda$7$$inlined$map$1$2.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$StoreNameDialog$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$StoreNameDialog$2.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$StoreNameDialog$3.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$UpdateSettingItem$2.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt.class"
+  ],
+  "added": [
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$5$1$1$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$5$1$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$7$1$2$4$1$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$7$1$2$5$1$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$7.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$lambda$27$lambda$26$$inlined$onDispose$1.class"
+  ],
+  "removed": [
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$4$1$1$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$4$1$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$6$1$2$4$1$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$6$1$2$5$1$1.class",
+    "2/com/trader/salesmanager/ui/settings/SettingsScreenKt$SettingsScreen$6.class"
+  ],
+  "unchangedBoxesPackageClasses": 47,
+  "unchangedBoxesScreenNamedClasses": 36,
+  "scope": "Original production bytes after cold compile. Only SettingsScreenKt and its generated/inline classes change; runtime probe variation is separate.47 is the entire boxes package, including36 names containing BoxesScreen."
+}

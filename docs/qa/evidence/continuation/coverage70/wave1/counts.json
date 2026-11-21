@@ -1,0 +1,66 @@
+{
+  "app": {
+    "tests": 107,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 34885,
+        "missed": 36729
+      },
+      "BRANCH": {
+        "covered": 827,
+        "missed": 2190
+      },
+      "LINE": {
+        "covered": 5659,
+        "missed": 4608
+      },
+      "COMPLEXITY": {
+        "covered": 1517,
+        "missed": 2514
+      },
+      "METHOD": {
+        "covered": 1296,
+        "missed": 1220
+      },
+      "CLASS": {
+        "covered": 415,
+        "missed": 369
+      }
+    }
+  },
+  "salesmanager": {
+    "tests": 195,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 118759,
+        "missed": 74550
+      },
+      "BRANCH": {
+        "covered": 5441,
+        "missed": 8875
+      },
+      "LINE": {
+        "covered": 10781,
+        "missed": 7014
+      },
+      "COMPLEXITY": {
+        "covered": 2692,
+        "missed": 7697
+      },
+      "METHOD": {
+        "covered": 1798,
+        "missed": 1388
+      },
+      "CLASS": {
+        "covered": 814,
+        "missed": 463
+      }
+    }
+  }
+}

@@ -77,3 +77,6 @@ schemas/
 keystore_base64.txt
 keystore.properties
 .cursorrules
+
+# Private signing export: retain only in secure local/environment storage.
+/keystore_base64.txt

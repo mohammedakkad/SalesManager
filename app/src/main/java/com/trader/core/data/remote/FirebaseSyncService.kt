@@ -2,6 +2,7 @@ package com.trader.core.data.remote
 
 import androidx.work.await
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
@@ -13,8 +14,12 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.CancellationException
 import com.trader.core.domain.model.InvoiceItem
 import com.trader.core.domain.model.SubscriptionStatus
 import com.trader.core.domain.model.ReturnInvoice
@@ -40,10 +45,45 @@ class FirebaseSyncService {
         is Double -> this; is Long -> toDouble(); is Int -> toDouble(); is String -> toDoubleOrNull(); else -> null
     }
 
+    private class NonfiniteFinancialSnapshot : IllegalArgumentException("Nonfinite financial snapshot")
+
+    private fun Map<*, *>.requireFiniteFields(fields: Set<String>) {
+        for (field in fields) {
+            // Preserve absent optional fields and existing legacy coercions. A parsed
+            // NaN/Infinity must never enter a monetary or quantity replacement batch.
+            val number = this[field].asDouble()
+            if (number != null && !number.isFinite()) throw NonfiniteFinancialSnapshot()
+        }
+    }
+
+    private fun DataSnapshot.requireFiniteFinancials(fields: Set<String>, nestedReturns: Boolean = false): DataSnapshot {
+        for (child in children) {
+            val row = child.value as? Map<*, *> ?: continue
+            row.requireFiniteFields(fields)
+            if (nestedReturns) {
+                val items = when (val raw = row["items"]) {
+                    is Map<*, *> -> raw.values
+                    is List<*> -> raw
+                    else -> emptyList<Any>()
+                }
+                for (raw in items) (raw as? Map<*, *>)?.requireFiniteFields(RETURN_ITEM_FINANCIAL_FIELDS)
+            }
+        }
+        return this
+    }
+
+    /** Cached Tasks can complete without suspension, so check both sides of the read. */
+    private suspend fun DatabaseReference.snapshotWhileActive(): DataSnapshot {
+        currentCoroutineContext().ensureActive()
+        val snapshot = get().await()
+        currentCoroutineContext().ensureActive()
+        return snapshot
+    }
+
     suspend fun validateCodeDetailed(code: String): ValidationResult {
         return try {
             val snap = withTimeoutOrNull(8_000) {
-                db.reference.child(PATH_ACTIVATION_CODES).child(code).get().await()
+                db.reference.child(PATH_ACTIVATION_CODES).child(code).snapshotWhileActive()
             } ?: return ValidationResult.NetworkError
 
             if (!snap.exists()) return ValidationResult.NotFound
@@ -57,6 +97,8 @@ class FirebaseSyncService {
                 "EXPIRED" -> ValidationResult.Expired
                 else -> ValidationResult.NotFound
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             ValidationResult.NetworkError
         }
@@ -123,7 +165,7 @@ class FirebaseSyncService {
     suspend fun getCodeStatus(code: String): String? {
         return try {
             val snap = withTimeoutOrNull(8_000) {
-                db.reference.child(PATH_ACTIVATION_CODES).child(code).get().await()
+                db.reference.child(PATH_ACTIVATION_CODES).child(code).snapshotWhileActive()
             } ?: return null
 
             if (!snap.exists()) return "DELETED"
@@ -137,6 +179,8 @@ class FirebaseSyncService {
                 "EXPIRED" -> "EXPIRED"
                 else -> "DELETED"
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             null
         }
@@ -146,7 +190,7 @@ class FirebaseSyncService {
         val root = db.reference.child("merchants").child(merchantCode)
 
         val customers = try {
-            root.child("customers").get().await().children.mapNotNull { snap ->
+            root.child("customers").snapshotWhileActive().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 Customer(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
@@ -155,12 +199,14 @@ class FirebaseSyncService {
                     createdAt = m["createdAt"].asLong() ?: System.currentTimeMillis()
                 )
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
         val paymentMethods = try {
-            root.child("payment_methods").get().await().children.mapNotNull { snap ->
+            root.child("payment_methods").snapshotWhileActive().children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 PaymentMethod(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
@@ -170,12 +216,14 @@ class FirebaseSyncService {
                     }.getOrDefault(PaymentType.OTHER)
                 )
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (e: Exception) {
             emptyList()
         }
 
         val transactions = try {
-            root.child("transactions").get().await().children.mapNotNull { snap ->
+            root.child("transactions").snapshotWhileActive().requireFiniteFinancials(TRANSACTION_FINANCIAL_FIELDS).children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 AppTransaction(
                     id = m["id"].asLong() ?: snap.key?.toLongOrNull() ?: return@mapNotNull null,
@@ -186,6 +234,7 @@ class FirebaseSyncService {
                         TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE")
                     }.getOrDefault(TransactionReturnStatus.NONE),
                     isPaid = m["isPaid"] as? Boolean ?: false,
+                    paymentType = runCatching { PaymentType.valueOf(m["paymentType"] as? String ?: "DEBT") }.getOrDefault(PaymentType.DEBT),
                     paymentMethodId = m["paymentMethodId"].asLong(),
                     note = m["note"] as? String ?: "",
                     date = m["date"].asLong() ?: System.currentTimeMillis(),
@@ -195,12 +244,18 @@ class FirebaseSyncService {
                     reminderEnabled = m["reminderEnabled"] as? Boolean ?: true
                 )
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
         val invoiceItems = try {
-            root.child("invoice_items").get().await().children.mapNotNull { snap ->
+            root.child("invoice_items").snapshotWhileActive().requireFiniteFinancials(INVOICE_FINANCIAL_FIELDS).children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 InvoiceItem(
                     id = m["id"] as? String ?: return@mapNotNull null,
@@ -215,12 +270,18 @@ class FirebaseSyncService {
                     merchantId = merchantCode
                 )
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
         val returns = try {
-            root.child("return_invoices").get().await().children.mapNotNull { snap ->
+            root.child("return_invoices").snapshotWhileActive().requireFiniteFinancials(RETURN_FINANCIAL_FIELDS, nestedReturns = true).children.mapNotNull { snap ->
                 val m = snap.value as? Map<*, *> ?: return@mapNotNull null
                 val invoiceId = m["id"] as? String ?: snap.key ?: return@mapNotNull null
                 val originalTxId = m["originalTransactionId"].asLong() ?: m["transactionId"].asLong() ?: return@mapNotNull null
@@ -277,26 +338,45 @@ class FirebaseSyncService {
                 }
                 Pair(invoice, items)
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
         val cashBoxes = try {
-            root.child("cash_boxes").get().await().children.mapNotNull { snap ->
+            root.child("cash_boxes").snapshotWhileActive().requireFiniteFinancials(CASH_FINANCIAL_FIELDS).children.mapNotNull { snap ->
                 snap.toCashBox(merchantCode)
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
         val cashBoxMovements = try {
-            root.child("cash_box_movements").get().await().children.mapNotNull { snap ->
+            root.child("cash_box_movements").snapshotWhileActive().requireFiniteFinancials(CASH_MOVEMENT_FINANCIAL_FIELDS).children.mapNotNull { snap ->
                 snap.toCashBoxMovement(merchantCode)
             }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (invalid: NonfiniteFinancialSnapshot) {
+            // Reject the complete staged download; never turn rejected money into
+            // an empty family which a repository could interpret as deletion.
+            throw invalid
         } catch (e: Exception) {
             emptyList()
         }
 
+        currentCoroutineContext().ensureActive()
         return MerchantData(customers, transactions, paymentMethods, returns, invoiceItems, cashBoxes, cashBoxMovements)
     }
 
@@ -339,11 +419,19 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("cash_boxes")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(CASH_FINANCIAL_FIELDS)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 trySend(snap.children.mapNotNull { child ->
                     runCatching { child.toCashBox(merchantCode) }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -383,11 +471,19 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("cash_box_movements")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(CASH_MOVEMENT_FINANCIAL_FIELDS)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 trySend(snap.children.mapNotNull { child ->
                     runCatching { child.toCashBoxMovement(merchantCode) }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -435,7 +531,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -447,6 +545,12 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("transactions")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(TRANSACTION_FINANCIAL_FIELDS)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 trySend(snap.children.mapNotNull { child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
@@ -459,6 +563,7 @@ class FirebaseSyncService {
                                 TransactionReturnStatus.valueOf(m["returnStatus"] as? String ?: "NONE")
                             }.getOrDefault(TransactionReturnStatus.NONE),
                             isPaid = m["isPaid"] as? Boolean ?: false,
+                            paymentType = runCatching { PaymentType.valueOf(m["paymentType"] as? String ?: "DEBT") }.getOrDefault(PaymentType.DEBT),
                             paymentMethodId = m["paymentMethodId"].asLong(),
                             note = m["note"] as? String ?: "",
                             date = m["date"].asLong() ?: System.currentTimeMillis(),
@@ -470,7 +575,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -495,7 +602,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -507,6 +616,12 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("invoice_items")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(INVOICE_FINANCIAL_FIELDS)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 trySend(snap.children.mapNotNull { child ->
                     val m = child.value as? Map<*, *> ?: return@mapNotNull null
                     runCatching {
@@ -525,7 +640,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose {
@@ -537,10 +654,22 @@ class FirebaseSyncService {
         val ref = db.reference.child("merchants").child(merchantCode).child("return_invoices")
         val listener = object : ValueEventListener {
             override fun onDataChange(snap: DataSnapshot) {
+                try {
+                    snap.requireFiniteFinancials(RETURN_FINANCIAL_FIELDS, nestedReturns = true)
+                } catch (invalid: NonfiniteFinancialSnapshot) {
+                    close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                    return
+                }
                 launch {
                     val invoiceItemsSnap = runCatching {
                         db.reference.child("merchants").child(merchantCode).child("invoice_items").get().await()
                     }.getOrNull()
+                    try {
+                        invoiceItemsSnap?.requireFiniteFinancials(INVOICE_FINANCIAL_FIELDS)
+                    } catch (invalid: NonfiniteFinancialSnapshot) {
+                        close(SellerRealtimeException(DatabaseError.OPERATION_FAILED, invalid))
+                        return@launch
+                    }
 
                     val invoiceItems = invoiceItemsSnap?.children?.mapNotNull { itemSnap ->
                         val m = itemSnap.value as? Map<*, *> ?: return@mapNotNull null
@@ -610,7 +739,9 @@ class FirebaseSyncService {
                     trySend(returns)
                 }
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
@@ -633,7 +764,7 @@ class FirebaseSyncService {
                 mapOf(
                     "id" to t.id, "customerId" to t.customerId, "amount" to t.amount,
                     "originalAmount" to t.originalAmount, "returnStatus" to t.returnStatus.name,
-                    "isPaid" to t.isPaid, "paymentMethodId" to t.paymentMethodId,
+                    "isPaid" to t.isPaid, "paymentType" to t.paymentType.name, "paymentMethodId" to t.paymentMethodId,
                     "note" to t.note, "date" to t.date, "paidAt" to t.paidAt,
                     "hasItems" to t.hasItems,
                     "dueDate" to t.dueDate,
@@ -643,7 +774,7 @@ class FirebaseSyncService {
     }
 
     suspend fun pushReturnInvoice(merchantCode: String, returnInvoice: ReturnInvoice, items: List<ReturnItem>) {
-        withTimeoutOrNull(8_000) {
+        withTimeout(8_000) {
             val ref = db.reference.child("merchants").child(merchantCode).child("return_invoices").child(returnInvoice.id)
             ref.setValue(mapOf(
                 "id" to returnInvoice.id,
@@ -664,7 +795,8 @@ class FirebaseSyncService {
                         "returnedQty" to it.returnedQuantity,
                         "pricePerUnit" to it.pricePerUnit,
                         "costPricePerUnit" to it.costPricePerUnit,
-                        "totalRefund" to it.totalRefund
+                        "totalRefund" to it.totalRefund,
+                        "lostProfit" to it.lostProfit
                     )
                 }
             )).await()
@@ -741,7 +873,9 @@ class FirebaseSyncService {
                     }.getOrNull()
                 })
             }
-            override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {
+                close(SellerRealtimeException(error.code, error.toException()))
+            }
         }
         ref.addValueEventListener(listener)
         awaitClose { ref.removeEventListener(listener) }
@@ -771,6 +905,13 @@ class FirebaseSyncService {
     }
 
     companion object {
+        private val TRANSACTION_FINANCIAL_FIELDS = setOf("amount", "originalAmount")
+        private val INVOICE_FINANCIAL_FIELDS = setOf("quantity", "pricePerUnit", "totalPrice")
+        private val RETURN_FINANCIAL_FIELDS = setOf("totalRefund")
+        private val RETURN_ITEM_FINANCIAL_FIELDS = setOf("originalQuantity", "returnedQty", "returnedQuantity", "pricePerUnit", "costPricePerUnit", "lostProfit", "totalRefund")
+        private val CASH_FINANCIAL_FIELDS = setOf("currentBalance", "initialBalance")
+        private val CASH_MOVEMENT_FINANCIAL_FIELDS = setOf("amountDelta", "balanceAfter")
+
         private const val PATH_SUBSCRIPTION_REQUESTS = "subscription_requests"
         private const val PATH_ACTIVATION_CODES = "activation_codes"
         private const val KEY_STATUS = "status"

@@ -1,0 +1,186 @@
+{
+  "startingSha": "5b2016ca3503abe87136621f4b6b19191096a1e7",
+  "scope": "Clean local JVM counters; actual device/PDFBox and additional EC counters in separately identified hosted evidence. No production exclusions or threshold changes.",
+  "modules": {
+    "app": {
+      "BRANCH": {
+        "covered": 1615,
+        "missed": 1496,
+        "total": 3111,
+        "percent": 51.91256830601093,
+        "additionalCoveredFor95": 1341
+      },
+      "LINE": {
+        "covered": 8134,
+        "missed": 2173,
+        "total": 10307,
+        "percent": 78.91724071019695,
+        "additionalCoveredFor95": 1658
+      },
+      "METHOD": {
+        "covered": 1818,
+        "missed": 697,
+        "total": 2515,
+        "percent": 72.28628230616302,
+        "additionalCoveredFor95": 572
+      }
+    },
+    "salesmanager": {
+      "BRANCH": {
+        "covered": 7148,
+        "missed": 7536,
+        "total": 14684,
+        "percent": 48.67883410514846,
+        "additionalCoveredFor95": 6802
+      },
+      "LINE": {
+        "covered": 13921,
+        "missed": 3977,
+        "total": 17898,
+        "percent": 77.7796401832607,
+        "additionalCoveredFor95": 3083
+      },
+      "METHOD": {
+        "covered": 2391,
+        "missed": 809,
+        "total": 3200,
+        "percent": 74.71875,
+        "additionalCoveredFor95": 649
+      }
+    }
+  },
+  "weighted": {
+    "BRANCH": {
+      "covered": 8763,
+      "missed": 9032,
+      "total": 17795,
+      "percent": 49.244169710592864,
+      "additionalCoveredFor95": 8143
+    },
+    "LINE": {
+      "covered": 22055,
+      "missed": 6150,
+      "total": 28205,
+      "percent": 78.19535543343379,
+      "additionalCoveredFor95": 4740
+    },
+    "METHOD": {
+      "covered": 4209,
+      "missed": 1506,
+      "total": 5715,
+      "percent": 73.64829396325459,
+      "additionalCoveredFor95": 1221
+    }
+  },
+  "jvm": {
+    "app": {
+      "tests": 208,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "salesmanager": {
+      "tests": 393,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "artifacts": {
+    "debug/salesmanager-debug.apk": {
+      "bytes": 51009702,
+      "sha256": "eb16ccc97a5ed824ed6e533fcf40da4f658ebffff2dd88bc23b0d6805261be7c"
+    },
+    "androidTest/debug/salesmanager-debug-androidTest.apk": {
+      "bytes": 1060461,
+      "sha256": "bfa2754c0c6bc1c92f3ab4402ea8b59992882eaedd2a3bdd89fc7c8d7b1f87fc"
+    },
+    "release/salesmanager-release-unsigned.apk": {
+      "bytes": 26702050,
+      "sha256": "bdf7efd515cf668e4943bf76984bfd3f1714a37e9965e627efd0eecc0d16d103"
+    }
+  },
+  "targetLinePercent": 95,
+  "releaseReadiness": "FAIL",
+  "newJvmCases": 87,
+  "retainedStartingCases": 514,
+  "totalJvmCases": 601,
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 24
+  },
+  "qualifiedSource": "fda922fb865dabf5633115268d3b4e72ccbb8e4f",
+  "hostedRunUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42863854908",
+  "hostedStatus": "SUCCESS: seller and compose API24/28/33/35",
+  "fullBuild": "PASS: current source full aggregate5m36s; clean601JVM2m34s; clean Lint/Debug/AndroidTest/R8 unsigned Release packaging4m44s.",
+  "measurement": "Clean Seller production and test compilation: 601 JVM PASS in2m34s; no source/exclusion/gate change. Branch denominator now matches hosted report; incremental counts preserved separately.",
+  "hostedEvidence": "../hosted/run-42863854908.json",
+  "hostedCheckoutScope": "Public PR run displays abbreviated source SHA; native Git resolves full branch source. Raw authenticated checkout/artifacts were not independently downloaded.",
+  "hostedAdditionalApi28": {
+    "branches": {
+      "app": {
+        "covered": 1615,
+        "missed": 1496
+      },
+      "salesmanager": {
+        "covered": 7313,
+        "missed": 7371
+      },
+      "weighted overall": {
+        "covered": 8928,
+        "missed": 8867
+      }
+    },
+    "lines": {
+      "app": {
+        "covered": 8151,
+        "missed": 2156,
+        "total": 10307,
+        "percent": 79.08217716115261
+      },
+      "salesmanager": {
+        "covered": 14927,
+        "missed": 2971,
+        "total": 17898,
+        "percent": 83.40037993071851
+      },
+      "weighted overall": {
+        "covered": 23078,
+        "missed": 5127,
+        "total": 28205,
+        "percent": 81.82237191987237
+      }
+    },
+    "methods": {
+      "app": {
+        "covered": 1836,
+        "missed": 679
+      },
+      "salesmanager": {
+        "covered": 2461,
+        "missed": 739
+      },
+      "weighted overall": {
+        "covered": 4297,
+        "missed": 1418
+      }
+    },
+    "nativePdfLines": {
+      "InvoicePdfGenerator.kt": {
+        "covered": 489,
+        "missed": 48
+      },
+      "PdfCanvas.kt": {
+        "covered": 68,
+        "missed": 2
+      },
+      "ReportPdfGenerator.kt": {
+        "covered": 438,
+        "missed": 19
+      }
+    }
+  },
+  "distinctPassingCasesAcrossSuites": 625,
+  "preservedLocalApks": "/workspace/.salesmanager-tools/artifacts/coverage95"
+}

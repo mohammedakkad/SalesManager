@@ -1,0 +1,8 @@
+{
+  "startingSha": "a5c402f564669129aacdc745210c4f6a3075352d",
+  "productionFileSha256": "65fc26d928064424e093b6ff02792fc598c670fe6e123d7cf022fc59c46a1c4e",
+  "tests": 5,
+  "passed": 3,
+  "failed": 2,
+  "scope": "Pending/atomic/finite fixes already present; the unchanged standalone upload catches are under test. Public constructor accepts the coroutine owner; tests join the actual launched job and use real Room. No private member, generated flag or fake production trace setting is invoked."
+}

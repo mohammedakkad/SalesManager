@@ -1,0 +1,56 @@
+{
+  "startingSha": "cb8cea94548cfefa4446ce351c0347b6047f2e61",
+  "failingBeforeIdentities": [
+    {
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupExportCancellationRoomTest",
+      "name": "cancelledSessionLookupPropagatesAndReleasesSnapshotTransaction",
+      "beforeXml": "docs/qa/evidence/continuation/branch75-backup/before/TEST-com.trader.salesmanager.ui.settings.backup.BackupExportCancellationRoomTest.xml",
+      "result": "failure"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest",
+      "name": "queuedRestoreConfirmationsReserveOneAttemptBeforeDispatch",
+      "beforeXml": "docs/qa/evidence/continuation/branch75-backup/before/TEST-com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest.xml",
+      "result": "failure"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest",
+      "name": "queuedExportConfirmationsReserveOneAttemptBeforeDispatch",
+      "beforeXml": "docs/qa/evidence/continuation/branch75-backup/before/TEST-com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest.xml",
+      "result": "failure"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest",
+      "name": "restoreCancellationKeepsPreparedPayloadWithoutFalseFailure",
+      "beforeXml": "docs/qa/evidence/continuation/branch75-backup/before/TEST-com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest.xml",
+      "result": "failure"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest",
+      "name": "plainImportCancellationDoesNotOfferRestoreOrPublishFailure",
+      "beforeXml": "docs/qa/evidence/continuation/branch75-backup/before/TEST-com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest.xml",
+      "result": "failure"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest",
+      "name": "exportCancellationCancelsAttemptClearsPasswordAndDoesNotPublishFailure",
+      "beforeXml": "docs/qa/evidence/continuation/branch75-backup/before/TEST-com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest.xml",
+      "result": "failure"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest",
+      "name": "encryptedImportCancellationClearsPasswordWithoutFalseFailure",
+      "beforeXml": "docs/qa/evidence/continuation/branch75-backup/before/TEST-com.trader.salesmanager.ui.qualification.BackupCancellationBoundaryTest.xml",
+      "result": "failure"
+    }
+  ],
+  "count": 7,
+  "scope": "Regression case identities, not independent defect count. Initial same-exception-object fixture assertion excluded.",
+  "targetedAfter": {
+    "passed": 42,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "allFailingBeforeIdentitiesPassAfter": true
+}

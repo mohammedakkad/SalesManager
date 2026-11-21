@@ -52,6 +52,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import com.trader.salesmanager.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.trader.salesmanager.ui.theme.Cyan500
@@ -127,16 +129,21 @@ fun AnimatedCounter(
     prefix: String = "",
     suffix: String = ""
 ) {
+    val floatTarget = value.toFloat()
+    val canAnimate = floatTarget.isFinite()
     val animatedValue by animateFloatAsState(
-        targetValue = value.toFloat(),
+        targetValue = if (canAnimate) floatTarget else 0f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
         ),
         label = "counter"
     )
+    // Spring vectors use Float; the settled monetary label must keep the original Double.
+    // Values outside Float range are displayed directly instead of animating to infinity.
+    val displayedValue = if (!canAnimate || animatedValue == floatTarget) value else animatedValue.toDouble()
     Text(
-        text = prefix + String.format(Locale.US, "%,.${decimals}f", animatedValue) + suffix,
+        text = prefix + String.format(Locale.US, "%,.${decimals}f", displayedValue) + suffix,
         style = style,
         fontWeight = FontWeight.Bold,
         color = color,
@@ -205,7 +212,7 @@ fun ModernSearchBar(
                 exit = scaleOut() + fadeOut()
             ) {
                 IconButton(onClick = { onQueryChange("") }) {
-                    Icon(Icons.Rounded.Close, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.search_clear), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         },

@@ -1,0 +1,18 @@
+[
+  {
+    "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+    "bytes": 66044823,
+    "sha256": "925df0876c678922e14f29ff8d027dee207c63b554aaaf1b069008679f7f650a",
+    "coverageRuntimePrefixes": [
+      "org/jacoco/agent/rt/internal_29a6edd"
+    ],
+    "scope": "Canonical source, actual coverage-enabled APK assembly; no device runtime"
+  },
+  {
+    "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+    "bytes": 1062545,
+    "sha256": "7fc1b554f5bd944d8c0a4777c78055064704cfcb78d56c75fabc80bebf26b07d",
+    "coverageRuntimePrefixes": [],
+    "scope": "Canonical source, actual coverage-enabled APK assembly; no device runtime"
+  }
+]

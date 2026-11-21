@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.LowStockWorkerBehaviorTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:25:51" hostname="ac8333d6728a" time="0.393">
+  <properties/>
+  <testcase name="unavailableSettingsOrInventoryRequestsRetryWithoutAcknowledgment" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerBehaviorTest" time="0.348"/>
+  <testcase name="disabledSettingsDoNotQueryOrAcknowledgeCandidates" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerBehaviorTest" time="0.019"/>
+  <testcase name="notificationCountsDistinctProductsAndOnlyThenMarksCandidates" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerBehaviorTest" time="0.025"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

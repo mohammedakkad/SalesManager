@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-15T07:58:21" hostname="236b99701f27" time="2.359">
+  <properties/>
+  <testcase name="blankExplanationDoesNotInventAColonOrASecondCashEffect" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.41"/>
+  <testcase name="cancelledAdjustmentRetainsTheDraftAndAllowsAnotherAttempt" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.196"/>
+  <testcase name="transferReasonSendsAnAbsoluteBalanceAndTrimmedExplanation" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.219"/>
+  <testcase name="anEmptyBoxCollectionShowsAnEmptyStateAndNoAdjustmentActions" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.069"/>
+  <testcase name="duplicateAdjustmentCannotQueueASecondRepositoryCommand" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.084"/>
+  <testcase name="adjustmentFailureRetainsTheAmountNoteAndReasonForRetry" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.271"/>
+  <testcase name="accessibleBackActionNavigatesExactlyOnce" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.087"/>
+  <testcase name="invalidInitialAmountRemainsEditableInsteadOfDiscardingTheDialog" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.229"/>
+  <testcase name="pendingInitialSaveKeepsTheDialogAndBlocksSaveAndDismissUntilAcknowledged" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.23"/>
+  <testcase name="cancellingAnEditedDraftDoesNotCallTheRepository" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.259"/>
+  <testcase name="ledgerRetainsSignedAmountsKindsNotesAndRelativeTimeBuckets" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.128"/>
+  <testcase name="initialFailureKeepsArabicAmountAndCanBeRetriedExplicitly" classname="com.trader.salesmanager.ui.coverage.CashBoxCommandJourneysUiTest" time="0.171"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

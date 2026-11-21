@@ -45,6 +45,15 @@ interface CustomerDao {
         if (inserted == -1L) updateCustomer(customer)
     }
 
+    /** A remote echo must not discard a local edit awaiting synchronization. */
+    @Transaction
+    suspend fun mergeSyncedCustomer(customer: CustomerEntity) {
+        val existing = getCustomerById(customer.id)
+        if (existing == null || existing.syncStatus == "SYNCED") {
+            upsertCustomer(customer.copy(syncStatus = "SYNCED"))
+        }
+    }
+
     @Delete
     suspend fun deleteCustomer(customer: CustomerEntity)
 

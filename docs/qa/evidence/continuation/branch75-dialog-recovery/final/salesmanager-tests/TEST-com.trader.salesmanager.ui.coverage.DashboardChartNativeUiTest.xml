@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:44:51" hostname="6d75d821cc71" time="7.544">
+  <properties/>
+  <testcase name="changingThemeRetainsTheSeriesAndItsVisibleCurve" classname="com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest" time="5.981"/>
+  <testcase name="clearingAnAlreadyDrawnSeriesRemovesItsAccessibleAmounts" classname="com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest" time="0.289"/>
+  <testcase name="sevenDayChartExposesEveryActualDayAndAmountAndDrawsItsCurve" classname="com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest" time="0.539"/>
+  <testcase name="replacingHistoryUpdatesAccessibleValuesAndRemovesStaleDates" classname="com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest" time="0.456"/>
+  <testcase name="noHistoryIsDescribedWithoutInventingASale" classname="com.trader.salesmanager.ui.coverage.DashboardChartNativeUiTest" time="0.278"/>
+  <system-out><![CDATA[NATIVE_CHART_EVIDENCE file=build/reports/qa-native-transitions/changingThemeRetainsTheSeriesAndItsVisibleCurve-0.png sha256=840fa54c65c063f487bb00d3ec824580fba3706d74e75e189602ce1f8aabd440 greenPixels=815 hasValley=false description=المبيعات خلال 7 أيام: السبت: 100.00; الأحد: 200.00; الاثنين: 50.00
+NATIVE_CHART_EVIDENCE file=build/reports/qa-native-transitions/changingThemeRetainsTheSeriesAndItsVisibleCurve-1.png sha256=80149cfa1c0a4c82bfb8dd54cbd8ec1622ecf322055477d5a507b09a01835778 greenPixels=845 hasValley=false description=المبيعات خلال 7 أيام: السبت: 100.00; الأحد: 200.00; الاثنين: 50.00
+NATIVE_CHART_EVIDENCE file=build/reports/qa-native-transitions/sevenDayChartExposesEveryActualDayAndAmountAndDrawsItsCurve-0.png sha256=1dfdea0feb849cd718d28673243b7a5c9922a1f45f4c2674415f279fb7679663 greenPixels=1465 hasValley=false description=المبيعات خلال 7 أيام: السبت: 0.00; الأحد: 900.00; الاثنين: 1100.00; الثلاثاء: 1000000.00; الأربعاء: 1300.00; الخميس: 1400.00; الجمعة: 1100000.00
+NATIVE_CHART_EVIDENCE file=build/reports/qa-native-transitions/replacingHistoryUpdatesAccessibleValuesAndRemovesStaleDates-0.png sha256=169943f4eeb8f00d2bc29f4c23af8cebe584c72e29e744853d46e6446c427acf greenPixels=894 hasValley=true description=المبيعات خلال 7 أيام: السبت: 75.25; الأحد: 0.00; الاثنين: 125.50
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

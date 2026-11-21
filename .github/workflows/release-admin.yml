@@ -7,6 +7,8 @@ on:
 
 jobs:
   build:
+    # This audit branch must use offline, unsigned Seller QA only.
+    if: github.ref != 'refs/heads/codex/seller-full-coverage-audit'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -43,7 +43,7 @@ interface CashBoxDao {
     @Query("UPDATE cash_boxes SET currentBalance = currentBalance + :delta, updatedAt = :updatedAt, syncStatus = 'PENDING' WHERE id = :id")
     suspend fun applyDelta(id: String, delta: Double, updatedAt: Long)
 
-    @Query("SELECT * FROM cash_boxes WHERE syncStatus = 'PENDING'")
+    @Query("SELECT * FROM cash_boxes WHERE syncStatus IN ('PENDING', 'FAILED')")
     suspend fun getPending(): List<CashBoxEntity>
 
     @Query("UPDATE cash_boxes SET syncStatus = 'SYNCED' WHERE id = :id")

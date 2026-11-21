@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.customers.addedit.CustomerFormTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:31:21" hostname="ac8333d6728a" time="0.046">
+  <properties/>
+  <testcase name="conflictingPhoneBlocksSave" classname="com.trader.salesmanager.ui.customers.addedit.CustomerFormTest" time="0.017"/>
+  <testcase name="editUpdatesExistingCustomerRatherThanInserting" classname="com.trader.salesmanager.ui.customers.addedit.CustomerFormTest" time="0.009"/>
+  <testcase name="rapidDoubleSaveCannotCreateDuplicateCustomer" classname="com.trader.salesmanager.ui.customers.addedit.CustomerFormTest" time="0.008"/>
+  <testcase name="shortAndReservedNamesNeverPersist" classname="com.trader.salesmanager.ui.customers.addedit.CustomerFormTest" time="0.005"/>
+  <testcase name="creationTrimsNameAndPreservesArabic" classname="com.trader.salesmanager.ui.customers.addedit.CustomerFormTest" time="0.005"/>
+  <testcase name="phoneInputKeepsOnlyTenDigits" classname="com.trader.salesmanager.ui.customers.addedit.CustomerFormTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.SellerReadModelsTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:19:03" hostname="6d75d821cc71" time="1.145">
+  <properties/>
+  <testcase name="merchantWatcherUnsubscribesWhenInactiveAndEmitsExactBlockedReason" classname="com.trader.salesmanager.ui.qualification.SellerReadModelsTest" time="0.564"/>
+  <testcase name="inactiveHomeDoesNotSubscribeToAnotherMerchantsChat" classname="com.trader.salesmanager.ui.qualification.SellerReadModelsTest" time="0.171"/>
+  <testcase name="syncModelMirrorsErrorsAndRetryDelegatesToCoordinator" classname="com.trader.salesmanager.ui.qualification.SellerReadModelsTest" time="0.311"/>
+  <testcase name="homeProjectsLiveAnalyticsRecentSalesAndMerchantUnreadCount" classname="com.trader.salesmanager.ui.qualification.SellerReadModelsTest" time="0.015"/>
+  <testcase name="paymentMethodsIgnoreBlankInputAndKeepSelectedIdentityForDelete" classname="com.trader.salesmanager.ui.qualification.SellerReadModelsTest" time="0.021"/>
+  <testcase name="customerSearchDebouncesAndDeleteRequiresCurrentConfirmation" classname="com.trader.salesmanager.ui.qualification.SellerReadModelsTest" time="0.051"/>
+  <testcase name="stockReportSeparatesPaidCashUnpaidDebtAndActualUnitValue" classname="com.trader.salesmanager.ui.qualification.SellerReadModelsTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

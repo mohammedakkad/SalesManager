@@ -1,0 +1,56 @@
+{
+  "startingJvmCases": 948,
+  "finalJvmCases": 956,
+  "newJvmCases": 8,
+  "preservedStartingCases": 948,
+  "newCases": [
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest",
+      "name": "merchantCopyUsesTheCurrentPreferenceAndDisablesAfterAccountCodeIsCleared",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest",
+      "name": "liveSessionReorderingRevokesTheNewVisibleDeviceIdentity",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest",
+      "name": "settingsThemeSwitchPersistsTheChoiceWithoutChangingStoreOrMerchant",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest",
+      "name": "paymentMethodReplacementDeletesTheCurrentRowAndDoesNotAddARecord",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest",
+      "name": "blockedAccountRetryAppearsOnlyWhenPermittedAndNeverRunsFromThemeChange",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest",
+      "name": "confirmedActivationDoesNotNavigateAgainOnThemeOrUnrelatedStateChange",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest",
+      "name": "sessionRevocationRemainsBusyAcrossThemeAndRequiresExplicitRetryAfterFailure",
+      "result": "passed"
+    },
+    {
+      "module": "salesmanager",
+      "class": "com.trader.salesmanager.ui.coverage.ThemedAccountsUiTest",
+      "name": "pendingActivationKeepsCodeAndSubmitDisabledUntilAnExplicitFailureRetry",
+      "result": "passed"
+    }
+  ]
+}

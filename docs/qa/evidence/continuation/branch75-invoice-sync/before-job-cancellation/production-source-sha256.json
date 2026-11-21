@@ -1,0 +1,5 @@
+{
+  "path": "app/src/main/java/com/trader/core/data/repository/InvoiceItemRepositoryImpl.kt",
+  "sha256": "19c501889f7f9b6ccba7ec274b2cf170c3273c26a80505b819e565b733bf5442",
+  "note": "Intermediate source: first five regressions repaired; current-job cancellation not yet repaired."
+}

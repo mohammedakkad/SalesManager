@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.worker.StatusCheckWorkerBoundaryTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:02:21" hostname="ac8333d6728a" time="7.734">
+  <properties/>
+  <testcase name="staleExpiredResponseAfterLogoutCannotPostAFalseAccountNotification" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="0.472"/>
+  <testcase name="inactiveOrMissingCodeSkipsTheRemoteRead" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="0.424"/>
+  <testcase name="deletedAccountNotifiesOnLegacyAndroidWithoutAChannel" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="3.691"/>
+  <testcase name="cancelledStatusReadPropagatesWithoutInvalidatingTheSession" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="0.54"/>
+  <testcase name="activeAndUnrecognizedStatusesLeaveTheSessionAndNotificationsAlone" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="0.5"/>
+  <testcase name="staleDisabledResponseCannotClearTheNewMerchantOrNotify" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="0.496"/>
+  <testcase name="disabledAccountClearsOnlyActivationAndPostsItsSpecificReason" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="0.592"/>
+  <testcase name="unavailableStatusRetriesWithoutChangingSessionOrNotifying" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="0.507"/>
+  <testcase name="expiredAccountUsesRenewalMessage" classname="com.trader.core.worker.StatusCheckWorkerBoundaryTest" time="0.511"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

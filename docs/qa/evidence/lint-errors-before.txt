@@ -1,0 +1,8 @@
+SuspiciousIndentation: Suspicious indentation: This is conditionally executed; expected it to be indented (salesmanager/src/main/java/com/trader/salesmanager/ui/customers/details/CustomerDetailsScreen.kt:486,salesmanager/src/main/java/com/trader/salesmanager/ui/customers/details/CustomerDetailsScreen.kt:485)
+UnsafeOptInUsageError: This declaration is opt-in and its usage should be marked with `@androidx.camera.core.ExperimentalGetImage` or `@OptIn(markerClass = androidx.camera.core.ExperimentalGetImage.class)` (salesmanager/src/main/java/com/trader/salesmanager/ui/scanner/BarcodeScannerScreen.kt:138)
+FlowOperatorInvokedInComposition: Flow operator functions should not be invoked within composition (salesmanager/src/main/java/com/trader/salesmanager/ui/customers/details/CustomerDetailsScreen.kt:108)
+FlowOperatorInvokedInComposition: Flow operator functions should not be invoked within composition (salesmanager/src/main/java/com/trader/salesmanager/ui/inventory/list/InventoryListScreen.kt:139)
+FlowOperatorInvokedInComposition: Flow operator functions should not be invoked within composition (salesmanager/src/main/java/com/trader/salesmanager/ui/settings/SettingsScreen.kt:120)
+FlowOperatorInvokedInComposition: Flow operator functions should not be invoked within composition (salesmanager/src/main/java/com/trader/salesmanager/ui/settings/SettingsScreen.kt:123)
+FlowOperatorInvokedInComposition: Flow operator functions should not be invoked within composition (salesmanager/src/main/java/com/trader/salesmanager/ui/settings/SettingsScreen.kt:126)
+FlowOperatorInvokedInComposition: Flow operator functions should not be invoked within composition (salesmanager/src/main/java/com/trader/salesmanager/ui/theme/Theme.kt:167)

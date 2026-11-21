@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.OutboxRecoveryQueriesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:27:33" hostname="6d75d821cc71" time="0.425">
+  <properties/>
+  <testcase name="latestReceiptPagesExcludeSupersededRevisionsAndOtherMerchants" classname="com.trader.core.data.local.OutboxRecoveryQueriesTest" time="0.052"/>
+  <testcase name="claimAtExpiryBoundaryRejectsTheOldAcknowledgmentAndIncrementsRetryExactlyOnce" classname="com.trader.core.data.local.OutboxRecoveryQueriesTest" time="0.078"/>
+  <testcase name="malformedProcessingLeaseCannotBeReclaimedWithoutAnExplicitRecoveryPolicy" classname="com.trader.core.data.local.OutboxRecoveryQueriesTest" time="0.063"/>
+  <testcase name="fullyPopulatedFailureAndAcknowledgmentMetadataSurviveRestart" classname="com.trader.core.data.local.OutboxRecoveryQueriesTest" time="0.065"/>
+  <testcase name="observersExposeCommittedQueueAndDeletionWithoutLosingTheDurableTombstone" classname="com.trader.core.data.local.OutboxRecoveryQueriesTest" time="0.095"/>
+  <testcase name="rollbackOfClaimPreservesOriginalOwnerAndAllowsRecoveryAfterRestart" classname="com.trader.core.data.local.OutboxRecoveryQueriesTest" time="0.07"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

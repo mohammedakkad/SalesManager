@@ -1,0 +1,16 @@
+{
+  "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42624578824",
+  "state": {
+    "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+    "conclusion": "WORKFLOW_RUN_CONCLUSION_SUCCESS"
+  },
+  "headVisible": true,
+  "seller": [
+    "completed successfully: "
+  ],
+  "compose": [
+    "completed successfully: "
+  ],
+  "auditedSource": "c4c1e6565da41e07ff9f65437c62bcd7c3a9c787",
+  "scope": "Public workflow/job conclusion metadata; raw XML/PDF artifacts not independently downloaded."
+}

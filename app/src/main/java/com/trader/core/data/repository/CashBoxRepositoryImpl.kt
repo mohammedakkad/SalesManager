@@ -1,5 +1,6 @@
 package com.trader.core.data.repository
 
+import androidx.room.withTransaction
 import com.trader.core.data.local.dao.CashBoxDao
 import com.trader.core.data.local.dao.CashBoxMovementDao
 import com.trader.core.data.local.dao.PaymentMethodDao
@@ -7,6 +8,7 @@ import com.trader.core.data.local.db.AppDatabase
 import com.trader.core.data.local.db.recordCashBoxBalanceChange
 import com.trader.core.data.local.entity.CashBoxEntity
 import com.trader.core.data.local.entity.CashBoxMovementEntity
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.AdjustmentReason
 import com.trader.core.domain.model.CashBox
@@ -27,10 +29,10 @@ class CashBoxRepositoryImpl(
     private val movementDao: CashBoxMovementDao,
     private val paymentMethodDao: PaymentMethodDao,
     private val sync: FirebaseSyncService,
-    private val activationRepo: ActivationRepository
+    private val activationRepo: ActivationRepository,
+    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) : CashBoxRepository {
 
-    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val boxMutex = Mutex()
 
     init {
@@ -43,35 +45,40 @@ class CashBoxRepositoryImpl(
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
-                .filter { it.isNotEmpty() }
                 .distinctUntilChanged()
                 .collectLatest { merchantCode ->
-                    launch {
-                        sync.observeCashBoxes(merchantCode).collect { list ->
-                            list.forEach { remote ->
-                                boxMutex.withLock {
-                                    val local = dao.getById(remote.id)
-                                    if (local == null || local.syncStatus == SyncStatus.SYNCED.name) {
-                                        dao.upsert(
-                                            CashBoxEntity.fromDomain(
-                                                remote.copy(merchantId = merchantCode, syncStatus = SyncStatus.SYNCED)
+                    if (merchantCode.isBlank()) return@collectLatest
+                    coroutineScope {
+                        launch {
+                            sync.observeCashBoxes(merchantCode).recoverSellerRealtime().collect { list ->
+                                list.forEach { remote ->
+                                    boxMutex.withLock {
+                                      database.withTransaction {
+                                        if (database.saleOutboxDao().hasOutstandingFor(merchantCode)) return@withTransaction
+                                        val local = dao.getById(remote.id)
+                                        if (local == null || local.syncStatus == SyncStatus.SYNCED.name) {
+                                            dao.upsert(
+                                                CashBoxEntity.fromDomain(
+                                                    remote.copy(merchantId = merchantCode, syncStatus = SyncStatus.SYNCED)
+                                                )
                                             )
-                                        )
+                                        }
+                                      }
                                     }
                                 }
                             }
                         }
-                    }
-                    launch {
-                        sync.observeCashBoxMovements(merchantCode).collect { list ->
-                            list.forEach { remote ->
-                                val local = movementDao.getById(remote.id)
-                                if (local == null || local.syncStatus == SyncStatus.SYNCED.name) {
-                                    movementDao.insert(
-                                        CashBoxMovementEntity.fromDomain(
-                                            remote.copy(merchantId = merchantCode, syncStatus = SyncStatus.SYNCED)
+                        launch {
+                            sync.observeCashBoxMovements(merchantCode).recoverSellerRealtime().collect { list ->
+                                list.forEach { remote ->
+                                    val local = movementDao.getById(remote.id)
+                                    if (local == null || local.syncStatus == SyncStatus.SYNCED.name) {
+                                        movementDao.insert(
+                                            CashBoxMovementEntity.fromDomain(
+                                                remote.copy(merchantId = merchantCode, syncStatus = SyncStatus.SYNCED)
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }
@@ -110,7 +117,10 @@ class CashBoxRepositoryImpl(
         val boxId = paymentMethodId.toString()
 
         val remote = if (merchantCode.isNotEmpty()) {
-            runCatching { sync.fetchCashBox(merchantCode, boxId) }.getOrNull()
+            runCatching { sync.fetchCashBox(merchantCode, boxId) }.getOrElse { error ->
+                if (error is CancellationException) throw error
+                null
+            }
         } else null
 
         if (remote != null) {
@@ -188,24 +198,36 @@ class CashBoxRepositoryImpl(
     }
 
     private fun pushBoxAsync(boxId: String) {
+        if (database.inTransaction()) return
         syncScope.launch {
             val merchantCode = code()
+            if (database.saleOutboxDao().hasOutstandingFor(merchantCode)) return@launch
             if (merchantCode.isEmpty()) return@launch
             val entity = dao.getById(boxId) ?: return@launch
+            if (entity.merchantId.isNotBlank() && entity.merchantId != merchantCode) return@launch
             runCatching { sync.pushCashBox(merchantCode, entity.toDomain()) }
                 .onSuccess { dao.markSynced(boxId) }
-                .onFailure { dao.markFailed(boxId) }
+                .onFailure { error ->
+                    if (error is CancellationException) throw error
+                    dao.markFailed(boxId)
+                }
         }
     }
 
     private fun pushMovementAsync(movementId: String) {
+        if (database.inTransaction()) return
         syncScope.launch {
             val merchantCode = code()
+            if (database.saleOutboxDao().hasOutstandingFor(merchantCode)) return@launch
             if (merchantCode.isEmpty()) return@launch
             val entity = movementDao.getById(movementId) ?: return@launch
+            if (entity.merchantId.isNotBlank() && entity.merchantId != merchantCode) return@launch
             runCatching { sync.pushCashBoxMovement(merchantCode, entity.toDomain()) }
                 .onSuccess { movementDao.markSynced(movementId) }
-                .onFailure { movementDao.markFailed(movementId) }
+                .onFailure { error ->
+                    if (error is CancellationException) throw error
+                    movementDao.markFailed(movementId)
+                }
         }
     }
 
@@ -222,6 +244,7 @@ class CashBoxRepositoryImpl(
         dao.getByPaymentMethodId(paymentMethodId)?.toDomain()
 
     override suspend fun setInitialBalance(boxId: String, amount: Double) {
+        require(amount.isFinite() && amount >= 0) { "Initial balance must be finite and nonnegative" }
         boxMutex.withLock {
             val existing = dao.getById(boxId) ?: return
             if (existing.initialBalanceSetAt != null) return
@@ -243,6 +266,7 @@ class CashBoxRepositoryImpl(
         note: String?,
         reason: AdjustmentReason
     ) {
+        require(newAmount.isFinite() && newAmount >= 0) { "Correction amount must be finite and nonnegative" }
         boxMutex.withLock {
             val existing = dao.getById(boxId) ?: return
             if (existing.initialBalanceSetAt == null) return
@@ -264,6 +288,7 @@ class CashBoxRepositoryImpl(
         oldPaymentMethodId: Long?, oldAmount: Double, oldWasPaid: Boolean,
         newPaymentMethodId: Long?, newAmount: Double, newWasPaid: Boolean
     ) {
+        val recorded = mutableListOf<Pair<String, String>>()
         val deltas = mutableMapOf<Long, Double>()
         if (oldWasPaid && oldPaymentMethodId != null) {
             deltas.merge(oldPaymentMethodId, -oldAmount, Double::plus)
@@ -272,34 +297,53 @@ class CashBoxRepositoryImpl(
             deltas.merge(newPaymentMethodId, newAmount, Double::plus)
         }
 
-        deltas.filterValues { it != 0.0 }.forEach { (paymentMethodId, delta) ->
-            val boxId = paymentMethodId.toString()
-            boxMutex.withLock {
-                ensureBoxExists(paymentMethodId)
-                recordChange(
-                    boxId = boxId,
-                    delta = delta,
-                    absoluteBalance = null,
-                    type = CashBoxMovementType.TRANSACTION_EFFECT,
-                    note = "",
-                    relatedTransactionId = relatedTransactionId
-                )
+        boxMutex.withLock {
+            val changes = deltas.filterValues { it != 0.0 }
+            // Provisioning may fetch a remote box; keep network I/O outside the Room transaction.
+            changes.keys.forEach { ensureBoxExists(it) }
+            database.withTransaction {
+                changes.forEach { (paymentMethodId, delta) ->
+                    val boxId = paymentMethodId.toString()
+                    val movementId = recordChange(
+                        boxId = boxId,
+                        delta = delta,
+                        absoluteBalance = null,
+                        type = CashBoxMovementType.TRANSACTION_EFFECT,
+                        note = "",
+                        relatedTransactionId = relatedTransactionId
+                    )
+                    if (movementId != null) recorded += boxId to movementId
+                }
             }
+        }
+        // A standalone caller owns this commit; an outer sale/return transaction owns its outbox dispatch.
+        if (!database.inTransaction()) recorded.forEach { (boxId, movementId) ->
+            pushBoxAsync(boxId)
+            pushMovementAsync(movementId)
         }
     }
 
     override suspend fun syncPendingBoxes() {
         val merchantCode = code()
+        if (database.saleOutboxDao().hasOutstandingFor(merchantCode)) return
         if (merchantCode.isEmpty()) return
         dao.getPending().forEach { entity ->
+            if (entity.merchantId.isNotBlank() && entity.merchantId != merchantCode) return@forEach
             runCatching { sync.pushCashBox(merchantCode, entity.toDomain()) }
                 .onSuccess { dao.markSynced(entity.id) }
-                .onFailure { dao.markFailed(entity.id) }
+                .onFailure { error ->
+                    if (error is CancellationException) throw error
+                    dao.markFailed(entity.id)
+                }
         }
         movementDao.getPending().forEach { entity ->
+            if (entity.merchantId.isNotBlank() && entity.merchantId != merchantCode) return@forEach
             runCatching { sync.pushCashBoxMovement(merchantCode, entity.toDomain()) }
                 .onSuccess { movementDao.markSynced(entity.id) }
-                .onFailure { movementDao.markFailed(entity.id) }
+                .onFailure { error ->
+                    if (error is CancellationException) throw error
+                    movementDao.markFailed(entity.id)
+                }
         }
     }
 }

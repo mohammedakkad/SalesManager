@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.AccountToolsUiTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:23:49" hostname="ac8333d6728a" time="4.671">
+  <properties/>
+  <testcase name="activeDeviceRevokeUsesSessionIdAndBackIsPreserved" classname="com.trader.salesmanager.ui.coverage.AccountToolsUiTest" time="3.575"/>
+  <testcase name="blockedAccountDisplaysReasonAndOnlyExplicitRetryInvokesCallback" classname="com.trader.salesmanager.ui.coverage.AccountToolsUiTest" time="0.154"/>
+  <testcase name="paymentMethodDialogAddsOnlyAfterConfirmation" classname="com.trader.salesmanager.ui.coverage.AccountToolsUiTest" time="0.942"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

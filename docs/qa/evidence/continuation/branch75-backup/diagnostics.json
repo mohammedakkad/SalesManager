@@ -1,0 +1,41 @@
+{
+  "environment": {
+    "gradle": "8.9 official SHA256 verified",
+    "jdk": "Temurin17.0.21",
+    "sdk": "platform35/build-tools34.0.0; official cmdline-tools19.0 SHA1 checked against Google repository metadata",
+    "readOnlyHomeFix": "Runtime-only init script sets Test user.home/java.util.prefs.userRoot inside /workspace; project configuration unchanged",
+    "initialAppFailure": "170 tests could not initialize Robolectric because /home/agent/.robolectric-download-lock was not writable. Final fresh baseline passes all841 cases."
+  },
+  "fixtureCorrection": {
+    "test": "BackupOutboxRecoveryRoomTest.wakeupCancellationPropagatesAfterTheRestoreHasCommitted",
+    "initialAssertion": "assertSame(cancelled,actual)",
+    "correctedAssertion": "assertEquals(cancelled.message,actual.message), caught as CancellationException",
+    "reason": "Coroutine stack-trace recovery may copy the exception. Object identity is not the public cancellation contract.",
+    "productRegression": false
+  },
+  "artifactDownload": {
+    "host": "productionresultssa1.blob.core.windows.net",
+    "result": "HTTP CONNECT403 from environment proxy; ordinary inherited proxy and TLS verification retained",
+    "policyObserved": "Cloud status reports unrestricted/enforced; startup snapshot agrees. No retained diagnostic capture. Precise denial cause unresolved.",
+    "impact": "Starting-head artifact raw bytes not downloaded/reverified here. Source-specific API annotations confirm actual XML-derived cases, exit statuses and published Android PDF paths/hashes. New-source qualification must use its own run."
+  },
+  "currentSourceArtifactDownload": {
+    "artifact": "seller-compose-results-api-28",
+    "redirectHost": "productionresultssa17.blob.core.windows.net",
+    "status": "BLOCKED",
+    "error": "Tunnel connection failed: 403 Forbidden",
+    "rawBytesVerified": false
+  },
+  "api28FirstAttempt": {
+    "runId": 44059871127,
+    "jobId": 133958657661,
+    "source": "69ef00b3d60ab2919861aa7c98efae0668f0cbb0",
+    "stage": "JVM coverage",
+    "exit": 1,
+    "androidAndPdfCases": "12 NOT EXECUTED; zero PDF path records",
+    "rootCause": "Unresolved: published notices do not include the JVM failure detail; raw logs inaccessible and public step log endpoint404",
+    "retryJobId": 133966140120,
+    "retryResult": "SUCCESS, same source;7Android/5PDFBox and5PDF path/hash records",
+    "evidence": "hosted-attempt1/ versus hosted/"
+  }
+}

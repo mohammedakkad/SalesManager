@@ -4,6 +4,7 @@ import com.trader.core.data.local.dao.CashBoxDao
 import com.trader.core.data.local.dao.CashBoxMovementDao
 import com.trader.core.data.local.dao.PaymentMethodDao
 import com.trader.core.data.local.entity.PaymentMethodEntity
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.PaymentMethod
 import com.trader.core.domain.repository.ActivationRepository
@@ -25,11 +26,12 @@ class PaymentMethodRepositoryImpl(
 
     private fun startRealtimeSync() {
         syncScope.launch {
-            val code = activationRepo.getMerchantCode()
-            if (code.isEmpty()) return@launch
-            sync.observePaymentMethods(code).collect { list ->
+          activationRepo.observeMerchantCode().distinctUntilChanged().collectLatest { code ->
+            if (code.isBlank()) return@collectLatest
+            sync.observePaymentMethods(code).recoverSellerRealtime().collect { list ->
                 list.forEach { dao.insertPaymentMethod(PaymentMethodEntity.fromDomain(it)) }
             }
+          }
         }
     }
 

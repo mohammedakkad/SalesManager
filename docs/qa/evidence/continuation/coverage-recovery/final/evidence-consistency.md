@@ -1,0 +1,3 @@
+# Final consistency
+
+PASS:514 =447 retained+67new module JVM cases;537 unique qualified cases across suites.43 distinct pre-repair regression failures /44 executions, all names retained in the passing inventory. Source59413ed, workflow42836384853 SUCCESS; seller and all four compose lanes SUCCESS,48 repeated device/PDFBox executions,20 actual PDF paths and five observed artifact names. Remaining CSV/inventory/qualification agree:56 items,23 NOT TESTED,32 BLOCKED,one PARTIAL. Three offline APK hashes and expected unsigned signature-verification failure retained. All Seller QA reports and stage8/stage11 carry current evidence; no Admin source, threshold or inclusion change. JSON/XML/CSV and whitespace consistency PASS; these checks do not create new runtime successes.

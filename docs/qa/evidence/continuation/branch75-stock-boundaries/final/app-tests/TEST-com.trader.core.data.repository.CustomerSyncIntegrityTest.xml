@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.CustomerSyncIntegrityTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:14:32" hostname="ac8333d6728a" time="0.3">
+  <properties/>
+  <testcase name="remoteSnapshotPreservesEveryUnsyncedCustomerStatus" classname="com.trader.core.data.repository.CustomerSyncIntegrityTest" time="0.055"/>
+  <testcase name="visitorCannotBeOverwrittenByRemoteSnapshot" classname="com.trader.core.data.repository.CustomerSyncIntegrityTest" time="0.048"/>
+  <testcase name="networkRetryUsesFreshSubscriptionAndMergesOnlyAnActualRoomSnapshot" classname="com.trader.core.data.repository.CustomerSyncIntegrityTest" time="0.038"/>
+  <testcase name="logoutDuringBackoffPreventsTheOldCustomerAccountFromRetrying" classname="com.trader.core.data.repository.CustomerSyncIntegrityTest" time="0.026"/>
+  <testcase name="permissionFailurePreservesRealCustomerDebtAndNextMerchantCanSubscribe" classname="com.trader.core.data.repository.CustomerSyncIntegrityTest" time="0.05"/>
+  <testcase name="syncedRemoteEditsPreserveCustomerTransactionHistory" classname="com.trader.core.data.repository.CustomerSyncIntegrityTest" time="0.058"/>
+  <testcase name="logoutCancelsCustomerSubscription" classname="com.trader.core.data.repository.CustomerSyncIntegrityTest" time="0.023"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

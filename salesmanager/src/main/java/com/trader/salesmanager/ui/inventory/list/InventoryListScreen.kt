@@ -103,6 +103,7 @@ import com.trader.salesmanager.ui.theme.PaidGreen
 import com.trader.salesmanager.ui.theme.UnpaidAmber
 import com.trader.salesmanager.ui.theme.Violet500
 import com.trader.salesmanager.ui.theme.appColors
+import com.trader.salesmanager.util.export.saveExportToDownloads
 import com.trader.salesmanager.util.export.ExportManager
 import com.trader.salesmanager.util.export.ExportState
 import com.trader.salesmanager.util.export.ExportSuccessBottomSheet
@@ -135,11 +136,8 @@ fun InventoryListScreen(
         }
     }
 
-    val storeName by context.appDataStore.data
-    .map {
-        it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: ""
-    }
-    .collectAsState(initial = "")
+    val storeNameFlow = remember(context) { context.appDataStore.data.map { it[com.trader.salesmanager.ui.settings.STORE_NAME_KEY] ?: "" } }
+    val storeName by storeNameFlow.collectAsState(initial = "")
 
     val exportVm: ExportViewModel = koinViewModel()
     val exportState by exportVm.state.collectAsStateWithLifecycle()
@@ -169,9 +167,10 @@ fun InventoryListScreen(
                 showExportSheet = false
             },
             onDownload = {
-                ExportManager.saveToDownloads(context, file, success.fileName)
-                showExportSheet = false
-                exportVm.reset()
+                if (saveExportToDownloads(context, file, success.fileName)) {
+                    showExportSheet = false
+                    exportVm.reset()
+                }
             },
             onDismiss = {
                 showExportSheet = false; exportVm.reset()
@@ -254,7 +253,7 @@ fun InventoryListScreen(
                     contentColor = Color.White,
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Icon(Icons.Rounded.Inventory2, null, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.Inventory2, "جرد المخزون", modifier = Modifier.size(18.dp))
                 }
 
                 SmallFloatingActionButton(
@@ -265,7 +264,7 @@ fun InventoryListScreen(
                     contentColor = Color.White,
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Icon(Icons.Rounded.BarChart, null, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.BarChart, "تقارير المخزن", modifier = Modifier.size(18.dp))
                 }
 
                 FloatingActionButton(
@@ -276,7 +275,7 @@ fun InventoryListScreen(
                     contentColor = Color.White,
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Icon(Icons.Rounded.Add, null)
+                    Icon(Icons.Rounded.Add, "إضافة صنف")
                 }
             }
         }

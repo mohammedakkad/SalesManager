@@ -1,0 +1,72 @@
+{
+  "app": {
+    "tests": 162,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 49159,
+        "missed": 22919
+      },
+      "BRANCH": {
+        "covered": 1444,
+        "missed": 1659
+      },
+      "LINE": {
+        "covered": 7659,
+        "missed": 2638
+      },
+      "COMPLEXITY": {
+        "covered": 2109,
+        "missed": 1967
+      },
+      "METHOD": {
+        "covered": 1741,
+        "missed": 777
+      },
+      "CLASS": {
+        "covered": 558,
+        "missed": 228
+      }
+    }
+  },
+  "salesmanager": {
+    "tests": 352,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "coverage": {
+      "INSTRUCTION": {
+        "covered": 145114,
+        "missed": 49886
+      },
+      "BRANCH": {
+        "covered": 6868,
+        "missed": 7792
+      },
+      "LINE": {
+        "covered": 13619,
+        "missed": 4276
+      },
+      "COMPLEXITY": {
+        "covered": 3706,
+        "missed": 6869
+      },
+      "METHOD": {
+        "covered": 2335,
+        "missed": 865
+      },
+      "CLASS": {
+        "covered": 1051,
+        "missed": 228
+      }
+    }
+  },
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 24
+  },
+  "scope": "514 module JVM cases PASS; app162 cached after successful full execution and Seller352 executed in final1m37s JVM/JaCoCo acceptance. Complete5m32s local APK build uses identical production source; hosted59413ed succeeds separately on all five jobs."
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:28:12" hostname="ac8333d6728a" time="0.302">
+  <properties/>
+  <testcase name="remotelyDeletedSelectionCannotEnterEditorFromAStaleUiCallback" classname="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" time="0.037"/>
+  <testcase name="successfulRetryDeletesExactlyTheOriginalPendingIdentity" classname="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" time="0.057"/>
+  <testcase name="cancelledRetryRetainsStableIdentityWithoutInventingASecondFailure" classname="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" time="0.043"/>
+  <testcase name="multipleSelectionCannotEnterSingleMessageEditor" classname="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" time="0.048"/>
+  <testcase name="cancelledEditPropagatesInsteadOfReportingACompletedChild" classname="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" time="0.028"/>
+  <testcase name="ordinarySendFailureStillPersistsFailedStatusForExplicitRetry" classname="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" time="0.023"/>
+  <testcase name="cancelledBatchDeletionStopsBeforeDispatchingAnotherMessage" classname="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" time="0.04"/>
+  <testcase name="cancelledNewSendLeavesThePersistedMessagePendingRatherThanFailed" classname="com.trader.salesmanager.ui.qualification.ChatCancellationRoomTest" time="0.025"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

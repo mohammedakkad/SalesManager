@@ -1,0 +1,585 @@
+[
+  {
+    "id": 134917901511,
+    "name": "seller",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-11-18T15:35:48Z",
+    "completed_at": "2026-11-18T15:49:36Z",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-18T15:35:48Z",
+        "completed_at": "2026-11-18T15:35:51Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-18T15:35:51Z",
+        "completed_at": "2026-11-18T15:35:54Z"
+      },
+      {
+        "name": "Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-18T15:35:54Z",
+        "completed_at": "2026-11-18T15:35:54Z"
+      },
+      {
+        "name": "Provision verified isolated Android SDK",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-18T15:35:54Z",
+        "completed_at": "2026-11-18T15:36:04Z"
+      },
+      {
+        "name": "Install verified Gradle",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-18T15:36:04Z",
+        "completed_at": "2026-11-18T15:36:07Z"
+      },
+      {
+        "name": "Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-18T15:36:07Z",
+        "completed_at": "2026-11-18T15:36:07Z"
+      },
+      {
+        "name": "Generate offline packaging fixture (never production Firebase)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-18T15:36:07Z",
+        "completed_at": "2026-11-18T15:36:07Z"
+      },
+      {
+        "name": "Test, coverage, lint and debug assembly",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-11-18T15:36:07Z",
+        "completed_at": "2026-11-18T15:45:01Z"
+      },
+      {
+        "name": "Build minified unsigned QA release (not distributable)",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-18T15:45:01Z",
+        "completed_at": "2026-11-18T15:49:22Z"
+      },
+      {
+        "name": "Preserve reports even on failure",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-11-18T15:49:22Z",
+        "completed_at": "2026-11-18T15:49:26Z"
+      },
+      {
+        "name": "Post Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-11-18T15:49:26Z",
+        "completed_at": "2026-11-18T15:49:34Z"
+      },
+      {
+        "name": "Post Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-11-18T15:49:34Z",
+        "completed_at": "2026-11-18T15:49:34Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-11-18T15:49:34Z",
+        "completed_at": "2026-11-18T15:49:34Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-11-18T15:49:34Z",
+        "completed_at": "2026-11-18T15:49:34Z"
+      }
+    ]
+  },
+  {
+    "id": 134917902051,
+    "name": "compose (API 24)",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "started_at": "2026-11-18T15:35:48Z",
+    "completed_at": "2026-11-18T15:48:47Z",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-18T15:35:48Z",
+        "completed_at": "2026-11-18T15:35:50Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-18T15:35:50Z",
+        "completed_at": "2026-11-18T15:35:52Z"
+      },
+      {
+        "name": "Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-18T15:35:52Z",
+        "completed_at": "2026-11-18T15:35:53Z"
+      },
+      {
+        "name": "Provision verified isolated Android SDK",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-18T15:35:53Z",
+        "completed_at": "2026-11-18T15:36:05Z"
+      },
+      {
+        "name": "Install verified Gradle",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-18T15:36:05Z",
+        "completed_at": "2026-11-18T15:36:07Z"
+      },
+      {
+        "name": "Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-18T15:36:07Z",
+        "completed_at": "2026-11-18T15:36:08Z"
+      },
+      {
+        "name": "Enable hosted-runner KVM access",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-18T15:36:08Z",
+        "completed_at": "2026-11-18T15:36:08Z"
+      },
+      {
+        "name": "Run reactivecircus/android-emulator-runner@v2",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8,
+        "started_at": "2026-11-18T15:36:08Z",
+        "completed_at": "2026-11-18T15:48:40Z"
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-18T15:48:40Z",
+        "completed_at": "2026-11-18T15:48:43Z"
+      },
+      {
+        "name": "Post Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 16,
+        "started_at": "2026-11-18T15:48:43Z",
+        "completed_at": "2026-11-18T15:48:43Z"
+      },
+      {
+        "name": "Post Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-11-18T15:48:43Z",
+        "completed_at": "2026-11-18T15:48:43Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-11-18T15:48:43Z",
+        "completed_at": "2026-11-18T15:48:44Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-11-18T15:48:44Z",
+        "completed_at": "2026-11-18T15:48:44Z"
+      }
+    ]
+  },
+  {
+    "id": 134917902089,
+    "name": "compose (API 28)",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "started_at": "2026-11-18T15:35:48Z",
+    "completed_at": "2026-11-18T15:48:08Z",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-18T15:35:48Z",
+        "completed_at": "2026-11-18T15:35:50Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-18T15:35:50Z",
+        "completed_at": "2026-11-18T15:35:53Z"
+      },
+      {
+        "name": "Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-18T15:35:53Z",
+        "completed_at": "2026-11-18T15:35:53Z"
+      },
+      {
+        "name": "Provision verified isolated Android SDK",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-18T15:35:53Z",
+        "completed_at": "2026-11-18T15:36:05Z"
+      },
+      {
+        "name": "Install verified Gradle",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-18T15:36:05Z",
+        "completed_at": "2026-11-18T15:36:07Z"
+      },
+      {
+        "name": "Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-18T15:36:07Z",
+        "completed_at": "2026-11-18T15:36:08Z"
+      },
+      {
+        "name": "Enable hosted-runner KVM access",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-18T15:36:08Z",
+        "completed_at": "2026-11-18T15:36:08Z"
+      },
+      {
+        "name": "Run reactivecircus/android-emulator-runner@v2",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8,
+        "started_at": "2026-11-18T15:36:08Z",
+        "completed_at": "2026-11-18T15:48:00Z"
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-18T15:48:00Z",
+        "completed_at": "2026-11-18T15:48:04Z"
+      },
+      {
+        "name": "Post Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 16,
+        "started_at": "2026-11-18T15:48:04Z",
+        "completed_at": "2026-11-18T15:48:04Z"
+      },
+      {
+        "name": "Post Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-11-18T15:48:04Z",
+        "completed_at": "2026-11-18T15:48:04Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-11-18T15:48:04Z",
+        "completed_at": "2026-11-18T15:48:04Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-11-18T15:48:04Z",
+        "completed_at": "2026-11-18T15:48:04Z"
+      }
+    ]
+  },
+  {
+    "id": 134917902199,
+    "name": "compose (API 33)",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "started_at": "2026-11-18T15:35:48Z",
+    "completed_at": "2026-11-18T15:47:20Z",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-18T15:35:49Z",
+        "completed_at": "2026-11-18T15:35:51Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-18T15:35:51Z",
+        "completed_at": "2026-11-18T15:35:55Z"
+      },
+      {
+        "name": "Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-18T15:35:55Z",
+        "completed_at": "2026-11-18T15:35:55Z"
+      },
+      {
+        "name": "Provision verified isolated Android SDK",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-18T15:35:55Z",
+        "completed_at": "2026-11-18T15:36:10Z"
+      },
+      {
+        "name": "Install verified Gradle",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-18T15:36:10Z",
+        "completed_at": "2026-11-18T15:36:13Z"
+      },
+      {
+        "name": "Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-18T15:36:13Z",
+        "completed_at": "2026-11-18T15:36:14Z"
+      },
+      {
+        "name": "Enable hosted-runner KVM access",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-18T15:36:14Z",
+        "completed_at": "2026-11-18T15:36:14Z"
+      },
+      {
+        "name": "Run reactivecircus/android-emulator-runner@v2",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8,
+        "started_at": "2026-11-18T15:36:14Z",
+        "completed_at": "2026-11-18T15:47:13Z"
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-18T15:47:13Z",
+        "completed_at": "2026-11-18T15:47:16Z"
+      },
+      {
+        "name": "Post Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 16,
+        "started_at": "2026-11-18T15:47:16Z",
+        "completed_at": "2026-11-18T15:47:16Z"
+      },
+      {
+        "name": "Post Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-11-18T15:47:16Z",
+        "completed_at": "2026-11-18T15:47:16Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-11-18T15:47:16Z",
+        "completed_at": "2026-11-18T15:47:16Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-11-18T15:47:16Z",
+        "completed_at": "2026-11-18T15:47:16Z"
+      }
+    ]
+  },
+  {
+    "id": 134917902200,
+    "name": "compose (API 35)",
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "started_at": "2026-11-18T15:35:48Z",
+    "completed_at": "2026-11-18T15:49:26Z",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-18T15:35:49Z",
+        "completed_at": "2026-11-18T15:35:51Z"
+      },
+      {
+        "name": "Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-18T15:35:51Z",
+        "completed_at": "2026-11-18T15:35:54Z"
+      },
+      {
+        "name": "Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-18T15:35:54Z",
+        "completed_at": "2026-11-18T15:35:54Z"
+      },
+      {
+        "name": "Provision verified isolated Android SDK",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-18T15:35:54Z",
+        "completed_at": "2026-11-18T15:36:06Z"
+      },
+      {
+        "name": "Install verified Gradle",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-18T15:36:06Z",
+        "completed_at": "2026-11-18T15:36:08Z"
+      },
+      {
+        "name": "Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-11-18T15:36:08Z",
+        "completed_at": "2026-11-18T15:36:08Z"
+      },
+      {
+        "name": "Enable hosted-runner KVM access",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-11-18T15:36:08Z",
+        "completed_at": "2026-11-18T15:36:08Z"
+      },
+      {
+        "name": "Run reactivecircus/android-emulator-runner@v2",
+        "status": "completed",
+        "conclusion": "failure",
+        "number": 8,
+        "started_at": "2026-11-18T15:36:08Z",
+        "completed_at": "2026-11-18T15:49:18Z"
+      },
+      {
+        "name": "Run actions/upload-artifact@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-11-18T15:49:18Z",
+        "completed_at": "2026-11-18T15:49:23Z"
+      },
+      {
+        "name": "Post Run actions/cache@v4",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 16,
+        "started_at": "2026-11-18T15:49:23Z",
+        "completed_at": "2026-11-18T15:49:23Z"
+      },
+      {
+        "name": "Post Run actions/setup-java@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-11-18T15:49:23Z",
+        "completed_at": "2026-11-18T15:49:23Z"
+      },
+      {
+        "name": "Post Run actions/checkout@v4",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-11-18T15:49:23Z",
+        "completed_at": "2026-11-18T15:49:23Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-11-18T15:49:23Z",
+        "completed_at": "2026-11-18T15:49:23Z"
+      }
+    ]
+  }
+]

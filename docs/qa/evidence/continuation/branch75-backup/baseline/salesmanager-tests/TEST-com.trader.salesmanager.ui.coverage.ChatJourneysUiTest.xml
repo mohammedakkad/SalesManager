@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ChatJourneysUiTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:29:45" hostname="6d75d821cc71" time="0.528">
+  <properties/>
+  <testcase name="failedPendingMessageProvidesRetryAndDismissWithStableId" classname="com.trader.salesmanager.ui.coverage.ChatJourneysUiTest" time="0.212"/>
+  <testcase name="ownMessageDeletionOffersDistinctLocalAndEveryoneActions" classname="com.trader.salesmanager.ui.coverage.ChatJourneysUiTest" time="0.117"/>
+  <testcase name="inputAndSendAreDelegatedWithoutNetwork" classname="com.trader.salesmanager.ui.coverage.ChatJourneysUiTest" time="0.087"/>
+  <testcase name="deliveredReadEditedAndDeletedMessagesPreserveVisibilityRules" classname="com.trader.salesmanager.ui.coverage.ChatJourneysUiTest" time="0.108"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

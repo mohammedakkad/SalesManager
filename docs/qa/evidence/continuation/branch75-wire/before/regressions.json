@@ -1,0 +1,28 @@
+{
+  "count": 5,
+  "productionSource": "e517cafe4fb00dccb56f9f3bac4131c10ae22054",
+  "sourcePath": "app/src/main/java/com/trader/core/data/remote/FirebaseSyncService.kt",
+  "sourceFileSha256": "b3b43c5d35b862619308262fb160f52a9cffa13fa5c0ac39262cc4b790415e43",
+  "cases": [
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cancellationDuringFinalSnapshotParsingCannotDeliverThePayload"
+    },
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cancelledCodeStatusReadNeverReturnsAFalseMissingStatusToTheConsumer"
+    },
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cancellingEachSnapshotReadNeverReturnsAnAuthoritativePayloadToItsConsumer"
+    },
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cancelledActivationValidationNeverReturnsANetworkErrorToTheConsumer"
+    },
+    {
+      "class": "com.trader.core.data.remote.SellerFirebaseWireContractsTest",
+      "name": "cachedSnapshotCompletionStillHonorsCancellationBeforeDeliveringData"
+    }
+  ]
+}

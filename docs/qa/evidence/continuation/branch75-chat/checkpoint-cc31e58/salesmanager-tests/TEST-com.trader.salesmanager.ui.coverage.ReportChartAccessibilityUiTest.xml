@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-15T13:29:20" hostname="236b99701f27" time="1.598">
+  <properties/>
+  <testcase name="zeroPaymentSharesRemainAccessibleWithoutInventingAPositiveArc" classname="com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest" time="0.355"/>
+  <testcase name="dailyCurveExposesEveryDayAmountAndDrawsItsActualMultiPointPath" classname="com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest" time="0.298"/>
+  <testcase name="profitChartExposesSignedLossAndKeepsAllThreeSeriesVisible" classname="com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest" time="0.218"/>
+  <testcase name="paymentBarsExposePaidAndUnpaidAmountsAndDrawBothSeries" classname="com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest" time="0.221"/>
+  <testcase name="paymentDonutExposesAmountsAndDrawsTheMajorShareLarger" classname="com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest" time="0.243"/>
+  <testcase name="singleZeroDayRemainsAccessibleAndDrawsAFinitePoint" classname="com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest" time="0.262"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

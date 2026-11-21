@@ -1,0 +1,14 @@
+FIRST_FAILED_CLASS=META-INF/versions/25/org/bouncycastle/jcajce/provider/kdf/hkdf/HKDFSpi$HKDFwithSHA256.class
+java.io.IOException: Error while instrumenting META-INF/versions/25/org/bouncycastle/jcajce/provider/kdf/hkdf/HKDFSpi$HKDFwithSHA256.class with JaCoCo 0.8.12.202403310830/dbfb6f2.
+	at org.jacoco.core.instr.Instrumenter.instrumentError(Instrumenter.java:161)
+	at org.jacoco.core.instr.Instrumenter.instrument(Instrumenter.java:111)
+	at InstrumentDependency.main(InstrumentDependency.java:14)
+Caused by: java.lang.IllegalArgumentException: Unsupported class file major version 69
+	at org.objectweb.asm.ClassReader.<init>(ClassReader.java:200)
+	at org.objectweb.asm.ClassReader.<init>(ClassReader.java:180)
+	at org.objectweb.asm.ClassReader.<init>(ClassReader.java:166)
+	at org.jacoco.core.internal.instr.InstrSupport.classReaderFor(InstrSupport.java:280)
+	at org.jacoco.core.instr.Instrumenter.instrument(Instrumenter.java:77)
+	at org.jacoco.core.instr.Instrumenter.instrument(Instrumenter.java:109)
+	... 1 more
+CHECKED_CLASSES=5924 INSTRUMENTATION_FAILURES=46

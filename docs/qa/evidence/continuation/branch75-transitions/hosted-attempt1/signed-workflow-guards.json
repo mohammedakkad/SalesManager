@@ -1,0 +1,26 @@
+[
+  {
+    "run": 44113807976,
+    "name": "Build SalesManager Release APK",
+    "source": "5ce08486e4d2fbc0aab8ecd739b66bd8439981a6",
+    "jobs": [
+      {
+        "name": "build",
+        "conclusion": "skipped",
+        "steps": 0
+      }
+    ]
+  },
+  {
+    "run": 44113801845,
+    "name": "Build Admin Release APK",
+    "source": "5ce08486e4d2fbc0aab8ecd739b66bd8439981a6",
+    "jobs": [
+      {
+        "name": "build",
+        "conclusion": "skipped",
+        "steps": 0
+      }
+    ]
+  }
+]

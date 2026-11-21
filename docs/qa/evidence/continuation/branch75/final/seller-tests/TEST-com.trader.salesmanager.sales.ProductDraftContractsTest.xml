@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.ProductDraftContractsTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-15T07:58:05" hostname="236b99701f27" time="0.103">
+  <properties/>
+  <testcase name="typedZeroThresholdRemainsZeroRatherThanDefaultFive" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.029"/>
+  <testcase name="overflowingCostPriceCannotBeSaved" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.008"/>
+  <testcase name="removingPersistedDefaultPromotesRemainingUnitAndDeletesOnlyPersistedIdentity" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.017"/>
+  <testcase name="overflowingStockQuantityCannotBeSaved" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.005"/>
+  <testcase name="overflowingSalePriceCannotBeSaved" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.006"/>
+  <testcase name="overflowingLowStockThresholdCannotBeSaved" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.006"/>
+  <testcase name="numericEditingPreservesFiniteValuesAndBlankOptionalDefaults" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.013"/>
+  <testcase name="removingAnUnsavedDraftDoesNotRequestRemoteUnitDeletion" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.011"/>
+  <testcase name="loadedProductPreservesEditableUnitTypesDefaultsAndWeights" classname="com.trader.salesmanager.sales.ProductDraftContractsTest" time="0.007"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

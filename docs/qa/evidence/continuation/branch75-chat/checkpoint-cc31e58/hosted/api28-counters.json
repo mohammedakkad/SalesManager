@@ -1,0 +1,104 @@
+{
+  "bothJvm": {
+    "BRANCH": {
+      "app": {
+        "covered": 1728,
+        "missed": 1383
+      },
+      "salesmanager": {
+        "covered": 8314,
+        "missed": 6466
+      },
+      "weighted overall": {
+        "covered": 10042,
+        "missed": 7849
+      }
+    },
+    "LINE": {
+      "app": {
+        "covered": 8471,
+        "missed": 1836
+      },
+      "salesmanager": {
+        "covered": 16127,
+        "missed": 1822
+      },
+      "weighted overall": {
+        "covered": 24598,
+        "missed": 3658
+      }
+    },
+    "METHOD": {
+      "app": {
+        "covered": 1958,
+        "missed": 557
+      },
+      "salesmanager": {
+        "covered": 2702,
+        "missed": 520
+      },
+      "weighted overall": {
+        "covered": 4660,
+        "missed": 1077
+      }
+    }
+  },
+  "historical": {
+    "branches": {
+      "app": {
+        "covered": 1615,
+        "missed": 1496
+      },
+      "salesmanager": {
+        "covered": 8314,
+        "missed": 6466
+      },
+      "weighted overall": {
+        "covered": 9929,
+        "missed": 7962
+      }
+    },
+    "lines": {
+      "app": {
+        "covered": 8151,
+        "missed": 2156
+      },
+      "salesmanager": {
+        "covered": 16127,
+        "missed": 1822
+      },
+      "weighted overall": {
+        "covered": 24278,
+        "missed": 3978
+      }
+    },
+    "methods": {
+      "app": {
+        "covered": 1836,
+        "missed": 679
+      },
+      "salesmanager": {
+        "covered": 2702,
+        "missed": 520
+      },
+      "weighted overall": {
+        "covered": 4538,
+        "missed": 1199
+      }
+    },
+    "nativePdfLines": {
+      "InvoicePdfGenerator.kt": {
+        "covered": 489,
+        "missed": 48
+      },
+      "PdfCanvas.kt": {
+        "covered": 68,
+        "missed": 2
+      },
+      "ReportPdfGenerator.kt": {
+        "covered": 438,
+        "missed": 19
+      }
+    }
+  }
+}

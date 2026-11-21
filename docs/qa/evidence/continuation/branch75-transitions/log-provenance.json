@@ -1,0 +1,56 @@
+[
+  {
+    "rawArchive": "robolectric-dialog-diagnostics/gradle.log.gz",
+    "rawBytesSha256": "d5f6553f24c3435396c3cedb0257de3a3aa913a2595243145d43279dce2d18e8",
+    "archiveSha256": "5e133a5304eec40068975b69cc761684d0e0e529bd336051b3b9583226236d1c",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "final/suite-coverage.log.gz",
+    "rawBytesSha256": "9cbabe9e23b85395135a99138fce518ce006b625b1e4b3fd7b5f1b298ee4fae8",
+    "archiveSha256": "26f00839a4630ca6a8aae870c7ffd16708eac1852223fc3a9e3feaaeb944a5ff",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "final/final-verified-qa.log.gz",
+    "rawBytesSha256": "e33a906e1ad26f0b285424593fce73f5d10adbf0ce8c49e983ef41a904b7c9b7",
+    "archiveSha256": "6fa0d34e97f6c5dabb837480c45f0cc1412fabdd680eb93a7a43a18559ddcd25",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "final/final-clean-qa.log.gz",
+    "rawBytesSha256": "16c4b0539e1f15c0676ceb370056c47d966573a1d79b51a8e7492b7631035b61",
+    "archiveSha256": "1e801aa4fd63c27e031a3c4fae0304c94b5b9accae0f88dd4368dd09b10b6c5f",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "final/gates.log.gz",
+    "rawBytesSha256": "5336d51924ce8b9e55d2a304ded05b10187f17ca458c421bdbee792c20dd8126",
+    "archiveSha256": "b80e6d1328334c0b76ec272f606b1898c25ae051789fe3b776921af4196974ec",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "final/python-guards.log.gz",
+    "rawBytesSha256": "0e7f6ddac9f3158b574197d95dfeef8f21e0b81a8826d901529cbcf4479b47c2",
+    "archiveSha256": "eee526f66a9c894a6375dee4e5cbea962125359467c9eebd058801cede36d213",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "final/unsigned-release.log.gz",
+    "rawBytesSha256": "9873c0b8641caa99deb6c66514186096a82dbf100011ef807cabc1e3ef0c108f",
+    "archiveSha256": "eebc6ae79dee9d97d03ff539b0a387a8aa6372973b0e774f3e83a3d96e4023b0",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "before/gradle.log.gz",
+    "rawBytesSha256": "4919285c8cea7c3ee63f0950d8b57b33adcd414068ecd730f438c485e96872e7",
+    "archiveSha256": "d49912c614ecf26537353f67af78e207a65ff13305d2490a0c293f555dac1ce6",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  },
+  {
+    "rawArchive": "before-chart/gradle.log.gz",
+    "rawBytesSha256": "d379853edd6f5ec3d1702154ea592709f30f26c27a3e120fad973977d9e33092",
+    "archiveSha256": "3d196109659aa729d04d9eb82426172579bb21e0f99d79b300202b0d223705ae",
+    "viewTransform": "Readable .log views, when present, trim trailing line whitespace. Raw gzip preserves exact output."
+  }
+]

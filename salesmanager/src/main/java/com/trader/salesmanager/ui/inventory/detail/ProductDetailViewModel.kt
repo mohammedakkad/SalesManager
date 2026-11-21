@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 
 data class ManualAdjustState(
     val show: Boolean = false,
@@ -26,7 +27,8 @@ data class ManualAdjustState(
     val productName: String = "",
     val quantity: String = "",
     val isAdd: Boolean = true,
-    val note: String = ""
+    val note: String = "",
+    val error: String? = null
 )
 
 data class ProductDetailUiState(
@@ -75,25 +77,35 @@ class ProductDetailViewModel(
 
     fun dismissAdjust() { _adjust.value = ManualAdjustState() }
 
-    fun setAdjustQty(v: String)  { _adjust.update { it.copy(quantity = v) } }
-    fun setAdjustNote(v: String) { _adjust.update { it.copy(note = v) } }
+    fun setAdjustQty(v: String)  { _adjust.update { it.copy(quantity = v, error = null) } }
+    fun setAdjustNote(v: String) { _adjust.update { it.copy(note = v, error = null) } }
 
     fun applyAdjust() {
         val a = _adjust.value
-        val qty = a.quantity.toDoubleOrNull() ?: return
+        val qty = a.quantity.toDoubleOrNull()?.takeIf { it.isFinite() && it > 0 } ?: return
+        if (_isSaving.value) return
+        // Reserve submission before dispatch so two taps cannot enqueue two writes.
+        _isSaving.value = true
+        _adjust.update { it.copy(error = null) }
         viewModelScope.launch {
-            _isSaving.value = true
-            stockRepo.manualAdjust(
-                productId = a.productId,
-                unitId = a.unitId,
-                quantity = if (a.isAdd) qty else -qty,
-                type = if (a.isAdd) MovementType.MANUAL_IN else MovementType.MANUAL_OUT,
-                productName = a.productName,
-                unitLabel = a.unitLabel,
-                note = a.note
-            )
-            _isSaving.value = false
-            _adjust.value = ManualAdjustState()
+            try {
+                stockRepo.manualAdjust(
+                    productId = a.productId,
+                    unitId = a.unitId,
+                    quantity = if (a.isAdd) qty else -qty,
+                    type = if (a.isAdd) MovementType.MANUAL_IN else MovementType.MANUAL_OUT,
+                    productName = a.productName,
+                    unitLabel = a.unitLabel,
+                    note = a.note
+                )
+                _adjust.value = ManualAdjustState()
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _adjust.update { it.copy(error = "تعذر تعديل المخزون. حاول مرة أخرى.") }
+            } finally {
+                _isSaving.value = false
+            }
         }
     }
 

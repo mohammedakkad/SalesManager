@@ -1,0 +1,10 @@
+test_empty_reports_do_not_claim_target (test_coverage_target.CoverageTargetTest.test_empty_reports_do_not_claim_target) ... ok
+test_exact_seller_boundary_is_accepted_when_both_metrics_pass (test_coverage_target.CoverageTargetTest.test_exact_seller_boundary_is_accepted_when_both_metrics_pass) ... ok
+test_high_shared_coverage_cannot_hide_seller_below_target (test_coverage_target.CoverageTargetTest.test_high_shared_coverage_cannot_hide_seller_below_target) ... ok
+test_seller_above_target_cannot_hide_low_weighted_coverage (test_coverage_target.CoverageTargetTest.test_seller_above_target_cannot_hide_low_weighted_coverage) ... ok
+test_uses_weighted_counters_instead_of_mean_of_module_percentages (test_coverage_target.CoverageTargetTest.test_uses_weighted_counters_instead_of_mean_of_module_percentages) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.136s
+
+OK

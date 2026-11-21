@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" tests="21" skipped="0" failures="0" errors="0" timestamp="2026-11-11T10:20:36" hostname="13302589aed6" time="0.427">
+  <properties/>
+  <testcase name="changingWeightDisplayPreservesStoredKilogramsAndTheLocalCommercialPoundRule" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.024"/>
+  <testcase name="clearLinesRemovesTotalsAndStockWarningsTogether" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.018"/>
+  <testcase name="nullCustomPriceRestoresCatalogPriceAndZeroCustomPriceRemainsValid" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.02"/>
+  <testcase name="missingCatalogRecordsCannotCreateInventedInvoiceItems" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.022"/>
+  <testcase name="weightLabelsDistinguishCommercialDisplayFromKilograms" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.018"/>
+  <testcase name="zeroAndNegativeQuantitiesRemoveTheChosenLineWithoutChangingOthers" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.019"/>
+  <testcase name="validPersistedWeightDraftRestoresPriceStockAndKilograms" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.028"/>
+  <testcase name="unknownLegacyWeightLabelUsesTheExistingKilogramFallback" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.019"/>
+  <testcase name="stockWarningComparesConvertedKgAndAllowsTheExactBoundary" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.02"/>
+  <testcase name="matchingCatalogPriceRestoresWithoutRedundantOverride" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.02"/>
+  <testcase name="searchIncludesNameBarcodeAndCategoryAndCapsVisibleResultsAtTen" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.02"/>
+  <testcase name="pieceProjectionDoesNotApplyAWeightConversionOrLabel" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.019"/>
+  <testcase name="projectionUsesConvertedQuantityPriceMerchantAndTransactionIdentity" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.02"/>
+  <testcase name="unitChangeUsesItsOwnStockAndResetsCustomPrice" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.018"/>
+  <testcase name="duplicateDefaultProductIncrementsOneLineAndClearsSearch" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.019"/>
+  <testcase name="malformedDraftPreservesThePreviousBasketInsteadOfPartiallyReplacingIt" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.021"/>
+  <testcase name="legacyDraftWithoutWeightKeyDefaultsToKilograms" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.019"/>
+  <testcase name="matchingBarcodeAddsTheRealProductAndUnknownBarcodeReturnsItsExactText" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.023"/>
+  <testcase name="productWithoutUnitsCannotInventAnInvoiceLine" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.019"/>
+  <testcase name="catalogueLookupCancellationCancelsTheLoadJobAndPreservesTheDraft" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.021"/>
+  <testcase name="explicitUnitsRemainSeparateAndDuplicateChosenUnitIncrementsOnlyThatLine" classname="com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest" time="0.02"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

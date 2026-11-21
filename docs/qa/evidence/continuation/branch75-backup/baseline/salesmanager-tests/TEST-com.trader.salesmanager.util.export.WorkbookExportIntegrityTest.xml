@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.util.export.WorkbookExportIntegrityTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:32:12" hostname="6d75d821cc71" time="0.171">
+  <properties/>
+  <testcase name="inventoryWorkbookPreservesQuantitiesValuesAndStockStatus" classname="com.trader.salesmanager.util.export.WorkbookExportIntegrityTest" time="0.036"/>
+  <testcase name="salesWorkbookContainsCorrectPaidDebtAndCustomerIdentity" classname="com.trader.salesmanager.util.export.WorkbookExportIntegrityTest" time="0.043"/>
+  <testcase name="styleCountsAndFillReferencesMatchActualXmlElements" classname="com.trader.salesmanager.util.export.WorkbookExportIntegrityTest" time="0.038"/>
+  <testcase name="workbookRoundTripsArabicEscapingAndLiteralFormulaText" classname="com.trader.salesmanager.util.export.WorkbookExportIntegrityTest" time="0.052"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

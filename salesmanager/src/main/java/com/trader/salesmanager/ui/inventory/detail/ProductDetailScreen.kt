@@ -143,12 +143,15 @@ fun ProductDetailScreen(
                         label = { Text("ملاحظة (اختياري)") },
                         singleLine = true, modifier = Modifier.fillMaxWidth()
                     )
+                    adj.error?.let { message ->
+                        Text(message, color = MaterialTheme.colorScheme.error)
+                    }
                 }
             },
             confirmButton = {
                 Button(
                     onClick = viewModel::applyAdjust,
-                    enabled = adj.quantity.toDoubleOrNull() != null && adj.quantity.toDoubleOrNull()!! > 0 && !state.isSaving,
+                    enabled = adj.quantity.toDoubleOrNull()?.let { it.isFinite() && it > 0 } == true && !state.isSaving,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (adj.isAdd) PaidGreen else DebtRed
                     )
@@ -187,14 +190,14 @@ fun ProductDetailScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, "رجوع", tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
                         IconButton(onClick = { onEdit(productId) }) {
-                            Icon(Icons.Rounded.Edit, null, tint = Color.White)
+                            Icon(Icons.Rounded.Edit, "تعديل الصنف", tint = Color.White)
                         }
                         IconButton(onClick = { showDelete = true }) {
-                            Icon(Icons.Rounded.Delete, null, tint = Color.White.copy(0.8f))
+                            Icon(Icons.Rounded.Delete, "حذف الصنف", tint = Color.White.copy(0.8f))
                         }
                     }
                     Row(

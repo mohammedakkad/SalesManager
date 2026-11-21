@@ -1,0 +1,318 @@
+[
+  {
+    "name": "seller-compose-results-api-33",
+    "api": 33,
+    "artifactId": 14165865761,
+    "sha256": "1ae61de1aa11cef8d5dea9b66f781e7e10aaff52538e26a84baef8f46e22c068",
+    "advertisedDigest": "sha256:1ae61de1aa11cef8d5dea9b66f781e7e10aaff52538e26a84baef8f46e22c068",
+    "counts": {
+      "android": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "pdfBox": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "pdfs": [
+      {
+        "artifactPath": "tmp/seller-qa-pdf/customer-statement.pdf",
+        "sha256": "72865781253e3d572429c8923c49a68f5bb9d769a6fc5a6c6cf89a6944013c9b",
+        "bytes": 344427
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-content.pdf",
+        "sha256": "5ec9d321db0781e3d6bb4334a2330a1518e5e5b18cc009b20cda0b8d6af160f7",
+        "bytes": 337602
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-long.pdf",
+        "sha256": "474ee96db5dc296b6ae516bbefaefd6b2626b9fc7cab2addfb7591c44296f887",
+        "bytes": 358900
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/monthly-report.pdf",
+        "sha256": "3a39efa8ff8bf5d17e5bd6c71b763e2b522099541759c5a962fe98eeef5795fa",
+        "bytes": 352616
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+        "sha256": "aaba2785bee9d1075d96542dd7ca9d06e0ef972870884368c932e09b5f77553d",
+        "bytes": 343425
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/customer-statement.pdf",
+        "sha256": "72865781253e3d572429c8923c49a68f5bb9d769a6fc5a6c6cf89a6944013c9b",
+        "bytes": 344427
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-content.pdf",
+        "sha256": "5ec9d321db0781e3d6bb4334a2330a1518e5e5b18cc009b20cda0b8d6af160f7",
+        "bytes": 337602
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-long.pdf",
+        "sha256": "474ee96db5dc296b6ae516bbefaefd6b2626b9fc7cab2addfb7591c44296f887",
+        "bytes": 358900
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-return-viewmodel.pdf",
+        "sha256": "aaba2785bee9d1075d96542dd7ca9d06e0ef972870884368c932e09b5f77553d",
+        "bytes": 343425
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/monthly-report.pdf",
+        "sha256": "3a39efa8ff8bf5d17e5bd6c71b763e2b522099541759c5a962fe98eeef5795fa",
+        "bytes": 352616
+      }
+    ],
+    "fivePublishedPdfHashesVerified": true
+  },
+  {
+    "name": "seller-qa-reports",
+    "artifactId": 14165851211,
+    "sha256": "c7dce55646d5a2cae865fd437a724f9209bb771c98158b56b7ce4798193cc3e8",
+    "advertisedDigest": "sha256:c7dce55646d5a2cae865fd437a724f9209bb771c98158b56b7ce4798193cc3e8",
+    "counts": {
+      "app": {
+        "tests": 208,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "salesmanager": {
+        "tests": 633,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  },
+  {
+    "name": "seller-compose-results-api-24",
+    "api": 24,
+    "artifactId": 14165780414,
+    "sha256": "6b33d1e45e26913425c6d14a2c3b10ba04947dac0abd5dc5c8083c35cd149945",
+    "advertisedDigest": "sha256:6b33d1e45e26913425c6d14a2c3b10ba04947dac0abd5dc5c8083c35cd149945",
+    "counts": {
+      "android": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "pdfBox": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "pdfs": [
+      {
+        "artifactPath": "tmp/seller-qa-pdf/customer-statement.pdf",
+        "sha256": "61fec4561b7e614100b281d799840936f733347175f02cf403276ceee4154503",
+        "bytes": 2966904
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-long.pdf",
+        "sha256": "fd40194d6076378f49af512d3a394380a3326d0d2a10372aeeaa17e926369fda",
+        "bytes": 72656
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-content.pdf",
+        "sha256": "16fc171cd89b38b5599877bea3703205805d1176a44643d8f6d75f5a162857f6",
+        "bytes": 54703
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+        "sha256": "0a5e172d34a08bac0918cc8d1687d13f291b02d40db3414750e62903df270a9f",
+        "bytes": 57966
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/monthly-report.pdf",
+        "sha256": "2ccde5ca7a58ee758e49203f7b7e727130b10f02d4a09f2d4b9728255aeacc24",
+        "bytes": 60828
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/customer-statement.pdf",
+        "sha256": "61fec4561b7e614100b281d799840936f733347175f02cf403276ceee4154503",
+        "bytes": 2966904
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-content.pdf",
+        "sha256": "16fc171cd89b38b5599877bea3703205805d1176a44643d8f6d75f5a162857f6",
+        "bytes": 54703
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-long.pdf",
+        "sha256": "fd40194d6076378f49af512d3a394380a3326d0d2a10372aeeaa17e926369fda",
+        "bytes": 72656
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-return-viewmodel.pdf",
+        "sha256": "0a5e172d34a08bac0918cc8d1687d13f291b02d40db3414750e62903df270a9f",
+        "bytes": 57966
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/monthly-report.pdf",
+        "sha256": "2ccde5ca7a58ee758e49203f7b7e727130b10f02d4a09f2d4b9728255aeacc24",
+        "bytes": 60828
+      }
+    ],
+    "fivePublishedPdfHashesVerified": true
+  },
+  {
+    "name": "seller-compose-results-api-28",
+    "api": 28,
+    "artifactId": 14165720986,
+    "sha256": "6028db08156e40159b934564cf00de51ececadbe9663755d16690ab67a2cc693",
+    "advertisedDigest": "sha256:6028db08156e40159b934564cf00de51ececadbe9663755d16690ab67a2cc693",
+    "counts": {
+      "android": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "pdfBox": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "pdfs": [
+      {
+        "artifactPath": "tmp/seller-qa-pdf/customer-statement.pdf",
+        "sha256": "c29e5791fedd34806a9e2ff314bed2d4b6a565ea206ce0e30b6b469630097ed5",
+        "bytes": 7349418
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-content.pdf",
+        "sha256": "ed763fc3962dab9e41447b12c9dec87004a7b9d8f42c97e235956e4bbb221be6",
+        "bytes": 54693
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-long.pdf",
+        "sha256": "22c50a069cba75f3caa8115c59a3a7e558ec3d39f6b65c937688e8e64dfd2804",
+        "bytes": 71198
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+        "sha256": "958c2fd92e5d4cc43862cfee356684e9a59b0659ad51b03b934ac8a12618d0a6",
+        "bytes": 57787
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/monthly-report.pdf",
+        "sha256": "e891ac1b978ba6c8f524836c5f7db98889bd7cec74793cba2ba186431e4342d2",
+        "bytes": 60646
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/customer-statement.pdf",
+        "sha256": "c29e5791fedd34806a9e2ff314bed2d4b6a565ea206ce0e30b6b469630097ed5",
+        "bytes": 7349418
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-content.pdf",
+        "sha256": "ed763fc3962dab9e41447b12c9dec87004a7b9d8f42c97e235956e4bbb221be6",
+        "bytes": 54693
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-long.pdf",
+        "sha256": "22c50a069cba75f3caa8115c59a3a7e558ec3d39f6b65c937688e8e64dfd2804",
+        "bytes": 71198
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-return-viewmodel.pdf",
+        "sha256": "958c2fd92e5d4cc43862cfee356684e9a59b0659ad51b03b934ac8a12618d0a6",
+        "bytes": 57787
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/monthly-report.pdf",
+        "sha256": "e891ac1b978ba6c8f524836c5f7db98889bd7cec74793cba2ba186431e4342d2",
+        "bytes": 60646
+      }
+    ],
+    "fivePublishedPdfHashesVerified": true
+  },
+  {
+    "name": "seller-compose-results-api-35",
+    "api": 35,
+    "artifactId": 14165127065,
+    "sha256": "86d5c721cfcc18c286eb568849304cd17288e53c9ed5fe857df9a92bf25f1f73",
+    "advertisedDigest": "sha256:86d5c721cfcc18c286eb568849304cd17288e53c9ed5fe857df9a92bf25f1f73",
+    "counts": {
+      "android": {
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "pdfBox": {
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "pdfs": [
+      {
+        "artifactPath": "tmp/seller-qa-pdf/customer-statement.pdf",
+        "sha256": "7dac085719d56e55bab981ef3b267f856db4f2f3da0244b6b40ee4ce9b05cf3c",
+        "bytes": 48880
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-content.pdf",
+        "sha256": "030c242de8fb051820b7a8df11fd0348b0146f0a28e55cea12a377a8c0e133ae",
+        "bytes": 42766
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+        "sha256": "eb9e2da1afe7367631f3903a1a8abef45b026f46799cf81cd3a21a993d6666a9",
+        "bytes": 55228
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/invoice-long.pdf",
+        "sha256": "240604444a7c91d5257f5d7d4ae6f67667c6fdf3153b5af684fe452e9fa1173e",
+        "bytes": 66650
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf/monthly-report.pdf",
+        "sha256": "34a7e9d120d1134fa375f56f40186c63c9eacf77038d5bf8a3270cc0b904fb32",
+        "bytes": 55672
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/customer-statement.pdf",
+        "sha256": "7dac085719d56e55bab981ef3b267f856db4f2f3da0244b6b40ee4ce9b05cf3c",
+        "bytes": 48880
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-content.pdf",
+        "sha256": "030c242de8fb051820b7a8df11fd0348b0146f0a28e55cea12a377a8c0e133ae",
+        "bytes": 42766
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-long.pdf",
+        "sha256": "240604444a7c91d5257f5d7d4ae6f67667c6fdf3153b5af684fe452e9fa1173e",
+        "bytes": 66650
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/invoice-return-viewmodel.pdf",
+        "sha256": "eb9e2da1afe7367631f3903a1a8abef45b026f46799cf81cd3a21a993d6666a9",
+        "bytes": 55228
+      },
+      {
+        "artifactPath": "tmp/seller-qa-pdf-recovery/monthly-report.pdf",
+        "sha256": "34a7e9d120d1134fa375f56f40186c63c9eacf77038d5bf8a3270cc0b904fb32",
+        "bytes": 55672
+      }
+    ],
+    "fivePublishedPdfHashesVerified": true
+  }
+]

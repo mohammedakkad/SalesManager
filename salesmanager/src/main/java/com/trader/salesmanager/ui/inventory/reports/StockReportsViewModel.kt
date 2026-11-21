@@ -100,8 +100,8 @@ class StockReportsViewModel(
         cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
         val todayStart = cal.timeInMillis
-        cal.set(Calendar.HOUR_OF_DAY, 23); cal.set(Calendar.MINUTE, 59)
-        val todayEnd = cal.timeInMillis
+        cal.add(Calendar.DAY_OF_MONTH, 1)
+        val nextDayStart = cal.timeInMillis
 
         // الأسبوع
         cal.timeInMillis = now
@@ -132,7 +132,7 @@ class StockReportsViewModel(
                     it.amount
                 },
                 todayCash = cashTxs.filter {
-                    it.date in todayStart..todayEnd
+                    it.date >= todayStart && it.date < nextDayStart
                 }.sumOf {
                     it.amount
                 },

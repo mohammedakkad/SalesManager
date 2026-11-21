@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.SaleSessionViewModelTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-15T09:29:15" hostname="236b99701f27" time="0.082">
+  <properties/>
+  <testcase name="restoredDraftCannotRetargetMerchantAndOriginalAccountRetryIsIdempotent" classname="com.trader.salesmanager.sales.SaleSessionViewModelTest" time="0.044"/>
+  <testcase name="viewModelCreatedBeforeActivationUsesCurrentMerchantWhenSaving" classname="com.trader.salesmanager.sales.SaleSessionViewModelTest" time="0.038"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

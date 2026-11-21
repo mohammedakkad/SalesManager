@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.SellerLedgerQueriesTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:15:16" hostname="6d75d821cc71" time="0.57">
+  <properties/>
+  <testcase name="stockLedgerQueriesKeepChronologyTransactionAndUnitIdentity" classname="com.trader.core.data.local.SellerLedgerQueriesTest" time="0.076"/>
+  <testcase name="lowStockNotificationsRememberAcknowledgmentAndDropOnlyOrphans" classname="com.trader.core.data.local.SellerLedgerQueriesTest" time="0.058"/>
+  <testcase name="cashLedgerFailedRowsRemainRetryableAndBoxDeletionIsScoped" classname="com.trader.core.data.local.SellerLedgerQueriesTest" time="0.048"/>
+  <testcase name="cashBoxInitialBalanceDeltaAndSyncStatusDoNotChangeOtherBox" classname="com.trader.core.data.local.SellerLedgerQueriesTest" time="0.07"/>
+  <testcase name="syncObserverIncludesLedgerFailuresAndReturnsSyncedOnlyAfterAcknowledgment" classname="com.trader.core.data.local.SellerLedgerQueriesTest" time="0.193"/>
+  <testcase name="invoiceQueriesRetainSnapshotValuesAndReportRankLimits" classname="com.trader.core.data.local.SellerLedgerQueriesTest" time="0.076"/>
+  <testcase name="physicalCountSessionsKeepItemsScopedAndCompletionStopsActiveSession" classname="com.trader.core.data.local.SellerLedgerQueriesTest" time="0.048"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

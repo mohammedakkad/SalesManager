@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.trader.core.data.local.appDataStore
 import com.trader.salesmanager.R
 import com.trader.salesmanager.util.export.ExportManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,8 +36,10 @@ data class BackupUiState(
 
 class BackupViewModel(
     private val backupManager: BackupManager,
-    private val context: Context
+    context: Context
 ) : ViewModel() {
+
+    private val context = context.applicationContext
 
     private val _uiState = MutableStateFlow(BackupUiState())
     val uiState: StateFlow<BackupUiState> = _uiState.asStateFlow()
@@ -61,6 +64,7 @@ class BackupViewModel(
     }
 
     fun confirmExportPassword(password: String, confirmPassword: String) {
+        if (_uiState.value.isExporting) return
         if (password.isBlank()) {
             _uiState.update { it.copy(error = context.getString(R.string.backup_error_password_empty)) }
             return
@@ -69,16 +73,12 @@ class BackupViewModel(
             _uiState.update { it.copy(error = context.getString(R.string.backup_error_password_mismatch)) }
             return
         }
-        val passwordChars = password.toCharArray()
+        // Reserve synchronously so queued confirmations cannot start a second export.
+        _uiState.update {
+            it.copy(showExportPasswordDialog = false, isExporting = true, error = null, successMessage = null)
+        }
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    showExportPasswordDialog = false,
-                    isExporting = true,
-                    error = null,
-                    successMessage = null
-                )
-            }
+            val passwordChars = password.toCharArray()
             try {
                 val file = backupManager.exportEncryptedBackup(passwordChars)
                 val now = System.currentTimeMillis()
@@ -91,6 +91,8 @@ class BackupViewModel(
                         successMessage = context.getString(R.string.backup_export_success)
                     )
                 }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (_: BackupException.StorageFailed) {
                 Log.e(BACKUP_LOG_TAG, "Encrypted export storage failed")
                 _uiState.update {
@@ -109,6 +111,7 @@ class BackupViewModel(
                 }
             } finally {
                 passwordChars.fill('\u0000')
+                _uiState.update { it.copy(isExporting = false) }
             }
         }
     }
@@ -169,6 +172,8 @@ class BackupViewModel(
                         showImportConfirmDialog = true
                     )
                 }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (e: BackupException.NewerBackupVersion) {
                 Log.e(BACKUP_LOG_TAG, "Import blocked: backup version ${e.found} is newer than app")
                 _uiState.update {
@@ -242,15 +247,11 @@ class BackupViewModel(
     fun confirmImport() {
         val payload = _uiState.value.pendingImport ?: return
         if (_uiState.value.isImporting) return
+        // Keep the prepared payload until a completed attempt decides its outcome.
+        _uiState.update {
+            it.copy(isImporting = true, showImportConfirmDialog = false, error = null, successMessage = null)
+        }
         viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    isImporting = true,
-                    showImportConfirmDialog = false,
-                    error = null,
-                    successMessage = null
-                )
-            }
             try {
                 backupManager.restorePayload(payload)
                 _uiState.update {
@@ -260,6 +261,8 @@ class BackupViewModel(
                         successMessage = context.getString(R.string.backup_import_success)
                     )
                 }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
             } catch (e: BackupException.NewerBackupVersion) {
                 Log.e(BACKUP_LOG_TAG, "Restore blocked: backup version ${e.found} is newer than app")
                 _uiState.update {
@@ -278,6 +281,8 @@ class BackupViewModel(
                         error = context.getString(R.string.backup_error_import_failed)
                     )
                 }
+            } finally {
+                _uiState.update { it.copy(isImporting = false) }
             }
         }
     }

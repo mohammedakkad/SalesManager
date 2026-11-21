@@ -3,6 +3,7 @@ package com.trader.core.data.repository
 import com.trader.core.data.local.dao.CustomerDao
 import com.trader.core.data.local.dao.TransactionDao
 import com.trader.core.data.local.entity.CustomerEntity
+import com.trader.core.data.remote.recoverSellerRealtime
 import com.trader.core.data.remote.FirebaseSyncService
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.repository.ActivationRepository
@@ -11,7 +12,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import com.trader.core.domain.model.SyncStatus
 
@@ -19,10 +19,10 @@ class CustomerRepositoryImpl(
     private val dao: CustomerDao,
     private val transactionDao: TransactionDao,
     private val sync: FirebaseSyncService,
-    private val activationRepo: ActivationRepository
+    private val activationRepo: ActivationRepository,
+    private val syncScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 ) : CustomerRepository {
 
-    private val syncScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     init {
         startRealtimeSync()
@@ -31,16 +31,15 @@ class CustomerRepositoryImpl(
     private fun startRealtimeSync() {
         syncScope.launch {
             activationRepo.observeMerchantCode()
-            .filter {
-                it.isNotEmpty()
-            }
             .distinctUntilChanged()
             .collectLatest {
                 code ->
-                sync.observeCustomers(code).collect {
+                // collectLatest cancels the previous merchant listener even on logout.
+                if (code.isBlank()) return@collectLatest
+                sync.observeCustomers(code).recoverSellerRealtime().collect {
                     list ->
                     list.forEach {
-                        if (it.id != -1L) dao.upsertCustomer(CustomerEntity.fromDomain(it))
+                        if (it.id != -1L) dao.mergeSyncedCustomer(CustomerEntity.fromDomain(it))
                     }
                 }
             }

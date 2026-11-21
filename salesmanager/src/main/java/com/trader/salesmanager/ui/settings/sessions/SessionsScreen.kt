@@ -46,6 +46,8 @@ fun SessionsScreen(
     viewModel: SessionsViewModel = koinViewModel()
 ) {
     val activeSessions by viewModel.activeSessions.collectAsStateWithLifecycle()
+    val revoking by viewModel.revoking.collectAsStateWithLifecycle()
+    val revokeError by viewModel.revokeError.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -62,31 +64,37 @@ fun SessionsScreen(
             )
         }
     ) { paddingValues ->
-        if (activeSessions.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "لا توجد جلسات نشطة حالياً",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            revokeError?.let { message ->
+                Text(message, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp))
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(items = activeSessions, key = { it.id }) { session ->
-                    SessionCard(
-                        session = session,
-                        onRevokeSession = { viewModel.revokeSession(session.id) }
+            if (activeSessions.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "لا توجد جلسات نشطة حالياً",
+                        style = MaterialTheme.typography.bodyLarge
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(items = activeSessions, key = { it.id }) { session ->
+                        SessionCard(
+                            session = session,
+                            isRevoking = session.id in revoking,
+                            onRevokeSession = { viewModel.revokeSession(session.id) }
+                        )
+                    }
                 }
             }
         }
@@ -96,6 +104,7 @@ fun SessionsScreen(
 @Composable
 private fun SessionCard(
     session: Session,
+    isRevoking: Boolean,
     onRevokeSession: () -> Unit
 ) {
     val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("ar"))
@@ -144,7 +153,7 @@ private fun SessionCard(
                 )
             }
 
-            IconButton(onClick = onRevokeSession) {
+            IconButton(onClick = onRevokeSession, enabled = !isRevoking) {
                 Icon(
                     imageVector = Icons.Rounded.Logout,
                     contentDescription = "إنهاء الجلسة",

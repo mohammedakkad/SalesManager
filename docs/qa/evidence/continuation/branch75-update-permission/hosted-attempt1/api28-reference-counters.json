@@ -1,0 +1,44 @@
+{
+  "Seller API28 Android + JVM": {
+    "LINE": {
+      "covered": 16554,
+      "total": 17994
+    },
+    "METHOD": {
+      "covered": 2789,
+      "total": 3231
+    },
+    "BRANCH": {
+      "covered": 9854,
+      "total": 14818
+    }
+  },
+  "Historical weighted API28 Android + own module JVM": {
+    "LINE": {
+      "covered": 25048,
+      "total": 28464
+    },
+    "METHOD": {
+      "covered": 4701,
+      "total": 5751
+    },
+    "BRANCH": {
+      "covered": 11824,
+      "total": 18017
+    }
+  },
+  "Additional weighted API28 Android + both JVM suites": {
+    "LINE": {
+      "covered": 25319,
+      "total": 28464
+    },
+    "METHOD": {
+      "covered": 4811,
+      "total": 5751
+    },
+    "BRANCH": {
+      "covered": 11926,
+      "total": 18017
+    }
+  }
+}

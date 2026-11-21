@@ -1,0 +1,146 @@
+[
+  {
+    "scope": "qaCoverage",
+    "module": "salesmanager",
+    "metric": "BRANCH",
+    "covered": 8179,
+    "total": 14796,
+    "targetPercent": 75,
+    "additionalRequired": 2918
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "salesmanager",
+    "metric": "LINE",
+    "covered": 15130,
+    "total": 17957,
+    "targetPercent": 95,
+    "additionalRequired": 1930
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "weighted",
+    "metric": "BRANCH",
+    "covered": 9794,
+    "total": 17907,
+    "targetPercent": 75,
+    "additionalRequired": 3637
+  },
+  {
+    "scope": "qaCoverage",
+    "module": "weighted",
+    "metric": "LINE",
+    "covered": 23264,
+    "total": 28264,
+    "targetPercent": 95,
+    "additionalRequired": 3587
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "salesmanager",
+    "metric": "BRANCH",
+    "covered": 8179,
+    "total": 14796,
+    "targetPercent": 75,
+    "additionalRequired": 2918
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "salesmanager",
+    "metric": "LINE",
+    "covered": 15130,
+    "total": 17957,
+    "targetPercent": 95,
+    "additionalRequired": 1930
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "weighted",
+    "metric": "BRANCH",
+    "covered": 9907,
+    "total": 17907,
+    "targetPercent": 75,
+    "additionalRequired": 3524
+  },
+  {
+    "scope": "qaAllJvmCoverage",
+    "module": "weighted",
+    "metric": "LINE",
+    "covered": 23597,
+    "total": 28264,
+    "targetPercent": 95,
+    "additionalRequired": 3254
+  },
+  {
+    "scope": "Android API28+module JVM",
+    "module": "salesmanager",
+    "metric": "LINE",
+    "covered": 16134,
+    "total": 17957,
+    "targetPercent": 95,
+    "additionalRequired": 926
+  },
+  {
+    "scope": "Android API28+module JVM",
+    "module": "salesmanager",
+    "metric": "BRANCH",
+    "covered": 8328,
+    "total": 14796,
+    "targetPercent": 75,
+    "additionalRequired": 2769
+  },
+  {
+    "scope": "Android API28+module JVM",
+    "module": "weighted overall",
+    "metric": "LINE",
+    "covered": 24285,
+    "total": 28264,
+    "targetPercent": 95,
+    "additionalRequired": 2566
+  },
+  {
+    "scope": "Android API28+module JVM",
+    "module": "weighted overall",
+    "metric": "BRANCH",
+    "covered": 9943,
+    "total": 17907,
+    "targetPercent": 75,
+    "additionalRequired": 3488
+  },
+  {
+    "scope": "Android API28+both JVM",
+    "module": "salesmanager",
+    "metric": "LINE",
+    "covered": 16134,
+    "total": 17957,
+    "targetPercent": 95,
+    "additionalRequired": 926
+  },
+  {
+    "scope": "Android API28+both JVM",
+    "module": "salesmanager",
+    "metric": "BRANCH",
+    "covered": 8328,
+    "total": 14796,
+    "targetPercent": 75,
+    "additionalRequired": 2769
+  },
+  {
+    "scope": "Android API28+both JVM",
+    "module": "weighted overall",
+    "metric": "LINE",
+    "covered": 24605,
+    "total": 28264,
+    "targetPercent": 95,
+    "additionalRequired": 2246
+  },
+  {
+    "scope": "Android API28+both JVM",
+    "module": "weighted overall",
+    "metric": "BRANCH",
+    "covered": 10056,
+    "total": 17907,
+    "targetPercent": 75,
+    "additionalRequired": 3375
+  }
+]

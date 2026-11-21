@@ -1,0 +1,13 @@
+{
+  "severityCounts": {
+    "Warning": 24
+  },
+  "issueCounts": {
+    "ObsoleteLintCustomCheck": 4,
+    "UnusedAttribute": 1,
+    "StaticFieldLeak": 2,
+    "IconLauncherShape": 10,
+    "MonochromeLauncherIcon": 2,
+    "IconDuplicates": 5
+  }
+}

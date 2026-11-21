@@ -214,7 +214,7 @@ fun InvoiceItemsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, "رجوع", tint = Color.White)
                         }
                         Column(Modifier.weight(1f)) {
                             Text("أصناف الفاتورة", fontWeight = FontWeight.Bold,
@@ -228,7 +228,7 @@ fun InvoiceItemsScreen(
                             },
                             modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
                         ) {
-                            Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White)
+                            Icon(Icons.Rounded.QrCodeScanner, "مسح الباركود", tint = Color.White)
                         }
                         IconButton(
                             onClick = {
@@ -236,7 +236,7 @@ fun InvoiceItemsScreen(
                             },
                             modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
                         ) {
-                            Icon(Icons.Rounded.Search, null, tint = if (showSearch) Cyan500 else Color.White)
+                            Icon(Icons.Rounded.Search, "البحث عن صنف", tint = if (showSearch) Cyan500 else Color.White)
                         }
                     }
 
@@ -563,7 +563,7 @@ private fun InvoiceLineCard(
                                 },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Rounded.Remove, null,
+                                Icon(Icons.Rounded.Remove, "تقليل كمية ${line.product.product.name} (${line.selectedUnit.unitLabel})",
                                     tint = DebtRed,
                                     modifier = Modifier.size(16.dp))
                             }
@@ -604,7 +604,7 @@ private fun InvoiceLineCard(
                                 },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Rounded.Add, null,
+                                Icon(Icons.Rounded.Add, "زيادة كمية ${line.product.product.name} (${line.selectedUnit.unitLabel})",
                                     tint = Emerald500,
                                     modifier = Modifier.size(16.dp))
                             }
@@ -632,7 +632,7 @@ private fun InvoiceLineCard(
                                 },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Rounded.Edit, null,
+                                Icon(Icons.Rounded.Edit, "تعديل ${line.product.product.name} (${line.selectedUnit.unitLabel})",
                                     tint = Violet500,
                                     modifier = Modifier.size(12.dp))
                             }

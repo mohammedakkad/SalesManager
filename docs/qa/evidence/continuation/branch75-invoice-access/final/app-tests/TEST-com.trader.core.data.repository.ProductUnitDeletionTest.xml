@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.ProductUnitDeletionTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:23:50" hostname="ac8333d6728a" time="0.046">
+  <properties/>
+  <testcase name="deletingUnitDispatchesItsActualParentProductId" classname="com.trader.core.data.repository.ProductUnitDeletionTest" time="0.046"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:29:32" hostname="ac8333d6728a" time="0.168">
+  <properties/>
+  <testcase name="workerDoesNotDispatchPreviousMerchantAfterSwitch" classname="com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest" time="0.053"/>
+  <testcase name="workerRecoversDurableDeletionAfterDatabaseRestart" classname="com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest" time="0.037"/>
+  <testcase name="workerReturnsRetryAndKeepsDeletionAfterNetworkFailure" classname="com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest" time="0.034"/>
+  <testcase name="cancelledWorkerPreservesRetryIntent" classname="com.trader.salesmanager.sales.outbox.SaleOutboxWorkerTest" time="0.042"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
