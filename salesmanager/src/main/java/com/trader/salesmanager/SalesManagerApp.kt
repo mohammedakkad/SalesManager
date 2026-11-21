@@ -3,6 +3,7 @@ package com.trader.salesmanager
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
+import com.trader.core.data.local.appDataStore
 import com.trader.core.data.local.dao.ProductDao
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.LowStockSettingsRepository
@@ -16,6 +17,7 @@ import com.trader.salesmanager.worker.UnpaidDebtWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinComponent
@@ -39,6 +41,8 @@ class SalesManagerApp : Application(), KoinComponent {
         BackgroundUpdateWorker.schedulePeriodic(this)
 
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            // Warm DataStore so the theme preference is usually cached before the first frame.
+            runCatching { appDataStore.data.first() }
             runCatching {
                 val lowStockSettingsRepository: LowStockSettingsRepository by inject()
                 val lowStockSettings = lowStockSettingsRepository.getSettings()
