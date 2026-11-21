@@ -1,4 +1,4 @@
-> Current continuation (2026-11-11):758 JVM PASS (95 new; all663prior cases retained),22 Python guards PASS. Hosted43003544986 SUCCESS: seller and compose API24/28/33/35;7Android/5PDFBox per lane, five actual PDF paths/hashes and artifacts preserved. Seller Android+JVM Line89.0393%, Method83.0230%, Branch55.1542%; weighted Android+both-JVM Line86.5076%, Method80.6868%, Branch55.2165%. Local Lint0errors/24warnings; Debug/AndroidTest/minified unsigned Release PASS. Goal95% NOT ACHIEVED; releaseFAIL. [Current evidence and scope definitions](coverage95-lifecycle-progress.md). Earlier figures below are historical.
+> Current continuation (2026-11-11):758 JVM PASS (95 new; all663prior cases retained),22 Python guards PASS. Hosted43003544986 SUCCESS: seller and compose API24/28/33/35;7Android/5PDFBox per lane, five actual PDF paths/hashes and artifacts preserved. Seller Android+JVM Line89.0393%, Method83.0230%, Branch55.1542%; weighted Android+both-JVM Line86.5076%, Method80.6868%, Branch55.2165%. Local Lint0errors/24warnings; Debug/AndroidTest/minified unsigned Release PASS. Goal95% NOT ACHIEVED; releaseFAIL. [Current evidence and scope definitions](archive/coverage95-lifecycle-progress.md). Earlier figures below are historical.
 
 # Seller lint triage
 
@@ -28,7 +28,7 @@ Final stage7-final.log:24 warnings (17 launcher branding/themed-icon,4 incompati
 
 ## Stage 9 continuation
 
-See [Stage 9 partial evidence](stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.
+See [Stage 9 partial evidence](archive/stage9-progress.md). PDF export mechanics are updated but device/hosted success is unverified. Atomic sale commands, transactional outbox and next-schema migration remain unimplemented. Release readiness remains **FAIL**; earlier results are not new validation.
 
 
 ## Stage 10 implementation
@@ -220,7 +220,7 @@ The explicit remaining plan has **56 work items: 23 NOT TESTED, 32 BLOCKED, one 
 
 ## Verified local 95% continuation — 2026-11-10
 
-Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](coverage95-progress.md). Earlier counters below are historical.
+Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77.6573%, weighted 78.1178%. Target 95% NOT ACHIEVED; release FAIL. See [current evidence](archive/coverage95-progress.md). Earlier counters below are historical.
 
 |Metric (JVM)|Seller covered/total|Coverage|Weighted covered/total|Coverage|
 |---|---:|---:|---:|---:|
@@ -228,7 +228,7 @@ Current 95% continuation (2026-11-10): 593 JVM PASS, 79 new; Seller JVM lines 77
 |METHOD|2390/3200|74.6875%|4208/5715|73.6308%|
 |BRANCH|7151/14696|48.6595%|8766/17807|49.2278%|
 
-Full JVM/Room/JaCoCo/gates, Lint, Debug/AndroidTest APK and minified unsigned Release builds PASS. Lint 0 errors/24 warnings; 12 Python coverage guards and targeted secret/token-log policy PASS. All 514 starting JVM identities retained; 208 shared and 385 Seller cases, zero failures/errors/skips. Actual source protocol fakes do not qualify deployed Firebase rules, deduplication or distributed rollback. Hosted source verification is pending for this commit; the prior successful run is not reassigned to it. No Admin business, database schema, production exclusions, gates or signing material changes. [Details and exact evidence](coverage95-progress.md).
+Full JVM/Room/JaCoCo/gates, Lint, Debug/AndroidTest APK and minified unsigned Release builds PASS. Lint 0 errors/24 warnings; 12 Python coverage guards and targeted secret/token-log policy PASS. All 514 starting JVM identities retained; 208 shared and 385 Seller cases, zero failures/errors/skips. Actual source protocol fakes do not qualify deployed Firebase rules, deduplication or distributed rollback. Hosted source verification is pending for this commit; the prior successful run is not reassigned to it. No Admin business, database schema, production exclusions, gates or signing material changes. [Details and exact evidence](archive/coverage95-progress.md).
 
 ## Final local download follow-up — 2026-11-10
 
@@ -238,7 +238,7 @@ Full JVM/Room/JaCoCo/gates, Lint, Debug/AndroidTest APK and minified unsigned Re
 |METHOD|2391/3200|74.7188%|4209/5715|73.6483%|
 |BRANCH|7148/14684|48.6788%|8763/17795|49.2442%|
 
-Source `fda922fb865dabf5633115268d3b4e72ccbb8e4f`:601 JVM PASS (208 shared/393 Seller, zero failures/errors/skips);87 new cases and all514 starting identities retained. Full current JVM/Room/JaCoCo/gates/Lint/Debug/AndroidTest/minified unsigned Release aggregate PASS in5m36s; Lint0 errors/24 warnings;12 Python guards and targeted secret policy PASS. Five additional failing-before resolver regressions now pass; incomplete downloads return false and attempt pending-row cleanup. Real XLSX source bytes are verified on SDK-fake API33 and real legacy filesystem API28. This does not qualify device MediaStore permission/provider behavior. No Admin, schema, threshold, exclusion, production network or signing changes. [Current hosted status and detailed results](coverage95-progress.md).
+Source `fda922fb865dabf5633115268d3b4e72ccbb8e4f`:601 JVM PASS (208 shared/393 Seller, zero failures/errors/skips);87 new cases and all514 starting identities retained. Full current JVM/Room/JaCoCo/gates/Lint/Debug/AndroidTest/minified unsigned Release aggregate PASS in5m36s; Lint0 errors/24 warnings;12 Python guards and targeted secret policy PASS. Five additional failing-before resolver regressions now pass; incomplete downloads return false and attempt pending-row cleanup. Real XLSX source bytes are verified on SDK-fake API33 and real legacy filesystem API28. This does not qualify device MediaStore permission/provider behavior. No Admin, schema, threshold, exclusion, production network or signing changes. [Current hosted status and detailed results](archive/coverage95-progress.md).
 
 Hosted source qualification: [42863854908](https://github.com/mohammedakkad/SalesManager/actions/runs/42863854908) SUCCESS (seller and compose API24/28/33/35);7Android and5PDFBox cases pass per lane with5path/hash records and preserved artifacts. Clean JVM denominators reconcile with hosted compilation; clean601casesPASS. Additional Android+JVM line coverage83.3948% Seller/81.8188% weighted; target95% NOT ACHIEVED and releaseFAIL. See coverage95-progress.md for all Line/Method/Branch counters and their exact denominators.
 
@@ -260,3 +260,23 @@ Source `ee1fcc2ecf41ebba24884e366d6f8abf9748c467`; starting HEAD `68e99a76286faa
 Full clean local aggregate PASS in6m40s, including original coverage gates, both-JVM reports, Lint, Debug/AndroidTest APKs and actual R8 minified unsigned Release. Lint0errors/24warnings; targeted credential/signing/token-log policyPASS. [Hosted run42983779778](https://github.com/mohammedakkad/SalesManager/actions/runs/42983779778): seller and all four compose lanesSUCCESS;7Android and5PDFBox cases per lane with five actual PDF paths/hashes and preserved artifacts. Public XML-derived notices and EC-counter records are preserved; raw authenticated archives/checkout are not independently downloaded.
 
 Whole-suite reports add actual Seller-test execution of shared app code. Original project-local reports/gates, production class lists and denominators remain unchanged; the additional scope is not silently substituted for the historical baseline or attributed entirely to the31new tests. UI save failures remain retryable, filtered inventory searches no longer invent completion, and action accessibility improves. Existing monetary/stock/debt formulas and DB schema remain unchanged; no Admin business changes or production data/service access. Room2.6.1/schema25 and seven migration cases remain; authentic historical1–21fixtures are stillBLOCKED.56remaining qualification items (22NOT TESTED/32BLOCKED/2PARTIAL), server authorization/fencing, distributed reconciliation, legacy tenant/writer ownership and broader device/security/performance work remain open. ReleaseFAIL.
+
+
+## Modernization 2026-11 (AGP 9.5.2 / compileSdk 36 / Compose 1.11)
+
+Baseline on `production` (AGP 8.3.2): **0 errors, 27 warnings** (the 24 above plus `GradleDependency`
+and two `UseTomlInstead` for hardcoded `bcprov` / `espresso-intents`).
+
+Changes:
+- `UseTomlInstead` (2): fixed — coordinates moved into `libs.versions.toml`.
+- `ObsoleteLintCustomCheck` (4 → 0): fixed by the Compose/Navigation upgrade; their lint registries now load.
+- Newly *running* Compose checks reported 4 errors, all fixed: `NonObservableLocale` (2, date formatters now
+  read `LocalConfiguration`) and `StateFlowValueCalledInComposition` (2, test code).
+- `UseKtx` (10, new detector): 7 fixed in update/customer code; the 3 in `util/pdf` are removed by the PDF refactor.
+- `DefaultLocale` (33, new detector): `String.format` without a locale. Not suppressed: in an Arabic device locale these
+  produce Arabic-Indic digits, so they are part of the number-formatting consistency work (central formatter), not a
+  mechanical fix.
+- `OldTargetApi` / `GradleDependency` (compileSdk 37 available): intentional — the goal is compile/target 36; several
+  current AndroidX releases require compileSdk 37, tracked as a follow-up decision.
+- `ModifierParameter` (1, new): `SharedComponents.kt` parameter order; reordering is an API change for call sites.
+- Unchanged and still deliberate: launcher branding (17), `StaticFieldLeak` (2), `UnusedAttribute` dataExtractionRules (1).

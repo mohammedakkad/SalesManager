@@ -15,4 +15,4 @@ Retry reuses tempId, merchant and stored text. Active duplicate retries are reje
 
 Selected-message editing revalidates current canEdit before entering the editor. Cancellation stops edit/delete work; a cancelled batch does not dispatch another delete. Failed/uncertain deletes remain best-effort local hiding as before; no durable deletion journal is added here.
 
-Evidence: [current qualification](branch75-chat-progress.md), [before/after identities](evidence/continuation/branch75-chat/regressions.json), [actual hosted artifacts](evidence/continuation/branch75-chat/hosted/raw-artifact-verification.json). Client UI/SQLite tests do not qualify deployed Firebase rules or physical-device lifecycle behavior.
+Evidence: [current qualification](archive/branch75-chat-progress.md), [before/after identities](evidence/continuation/branch75-chat/regressions.json), [actual hosted artifacts](evidence/continuation/branch75-chat/hosted/raw-artifact-verification.json). Client UI/SQLite tests do not qualify deployed Firebase rules or physical-device lifecycle behavior.
