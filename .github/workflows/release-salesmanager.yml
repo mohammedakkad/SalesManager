@@ -75,13 +75,10 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O /tmp/gradle.zip
-          unzip -q /tmp/gradle.zip -d /tmp/gradle
-          export PATH="/tmp/gradle/gradle-8.7/bin:$PATH"
 
           # assembleStaging  أو  assembleRelease
           GRADLE_TASK="assemble$(echo ${BUILD_TYPE^})"
-          gradle :salesmanager:${GRADLE_TASK} --stacktrace
+          ./gradlew :salesmanager:${GRADLE_TASK} --stacktrace
 
       # ── إعادة تسمية الـ APK بالبريفكس الصحيح ────────────────
       - name: Rename APK
