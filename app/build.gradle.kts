@@ -59,6 +59,7 @@ dependencies {
     api(libs.okhttp3)
     api(libs.gson)
     api(libs.coil.compose)
+    api(libs.coil.network.okhttp)
 }
 apply(from = rootProject.file("gradle/qa-coverage.gradle"))
 
