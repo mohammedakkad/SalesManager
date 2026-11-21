@@ -380,11 +380,13 @@ fun ReportsScreen(
                     )
                 }
 
-                if (uiState.selectedDay != null) {
+                // Capture once: the lazy item lambda runs later and must not re-read live state.
+                val selectedDay = uiState.selectedDay
+                if (selectedDay != null) {
                     item {
                         SelectedDayDetail(
                             onViewTransactions = onViewDayTransactions,
-                            day = uiState.selectedDay!!,
+                            day = selectedDay,
                             month = uiState.calendarMonth,
                             year = uiState.calendarYear,
                             transactions = uiState.selectedDayTransactions,
