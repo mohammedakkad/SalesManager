@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.customers.details
 
+import androidx.core.net.toUri
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -239,7 +240,7 @@ Scaffold(
                         onClick = {
                             val intent = Intent(
                                 Intent.ACTION_DIAL,
-                                Uri.parse("tel:$phone")
+                                "tel:$phone".toUri()
                             )
                             context.startActivity(intent)
                         },
@@ -279,7 +280,7 @@ Scaffold(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val url = "https://wa.me/972$rawPhone"
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
                         }
                     )
                     WhatsAppButton(
@@ -287,7 +288,7 @@ Scaffold(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             val url = "https://wa.me/970$rawPhone"
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
                         }
                     )
                 }
