@@ -60,7 +60,7 @@ import com.trader.salesmanager.ui.transactions.details.TransactionDetailsUiState
 import com.trader.salesmanager.ui.transactions.list.TransactionsScreen
 import com.trader.salesmanager.ui.transactions.list.TransactionsViewModel
 import com.trader.salesmanager.update.AppUpdateViewModel
-import com.trader.salesmanager.ui.recomposition.FakeViewModels.fake
+import com.trader.testing.recomposition.FakeViewModels.fake
 import io.mockk.mockk
 import org.junit.Test
 import org.junit.runner.RunWith

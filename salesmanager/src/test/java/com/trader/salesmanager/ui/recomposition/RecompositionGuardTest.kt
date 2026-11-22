@@ -9,12 +9,13 @@ import com.trader.salesmanager.ui.home.*
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceItemsScreen
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceItemsUiState
 import com.trader.salesmanager.ui.inventory.invoice.InvoiceItemsViewModel
-import com.trader.salesmanager.ui.recomposition.FakeViewModels.fake
+import com.trader.testing.recomposition.FakeViewModels.fake
 import com.trader.salesmanager.ui.reports.*
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionScreen
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionUiState
 import com.trader.salesmanager.ui.transactions.addedit.AddEditTransactionViewModel
 import io.mockk.mockk
+import com.trader.testing.recomposition.RecompositionMeter.Phase
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before

@@ -1,4 +1,4 @@
-package com.trader.salesmanager.ui.recomposition
+package com.trader.testing.recomposition
 
 import io.mockk.every
 import io.mockk.mockk
@@ -21,9 +21,10 @@ object FakeViewModels {
         val vm = mockk<T>(relaxed = true)
         val flows = linkedMapOf<String, MutableStateFlow<Any?>>()
         T::class.java.methods
-            .filter { it.parameterCount == 0 && it.name.startsWith("get") && Flow::class.java.isAssignableFrom(it.returnType) }
+            .filter { it.parameterCount == 0 && (it.name.startsWith("get") || it.name.startsWith("is")) && Flow::class.java.isAssignableFrom(it.returnType) }
             .forEach { m ->
-                val name = m.name.removePrefix("get").replaceFirstChar { it.lowercase() }
+                // Kotlin names the getter of `isX` just `isX()`.
+                val name = if (m.name.startsWith("is")) m.name else m.name.removePrefix("get").replaceFirstChar { it.lowercase() }
                 val value = if (name in overrides) overrides[name] else defaultOf(elementType(m.genericReturnType))
                 // A one-shot event stream (Flow/SharedFlow) with no sensible default never emits.
                 val flow: Flow<Any?> = if (value == null && name !in overrides && !StateFlow::class.java.isAssignableFrom(m.returnType))
@@ -43,12 +44,13 @@ object FakeViewModels {
             List::class.java.isAssignableFrom(raw) || Collection::class.java.isAssignableFrom(raw) -> emptyList<Any>()
             Map::class.java.isAssignableFrom(raw) -> emptyMap<Any, Any>()
             Set::class.java.isAssignableFrom(raw) -> emptySet<Any>()
-            raw == java.lang.Boolean::class.java || raw == Boolean::class.javaPrimitiveType -> false
-            raw == java.lang.Integer::class.java -> 0
-            raw == java.lang.Long::class.java -> 0L
-            raw == java.lang.Double::class.java -> 0.0
-            raw == java.lang.Float::class.java -> 0f
+            raw == Boolean::class.javaObjectType || raw == Boolean::class.javaPrimitiveType -> false
+            raw == Int::class.javaObjectType -> 0
+            raw == Long::class.javaObjectType -> 0L
+            raw == Double::class.javaObjectType -> 0.0
+            raw == Float::class.javaObjectType -> 0f
             raw == String::class.java -> ""
+            raw == Any::class.java -> null
             raw.isEnum -> raw.enumConstants.first()
             else -> runCatching { raw.getDeclaredConstructor().newInstance() }.getOrNull()
         }
