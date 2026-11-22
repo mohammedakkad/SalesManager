@@ -58,6 +58,8 @@ android {
         }
     }
     testOptions { unitTests.isIncludeAndroidResources = true }
+    // Test-only helpers shared with :admin (never part of an APK).
+    sourceSets.getByName("test").kotlin.directories.add("../testing/recomposition")
     compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
     buildFeatures {
         compose = true
