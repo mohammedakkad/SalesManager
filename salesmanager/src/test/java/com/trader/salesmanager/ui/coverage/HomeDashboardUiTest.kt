@@ -29,7 +29,7 @@ class HomeDashboardUiTest:OfflineSellerUiTest() {
         var customer=0L;var tx=0L;var all=0;var add=0
         show { HomeScreen({all++},{},{},{add++},{tx=it},{customer=it},vm,sync) }
         ui.onNodeWithText("99+").assertExists()
-        ui.onNodeWithText("عملية جديدة",useUnmergedTree=true).performClick();assertEquals(1,add)
+        ui.onNodeWithContentDescription("عملية جديدة").performClick();assertEquals(1,add)
         ui.onNode(hasScrollAction()).performScrollToNode(hasText("قهوة"));ui.onNodeWithText("قهوة").assertExists()
         ui.onNode(hasScrollAction()).performScrollToNode(hasText("عميل مدين"));ui.onNodeWithText("عميل مدين").performClick();assertEquals(7,customer)
         ui.onNode(hasScrollAction()).performScrollToNode(hasText("فاتورة حديثة"));ui.onNodeWithText("فاتورة حديثة").performClick();assertEquals(41,tx)

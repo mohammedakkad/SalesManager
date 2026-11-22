@@ -1,5 +1,7 @@
 package com.trader.admin.ui.requests
 
+import com.trader.admin.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -58,7 +60,7 @@ fun AdminRequestsScreen(
                 title = { Text("طلبات الاشتراك", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Slate100)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.cd_navigate_back), tint = Slate100)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -122,7 +124,7 @@ fun AdminRequestsScreen(
                         .align(Alignment.TopEnd)
                         .padding(12.dp)
                         .background(Color.Black.copy(0.5f), CircleShape)
-                ) { Icon(Icons.Rounded.Close, null, tint = Color.White) }
+                ) { Icon(Icons.Rounded.Close, stringResource(R.string.cd_close_preview), tint = Color.White) }
             }
         }
     }

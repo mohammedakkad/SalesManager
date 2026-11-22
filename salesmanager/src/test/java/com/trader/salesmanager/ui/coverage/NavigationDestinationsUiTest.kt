@@ -95,7 +95,7 @@ class NavigationDestinationsUiTest:OfflineNavigationFixture() {
     }
     private fun invoiceRoundTrip(name:String) {
         saleState.value=saleState.value.copy(selectedCustomer=customer.copy(name=name))
-        show{AppNavigation()};ui.onNodeWithText("عملية جديدة",useUnmergedTree=true).assertIsDisplayed().performClick()
+        show{AppNavigation()};ui.onNodeWithContentDescription("عملية جديدة").assertIsDisplayed().performClick()
         ui.onNodeWithText("إضافة أصناف من المخزن (اختياري)").performClick()
         ui.onNodeWithText("الزبون: $name").assertExists()
         ui.onNode(hasText("تأكيد",substring=true) and hasClickAction()).assertIsDisplayed().performClick()

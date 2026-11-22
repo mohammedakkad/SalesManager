@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.inventory.addedit
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -129,7 +131,7 @@ fun AddEditProductScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                 }
                 Text(
                     if (state.isEditing) "تعديل صنف" else "إضافة صنف جديد",
@@ -214,7 +216,7 @@ fun AddEditProductScreen(
                         .size(56.dp)
                         .padding(top = 4.dp) // محاذاة مع الـ TextField
                     ) {
-                        Icon(Icons.Rounded.QrCodeScanner, null, tint = Cyan500)
+                        Icon(Icons.Rounded.QrCodeScanner, stringResource(R.string.cd_scan_barcode), tint = Cyan500)
                     }
                 }
             }

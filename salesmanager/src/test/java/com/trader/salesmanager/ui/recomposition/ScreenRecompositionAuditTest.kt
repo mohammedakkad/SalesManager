@@ -1,6 +1,7 @@
 package com.trader.salesmanager.ui.recomposition
 
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.trader.core.domain.model.*
@@ -93,7 +94,7 @@ class ScreenRecompositionAuditTest : RecompositionAuditFixture() {
                 listOf(TopSellingProduct("p", "أرز بسمتي", 32.0)), listOf(TopDebtorCustomer(7, "محمد خالد", 540.0)),
                 listOf(DailySales(day, 100.0), DailySales(day + 86_400_000, 300.0))))))
         val (sync, _) = fake<SyncStatusViewModel>(mapOf("syncState" to GlobalSyncState.AllSynced))
-        measure("home", { ui.onNodeWithText("عملية جديدة", useUnmergedTree = true).performClick() }) { HomeScreen({}, {}, {}, {}, {}, {}, vm, sync) }
+        measure("home", { ui.onNodeWithContentDescription("عملية جديدة").performClick() }) { HomeScreen({}, {}, {}, {}, {}, {}, vm, sync) }
     }
 
     @Test fun reports() {

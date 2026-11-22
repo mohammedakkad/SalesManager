@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.reports
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
@@ -210,7 +212,7 @@ fun ReportsScreen(
                 navigationIcon = {
                     if (showNavigateUp) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back))
                         }
                     }
                 },

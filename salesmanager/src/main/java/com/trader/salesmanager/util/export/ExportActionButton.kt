@@ -1,5 +1,7 @@
 package com.trader.salesmanager.util.export
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.AnimatedContent
@@ -266,7 +268,7 @@ private fun ExportErrorBar(message: String, onRetry: () -> Unit, onDismiss: () -
                 Text("إعادة", color = DebtRed, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelMedium)
             }
             IconButton(onClick = onDismiss, Modifier.size(28.dp)) {
-                Icon(Icons.Rounded.Close, null, tint = DebtRed, modifier = Modifier.size(16.dp))
+                Icon(Icons.Rounded.Close, stringResource(R.string.cd_dismiss_error), tint = DebtRed, modifier = Modifier.size(16.dp))
             }
         }
     }

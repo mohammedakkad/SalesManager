@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.returns
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -125,7 +127,7 @@ fun ReturnProcessScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Column(Modifier.weight(1f)) {
                             Text(

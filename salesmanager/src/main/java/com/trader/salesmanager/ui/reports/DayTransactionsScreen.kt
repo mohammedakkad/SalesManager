@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.reports
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -218,7 +220,7 @@ fun DayTransactionsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
@@ -242,7 +244,7 @@ fun DayTransactionsScreen(
                                     .clip(CircleShape)
                                     .background(Color.White.copy(0.15f))
                             ) {
-                                Icon(Icons.Rounded.Tune, null, tint = Color.White)
+                                Icon(Icons.Rounded.Tune, stringResource(R.string.cd_filter), tint = Color.White)
                             }
                         }
                     }
@@ -269,7 +271,7 @@ fun DayTransactionsScreen(
                         trailingIcon = {
                             AnimatedVisibility(state.query.isNotEmpty()) {
                                 IconButton(onClick = { viewModel.setQuery("") }) {
-                                    Icon(Icons.Rounded.Close, null, tint = Color.White.copy(0.7f))
+                                    Icon(Icons.Rounded.Close, stringResource(R.string.cd_clear_search), tint = Color.White.copy(0.7f))
                                 }
                             }
                         },

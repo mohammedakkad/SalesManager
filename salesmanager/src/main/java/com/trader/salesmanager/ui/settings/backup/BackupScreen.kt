@@ -198,7 +198,7 @@ fun BackupScreen(
                                 .clip(CircleShape)
                                 .background(Color.White.copy(0.2f))
                         ) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Spacer(Modifier.width(12.dp))
                         Column {

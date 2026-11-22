@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.transactions.list
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -88,7 +90,7 @@ fun TransactionsScreen(
                 containerColor = Cyan500, contentColor = Color.White,
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Icon(Icons.Rounded.Add, null)
+                Icon(Icons.Rounded.Add, stringResource(R.string.cd_new_transaction))
             }
         }
     ) {
@@ -103,7 +105,7 @@ fun TransactionsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Spacer(Modifier.width(8.dp))
                         Column {

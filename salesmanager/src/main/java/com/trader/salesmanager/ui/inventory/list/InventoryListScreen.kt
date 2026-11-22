@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.inventory.list
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -297,7 +299,7 @@ fun InventoryListScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (showNavigateUp) {
                             IconButton(onClick = onNavigateUp) {
-                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                             }
                         }
                         Text(
@@ -355,7 +357,7 @@ fun InventoryListScreen(
                             .clip(CircleShape)
                             .background(Color.White.copy(0.15f))
                         ) {
-                            Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White)
+                            Icon(Icons.Rounded.QrCodeScanner, stringResource(R.string.cd_scan_barcode), tint = Color.White)
                         }
                     }
 
@@ -384,7 +386,7 @@ fun InventoryListScreen(
                                 IconButton(onClick = {
                                     viewModel.setQuery("")
                                 }) {
-                                    Icon(Icons.Rounded.Close, null, tint = Color.White.copy(0.7f))
+                                    Icon(Icons.Rounded.Close, stringResource(R.string.cd_clear_search), tint = Color.White.copy(0.7f))
                                 }
                             }
                         },

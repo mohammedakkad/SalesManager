@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.chat
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.draw.drawBehind
 import com.trader.core.util.format.AppNumberFormat
@@ -251,7 +253,7 @@ private fun NormalChatAppBar(onNavigateUp: () -> Unit) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onNavigateUp) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
             }
             Spacer(Modifier.width(8.dp))
             Box(
@@ -298,7 +300,7 @@ private fun SelectionAppBar(
 
             // زر إغلاق
             IconButton(onClick = onClose) {
-                Icon(Icons.Rounded.Close, null, tint = Color.White)
+                Icon(Icons.Rounded.Close, stringResource(R.string.cd_exit_selection), tint = Color.White)
             }
 
             // ✅ عداد متحرك — يرتفع عند الزيادة وينزل عند النقص
@@ -307,20 +309,20 @@ private fun SelectionAppBar(
             // نسخ
             AnimatedVisibility(canCopy, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
                 IconButton(onClick = onCopy) {
-                    Icon(Icons.Rounded.ContentCopy, null, tint = Color.White.copy(0.9f))
+                    Icon(Icons.Rounded.ContentCopy, stringResource(R.string.cd_copy_messages), tint = Color.White.copy(0.9f))
                 }
             }
 
             // تعديل — فقط عند محددة واحدة هي رسالتي
             AnimatedVisibility(canEdit, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
                 IconButton(onClick = onEdit) {
-                    Icon(Icons.Rounded.Edit, null, tint = Emerald400)
+                    Icon(Icons.Rounded.Edit, stringResource(R.string.cd_edit_message), tint = Emerald400)
                 }
             }
 
             // حذف
             IconButton(onClick = onDelete, enabled = count > 0) {
-                Icon(Icons.Rounded.Delete, null,
+                Icon(Icons.Rounded.Delete, stringResource(R.string.cd_delete_messages),
                     tint = if (count > 0) DebtRed else Color.White.copy(0.3f))
             }
         }
@@ -585,7 +587,7 @@ private fun ChatInputBar(
                 Text("تعديل الرسالة", style = MaterialTheme.typography.labelMedium,
                     color = Emerald500, modifier = Modifier.weight(1f))
                 IconButton(onClick = onCancel, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Rounded.Close, null, tint = appColors.textSubtle, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.Close, stringResource(R.string.cd_cancel_edit), tint = appColors.textSubtle, modifier = Modifier.size(18.dp))
                 }
             }
         }

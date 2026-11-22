@@ -1,5 +1,8 @@
 package com.trader.salesmanager.ui.home
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -108,11 +111,13 @@ fun HomeScreen(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAddTransaction,
+                // The label lives on the icon: Material 3 clears the text's semantics while the
+                // FAB is not fully expanded, and clearing it here avoids a double announcement.
                 icon = {
-                    Icon(Icons.Rounded.Add, null)
+                    Icon(Icons.Rounded.Add, stringResource(R.string.cd_new_transaction))
                 },
                 text = {
-                    Text("عملية جديدة", fontWeight = FontWeight.SemiBold)
+                    Text("عملية جديدة", fontWeight = FontWeight.SemiBold, modifier = Modifier.clearAndSetSemantics { })
                 },
                 containerColor = Emerald500,
                 contentColor = Color.White,

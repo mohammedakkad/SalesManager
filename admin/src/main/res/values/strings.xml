@@ -1,1 +1,19 @@
-<resources><string name="app_name">Admin Panel</string></resources>
+<resources><string name="app_name">Admin Panel</string>    <!-- Content descriptions for icon-only buttons (TalkBack). -->
+    <string name="cd_adjust_expiry">تعديل تاريخ الانتهاء</string>
+    <string name="cd_cancel_edit">إلغاء التعديل</string>
+    <string name="cd_close_preview">إغلاق المعاينة</string>
+    <string name="cd_copy_code">نسخ الرمز</string>
+    <string name="cd_copy_messages">نسخ الرسائل المحددة</string>
+    <string name="cd_delete_merchant">حذف التاجر</string>
+    <string name="cd_delete_messages">حذف الرسائل المحددة</string>
+    <string name="cd_edit_message">تعديل الرسالة</string>
+    <string name="cd_exit_selection">إلغاء التحديد</string>
+    <string name="cd_hide_password">إخفاء كلمة المرور</string>
+    <string name="cd_navigate_back">رجوع</string>
+    <string name="cd_notifications">الإشعارات</string>
+    <string name="cd_show_password">إظهار كلمة المرور</string>
+    <string name="cd_sign_out">تسجيل الخروج</string>
+    <string name="cd_add_merchant">إضافة تاجر</string>
+    <string name="cd_save_edit">حفظ التعديل</string>
+    <string name="cd_send">إرسال</string>
+</resources>

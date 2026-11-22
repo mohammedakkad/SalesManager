@@ -1,5 +1,7 @@
 package com.trader.admin.ui.chat.detail
 
+import com.trader.admin.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -105,7 +107,7 @@ Scaffold(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Spacer(Modifier.width(8.dp))
                         Box(Modifier.size(38.dp).clip(CircleShape).background(Color.White.copy(0.2f)), Alignment.Center) {
@@ -199,7 +201,7 @@ Modifier.fillMaxWidth().background(Navy800).statusBarsPadding()
 ) {
 Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
 IconButton(onClick = onClose) {
-Icon(Icons.Rounded.Close, null, tint = Slate100)
+Icon(Icons.Rounded.Close, stringResource(R.string.cd_exit_selection), tint = Slate100)
 }
 // عداد متحرك
 Box(Modifier.weight(1f).padding(start = 4.dp)) {
@@ -226,16 +228,16 @@ style = MaterialTheme.typography.bodyMedium)
 }
 AnimatedVisibility(canCopy, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
 IconButton(onClick = onCopy) {
-Icon(Icons.Rounded.ContentCopy, null, tint = Slate100)
+Icon(Icons.Rounded.ContentCopy, stringResource(R.string.cd_copy_messages), tint = Slate100)
 }
 }
 AnimatedVisibility(canEdit, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
 IconButton(onClick = onEdit) {
-Icon(Icons.Rounded.Edit, null, tint = Cyan400)
+Icon(Icons.Rounded.Edit, stringResource(R.string.cd_edit_message), tint = Cyan400)
 }
 }
 IconButton(onClick = onDelete, enabled = count > 0) {
-Icon(Icons.Rounded.Delete, null,
+Icon(Icons.Rounded.Delete, stringResource(R.string.cd_delete_messages),
 tint = if (count > 0) Color(0xFFEF4444) else Slate600)
 }
 }
@@ -409,7 +411,7 @@ Spacer(Modifier.width(8.dp))
 Text("تعديل الرسالة", style = MaterialTheme.typography.labelMedium,
 color = Indigo500, modifier = Modifier.weight(1f))
 IconButton(onClick = onCancel, modifier = Modifier.size(32.dp)) {
-Icon(Icons.Rounded.Close, null, tint = Slate400, modifier = Modifier.size(18.dp))
+Icon(Icons.Rounded.Close, stringResource(R.string.cd_cancel_edit), tint = Slate400, modifier = Modifier.size(18.dp))
 }
 }
 }
@@ -427,7 +429,8 @@ unfocusedBorderColor = Slate700, focusedTextColor = Slate100, unfocusedTextColor
 FloatingActionButton(onClick = onSend,
 containerColor = if (uiState.editingMessage != null) Cyan400 else Indigo500,
 contentColor = Color.White, shape = RoundedCornerShape(14.dp), modifier = Modifier.size(52.dp)) {
-Icon(if (uiState.editingMessage != null) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.Send, null)
+Icon(if (uiState.editingMessage != null) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.Send,
+stringResource(if (uiState.editingMessage != null) R.string.cd_save_edit else R.string.cd_send))
 }
 }
 }

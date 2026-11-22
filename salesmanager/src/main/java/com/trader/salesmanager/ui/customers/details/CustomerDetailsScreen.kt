@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.customers.details
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import androidx.core.net.toUri
 import android.content.Intent
@@ -172,7 +174,7 @@ Scaffold(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
                         // ✅ إخفاء زر التعديل للزبون الزائر (id = -1)

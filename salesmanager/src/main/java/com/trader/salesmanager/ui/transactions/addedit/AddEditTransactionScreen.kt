@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.transactions.addedit
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -109,7 +111,7 @@ fun AddEditTransactionScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                 }
                 Text(if (uiState.isEditMode) "تعديل العملية" else "إضافة عملية",
                     style = MaterialTheme.typography.titleLarge,
