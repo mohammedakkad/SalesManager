@@ -12,7 +12,7 @@ Branch: `feat/kmp-android-desktop` (merged with `production` @ 44229d1, PRs #52/
 
 ### K0 — Baseline and spike (no production code changes)
 - [x] K0.1 Record the baseline: test counts per module, coverage, lint, build times, APK size. Save to `docs/kmp/baseline.md`.  
-  - commit: 303ff7a · evidence: 1,176 unit tests green (app 292, salesmanager 884); lint 0 errors/22 warnings; line coverage 90.31%; debug APK 59,851,221 B; assembleDebug 293 s cold. Device/R8/admin not verified.
+  - commit: the commit titled "docs(kmp): K0.1 baseline (re-measured on merged production)" (a commit cannot contain its own hash; measured on code `44229d1`) · evidence: 1,192 unit tests from XML (app 292, salesmanager 884, admin 16), 0 failures/skipped; lint 0 errors (29/22/23 warnings); line coverage 90.31%; debug APK 59,851,221 B, release R8 27,616,762 B; cold assemble 93 s; toolchain matches prompt. Seller QA #90 on PR #53 head failed on API 24 (cause not verified); #88 green.
 - [ ] K0.2 Generate the dependency inventory: every library mapped to KMP-ready / JVM-only / Android-only, with version and evidence link. Save to `docs/kmp/dependency-matrix.md`.  
   - commit: _pending_ · evidence: _pending_
 - [ ] K0.3 Generate the Android-coupling inventory per file (`android.*`, Firebase, Gson, WorkManager, PDF, CameraX), grouped by module and layer. Save to `docs/kmp/coupling-inventory.md`.  
