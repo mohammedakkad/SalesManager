@@ -1,5 +1,6 @@
 package com.trader.salesmanager.util.export
 
+import com.trader.core.util.format.AppNumberFormat
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -128,15 +129,13 @@ object ExportManager {
         // ── جدول العمليات ──────────────────────────────────────
         xlsx.addRow("#" to headerStyle, "الزبون" to headerStyle, "التاريخ" to headerStyle,
             "المبلغ (₪)" to headerStyle, "طريقة الدفع" to headerStyle, "الحالة" to headerStyle, "ملاحظة" to headerStyle)
-
-        val df = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("ar"))
         transactions.forEachIndexed { i, tx ->
             val rowStyle = if (tx.isPaid) paidStyle else debtStyle
             val alt = if (i % 2 == 0) normalStyle else altStyle
             xlsx.addRow(
                 (i + 1).toString() to (if (tx.isPaid) paidStyle else debtStyle),
                 tx.customerName to rowStyle,
-                df.format(Date(tx.date)) to rowStyle,
+                AppNumberFormat.formatDate("dd/MM/yyyy HH:mm", Date(tx.date)) to rowStyle,
                 tx.amount to rowStyle,
                 tx.paymentMethodName.ifEmpty { "—" } to rowStyle,
                 (if (tx.isPaid) "مدفوع" else "غير مدفوع") to rowStyle,
@@ -207,7 +206,7 @@ object ExportManager {
         xlsx.setColWidth(7, 12.0)
 
         xlsx.addRow("" to normalStyle, "تقرير المخزون — $storeName" to titleStyle)
-        xlsx.addRow("" to normalStyle, SimpleDateFormat("dd MMMM yyyy", Locale("ar")).format(Date()) to XlsxWriter.CellStyle(fontColor = "FF64748B"))
+        xlsx.addRow("" to normalStyle, AppNumberFormat.formatDate("dd MMMM yyyy", Date()) to XlsxWriter.CellStyle(fontColor = "FF64748B"))
         xlsx.addEmptyRow()
 
         xlsx.addRow(

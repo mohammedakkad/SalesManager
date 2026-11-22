@@ -1,5 +1,8 @@
 package com.trader.salesmanager.ui.reports
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.format.AppNumberFormat
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -209,7 +212,7 @@ fun ReportsScreen(
                 navigationIcon = {
                     if (showNavigateUp) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back))
                         }
                     }
                 },
@@ -758,7 +761,7 @@ private fun SelectedDayDetail(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            String.format("%.0f", tx.amount),
+                            AppNumberFormat.number(tx.amount, "%.0f"),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = if (tx.isPaid) PaidGreen else UnpaidAmber
@@ -818,7 +821,7 @@ private fun DaySummaryChip(label: String, value: Double, color: Color, modifier:
             Text(label, style = MaterialTheme.typography.labelSmall, color = color)
             Spacer(Modifier.height(2.dp))
             Text(
-                String.format("%.0f", value),
+                AppNumberFormat.number(value, "%.0f"),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold, color = color
             )
@@ -881,7 +884,7 @@ private fun TimeSlotRow(label: String, value: Double, ratio: Float, color: Color
         ) {
             Text(label, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
             Text(
-                String.format("%.0f", value),
+                AppNumberFormat.number(value, "%.0f"),
                 style = MaterialTheme.typography.labelMedium,
                 color = color,
                 fontWeight = FontWeight.Bold
@@ -1041,7 +1044,7 @@ private fun SummaryCard(
 
                 // ── الرقم الرئيسي ─────────────────────────────────
                 Text(
-                    text = "₪ ${String.format("%,.0f", animated)}",
+                    text = "₪ ${AppNumberFormat.number(animated, "%,.0f")}",
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.ExtraBold,
                     color = color
@@ -1097,7 +1100,7 @@ private fun MiniAmountPill(
         Column {
             Text(label, style = MaterialTheme.typography.labelSmall, color = color.copy(alpha = 0.8f))
             Text(
-                "₪ ${String.format("%,.0f", amount)}",
+                "₪ ${AppNumberFormat.number(amount, "%,.0f")}",
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = color
@@ -1133,7 +1136,7 @@ private fun MetricCard(label: String, value: Double, color: Color, modifier: Mod
             }
             Spacer(Modifier.height(8.dp))
             Text(
-                String.format("%.0f", value),
+                AppNumberFormat.number(value, "%.0f"),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.ExtraBold,
                 color = color
@@ -1199,7 +1202,7 @@ private fun AgingRow(label: String, amount: Double, count: Int, ratio: Float, co
         ) {
             Text(label, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
             Text(
-                "${String.format("%.0f", amount)} · $count",
+                "${AppNumberFormat.number(amount, "%.0f")} · $count",
                 style = MaterialTheme.typography.labelMedium,
                 color = color,
                 fontWeight = FontWeight.Bold
@@ -1644,7 +1647,7 @@ private fun RankList(items: List<CustomerRank>, color: Color) {
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            String.format("%.0f", item.amount),
+                            AppNumberFormat.number(item.amount, "%.0f"),
                             style = MaterialTheme.typography.labelSmall,
                             color = color
                         )

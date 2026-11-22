@@ -2,7 +2,7 @@ package com.trader.salesmanager.util.pdf.components
 
 import android.graphics.Canvas
 import android.text.Layout
-import com.trader.salesmanager.util.format.AppNumberFormat
+import com.trader.core.util.format.AppNumberFormat
 import com.trader.salesmanager.util.pdf.core.PdfDocumentBuilder
 import com.trader.salesmanager.util.pdf.design.PdfSpacing
 import com.trader.salesmanager.util.pdf.design.PdfTypeScale

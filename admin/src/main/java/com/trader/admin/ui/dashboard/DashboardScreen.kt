@@ -1,5 +1,7 @@
 package com.trader.admin.ui.dashboard
 
+import com.trader.admin.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -55,13 +57,13 @@ fun DashboardScreen(
                         onClick = onNavigateToNotifications,
                         modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
                     ) {
-                        Icon(Icons.Rounded.Notifications, null, tint = Color.White)
+                        Icon(Icons.Rounded.Notifications, stringResource(R.string.cd_notifications), tint = Color.White)
                     }
                     IconButton(
                         onClick = onSignOut,
                         modifier = Modifier.clip(CircleShape).background(Color.White.copy(0.15f))
                     ) {
-                        Icon(Icons.AutoMirrored.Rounded.Logout, null, tint = Color.White)
+                        Icon(Icons.AutoMirrored.Rounded.Logout, stringResource(R.string.cd_sign_out), tint = Color.White)
                     }
                 }
             }

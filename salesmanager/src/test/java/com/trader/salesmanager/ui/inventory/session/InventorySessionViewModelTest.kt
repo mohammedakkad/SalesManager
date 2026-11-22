@@ -24,7 +24,7 @@ class InventorySessionViewModelTest {
     @After fun cleanup() { store.clear(); Dispatchers.resetMain() }
 
     @Test fun validCountsAndClearingPersistWhileInvalidCountsNeverReachRepository() = runTest {
-        val model = InventorySessionViewModel(repository, mockk<ProductRepository>(), "m")
+        val model = InventorySessionViewModel(repository, mockk<ProductRepository>(), com.trader.core.domain.repository.MerchantContext.fixed("m"))
         store.put("inventory", model)
         val item = InventorySessionItem(id = "item", sessionId = "session", unitId = "unit", systemQuantity = 5.0)
         for (invalid in listOf(-1.0, Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)) {

@@ -1,5 +1,8 @@
 package com.trader.salesmanager.ui.returns
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Spring
@@ -124,7 +127,7 @@ fun ReturnProcessScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Column(Modifier.weight(1f)) {
                             Text(
@@ -143,12 +146,12 @@ fun ReturnProcessScreen(
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         SummaryPill("${state.selectedLines.size} أصناف", Icons.Rounded.Inventory2)
                         SummaryPill(
-                            "₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
+                            "₪${AppNumberFormat.number(state.totalRefund, "%.2f")}",
                             Icons.AutoMirrored.Rounded.Undo
                         )
                         if (state.totalLostProfit > 0) {
                             SummaryPill(
-                                "خسارة ₪${String.format(Locale.US, "%.2f", state.totalLostProfit)}",
+                                "خسارة ₪${AppNumberFormat.number(state.totalLostProfit, "%.2f")}",
                                 Icons.AutoMirrored.Rounded.TrendingDown
                             )
                         }
@@ -255,7 +258,7 @@ fun ReturnProcessScreen(
                         Icon(Icons.AutoMirrored.Rounded.Undo, null, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            "تأكيد الإرجاع · ₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
+                            "تأكيد الإرجاع · ₪${AppNumberFormat.number(state.totalRefund, "%.2f")}",
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.bodyLarge
                         )
@@ -393,7 +396,7 @@ private fun ReturnLineCard(
                             }
                             Text("·", color = appColors.textSubtle)
                             Text(
-                                "₪${String.format(Locale.US, "%.2f", line.invoiceItem.pricePerUnit)}",
+                                "₪${AppNumberFormat.number(line.invoiceItem.pricePerUnit, "%.2f")}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = appColors.textSubtle
                             )
@@ -420,7 +423,7 @@ private fun ReturnLineCard(
                     ) {
                         Column(horizontalAlignment = Alignment.End) {
                             Text(
-                                "₪${String.format(Locale.US, "%.2f", line.refundAmount)}",
+                                "₪${AppNumberFormat.number(line.refundAmount, "%.2f")}",
                                 color = Violet500,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Black
@@ -433,7 +436,7 @@ private fun ReturnLineCard(
                                     Icon(Icons.AutoMirrored.Rounded.TrendingDown, null,
                                         tint = DebtRed, modifier = Modifier.size(10.dp))
                                     Text(
-                                        "₪${String.format(Locale.US, "%.2f", line.lostProfit)}",
+                                        "₪${AppNumberFormat.number(line.lostProfit, "%.2f")}",
                                         color = DebtRed,
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold
@@ -607,7 +610,7 @@ private fun ConfirmReturnBottomSheet(
                         color = appColors.textPrimary
                     )
                     Text(
-                        "₪${String.format(Locale.US, "%.2f", line.refundAmount)}",
+                        "₪${AppNumberFormat.number(line.refundAmount, "%.2f")}",
                         color = Violet500, fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -622,7 +625,7 @@ private fun ConfirmReturnBottomSheet(
                     style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold
                 )
                 Text(
-                    "₪${String.format(Locale.US, "%.2f", state.totalRefund)}",
+                    "₪${AppNumberFormat.number(state.totalRefund, "%.2f")}",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold, color = Violet500
                 )
@@ -646,11 +649,7 @@ private fun ConfirmReturnBottomSheet(
                     )
                     Text(
                         "سيتم تسجيل خسارة ₪${
-                            String.format(
-                                Locale.US,
-                                "%.2f",
-                                state.totalLostProfit
-                            )
+                            AppNumberFormat.number(state.totalLostProfit, "%.2f")
                         } من هامش الربح",
                         color = DebtRed, style = MaterialTheme.typography.bodySmall
                     )

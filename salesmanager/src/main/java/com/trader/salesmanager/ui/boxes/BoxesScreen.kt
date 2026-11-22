@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.boxes
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.ui.platform.LocalConfiguration
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -730,11 +731,11 @@ private fun formatRelativeTime(millis: Long): String {
         diff < 60_000L -> stringResource(R.string.boxes_time_now)
         diff < 3_600_000L -> stringResource(R.string.boxes_time_minutes, diff / 60_000)
         diff < 86_400_000L -> stringResource(R.string.boxes_time_hours, diff / 3_600_000)
-        else -> SimpleDateFormat("dd/MM", LocalConfiguration.current.locales[0]).format(Date(millis))
+        else -> AppNumberFormat.formatDate("dd/MM", Date(millis))
     }
 }
 
 private fun formatSignedAmount(delta: Double): String {
     val prefix = if (delta >= 0) "+" else ""
-    return prefix + String.format(Locale.US, "%.2f", delta)
+    return prefix + AppNumberFormat.number(delta, "%.2f")
 }

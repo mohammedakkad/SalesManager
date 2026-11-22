@@ -2,7 +2,7 @@ package com.trader.salesmanager.util.pdf
 
 import com.trader.core.domain.model.Customer
 import com.trader.core.domain.model.Transaction
-import com.trader.salesmanager.util.format.AppNumberFormat
+import com.trader.core.util.format.AppNumberFormat
 import com.trader.salesmanager.util.pdf.components.PdfBadgeTone
 import com.trader.salesmanager.util.pdf.components.PdfCell
 import com.trader.salesmanager.util.pdf.components.PdfColumn

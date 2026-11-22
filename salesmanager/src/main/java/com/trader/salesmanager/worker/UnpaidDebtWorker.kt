@@ -1,5 +1,6 @@
 package com.trader.salesmanager.worker
 
+import com.trader.core.util.format.AppNumberFormat
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -101,9 +102,9 @@ class UnpaidDebtWorker(
         )
 
         val body = if (txCount == 1)
-            "لم يسدد فاتورة بقيمة ₪${String.format("%,.0f", totalDebt)} حتى الآن"
+            "لم يسدد فاتورة بقيمة ₪${AppNumberFormat.number(totalDebt, "%,.0f")} حتى الآن"
         else
-            "لديه $txCount فواتير غير مسددة بإجمالي ₪${String.format("%,.0f", totalDebt)}"
+            "لديه $txCount فواتير غير مسددة بإجمالي ₪${AppNumberFormat.number(totalDebt, "%,.0f")}"
 
         val notif = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_alert)

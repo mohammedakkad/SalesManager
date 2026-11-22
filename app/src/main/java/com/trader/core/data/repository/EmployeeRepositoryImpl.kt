@@ -9,6 +9,8 @@ import com.trader.core.domain.model.EmployeeRole
 import com.trader.core.domain.model.SyncStatus
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.EmployeeRepository
+import com.trader.core.domain.repository.MerchantContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -16,13 +18,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 class EmployeeRepositoryImpl(
     private val dao: EmployeeDao,
-    private val merchantId: String,
+    private val merchant: MerchantContext,
     private val sync: FirebaseSyncService,
     private val activationRepo: ActivationRepository
 ) : EmployeeRepository {
@@ -33,10 +36,14 @@ class EmployeeRepositoryImpl(
         startRealtimeSync()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeEmployees(): Flow<List<Employee>> =
-        dao.getAllByMerchant(merchantId).map { list -> list.map { it.toDomain() } }
+        merchant.observeCode().distinctUntilChanged()
+            .flatMapLatest { code -> dao.getAllByMerchant(code) }
+            .map { list -> list.map { it.toDomain() } }
 
     override suspend fun addOrUpdate(employee: Employee) {
+        val merchantId = merchant.currentCode()
         val entity = EmployeeEntity.fromDomain(employee.copy(merchantId = merchantId))
         dao.insertOrUpdate(entity)
 
@@ -52,6 +59,7 @@ class EmployeeRepositoryImpl(
         dao.getById(id)?.toDomain()
 
     override suspend fun deleteById(id: String) {
+        val merchantId = merchant.currentCode()
         dao.deleteById(id)
 
         syncScope.launch {
@@ -60,9 +68,10 @@ class EmployeeRepositoryImpl(
     }
 
     override suspend fun getByPin(pin: String): Employee? =
-        dao.getByPin(merchantId, pin)?.toDomain()
+        dao.getByPin(merchant.currentCode(), pin)?.toDomain()
 
     override suspend fun ensureDefaultAdmin() {
+        val merchantId = merchant.currentCode()
         val count = dao.countByMerchant(merchantId)
         if (count > 0) return
 

@@ -1,5 +1,7 @@
 package com.trader.core.domain.model
 
+import com.trader.core.util.format.AppNumberFormat
+
 data class Product(
     val id: String = "",
     val barcode: String? = null,
@@ -47,13 +49,13 @@ data class ProductUnit(
 
     /** يحوّل الكمية المخزنة (بالكيلو دائماً) إلى وحدة العرض */
     fun displayQuantity(rawKg: Double): String = when {
-        unitType != UnitType.WEIGHT -> rawKg.toInt().toString()
+        unitType != UnitType.WEIGHT -> AppNumberFormat.number(rawKg.toInt(), "%d")
         else -> {
             val displayValue = rawKg / weightUnit.kgFactor
             if (displayValue == displayValue.toLong().toDouble())
-                displayValue.toLong().toString()
+                AppNumberFormat.number(displayValue.toLong(), "%d")
             else
-                String.format("%.1f", displayValue)
+                AppNumberFormat.number(displayValue, "%.1f")
         }
     }
 }

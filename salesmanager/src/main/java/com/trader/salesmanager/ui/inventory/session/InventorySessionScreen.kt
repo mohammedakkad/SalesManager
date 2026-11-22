@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.inventory.session
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -610,7 +611,6 @@ private fun CountInputDialog(
 
 @Composable
 private fun NoActiveSession(pastSessions: List<InventorySession>, onStart: () -> Unit) {
-    val fmt = SimpleDateFormat("dd/MM/yyyy - hh:mm a", Locale("ar"))
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -695,7 +695,7 @@ private fun NoActiveSession(pastSessions: List<InventorySession>, onStart: () ->
                         }
                         Column(Modifier.weight(1f)) {
                             Text(
-                                fmt.format(Date(session.startedAt)),
+                                AppNumberFormat.formatDate("dd/MM/yyyy - hh:mm a", Date(session.startedAt)),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium
                             )
@@ -734,4 +734,4 @@ private fun StatItem(value: String, label: String, color: Color) {
 
 private fun formatQty(qty: Double): String =
     if (qty == qty.toLong().toDouble()) qty.toLong().toString()
-    else String.format("%.3f", qty).trimEnd('0').trimEnd('.')
+    else AppNumberFormat.number(qty, "%.3f").trimEnd('0').trimEnd('.')

@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.settings.sessions
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -107,9 +108,8 @@ private fun SessionCard(
     isRevoking: Boolean,
     onRevokeSession: () -> Unit
 ) {
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("ar"))
-    val loginDate = dateFormat.format(Date(session.loginDate))
-    val lastActive = dateFormat.format(Date(session.lastActive))
+    val loginDate = AppNumberFormat.formatDate("dd/MM/yyyy HH:mm", Date(session.loginDate))
+    val lastActive = AppNumberFormat.formatDate("dd/MM/yyyy HH:mm", Date(session.lastActive))
 
     Card(
         modifier = Modifier.fillMaxWidth(),

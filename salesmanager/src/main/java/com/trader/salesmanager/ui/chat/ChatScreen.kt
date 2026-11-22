@@ -1,5 +1,10 @@
 package com.trader.salesmanager.ui.chat
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.draw.drawBehind
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -248,7 +253,7 @@ private fun NormalChatAppBar(onNavigateUp: () -> Unit) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onNavigateUp) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
             }
             Spacer(Modifier.width(8.dp))
             Box(
@@ -295,7 +300,7 @@ private fun SelectionAppBar(
 
             // زر إغلاق
             IconButton(onClick = onClose) {
-                Icon(Icons.Rounded.Close, null, tint = Color.White)
+                Icon(Icons.Rounded.Close, stringResource(R.string.cd_exit_selection), tint = Color.White)
             }
 
             // ✅ عداد متحرك — يرتفع عند الزيادة وينزل عند النقص
@@ -304,20 +309,20 @@ private fun SelectionAppBar(
             // نسخ
             AnimatedVisibility(canCopy, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
                 IconButton(onClick = onCopy) {
-                    Icon(Icons.Rounded.ContentCopy, null, tint = Color.White.copy(0.9f))
+                    Icon(Icons.Rounded.ContentCopy, stringResource(R.string.cd_copy_messages), tint = Color.White.copy(0.9f))
                 }
             }
 
             // تعديل — فقط عند محددة واحدة هي رسالتي
             AnimatedVisibility(canEdit, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
                 IconButton(onClick = onEdit) {
-                    Icon(Icons.Rounded.Edit, null, tint = Emerald400)
+                    Icon(Icons.Rounded.Edit, stringResource(R.string.cd_edit_message), tint = Emerald400)
                 }
             }
 
             // حذف
             IconButton(onClick = onDelete, enabled = count > 0) {
-                Icon(Icons.Rounded.Delete, null,
+                Icon(Icons.Rounded.Delete, stringResource(R.string.cd_delete_messages),
                     tint = if (count > 0) DebtRed else Color.White.copy(0.3f))
             }
         }
@@ -582,7 +587,7 @@ private fun ChatInputBar(
                 Text("تعديل الرسالة", style = MaterialTheme.typography.labelMedium,
                     color = Emerald500, modifier = Modifier.weight(1f))
                 IconButton(onClick = onCancel, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Rounded.Close, null, tint = appColors.textSubtle, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Rounded.Close, stringResource(R.string.cd_cancel_edit), tint = appColors.textSubtle, modifier = Modifier.size(18.dp))
                 }
             }
         }
@@ -666,10 +671,15 @@ private fun PendingBubble(
     )
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
         Column(horizontalAlignment = Alignment.End) {
+            val bubbleShape = RoundedCornerShape(topStart = 18.dp, topEnd = 4.dp, bottomStart = 18.dp, bottomEnd = 18.dp)
             Surface(
-                shape = RoundedCornerShape(topStart = 18.dp, topEnd = 4.dp, bottomStart = 18.dp, bottomEnd = 18.dp),
-                color = if (pending.isFailed) DebtRed.copy(0.12f) else Emerald500.copy(alpha),
-                modifier = Modifier.widthIn(max = 280.dp)
+                shape = bubbleShape,
+                color = if (pending.isFailed) DebtRed.copy(0.12f) else Color.Transparent,
+                // The sending pulse is painted in the draw phase so it never recomposes the bubble.
+                modifier = Modifier.widthIn(max = 280.dp).then(
+                    if (pending.isFailed) Modifier
+                    else Modifier.drawBehind { drawOutline(bubbleShape.createOutline(size, layoutDirection, this), Emerald500.copy(alpha)) }
+                )
             ) {
                 Text(pending.text, Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                     color = if (pending.isFailed) DebtRed else Color.White,
@@ -718,21 +728,20 @@ private fun DateDivider(label: String) {
 
 // ── Helpers ───────────────────────────────────────────────────
 private fun formatTime(date: Date): String =
-SimpleDateFormat("hh:mm a", Locale("ar")).format(date)
+AppNumberFormat.formatDate("hh:mm a", date)
 
 private fun groupMessagesByDate(messages: List<ChatMessage>): Map<String, List<ChatMessage>> {
-    val today = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+    val today = AppNumberFormat.formatDate("dd/MM/yyyy", Date())
     val yesterday = Calendar.getInstance().apply {
         add(Calendar.DAY_OF_YEAR, -1)
     }
     .time.let {
-        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it)
+        AppNumberFormat.formatDate("dd/MM/yyyy", it)
     }
-    val fmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return messages.groupBy {
         msg ->
         val d = msg.timestamp?.toDate() ?: return@groupBy "—"
-        when (val k = fmt.format(d)) {
+        when (val k = AppNumberFormat.formatDate("dd/MM/yyyy", d)) {
             today -> "اليوم"; yesterday -> "أمس"; else -> k
         }
     }

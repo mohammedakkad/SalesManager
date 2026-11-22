@@ -22,7 +22,7 @@ class InventoryCountUiFlowTest:OfflineSellerUiTest() {
         every { repo.getAllSessions() } returns MutableStateFlow(listOf(session))
         every { repo.getSessionItems("s") } returns items
         coEvery { repo.updateSessionItem(any()) } coAnswers { val updated=firstArg<InventorySessionItem>();items.value=items.value.map { if(it.id==updated.id) updated else it } }
-        val vm=owned(InventorySessionViewModel(repo,mockk<ProductRepository>(relaxed=true),"fixture"))
+        val vm=owned(InventorySessionViewModel(repo,mockk<ProductRepository>(relaxed=true),com.trader.core.domain.repository.MerchantContext.fixed("fixture")))
         show { InventorySessionScreen({},viewModel=vm) }
         ui.onNode(hasScrollToIndexAction()).performScrollToNode(hasText("حبة أرز"))
         ui.onNodeWithText("حبة أرز").performClick()
@@ -35,7 +35,7 @@ class InventoryCountUiFlowTest:OfflineSellerUiTest() {
         val repo=mockk<InventoryRepository>(relaxed=true)
         every { repo.getActiveSession() } returns MutableStateFlow(null)
         every { repo.getAllSessions() } returns MutableStateFlow(listOf(InventorySession("old","fixture",InventoryStatus.FINISHED,totalAdjustments=2)))
-        val vm=owned(InventorySessionViewModel(repo,mockk<ProductRepository>(relaxed=true),"fixture"))
+        val vm=owned(InventorySessionViewModel(repo,mockk<ProductRepository>(relaxed=true),com.trader.core.domain.repository.MerchantContext.fixed("fixture")))
         show { InventorySessionScreen({},viewModel=vm) }
         ui.onNodeWithText("بدء جرد جديد").performClick()
         coVerify { repo.startNewSession("fixture") }

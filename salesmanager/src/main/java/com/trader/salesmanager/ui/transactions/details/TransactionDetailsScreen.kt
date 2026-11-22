@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.transactions.details
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -262,7 +264,7 @@ fun TransactionDetailsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
                         // ✅ Fix 4: دفاعي — يعتمد على hasItems أو وجود أصناف فعلية في الـ state
@@ -293,7 +295,7 @@ fun TransactionDetailsScreen(
                         IconButton(onClick = {
                             showDeleteDialog = true
                         }) {
-                            Icon(Icons.Rounded.Delete, null, tint = Color.White.copy(0.8f))
+                            Icon(Icons.Rounded.Delete, stringResource(R.string.cd_delete_transaction), tint = Color.White.copy(0.8f))
                         }
                     }
                     Spacer(Modifier.height(12.dp))

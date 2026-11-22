@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.activation
 
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -47,7 +48,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -112,7 +112,8 @@ fun ActivationScreen(
                 Box(
                     modifier = Modifier
                         .size(100.dp)
-                        .scale(pulseScale)
+                        // Read in the draw layer: the pulse never recomposes the screen.
+                        .graphicsLayer { scaleX = pulseScale; scaleY = pulseScale }
                         .clip(CircleShape)
                         .background(Brush.radialGradient(listOf(Emerald500, Cyan500))),
                     contentAlignment = Alignment.Center

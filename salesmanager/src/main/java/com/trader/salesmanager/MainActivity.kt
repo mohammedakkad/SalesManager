@@ -1,6 +1,7 @@
 package com.trader.salesmanager
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -18,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.trader.salesmanager.service.NotificationService
+import com.trader.core.ui.WideScreenContainer
+import com.trader.salesmanager.ui.locale.AppLocale
 import com.trader.salesmanager.ui.navigation.AppNavigation
 import com.trader.salesmanager.ui.theme.SalesManagerTheme
 import com.trader.salesmanager.update.AppUpdateViewModel
@@ -32,6 +35,11 @@ class MainActivity : ComponentActivity() {
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { /* granted or denied */ }
+
+    override fun attachBaseContext(newBase: Context) {
+        // Arabic + RTL regardless of the device language (single switch: AppLocale).
+        super.attachBaseContext(AppLocale.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +57,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation(
-                        pendingNavigation = pendingNavigation,
-                        onNavigationHandled = { pendingNavigation = null }
-                    )
+                    WideScreenContainer {
+                        AppNavigation(
+                            pendingNavigation = pendingNavigation,
+                            onNavigationHandled = { pendingNavigation = null }
+                        )
+                    }
                 }
             }
         }

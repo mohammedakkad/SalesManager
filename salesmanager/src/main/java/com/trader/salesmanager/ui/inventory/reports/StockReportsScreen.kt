@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.inventory.reports
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -137,7 +138,7 @@ private fun LazyListScope.stockTab(state: StockReportsUiState) {
     item {
         BigValueCard(
             label = "قيمة المخزن الإجمالية",
-            value = "₪${String.format("%,.2f", state.totalProductsValue)}",
+            value = "₪${AppNumberFormat.number(state.totalProductsValue, "%,.2f")}",
             icon = Icons.Rounded.Inventory2,
             gradient = listOf(Emerald500, Color(0xFF059669)),
             modifier = Modifier.padding(16.dp)
@@ -189,7 +190,7 @@ private fun LazyListScope.cashTab(state: StockReportsUiState) {
     item {
         BigValueCard(
             label = "إجمالي الكاش المحصّل",
-            value = "₪${String.format("%,.2f", state.cashSummary.totalCash)}",
+            value = "₪${AppNumberFormat.number(state.cashSummary.totalCash, "%,.2f")}",
             icon = Icons.Rounded.Payments,
             gradient = listOf(PaidGreen, Color(0xFF16A34A)),
             modifier = Modifier.padding(16.dp)
@@ -342,7 +343,7 @@ private fun StockItemRow(item: StockReportItem) {
                     color = appColors.textSubtle)
             }
             val qtyStr = when (item.unitType) {
-                UnitType.WEIGHT -> "${String.format("%.3f", item.currentQty).trimEnd('0').trimEnd('.')} كجم"
+                UnitType.WEIGHT -> "${AppNumberFormat.number(item.currentQty, "%.3f").trimEnd('0').trimEnd('.')} كجم"
                 else            -> "${item.currentQty.toInt()}"
             }
             Text(qtyStr, fontWeight = FontWeight.Bold,
@@ -360,7 +361,7 @@ private fun CashRow(label: String, amount: Double, color: Color) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically) {
         Text(label, style = MaterialTheme.typography.bodySmall, color = appColors.textSecondary)
-        Text("₪${String.format("%,.2f", amount)}",
+        Text("₪${AppNumberFormat.number(amount, "%,.2f")}",
             fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium,
             color = color)
     }
@@ -410,7 +411,7 @@ private fun AlertProductCard(product: ProductWithUnits, color: Color) {
                 val qtyText = product.units.joinToString(" • ") { u ->
                     "${u.unitLabel}: ${u.quantityInStock.let {
                         if (it == it.toLong().toDouble()) it.toLong().toString()
-                        else String.format("%.2f", it)
+                        else AppNumberFormat.number(it, "%.2f")
                     }}"
                 }
                 Text(qtyText, style = MaterialTheme.typography.labelSmall, color = color)

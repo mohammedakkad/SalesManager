@@ -60,6 +60,16 @@ if [[ -n "${SELLER_QA_ANDROID_API:-}" && "$seller_device_api" != "$SELLER_QA_AND
   exit 1
 fi
 export SELLER_QA_ANDROID_API_ACTUAL="$seller_device_api"
+# The app forces Arabic + RTL itself (AppLocale); these lanes deliberately run on an English
+# device so the UI/PDF checks prove device-language independence. Record and require it.
+qa_stage="device language"
+seller_device_locale="$(adb shell getprop persist.sys.locale | tr -d '\r\n')"
+[[ -z "$seller_device_locale" ]] && seller_device_locale="$(adb shell getprop ro.product.locale | tr -d '\r\n')"
+echo "::notice title=Seller device language [API $seller_device_api]::$seller_device_locale"
+if [[ "$seller_device_locale" != en* ]]; then
+  echo "::error title=Seller device language::Expected an English device language, got '$seller_device_locale'"
+  exit 1
+fi
 qa_api_suffix=" [API $seller_device_api]"
 adb shell rm -rf /data/local/tmp/seller-qa-pdf
 qa_stage="JVM coverage"

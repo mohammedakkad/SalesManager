@@ -1,14 +1,10 @@
 package com.trader.salesmanager.ui.components
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -143,7 +139,7 @@ fun AnimatedCounter(
     // Values outside Float range are displayed directly instead of animating to infinity.
     val displayedValue = if (!canAnimate || animatedValue == floatTarget) value else animatedValue.toDouble()
     Text(
-        text = prefix + String.format(Locale.US, "%,.${decimals}f", displayedValue) + suffix,
+        text = prefix + AppNumberFormat.number(displayedValue, "%,.${decimals}f") + suffix,
         style = style,
         fontWeight = FontWeight.Bold,
         color = color,
@@ -195,8 +191,8 @@ fun StatCard(
 fun ModernSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    placeholder: String = "بحث...",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    placeholder: String = "بحث..."
 ) {
     OutlinedTextField(
         value = query,
@@ -236,12 +232,7 @@ fun EmptyState(
     subtitle: String,
     modifier: Modifier = Modifier
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 0.95f, targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(tween(1500), RepeatMode.Reverse),
-        label = "scale"
-    )
+    // (An infinite "pulse" animation whose value was never read used to run here; removed.)
     Column(
         modifier = modifier.fillMaxWidth().padding(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -277,7 +268,7 @@ fun GradientTopBar(
         navigationIcon = {
             if (onNavigateUp != null) {
                 IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.cd_navigate_back), tint = Color.White)
                 }
             }
         },

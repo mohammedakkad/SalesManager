@@ -1,5 +1,7 @@
 package com.trader.admin.ui.merchants.list
 
+import com.trader.admin.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -35,14 +37,14 @@ fun MerchantsScreen(
     viewModel: MerchantsViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val search = viewModel.search.value
+    val search by viewModel.search.collectAsStateWithLifecycle()
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddMerchant, containerColor = Indigo500, contentColor = Color.White,
                 shape = RoundedCornerShape(16.dp)
-            ) { Icon(Icons.Rounded.PersonAdd, null) }
+            ) { Icon(Icons.Rounded.PersonAdd, stringResource(R.string.cd_add_merchant)) }
         },
         containerColor = Navy950
     ) { padding ->
@@ -61,7 +63,7 @@ fun MerchantsScreen(
                         IconButton(onClick = onNavigateUp) {
                             Icon(
                                 Icons.AutoMirrored.Rounded.ArrowBack,
-                                null,
+                                stringResource(R.string.cd_navigate_back),
                                 tint = Color.White
                             )
                         }

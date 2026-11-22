@@ -1,5 +1,9 @@
 package com.trader.salesmanager.ui.home
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
@@ -107,11 +111,13 @@ fun HomeScreen(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAddTransaction,
+                // The label lives on the icon: Material 3 clears the text's semantics while the
+                // FAB is not fully expanded, and clearing it here avoids a double announcement.
                 icon = {
-                    Icon(Icons.Rounded.Add, null)
+                    Icon(Icons.Rounded.Add, stringResource(R.string.cd_new_transaction))
                 },
                 text = {
-                    Text("عملية جديدة", fontWeight = FontWeight.SemiBold)
+                    Text("عملية جديدة", fontWeight = FontWeight.SemiBold, modifier = Modifier.clearAndSetSemantics { })
                 },
                 containerColor = Emerald500,
                 contentColor = Color.White,
@@ -378,7 +384,7 @@ private fun RecentTransactionCard(tx: Transaction, index: Int, onClick: () -> Un
                 // المبلغ + حالة
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        String.format("%.0f", tx.amount),
+                        AppNumberFormat.number(tx.amount, "%.0f"),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = if (tx.isPaid) PaidGreen else UnpaidAmber
@@ -422,6 +428,6 @@ private fun formatTxDate(millis: Long): String {
         diff < 60_000L -> "الآن"
         diff < 3_600_000L -> "${diff / 60_000} د"
         diff < 86_400_000L -> "${diff / 3_600_000} س"
-        else -> SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(millis))
+        else -> AppNumberFormat.formatDate("dd/MM", Date(millis))
     }
 }

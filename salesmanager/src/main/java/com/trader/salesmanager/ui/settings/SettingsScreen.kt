@@ -185,7 +185,7 @@ fun SettingsScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(
@@ -218,6 +218,8 @@ fun SettingsScreen(
                 )
 
                 DarkModeSettingItem()
+
+                DigitSystemSettingItem()
 
                 LowStockAlertsSettingItem(
                     settings = lowStockSettings,

@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.scanner
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import android.Manifest
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -213,7 +215,7 @@ fun BarcodeScannerScreen(
             Arrangement.SpaceBetween, Alignment.CenterVertically) {
             IconButton(onClick = onDismiss,
                 modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(Color.Black.copy(0.5f))
-            ) { Icon(Icons.Rounded.Close, null, tint = Color.White) }
+            ) { Icon(Icons.Rounded.Close, stringResource(R.string.cd_close_scanner), tint = Color.White) }
 
             Text("مسح الباركود", color = Color.White,
                 style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -223,7 +225,7 @@ fun BarcodeScannerScreen(
                 modifier = Modifier.clip(RoundedCornerShape(12.dp)).background(Color.Black.copy(0.5f))
             ) {
                 Icon(if (torchEnabled) Icons.Rounded.FlashOff else Icons.Rounded.FlashOn,
-                    null, tint = if (torchEnabled) Cyan500 else Color.White)
+                    stringResource(if (torchEnabled) R.string.cd_torch_off else R.string.cd_torch_on), tint = if (torchEnabled) Cyan500 else Color.White)
             }
         }
     }

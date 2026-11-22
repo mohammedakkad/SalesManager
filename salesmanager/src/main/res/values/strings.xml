@@ -106,4 +106,28 @@
     <string name="sync_sheet_empty_title">لا يوجد شيء معلق</string>
     <string name="sync_sheet_empty_subtitle">جميع بياناتك متزامنة بالكامل</string>
     <string name="search_clear">مسح البحث</string>
+    <!-- Settings: digit system -->
+    <string name="settings_digits_title">نظام الأرقام</string>
+    <string name="settings_digits_subtitle">يُطبَّق على الشاشات والفواتير والتقارير</string>
+    <string name="settings_digits_arabic_indic">عربية ١٢٣</string>
+    <string name="settings_digits_western">غربية 123</string>
+    <!-- Content descriptions for icon-only buttons (TalkBack). -->
+    <string name="cd_cancel_edit">إلغاء التعديل</string>
+    <string name="cd_clear_search">مسح البحث</string>
+    <string name="cd_close_scanner">إغلاق الماسح</string>
+    <string name="cd_copy_messages">نسخ الرسائل المحددة</string>
+    <string name="cd_delete_customer">حذف الزبون</string>
+    <string name="cd_delete_messages">حذف الرسائل المحددة</string>
+    <string name="cd_delete_payment_method">حذف طريقة الدفع</string>
+    <string name="cd_delete_transaction">حذف العملية</string>
+    <string name="cd_dismiss_error">إخفاء الخطأ</string>
+    <string name="cd_edit_message">تعديل الرسالة</string>
+    <string name="cd_exit_selection">إلغاء التحديد</string>
+    <string name="cd_filter">تصفية العمليات</string>
+    <string name="cd_navigate_back">رجوع</string>
+    <string name="cd_scan_barcode">مسح الباركود</string>
+    <string name="cd_torch_off">إطفاء الفلاش</string>
+    <string name="cd_torch_on">تشغيل الفلاش</string>
+    <string name="cd_new_transaction">عملية جديدة</string>
+    <string name="cd_add_payment_method">إضافة طريقة دفع</string>
 </resources>

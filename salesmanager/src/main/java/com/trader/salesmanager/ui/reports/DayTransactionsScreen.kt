@@ -1,5 +1,8 @@
 package com.trader.salesmanager.ui.reports
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -185,7 +188,7 @@ fun DayTransactionsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val dateLabel = remember(dateMillis) {
-        SimpleDateFormat("EEEE، d MMMM yyyy", Locale("ar")).format(Date(dateMillis))
+        AppNumberFormat.formatDate("EEEE، d MMMM yyyy", Date(dateMillis))
     }
     var showFilterSheet by remember { mutableStateOf(false) }
 
@@ -217,7 +220,7 @@ fun DayTransactionsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
@@ -241,7 +244,7 @@ fun DayTransactionsScreen(
                                     .clip(CircleShape)
                                     .background(Color.White.copy(0.15f))
                             ) {
-                                Icon(Icons.Rounded.Tune, null, tint = Color.White)
+                                Icon(Icons.Rounded.Tune, stringResource(R.string.cd_filter), tint = Color.White)
                             }
                         }
                     }
@@ -268,7 +271,7 @@ fun DayTransactionsScreen(
                         trailingIcon = {
                             AnimatedVisibility(state.query.isNotEmpty()) {
                                 IconButton(onClick = { viewModel.setQuery("") }) {
-                                    Icon(Icons.Rounded.Close, null, tint = Color.White.copy(0.7f))
+                                    Icon(Icons.Rounded.Close, stringResource(R.string.cd_clear_search), tint = Color.White.copy(0.7f))
                                 }
                             }
                         },
@@ -373,7 +376,7 @@ private fun SummaryChip(modifier: Modifier, label: String, value: Double, color:
         Text(label, style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
         Spacer(Modifier.height(2.dp))
         Text(
-            "₪${String.format("%,.0f", animated)}",
+            "₪${AppNumberFormat.number(animated, "%,.0f")}",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = color
@@ -425,7 +428,7 @@ private fun DayTxCard(tx: Transaction, onClick: () -> Unit) {
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    "₪${String.format("%,.0f", tx.amount)}",
+                    "₪${AppNumberFormat.number(tx.amount, "%,.0f")}",
                     style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
                     color = if (tx.isPaid) PaidGreen else appColors.textPrimary
                 )

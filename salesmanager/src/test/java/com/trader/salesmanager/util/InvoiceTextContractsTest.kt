@@ -13,6 +13,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk=[28],manifest=Config.NONE,application=Application::class)
 class InvoiceTextContractsTest {
+    @get:org.junit.Rule(order=-10) val westernDigits=com.trader.salesmanager.testing.WesternDigitsRule()
     private val transaction=Transaction(42,7,"زبون الاختبار",60.0,isPaid=false,paymentType=PaymentType.DEBT,date=0)
     private val item=InvoiceItem(id="line",transactionId=42,productId="p",productName="أرز",unitId="u",unitLabel="كيلو",quantity=2.5,pricePerUnit=40.0,totalPrice=100.0)
     private fun text(t:Transaction=transaction,items:List<InvoiceItem> = emptyList(),name:String="متجر الاختبار")=InvoiceSharer.buildInvoiceText(t,items,name)

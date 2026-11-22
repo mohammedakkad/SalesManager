@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.navigation
 
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -37,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -65,7 +65,8 @@ fun SplashCheckScreen() {
             Box(
                 modifier = Modifier
                     .size(90.dp)
-                    .scale(pulse)
+                    // Read in the draw layer: the pulse never recomposes the screen.
+                    .graphicsLayer { scaleX = pulse; scaleY = pulse }
                     .clip(CircleShape)
                     .background(Color.White.copy(0.2f)),
                 contentAlignment = Alignment.Center

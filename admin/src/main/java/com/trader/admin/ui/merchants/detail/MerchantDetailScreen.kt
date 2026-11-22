@@ -1,5 +1,8 @@
 package com.trader.admin.ui.merchants.detail
 
+import com.trader.core.util.format.AppNumberFormat
+import com.trader.admin.R
+import androidx.compose.ui.res.stringResource
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -125,11 +128,11 @@ fun MerchantDetailScreen(
                         Column {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = onNavigateUp) {
-                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                                 }
                                 Spacer(Modifier.weight(1f))
                                 IconButton(onClick = { showDelete = true }) {
-                                    Icon(Icons.Rounded.Delete, null, tint = Color.White.copy(0.8f))
+                                    Icon(Icons.Rounded.Delete, stringResource(R.string.cd_delete_merchant), tint = Color.White.copy(0.8f))
                                 }
                             }
                             Spacer(Modifier.height(8.dp))
@@ -218,7 +221,7 @@ fun MerchantDetailScreen(
                         DetailCard(
                             label = "تاريخ التسجيل",
                             value = m.createdAt?.toDate()?.let {
-                                java.text.SimpleDateFormat("yyyy/MM/dd", java.util.Locale.getDefault()).format(it)
+                                AppNumberFormat.formatDate("yyyy/MM/dd", it)
                             } ?: "غير معروف",
                             icon = Icons.Rounded.History,
                             color = Slate400
@@ -383,7 +386,7 @@ private fun ActivationCodeCard(code: String, onCopy: () -> Unit) {
                     color = Slate100, letterSpacing = androidx.compose.ui.unit.TextUnit(2f, androidx.compose.ui.unit.TextUnitType.Sp))
             }
             IconButton(onClick = onCopy) {
-                Icon(Icons.Rounded.ContentCopy, null, tint = Indigo400, modifier = Modifier.size(20.dp))
+                Icon(Icons.Rounded.ContentCopy, stringResource(R.string.cd_copy_code), tint = Indigo400, modifier = Modifier.size(20.dp))
             }
         }
     }
@@ -422,15 +425,14 @@ private fun ExpiryCard(merchant: Merchant, onAdjust: () -> Unit) {
                 Column(Modifier.weight(1f)) {
                     Text("اشتراك مؤقت", style = MaterialTheme.typography.labelSmall, color = Slate400)
                     if (expiryDate != null) {
-                        val fmt = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
-                        Text("ينتهي ${fmt.format(expiryDate)}",
+                        Text("ينتهي ${AppNumberFormat.formatDate("dd/MM/yyyy", expiryDate)}",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = Slate100)
                     }
                 }
                 IconButton(onClick = onAdjust) {
-                    Icon(Icons.Rounded.EditCalendar, null, tint = Cyan500, modifier = Modifier.size(20.dp))
+                    Icon(Icons.Rounded.EditCalendar, stringResource(R.string.cd_adjust_expiry), tint = Cyan500, modifier = Modifier.size(20.dp))
                 }
             }
 

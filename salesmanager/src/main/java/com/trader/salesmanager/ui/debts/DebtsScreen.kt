@@ -1,5 +1,8 @@
 package com.trader.salesmanager.ui.debts
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -74,7 +77,7 @@ fun DebtsScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (showNavigateUp) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Spacer(Modifier.width(8.dp))
                     }
@@ -179,7 +182,7 @@ private fun DebtCard(name: String, debt: Double, rank: Int, onClick: () -> Unit)
                 )
             }
             Text(
-                String.format("%.2f", debt),
+                AppNumberFormat.number(debt, "%.2f"),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = DebtRed
