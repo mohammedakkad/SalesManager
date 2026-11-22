@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.trader.salesmanager.service.NotificationService
+import com.trader.core.ui.WideScreenContainer
 import com.trader.salesmanager.ui.locale.AppLocale
 import com.trader.salesmanager.ui.navigation.AppNavigation
 import com.trader.salesmanager.ui.theme.SalesManagerTheme
@@ -56,10 +57,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation(
-                        pendingNavigation = pendingNavigation,
-                        onNavigationHandled = { pendingNavigation = null }
-                    )
+                    WideScreenContainer {
+                        AppNavigation(
+                            pendingNavigation = pendingNavigation,
+                            onNavigationHandled = { pendingNavigation = null }
+                        )
+                    }
                 }
             }
         }
