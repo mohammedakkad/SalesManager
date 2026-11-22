@@ -5,7 +5,7 @@ import android.content.ComponentName
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
 import com.trader.salesmanager.util.export.ExportViewModel

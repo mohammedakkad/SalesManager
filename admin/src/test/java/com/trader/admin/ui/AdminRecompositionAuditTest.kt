@@ -3,7 +3,7 @@ package com.trader.admin.ui
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.trader.admin.ui.auth.AuthViewModel
 import com.trader.admin.ui.auth.LoginScreen
 import com.trader.admin.ui.chat.detail.ChatDetailScreen
