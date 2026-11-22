@@ -41,7 +41,15 @@ class KoinGraphVerificationTest {
         }
     }
 
-    @After fun close() { if (::app.isInitialized) app.close() }
+    /** Resolved view models start work in init; clearing cancels their scopes before the next test class runs. */
+    private val store = androidx.lifecycle.ViewModelStore()
+
+    @After fun close() {
+        store.clear()
+        if (::app.isInitialized) app.close()
+        val context = ApplicationProvider.getApplicationContext<Application>()
+        FirebaseApp.getApps(context).forEach { runCatching { com.google.firebase.firestore.FirebaseFirestore.getInstance(it).terminate() }; it.delete() }
+    }
 
     @OptIn(KoinExperimentalAPI::class)
     @Test fun everyConstructorDependencyIsDeclared() {
@@ -61,12 +69,17 @@ class KoinGraphVerificationTest {
         val definitions = app.koin.instanceRegistry.instances.values.map { it.beanDefinition }.distinct()
         val failures = definitions.mapNotNull { def ->
             val params = PARAMETERS[def.primaryType.simpleName] ?: parametersOf()
-            runCatching { app.koin.get<Any>(def.primaryType, def.qualifier) { params } }
+            runCatching { app.koin.get<Any>(def.primaryType, def.qualifier) { params }.also { keep(def.primaryType.simpleName, it) } }
                 .exceptionOrNull()?.let { "${def.primaryType.simpleName}: ${generateSequence(it) { e -> e.cause }.last()}" }
         }
         println("Resolved ${definitions.size - failures.size}/${definitions.size} definitions")
         assertTrue("Unresolvable definitions:\n${failures.joinToString("\n")}", failures.isEmpty())
         assertTrue("Expected the full graph, got ${definitions.size}", definitions.size > 50)
+    }
+
+    @Suppress("RestrictedApi")
+    private fun keep(name: String?, instance: Any) {
+        if (instance is androidx.lifecycle.ViewModel) store.put("verify-$name", instance)
     }
 
     private companion object {
