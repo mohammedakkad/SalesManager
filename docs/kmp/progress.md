@@ -5,7 +5,8 @@ Branch: `feat/kmp-android-desktop` (merged with `production` @ 44229d1, PRs #52/
 
 ## Notes / deviations
 
-- None yet.
+- `baseline.md` supersedes the figures in section 0 of the master prompt (unit-test floor: 1,192).
+- K0.1 commit: `328e3b7` (to be backfilled in the K0.2 commit).
 
 ## Tasks
 
@@ -36,6 +37,9 @@ Branch: `feat/kmp-android-desktop` (merged with `production` @ 44229d1, PRs #52/
 - [ ] K1.5 CI: add a `windows-latest` job that compiles desktop and runs desktop tests (no packaging yet). Linux jobs unchanged.  
   - commit: _pending_ · evidence: _pending_
 - [ ] K1.6 Docs: `docs/kmp/developer-setup.md` (JDK, running desktop and Android, IDE plugin).  
+  - commit: _pending_ · evidence: _pending_
+
+- [ ] K1.7 **Proposed, needs owner approval:** make `:admin` debug buildable (today `:admin:assembleDebug` fails in `processDebugGoogleServices`: no client for `com.trader.admin.debug`). Options: (a) add a `com.trader.admin.debug` Android app to the Firebase project and update `admin/google-services.json` (owner action, touches Firebase config); (b) drop `applicationIdSuffix = ".debug"` in `admin/build.gradle.kts:32` (changes the debug applicationId, so it no longer installs beside release). Not started.  
   - commit: _pending_ · evidence: _pending_
 
 ### K2 — Domain models to commonMain (smallest pieces first)

@@ -84,8 +84,19 @@ Robolectric jars downloaded fine through the mirror, so no module is "not verifi
 | `:salesmanager` | `lintDebug` | 0 | 22 |
 | `:admin` | `lintRelease` | 0 | 23 |
 
-`:admin:lintDebug` fails before lint runs: `processDebugGoogleServices`: "No matching client found for package name
-'com.trader.admin.debug' in admin/google-services.json". CI uses `:admin:lintRelease`, as `scripts/qa-seller.sh` does.
+### `:admin` is verified through the release variant only
+
+`./gradlew --configure-on-demand --no-configuration-cache :admin:assembleDebug` fails (40 s, log `build-logs/k0/admin-assemble-debug.log`):
+
+```
+Execution failed for task ':admin:processDebugGoogleServices' (registered by plugin 'com.android.internal.application').
+> No matching client found for package name 'com.trader.admin.debug' in /home/user/SalesManager/admin/google-services.json
+```
+
+Cause: `admin/build.gradle.kts:32` sets `debug { applicationIdSuffix = ".debug" }` (applicationId `com.trader.admin`, line 19), while
+`admin/google-services.json` only has clients for `com.trader.admin` and `com.trader.salesmanager`. The admin debug variant therefore cannot be built.
+`testBuildType` is `release` (line 48), `scripts/qa-seller.sh` and CI use `:admin:testReleaseUnitTest` and `:admin:lintRelease`, so `:admin`
+numbers in this file (16 tests, 23 lint warnings) come from the release variant. No file was changed. A fix is proposed in `progress.md` (K1.7, needs owner approval).
 
 ## Coverage (JaCoCo, `:app:qaCoverage :salesmanager:qaCoverage :app:qaAllJvmCoverage :salesmanager:qaAllJvmCoverage`)
 
@@ -108,7 +119,7 @@ A previous run gave 9585 / 2206 covered lines / branches for `:app`, so `:app` n
 
 Built without any keystore (no `KEYSTORE_*` variables, no `keystore.properties`). `:admin` APK sizes were not measured.
 
-## CI on the production head (`44229d1`)
+## CI baseline
 
 Workflows in the repo: `Build SalesManager Release APK`, `Build Admin Release APK`, `Build Release APK`, `Seller QA`.
 `Seller QA` (seller job with tests, coverage gates, lint and minified build; device tests on API 24/28/33/35/36; R8 smoke on API 24/36)
@@ -118,18 +129,50 @@ runs only on `pull_request`, so it has **no run on the production head commit it
 |---|---|---|---|
 | Build SalesManager Release APK #618 | `44229d1` (production) | success | https://github.com/mohammedakkad/SalesManager/actions/runs/45034140633 |
 | Build Admin Release APK #491 | `44229d1` (production) | success | https://github.com/mohammedakkad/SalesManager/actions/runs/45034140859 |
-| Seller QA #90 (PR #53 head) | `45c913b` | **failure** | https://github.com/mohammedakkad/SalesManager/actions/runs/45033629599 |
+| Seller QA #90 (PR #53 head) | `45c913b` | failure: 1 of 8 jobs, infra (see below) | https://github.com/mohammedakkad/SalesManager/actions/runs/45033629599 |
 | Seller QA #89 (PR #53) | `ffd6cf5` | cancelled | https://github.com/mohammedakkad/SalesManager/actions/runs/44999265518 |
 | Seller QA #88 (PR #53) | `581d50a` | success (all jobs) | https://github.com/mohammedakkad/SalesManager/actions/runs/44998447639 |
 
-Seller QA #90 jobs: `seller` (tests, coverage gates, lint, debug assembly, minified release) success; compose API 28, 33, 35, 36 success;
-R8 smoke API 24 and 36 success; **compose (API 24) failed** in the `reactivecircus/android-emulator-runner` step after about 79 s.
-The root cause was not read from the log (the log tail showed only the artifact upload): **cause not verified**.
-Latest fully green Seller QA run: #88. Per the rules, CI was not re-run.
+### Seller QA #90, job "compose (API 24)" (job 137242428178): classification (a) infra, not a test or code failure
+
+Decisive lines from the job log (read only, CI was not re-run):
+
+```
+14:36:33 adb ... shell getprop sys.boot_completed -> adb: device offline        (transient)
+14:36:35 ... getprop sys.boot_completed -> 1 ; Emulator booted.                 (emulator is fine)
+14:37:04 > Task :app:checkDebugUnitTestAarMetadata FAILED
+14:37:04 > Could not resolve io.mockk:mockk:1.14.12.
+14:37:04 > Could not GET 'https://repo.maven.apache.org/maven2/io/mockk/mockk/1.14.12/mockk-1.14.12.pom'.
+14:37:04 > Received status code 403 from server: Forbidden
+14:37:04 > Could not resolve org.robolectric:robolectric:4.18.1.
+14:37:04 > Could not GET '.../robolectric/4.18.1/robolectric-4.18.1.pom'. Received status code 403 from server: Forbidden
+14:37:04 BUILD FAILED in 17s
+14:37:04 stage=JVM coverage exit=1
+```
+
+- The emulator booted; the first Gradle step of `scripts/run-seller-device-qa.sh` ("JVM coverage" stage) could not download POMs from
+  Maven Central (HTTP 403). Every device and PDFBox case shows `NOT EXECUTED`: no test ran, so no test failed.
+- Same family as the HTTP 429 seen from the container used for K0.1: Maven Central throttling/blocking, not repository code.
+- The other seven jobs of the same run passed (seller job, compose API 28/33/35/36, R8 smoke API 24/36), and they resolved the same dependencies.
+- Commits between run #88 (`581d50a`) and run #90 (`45c913b`): `ffd6cf5` (docs: `docs/modernization/report-ar.md`, +2 lines) and
+  `45c913b` (docs: `docs/kmp/KMP-MASTER-PROMPT.md`, +306 lines). Neither touched `.github/workflows`, emulator configuration, or compose/androidTest code.
+- Tree diff `45c913b` vs `44229d1` (production head): **empty**. So production head has the same tree as the PR head that ran #90.
+- **Owner to re-run failed jobs on #90.** Not verified until that re-run is green.
+
+## Other baseline items
+
+- `qa/pdf-verifier` has tests: 10 `@Test` methods in 3 Java classes (`InvoicePdfContentTest` 5, `FinancialPdfBoundaryContentTest` 4,
+  `LongCustomerStatementContentTest` 1). It is a **separate Gradle build** (`gradle -p qa/pdf-verifier ... test`, not in `settings.gradle.kts`)
+  that reads PDFs generated on a device (`-PpdfFixtureDir=/tmp/seller-qa-pdf`), run by `scripts/run-seller-device-qa.sh`.
+  Its tests are **not** in the 1,192 and were not run locally (no device fixtures). Count by grep, not a test result.
+- Configuration time of `./gradlew :salesmanager:assembleDebug --dry-run --configure-on-demand --no-configuration-cache --profile`
+  with a stopped daemon: Startup 3.4 s, Loading Projects 0.4 s, Configuring Projects 3.8 s, total 11.5 s.
+  With a warm daemon the whole dry run takes 1 s.
 
 ## Not verified
 
-- Root cause of the API 24 device failure in Seller QA #90 (not a Seller QA run on the production head: none exists).
+- Seller QA device results on a green run for this exact tree: #90 failed on infra before any test ran, so a re-run of the failed job is pending (owner).
+- `qa/pdf-verifier` tests were not run locally (they need device-generated PDFs).
 - Device test results for the production head commit itself.
 - `:admin` debug lint, `:admin` APK size.
 - First-ever build time with an empty dependency cache on a developer machine.
