@@ -26,7 +26,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.CloudOff
 import androidx.compose.material.icons.rounded.DeleteForever
@@ -173,7 +173,7 @@ fun CustomersScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (showNavigateUp) {
                             IconButton(onClick = onNavigateUp) {
-                                Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                             }
                             Spacer(Modifier.width(8.dp))
                         }

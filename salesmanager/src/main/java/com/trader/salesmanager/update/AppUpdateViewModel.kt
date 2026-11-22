@@ -1,5 +1,6 @@
 package com.trader.salesmanager.update
 
+import androidx.core.content.edit
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
@@ -140,9 +141,7 @@ class AppUpdateViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun saveApkPath(context: Context, path: String) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-            .edit()
-            .putString(KEY_APK_PATH, path)
-            .apply()
+            .edit { putString(KEY_APK_PATH, path) }
     }
 
     private fun loadSavedApkFile(context: Context): File? {

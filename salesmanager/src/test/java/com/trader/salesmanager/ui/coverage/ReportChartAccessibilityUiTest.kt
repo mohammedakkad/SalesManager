@@ -27,6 +27,8 @@ class ReportChartAccessibilityUiTest:OfflineSellerUiTest() {
         show{ReportsScreen({},viewModel=vm)};ui.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(title));ui.mainClock.advanceTimeBy(2000);ui.waitForIdle()
     }
     private fun countPixels(description:String,color:(Color)->Boolean):Int {
+        // Compose >= 1.8 scrolls minimally to the title; bring the measured chart itself into view.
+        ui.onNode(hasScrollToIndexAction()).performScrollToNode(hasContentDescription(description));ui.waitForIdle()
         val node=ui.onNodeWithContentDescription(description).assertExists().fetchSemanticsNode();val b=node.boundsInRoot
         lateinit var bitmap:Bitmap
         ui.runOnIdle{val view=activity.findViewById<View>(android.R.id.content);bitmap=Bitmap.createBitmap(view.width,view.height,Bitmap.Config.ARGB_8888);view.draw(Canvas(bitmap))}

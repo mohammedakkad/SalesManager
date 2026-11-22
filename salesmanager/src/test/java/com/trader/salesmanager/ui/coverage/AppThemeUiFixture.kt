@@ -30,7 +30,7 @@ abstract class AppThemeUiFixture:OfflineSellerUiTest() {
     }
     @Volatile private var observedDark:Boolean?=null
     protected fun showApp(content:@Composable ()->Unit){
-        ui.setContent{org.koin.compose.KoinContext{SalesManagerTheme{val value=isDarkTheme;SideEffect{observedDark=value};content()}}}
+        ui.setContent{SalesManagerTheme{val value=isDarkTheme;SideEffect{observedDark=value};content()}}
         if(!ui.mainClock.autoAdvance)ui.mainClock.advanceTimeBy(1000)
         ui.waitUntil(5000){observedDark==false}
     }

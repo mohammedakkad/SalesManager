@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
@@ -17,11 +16,11 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace  = "com.trader.salesmanager"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         testInstrumentationRunner = "com.trader.salesmanager.qa.OfflineQaRunner"
         applicationId = "com.trader.salesmanager"
-        minSdk = 24; targetSdk = 35
+        minSdk = 24; targetSdk = 36
         versionCode = 10205; versionName = "1.2.5"
     }
     signingConfigs {
@@ -60,16 +59,17 @@ android {
     }
     testOptions { unitTests.isIncludeAndroidResources = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
-    kotlinOptions { jvmTarget = "11" }
     buildFeatures {
         compose = true
         buildConfig = true
+        resValues = true
     }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 
 dependencies {
-    implementation("org.bouncycastle:bcprov-jdk18on:1.87")
+    implementation(libs.bouncycastle.bcprov)
+    implementation(libs.androidx.startup)
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.test.compose.junit)
     testImplementation(libs.test.workmanager)
@@ -79,12 +79,12 @@ dependencies {
     androidTestImplementation(libs.test.androidx.runner)
     androidTestImplementation(libs.test.androidx.junit)
     androidTestImplementation(libs.test.compose.junit)
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+    androidTestImplementation(libs.test.espresso.intents)
     debugImplementation(libs.test.compose.manifest)
     testImplementation(libs.test.junit)
     testImplementation(libs.test.mockk)
     testImplementation(libs.test.coroutines)
-    testImplementation("com.squareup.okhttp3:mockwebserver:${libs.versions.okhttp.get()}")
+    testImplementation(libs.test.mockwebserver)
     implementation(project(":app"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
@@ -100,3 +100,5 @@ dependencies {
 }
 
 apply(from = rootProject.file("gradle/qa-coverage.gradle"))
+
+kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11) } }

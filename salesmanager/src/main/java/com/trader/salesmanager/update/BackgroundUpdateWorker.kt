@@ -1,5 +1,6 @@
 package com.trader.salesmanager.update
 
+import androidx.core.content.edit
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -59,9 +60,7 @@ class BackgroundUpdateWorker(
 
         return if (file != null) {
             applicationContext.getSharedPreferences(AppUpdateViewModel.PREFS_NAME, Context.MODE_PRIVATE)
-                .edit()
-                .putString(AppUpdateViewModel.KEY_APK_PATH, file.absolutePath)
-                .apply()
+                .edit { putString(AppUpdateViewModel.KEY_APK_PATH, file.absolutePath) }
             showReadyNotification()
             Result.success()
         } else {

@@ -25,14 +25,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.AssignmentReturn
+import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.AssignmentReturn
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.CloudOff
 import androidx.compose.material.icons.rounded.PendingActions
 import androidx.compose.material.icons.rounded.Receipt
-import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
@@ -226,8 +226,8 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
         else         -> UnpaidAmber
     }
     val icon = when {
-        isFullReturn -> Icons.Rounded.Undo
-        isPartReturn -> Icons.Rounded.AssignmentReturn
+        isFullReturn -> Icons.AutoMirrored.Rounded.Undo
+        isPartReturn -> Icons.AutoMirrored.Rounded.AssignmentReturn
         tx.isPaid    -> Icons.Rounded.CheckCircle
         else         -> Icons.Rounded.PendingActions
     }

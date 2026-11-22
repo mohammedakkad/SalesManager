@@ -3,11 +3,7 @@ package com.trader.salesmanager.util.export
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Typeface
-import android.graphics.pdf.PdfDocument
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -22,11 +18,10 @@ import com.trader.core.domain.model.stockLevel
 import com.trader.salesmanager.ui.reports.CustomerRank
 import com.trader.salesmanager.ui.reports.DaySalesEntry
 import com.trader.salesmanager.ui.reports.PaymentShare
+import com.trader.salesmanager.util.pdf.CustomerStatementPdfGenerator
 import com.trader.salesmanager.util.pdf.InvoicePdfGenerator
-import com.trader.salesmanager.util.pdf.PdfLayoutConstants
 import com.trader.salesmanager.util.pdf.ReportPdfGenerator
 import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -40,24 +35,7 @@ import java.util.Locale
 object ExportManager {
 
     // ── ألوان المشروع ─────────────────────────────────────────
-    private val GREEN   = PdfLayoutConstants.EMERALD_500
-    private val GREEN_L = PdfLayoutConstants.EMERALD_100
-    private val RED     = PdfLayoutConstants.RED_500
-    private val RED_L   = PdfLayoutConstants.RED_100
-    private val AMBER   = PdfLayoutConstants.AMBER_500
-    private val AMBER_L = PdfLayoutConstants.AMBER_100
-    private val VIOLET  = PdfLayoutConstants.VIOLET_500
-    private val CYAN    = PdfLayoutConstants.CYAN_500
-    private val GRAY_L  = PdfLayoutConstants.SLATE_50
-    private val GRAY_M  = PdfLayoutConstants.SLATE_200
-    private val GRAY_D  = PdfLayoutConstants.SLATE_600
-    private val BLACK   = PdfLayoutConstants.SLATE_900
-    private val WHITE   = PdfLayoutConstants.WHITE
 
-    // A4 dimensions at 72 DPI
-    private const val W = 595f
-    private const val H = 842f
-    private const val M = 36f  // margin
 
     // ══════════════════════════════════════════════════════════
     // 1. PDF — فاتورة عملية واحدة
@@ -97,71 +75,7 @@ object ExportManager {
         customer: Customer,
         transactions: List<Transaction>,
         storeName: String
-    ): File {
-        val doc = PdfDocument()
-        val info = PdfDocument.PageInfo.Builder(W.toInt(), H.toInt(), 1).create()
-        val page = doc.startPage(info)
-        val c = page.canvas
-        var y = 0f
-
-        // Header
-        c.drawRect(0f, 0f, W, 80f, fill(VIOLET))
-        c.drawText(customer.name, W - M, 38f, paint(WHITE, 20f, bold = true, align = Paint.Align.RIGHT))
-        c.drawText("كشف الحساب", W - M, 56f, paint(WHITE.withAlpha(200), 11f, align = Paint.Align.RIGHT))
-        if (customer.phone.isNotEmpty())
-            c.drawText("📞 ${customer.phone}", M, 56f, paint(WHITE.withAlpha(200), 10f, align = Paint.Align.LEFT))
-        y = 90f
-
-        // ملخص
-        val total  = transactions.sumOf { it.amount }
-        val paid   = transactions.filter { it.isPaid }.sumOf { it.amount }
-        val unpaid = total - paid
-
-        c.drawRect(M, y, W - M, y + 50f, fill(GRAY_L))
-        val third = (W - M * 2) / 3
-        summaryBox(c, M,           y, third, "الإجمالي", "₪${total.fmt()}",  GRAY_D)
-        summaryBox(c, M + third,   y, third, "مدفوع",    "₪${paid.fmt()}",   GREEN)
-        summaryBox(c, M + third*2, y, third, "دين",      "₪${unpaid.fmt()}", RED)
-        y += 58f
-
-        // رأس جدول العمليات
-        c.drawText("سجل العمليات", W - M, y + 14f, paint(BLACK, 13f, bold = true, align = Paint.Align.RIGHT))
-        y += 22f
-
-        c.drawRect(M, y, W - M, y + 26f, fill(VIOLET))
-        val txFmt = SimpleDateFormat("dd/MM/yyyy", Locale("ar"))
-        listOf("المبلغ" to 0.15f, "طريقة الدفع" to 0.3f, "الحالة" to 0.5f, "التاريخ" to 0.75f, "#" to 0.95f).forEach { (label, pct) ->
-            c.drawText(label, M + (W - M*2) * pct, y + 18f, paint(WHITE, 10f, bold = true, align = Paint.Align.CENTER))
-        }
-        y += 26f
-
-        transactions.take(25).forEachIndexed { i, tx ->
-            if (y > H - 80f) return@forEachIndexed  // ضمان عدم التجاوز
-            val bg = if (i % 2 == 0) WHITE else GRAY_L
-            c.drawRect(M, y, W - M, y + 22f, fill(bg))
-            c.drawRect(M, y, W - M, y + 22f, stroke(GRAY_M, 0.5f))
-
-            val statusColor = if (tx.isPaid) GREEN else RED
-            c.drawText("₪${tx.amount.fmt()}", M + (W-M*2)*0.15f, y+15f, paint(BLACK, 9f, align = Paint.Align.CENTER))
-            c.drawText(tx.paymentMethodName.ifEmpty {"—"}, M+(W-M*2)*0.3f, y+15f, paint(GRAY_D,9f,align=Paint.Align.CENTER))
-            c.drawText(if(tx.isPaid)"مدفوع" else "دين", M+(W-M*2)*0.5f, y+15f, paint(statusColor,9f,bold=true,align=Paint.Align.CENTER))
-            c.drawText(txFmt.format(Date(tx.date)), M+(W-M*2)*0.75f, y+15f, paint(GRAY_D,9f,align=Paint.Align.CENTER))
-            c.drawText("#${tx.id}", M+(W-M*2)*0.95f, y+15f, paint(GRAY_D,8f,align=Paint.Align.CENTER))
-            y += 22f
-        }
-
-        if (transactions.size > 25) {
-            c.drawText("... وأكثر (${transactions.size - 25} عملية إضافية)", W - M, y + 16f, paint(GRAY_D, 9f, align = Paint.Align.RIGHT))
-        }
-
-        drawFooter(c, storeName)
-
-        doc.finishPage(page)
-        val file = File(cacheDir, "statement_${customer.id}.pdf")
-        doc.writeTo(FileOutputStream(file))
-        doc.close()
-        return file
-    }
+    ): File = CustomerStatementPdfGenerator.generate(cacheDir, customer, transactions, storeName)
 
     // ══════════════════════════════════════════════════════════
     // 3. Excel — تقرير المبيعات
@@ -404,43 +318,4 @@ object ExportManager {
             }
         } catch (_: Exception) { false }
     }
-
-    // ══════════════════════════════════════════════════════════
-    // PDF helpers
-    // ══════════════════════════════════════════════════════════
-    private fun summaryBox(c: Canvas, x: Float, y: Float, w: Float, label: String, value: String, color: Int) {
-        c.drawText(label, x + w - 5f, y + 16f, paint(GRAY_D, 9f, align = Paint.Align.RIGHT))
-        c.drawText(value, x + w - 5f, y + 34f, paint(color, 12f, bold = true, align = Paint.Align.RIGHT))
-    }
-
-    private fun drawFooter(c: Canvas, storeName: String) {
-        c.drawRect(0f, H - 35f, W, H, fill(PdfLayoutConstants.SLATE_100))
-        c.drawLine(0f, H - 35f, W, H - 35f, stroke(GRAY_M))
-        c.drawText("شكراً لتعاملكم معنا", W / 2, H - 15f, paint(GRAY_D, 9f, align = Paint.Align.CENTER))
-        val now = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("ar")).format(Date())
-        c.drawText("صدر بتاريخ: $now", M, H - 15f, paint(GRAY_D, 8f, align = Paint.Align.LEFT))
-    }
-
-    // ── Paint factory ─────────────────────────────────────────
-    private fun paint(color: Int, size: Float, bold: Boolean = false, align: Paint.Align = Paint.Align.RIGHT) =
-        Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            this.color = color
-            textSize = size
-            textAlign = align
-            typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
-        }
-
-    private fun fill(color: Int) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        this.color = color
-        style = Paint.Style.FILL
-    }
-
-    private fun stroke(color: Int, width: Float = 1f) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        this.color = color
-        style = Paint.Style.STROKE
-        strokeWidth = width
-    }
-
-    private fun Int.withAlpha(alpha: Int): Int = Color.argb(alpha, Color.red(this), Color.green(this), Color.blue(this))
-    private fun Double.fmt(): String = if (this == toLong().toDouble()) toLong().toString() else "%.2f".format(this)
 }

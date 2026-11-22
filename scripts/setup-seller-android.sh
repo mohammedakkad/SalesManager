@@ -22,9 +22,9 @@ yes | "$manager" --sdk_root="$ANDROID_HOME" --licenses
 license_status=${PIPESTATUS[1]}
 set -e
 if [ "$license_status" -ne 0 ]; then exit "$license_status"; fi
-"$manager" --sdk_root="$ANDROID_HOME" 'platforms;android-35' 'build-tools;34.0.0' 'platform-tools'
-test -f "$ANDROID_HOME/platforms/android-35/android.jar"
-test -x "$ANDROID_HOME/build-tools/34.0.0/aapt2"
+"$manager" --sdk_root="$ANDROID_HOME" 'platforms;android-36' 'build-tools;36.0.0' 'platform-tools'
+test -f "$ANDROID_HOME/platforms/android-36/android.jar"
+test -x "$ANDROID_HOME/build-tools/36.0.0/aapt2"
 "$ANDROID_HOME/platform-tools/adb" version
 if [ -n "${GITHUB_ENV:-}" ]; then
   printf 'ANDROID_HOME=%s\nANDROID_SDK_ROOT=%s\n' "$ANDROID_HOME" "$ANDROID_HOME" >> "$GITHUB_ENV"

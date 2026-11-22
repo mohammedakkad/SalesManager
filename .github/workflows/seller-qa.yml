@@ -58,7 +58,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api: [24, 28, 33, 35]
+        api: [24, 28, 33, 35, 36]
     env:
       SELLER_QA_ANDROID_API: ${{ matrix.api }}
     steps:

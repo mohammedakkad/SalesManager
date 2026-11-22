@@ -17,23 +17,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.AssignmentReturn
+import androidx.compose.material.icons.automirrored.rounded.Notes
+import androidx.compose.material.icons.automirrored.rounded.Chat
+import androidx.compose.material.icons.automirrored.rounded.Undo
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowForward
-import androidx.compose.material.icons.rounded.AssignmentReturn
 import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.CreditCard
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material.icons.rounded.Notes
 import androidx.compose.material.icons.rounded.Payment
 import androidx.compose.material.icons.rounded.PendingActions
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Print
 import androidx.compose.material.icons.rounded.Share
-import androidx.compose.material.icons.rounded.Chat
-import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -262,7 +262,7 @@ fun TransactionDetailsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
                         }
                         Spacer(Modifier.weight(1f))
                         // ✅ Fix 4: دفاعي — يعتمد على hasItems أو وجود أصناف فعلية في الـ state
@@ -279,7 +279,7 @@ fun TransactionDetailsScreen(
                                     .background(Color.White.copy(0.15f))
                             ) {
                                 Icon(
-                                    Icons.Rounded.AssignmentReturn,
+                                    Icons.AutoMirrored.Rounded.AssignmentReturn,
                                     contentDescription = "مرتجع",
                                     tint = Color.White
                                 )
@@ -377,7 +377,7 @@ fun TransactionDetailsScreen(
                 }
                 DetailRow(Icons.Rounded.Payment, "نوع الدفع", paymentTypeLabel, UnpaidAmber)
                 if (t.note.isNotEmpty())
-                    DetailRow(Icons.Rounded.Notes, "ملاحظة", t.note, Color(0xFF8B5CF6))
+                    DetailRow(Icons.AutoMirrored.Rounded.Notes, "ملاحظة", t.note, Color(0xFF8B5CF6))
             }
         }
 
@@ -449,7 +449,7 @@ fun TransactionDetailsScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                                     ) {
-                                        Icon(Icons.Rounded.Undo, null,
+                                        Icon(Icons.AutoMirrored.Rounded.Undo, null,
                                             tint = DebtRed, modifier = Modifier.size(14.dp))
                                         Text("مرتجع",
                                             style = MaterialTheme.typography.bodySmall,
@@ -563,7 +563,7 @@ fun TransactionDetailsScreen(
                         modifier = Modifier.weight(1f).height(48.dp),
                         shape = RoundedCornerShape(14.dp)
                     ) {
-                        Icon(Icons.Rounded.Chat, null, Modifier.size(18.dp))
+                        Icon(Icons.AutoMirrored.Rounded.Chat, null, Modifier.size(18.dp))
                         Spacer(Modifier.width(6.dp))
                         Text("مشاركة نصية سريعة", maxLines = 1)
                     }

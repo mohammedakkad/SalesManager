@@ -32,10 +32,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.7-bin.zip -O /tmp/gradle.zip
-          unzip -q /tmp/gradle.zip -d /tmp/gradle
-          export PATH="/tmp/gradle/gradle-8.7/bin:$PATH"
-          gradle :admin:assembleRelease --stacktrace
+          ./gradlew :admin:assembleRelease --stacktrace
 
       - uses: actions/upload-artifact@v4
         with:

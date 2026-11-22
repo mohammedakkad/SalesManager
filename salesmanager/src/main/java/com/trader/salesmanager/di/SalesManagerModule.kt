@@ -76,7 +76,7 @@ import com.trader.salesmanager.update.AppUpdateViewModel
 import com.trader.salesmanager.util.export.ExportViewModel
 import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val salesManagerModule = module {

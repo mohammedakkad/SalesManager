@@ -27,8 +27,11 @@ class ThemePreferenceUiTest:OfflineSellerUiTest() {
     private val preferences=MutableStateFlow<Preferences>(emptyPreferences())
     private var writes=0
     private val committedThemes=mutableListOf<String>()
+    /** false simulates a preference read that has not completed yet (slow disk). */
+    private val readCompleted=MutableStateFlow(true)
     private val store=object:DataStore<Preferences> {
-        override val data:Flow<Preferences> = preferences
+        @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+        override val data:Flow<Preferences> = readCompleted.flatMapLatest{done->if(done) preferences else emptyFlow()}
         override suspend fun updateData(transform:suspend(Preferences)->Preferences):Preferences {
             writes++;return transform(preferences.value).also{preferences.value=it}
         }
@@ -81,5 +84,16 @@ class ThemePreferenceUiTest:OfflineSellerUiTest() {
         ui.onNodeWithText(expected(true)).assertExists()
         ui.runOnIdle{preferences.value=preferencesOf(DARK_MODE_KEY to true,stringPreferencesKey("store_name") to "متجر آخر")}
         ui.onNodeWithText(expected(true)).assertExists();assertEquals(0,writes)
+    }
+    @Test fun pendingPreferenceReadNeitherBlocksNorShowsTheOppositeTheme(){
+        // Regression: the theme used runBlocking during composition. A slow read must not block the
+        // main thread, and no content may be committed with a guessed theme before the value arrives.
+        preferences.value=preferencesOf(DARK_MODE_KEY to true);readCompleted.value=false
+        show{SalesManagerTheme(context=activity){Probe()}}
+        ui.onNodeWithText(expected(false)).assertDoesNotExist();ui.onNodeWithText(expected(true)).assertDoesNotExist()
+        assertTrue(committedThemes.isEmpty())
+        ui.runOnIdle{readCompleted.value=true}
+        ui.onNodeWithText(expected(true)).assertExists()
+        assertTrue(committedThemes.isNotEmpty());assertTrue(committedThemes.all{it==expected(true)});assertEquals(0,writes)
     }
 }

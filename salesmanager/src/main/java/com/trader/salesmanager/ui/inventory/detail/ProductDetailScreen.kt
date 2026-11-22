@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddCircle
@@ -33,7 +34,6 @@ import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.RemoveCircle
 import androidx.compose.material.icons.rounded.Scale
 import androidx.compose.material.icons.rounded.ShoppingCart
-import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -458,7 +458,7 @@ private fun MovementRow(mov: StockMovement) {
     val color = if (isIn) PaidGreen else DebtRed
     val icon = when (mov.movementType) {
         MovementType.SALE_OUT -> Icons.Rounded.ShoppingCart
-        MovementType.RETURN_IN -> Icons.Rounded.Undo
+        MovementType.RETURN_IN -> Icons.AutoMirrored.Rounded.Undo
         MovementType.MANUAL_IN -> Icons.Rounded.AddCircle
         MovementType.MANUAL_OUT -> Icons.Rounded.RemoveCircle
         MovementType.INVENTORY_ADJUST -> Icons.Rounded.Inventory2
