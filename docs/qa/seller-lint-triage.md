@@ -282,3 +282,33 @@ Final on this branch: **0 errors, 55 warnings**.
   current AndroidX releases require compileSdk 37, tracked as a follow-up decision.
 - `ModifierParameter` (1, new): `SharedComponents.kt` parameter order; reordering is an API change for call sites.
 - Unchanged and still deliberate: launcher branding (17), `StaticFieldLeak` (2), `UnusedAttribute` dataExtractionRules (1).
+
+
+## Phase 6 (2026-11-22) — seller and admin, no baseline, no suppression
+
+Lint now runs for both apps in the QA job (`:salesmanager:lintDebug`, `:admin:lintRelease`; admin was never linted before).
+
+| Module | Before Phase 6 | After Phase 6 |
+| --- | --- | --- |
+| salesmanager | 0 errors, 23 warnings | **0 errors, 22 warnings** |
+| admin (first run) | 4 errors, 27 warnings | **0 errors, 23 warnings** |
+
+Fixed:
+
+* admin `SuspiciousIndentation` (ChatDetailScreen): the "edited" label `if` now has braces; behaviour unchanged.
+* admin `NonObservableLocale` ×2 and the other admin date formatting: all go through `AppNumberFormat.formatDate` (the single shared formatter from 6B), never the device locale.
+* admin `StateFlowValueCalledInComposition` (MerchantsScreen): `search` is collected with `collectAsStateWithLifecycle()`; the search field now also follows view-model changes.
+* seller `ModifierParameter` (ModernSearchBar): `modifier` is the first optional parameter; every caller passes `placeholder` by name.
+
+Remaining warnings, each justified:
+
+| Warning | Seller | Admin | Why it stays |
+| --- | ---: | ---: | --- |
+| IconLauncherShape | 10 | 10 | Launcher artwork fills the square/round bounds. Changing it is a branding decision with device verification on API 24/26/33+. |
+| IconDuplicates | 5 | 5 | Identical round/square launcher bitmaps; same branding decision as above. |
+| MonochromeLauncherIcon | 2 | 2 | Needs a designed monochrome icon for themed icons on API 33+. |
+| GradleDependency (compileSdk 37) | 1 | 1 | compileSdk 37 is explicitly out of scope for this phase. |
+| OldTargetApi | 1 | 1 | Follows from the same compileSdk/targetSdk 36 decision. |
+| StaticFieldLeak | 2 | – | `BackupViewModel` and `BoxesViewModel` store `context.applicationContext` (no Activity leak). Lint flags the `Context` type. Moving to an Application-typed dependency changes their Koin signatures; deferred. |
+| UnusedAttribute (`localeConfig`) | 1 | – | Intentional: per-app language config only exists on API 33+ and is ignored below (6B). |
+| UnusedResources | – | 4 | `backup_rules.xml`, `data_extraction_rules.xml`, `ic_launcher_background` colour, `ic_google`. The two XML rule files belong in the admin manifest (backup policy). Wiring them changes backup behaviour, so it is left for the owner; deleting them would lose that policy. |

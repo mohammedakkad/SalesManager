@@ -1,5 +1,6 @@
 package com.trader.admin.ui.requests
 
+import com.trader.core.util.format.AppNumberFormat
 import com.trader.admin.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
@@ -30,7 +31,6 @@ import coil3.compose.AsyncImage
 import com.trader.admin.ui.theme.*
 import com.trader.core.domain.model.SubscriptionRequest
 import org.koin.androidx.compose.koinViewModel
-import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -137,8 +137,7 @@ private fun RequestItem(
     onApprove: () -> Unit,
     onReject: () -> Unit
 ) {
-    val date =
-        SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date(request.requestedAt))
+    val date = AppNumberFormat.formatDate("yyyy/MM/dd HH:mm", request.requestedAt)
 
     Card(
         shape = RoundedCornerShape(16.dp),

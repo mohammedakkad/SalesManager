@@ -1,5 +1,6 @@
 package com.trader.admin.ui.chat.detail
 
+import com.trader.core.util.format.AppNumberFormat
 import com.trader.admin.R
 import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.*
@@ -36,7 +37,6 @@ import com.trader.core.domain.model.SENDER_ADMIN
 import com.trader.admin.ui.theme.*
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
@@ -364,10 +364,11 @@ style = MaterialTheme.typography.bodyMedium, lineHeight = 20.sp)
 Row(Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
 horizontalArrangement = Arrangement.spacedBy(4.dp),
 verticalAlignment = Alignment.CenterVertically) {
-if (msg.isEdited && !msg.isDeleted)
+if (msg.isEdited && !msg.isDeleted) {
 Text("معدّل", style = MaterialTheme.typography.labelSmall, color = Slate600, fontSize = 9.sp)
+}
 msg.timestamp?.toDate()?.let {
-Text(SimpleDateFormat("hh:mm a", Locale("ar")).format(it),
+Text(AppNumberFormat.formatDate("hh:mm a", it),
 style = MaterialTheme.typography.labelSmall, color = Slate600, fontSize = 10.sp)
 }
 if (isAdmin && !msg.isDeleted) AdminReadReceipt(msg.status)
@@ -449,18 +450,17 @@ HorizontalDivider(Modifier.weight(1f), color = Slate800)
 }
 
 private fun groupByDate(messages: List<ChatMessage>): Map<String, List<ChatMessage>> {
-val today = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+val today = AppNumberFormat.formatDate("dd/MM/yyyy", Date())
 val yesterday = Calendar.getInstance().apply {
 add(Calendar.DAY_OF_YEAR, -1)
 }
 .time.let {
-SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it)
+AppNumberFormat.formatDate("dd/MM/yyyy", it)
 }
-val fmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 return messages.groupBy {
 msg ->
 val d = msg.timestamp?.toDate() ?: return@groupBy "—"
-when (val k = fmt.format(d)) {
+when (val k = AppNumberFormat.formatDate("dd/MM/yyyy", d)) {
 today -> "اليوم"; yesterday -> "أمس"; else -> k
 }
 }

@@ -37,7 +37,7 @@ fun MerchantsScreen(
     viewModel: MerchantsViewModel = koinViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val search = viewModel.search.value
+    val search by viewModel.search.collectAsStateWithLifecycle()
 
     Scaffold(
         floatingActionButton = {

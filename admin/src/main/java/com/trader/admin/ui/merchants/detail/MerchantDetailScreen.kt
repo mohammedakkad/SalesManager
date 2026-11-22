@@ -1,5 +1,6 @@
 package com.trader.admin.ui.merchants.detail
 
+import com.trader.core.util.format.AppNumberFormat
 import com.trader.admin.R
 import androidx.compose.ui.res.stringResource
 import android.content.ClipData
@@ -220,7 +221,7 @@ fun MerchantDetailScreen(
                         DetailCard(
                             label = "تاريخ التسجيل",
                             value = m.createdAt?.toDate()?.let {
-                                java.text.SimpleDateFormat("yyyy/MM/dd", java.util.Locale.getDefault()).format(it)
+                                AppNumberFormat.formatDate("yyyy/MM/dd", it)
                             } ?: "غير معروف",
                             icon = Icons.Rounded.History,
                             color = Slate400
@@ -424,8 +425,7 @@ private fun ExpiryCard(merchant: Merchant, onAdjust: () -> Unit) {
                 Column(Modifier.weight(1f)) {
                     Text("اشتراك مؤقت", style = MaterialTheme.typography.labelSmall, color = Slate400)
                     if (expiryDate != null) {
-                        val fmt = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
-                        Text("ينتهي ${fmt.format(expiryDate)}",
+                        Text("ينتهي ${AppNumberFormat.formatDate("dd/MM/yyyy", expiryDate)}",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = Slate100)

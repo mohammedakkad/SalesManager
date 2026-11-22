@@ -191,8 +191,8 @@ fun StatCard(
 fun ModernSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    placeholder: String = "بحث...",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    placeholder: String = "بحث..."
 ) {
     OutlinedTextField(
         value = query,
