@@ -1,5 +1,9 @@
 package com.trader.salesmanager.util.export
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -24,7 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Chat
+import androidx.compose.material.icons.automirrored.rounded.Chat
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
@@ -119,7 +123,7 @@ fun ExportActionButton(
             loading ->
             if (loading) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp, color = Violet500.copy(shimmer))
+                    CircularProgressIndicator(Modifier.size(16.dp).graphicsLayer { alpha = shimmer; compositingStrategy = CompositingStrategy.ModulateAlpha }, strokeWidth = 2.dp, color = Violet500)
                     Text((state as? ExportState.Loading)?.message ?: "جارٍ...",
                         color = appColors.textSubtle, style = MaterialTheme.typography.labelMedium)
                 }
@@ -215,7 +219,7 @@ private fun ExportSuccessSheet(
             HorizontalDivider(color = appColors.divider)
 
             SheetAction(Icons.Rounded.Share, Cyan500, "مشاركة", "عبر أي تطبيق", onShare)
-            SheetAction(Icons.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
+            SheetAction(Icons.AutoMirrored.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
             onPrint?.let {
                 SheetAction(Icons.Rounded.Print, Emerald500, "طباعة", "عبر خدمة الطباعة", it)
             }
@@ -264,7 +268,7 @@ private fun ExportErrorBar(message: String, onRetry: () -> Unit, onDismiss: () -
                 Text("إعادة", color = DebtRed, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelMedium)
             }
             IconButton(onClick = onDismiss, Modifier.size(28.dp)) {
-                Icon(Icons.Rounded.Close, null, tint = DebtRed, modifier = Modifier.size(16.dp))
+                Icon(Icons.Rounded.Close, stringResource(R.string.cd_dismiss_error), tint = DebtRed, modifier = Modifier.size(16.dp))
             }
         }
     }
@@ -309,7 +313,7 @@ fun ExportSuccessBottomSheet(
             }
             HorizontalDivider(color = appColors.divider)
             SheetAction(Icons.Rounded.Share, Cyan500, "مشاركة", "عبر أي تطبيق", onShare)
-            SheetAction(Icons.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
+            SheetAction(Icons.AutoMirrored.Rounded.Chat, Color(0xFF25D366), "واتساب", "إرسال مباشر", onWhatsApp)
             onPrint?.let {
                 SheetAction(Icons.Rounded.Print, Emerald500, "طباعة", "عبر خدمة الطباعة", it)
             }

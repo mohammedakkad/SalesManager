@@ -1,5 +1,7 @@
 package com.trader.admin.ui.notifications
 
+import com.trader.admin.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -39,7 +42,7 @@ fun NotificationsScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                     }
                     Spacer(Modifier.width(8.dp))
                     Column {

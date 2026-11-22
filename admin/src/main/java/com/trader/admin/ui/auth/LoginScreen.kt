@@ -1,5 +1,7 @@
 package com.trader.admin.ui.auth
 
+import com.trader.admin.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -121,7 +123,7 @@ fun LoginScreen(
                                 Icon(
                                     if (state.passwordVisible) Icons.Rounded.VisibilityOff
                                     else Icons.Rounded.Visibility,
-                                    null, tint = Slate400
+                                    stringResource(if (state.passwordVisible) R.string.cd_hide_password else R.string.cd_show_password), tint = Slate400
                                 )
                             }
                         },

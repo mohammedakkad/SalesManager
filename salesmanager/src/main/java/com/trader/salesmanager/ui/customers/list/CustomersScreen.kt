@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.customers.list
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -26,7 +28,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.CloudOff
 import androidx.compose.material.icons.rounded.DeleteForever
@@ -173,7 +175,7 @@ fun CustomersScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (showNavigateUp) {
                             IconButton(onClick = onNavigateUp) {
-                                Icon(Icons.Rounded.ArrowBack, null, tint = Color.White)
+                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                             }
                             Spacer(Modifier.width(8.dp))
                         }
@@ -222,6 +224,9 @@ fun CustomersScreen(
             }
 
             // ── Content ──────────────────────────────────────────
+            // Capture only the list: capturing the whole uiState would re-run every visible row
+            // whenever an unrelated field (e.g. the sync badge) changes.
+            val customers = uiState.customers
             AnimatedContent(
                 targetState = Triple(uiState.isLoading, uiState.customers.isEmpty(), uiState.searchQuery),
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
@@ -243,7 +248,7 @@ fun CustomersScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        itemsIndexed(uiState.customers, key = { _, c ->
+                        itemsIndexed(customers, key = { _, c ->
                             c.id
                         }) { index, customer ->
                             val visible = remember {
@@ -354,7 +359,7 @@ private fun CustomerCard(customer: Customer, onClick: () -> Unit, onDelete: () -
             // ✅ إخفاء زر الحذف للزبون الزائر (id = -1)
             if (customer.id != -1L) {
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Rounded.DeleteOutline, null, tint = DebtRed.copy(alpha = 0.7f))
+                    Icon(Icons.Rounded.DeleteOutline, stringResource(R.string.cd_delete_customer), tint = DebtRed.copy(alpha = 0.7f))
                 }
             }
             Icon(

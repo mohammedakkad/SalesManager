@@ -5,7 +5,7 @@ import android.content.ComponentName
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.lifecycle.ViewModel
 import androidx.test.core.app.ApplicationProvider
 import com.trader.salesmanager.util.export.ExportViewModel
@@ -13,7 +13,7 @@ import org.junit.*
 import org.junit.rules.TestRule
 import org.junit.rules.ExternalResource
 import org.junit.runners.model.Statement
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -23,6 +23,7 @@ import org.robolectric.annotation.Config
 /** No app manifest/providers: only a plain test activity is registered before ActivityScenario starts. */
 @Config(sdk=[28],manifest=Config.NONE,application=Application::class)
 abstract class OfflineSellerUiTest {
+    @get:org.junit.Rule(order=-10) val westernDigits=com.trader.salesmanager.testing.WesternDigitsRule()
     @get:Rule(order=-2) val koinLifetime=object:ExternalResource() {
         override fun before(){startKoin { modules(module { viewModel { ExportViewModel() } }) }}
         override fun after(){stopKoin()}
@@ -43,6 +44,6 @@ abstract class OfflineSellerUiTest {
     private var key=0
     protected fun <T:ViewModel> owned(vm:T):T = vm.also { activity.viewModelStore.put("fixture-${key++}",it) }
     protected fun show(content:@Composable () -> Unit) {
-        ui.setContent { org.koin.compose.KoinContext { MaterialTheme { content() } } }
+        ui.setContent { MaterialTheme { content() } }
     }
 }

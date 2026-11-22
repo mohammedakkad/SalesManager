@@ -29,6 +29,8 @@ class ReportCanvasRenderingUiTest:OfflineSellerUiTest() {
             salesProfitLast7Days=listOf(SalesProfitDayEntry("01/01",100.0,profit))))
         show{ReportsScreen({},viewModel=vm)}
         ui.onNode(hasScrollToIndexAction()).performScrollToNode(hasText("المبيعات مقابل الربح - آخر 7 أيام"))
+        // Compose >= 1.8 scrolls minimally to the title; bring the drawn chart itself into view.
+        ui.onNode(hasScrollToIndexAction()).performScrollToNode(hasContentDescription("المبيعات والربح",substring=true))
         ui.mainClock.advanceTimeBy(2000);ui.waitForIdle()
     }
     private fun longestColorColumn(color:Color):Int {

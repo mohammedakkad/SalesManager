@@ -34,7 +34,7 @@ class SessionRevokeRoomUiTest:OfflineSellerUiTest() {
         mockkStatic(FirebaseDatabase::class)
         every { FirebaseDatabase.getInstance() } returns database
         every { database.getReference("merchants").child("merchant-a").child("sessions").child("session-a") } returns reference
-        ui.runOnIdle {vm=owned(SessionsViewModel(db.sessionDao(),"merchant-a"))}
+        ui.runOnIdle {vm=owned(SessionsViewModel(db.sessionDao(),com.trader.core.domain.repository.MerchantContext.fixed("merchant-a")))}
     }
     @After fun close(){ui.runOnIdle {vm.viewModelScope.cancel()};db.close();unmockkStatic(FirebaseDatabase::class)}
     private fun display(expected:Int=1){show {SessionsScreen({},vm)};ui.waitUntil(10000){ui.waitForIdle();vm.activeSessions.value.size==expected};ui.waitForIdle()}
@@ -118,7 +118,7 @@ class SessionRevokeRoomUiTest:OfflineSellerUiTest() {
         display()
         ui.runOnIdle {
             vm.revokeSession("")
-            val unactivated=owned(SessionsViewModel(db.sessionDao(),""))
+            val unactivated=owned(SessionsViewModel(db.sessionDao(),com.trader.core.domain.repository.MerchantContext.fixed("")))
             unactivated.revokeSession("session-a");unactivated.viewModelScope.cancel()
         }
         verify(exactly=0){reference.removeValue()}

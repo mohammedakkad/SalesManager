@@ -3,6 +3,7 @@ import java.util.Locale
 import org.junit.Test
 import org.junit.Assert.*
 class InvoiceInputTest {
+    @get:org.junit.Rule(order=-10) val westernDigits=com.trader.salesmanager.testing.WesternDigitsRule()
     @Test fun latinAndPersianDigitsAreParsed() {
         assertEquals(12.5,"۱۲.۵".toSafeDouble()!!,0.0)
         assertEquals(12.5,"12,5".toSafeDouble()!!,0.0)

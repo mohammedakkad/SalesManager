@@ -66,9 +66,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalClipboardManager
+import com.trader.core.util.rememberPlainTextCopier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -117,7 +116,7 @@ fun SettingsScreen(
     lowStockSettingsRepository: LowStockSettingsRepository = koinInject()
 ) {
     val context = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
+    val copyText = rememberPlainTextCopier()
     val scope = rememberCoroutineScope()
 
     val storeNameFlow = remember(context) { context.appDataStore.data.map { it[STORE_NAME_KEY] ?: "" } }
@@ -186,7 +185,7 @@ fun SettingsScreen(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(
@@ -213,12 +212,14 @@ fun SettingsScreen(
                     merchantCode = merchantCode,
                     onCopy = {
                         if (merchantCode.isBlank()) return@MerchantCodeCard
-                        clipboardManager.setText(AnnotatedString(merchantCode))
+                        copyText(merchantCode)
                         Toast.makeText(context, "تم نسخ الكود", Toast.LENGTH_SHORT).show()
                     }
                 )
 
                 DarkModeSettingItem()
+
+                DigitSystemSettingItem()
 
                 LowStockAlertsSettingItem(
                     settings = lowStockSettings,

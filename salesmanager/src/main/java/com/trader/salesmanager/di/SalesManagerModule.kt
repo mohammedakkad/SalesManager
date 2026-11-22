@@ -74,10 +74,16 @@ import com.trader.salesmanager.ui.transactions.details.TransactionDetailsViewMod
 import com.trader.salesmanager.ui.transactions.list.TransactionsViewModel
 import com.trader.salesmanager.update.AppUpdateViewModel
 import com.trader.salesmanager.util.export.ExportViewModel
-import kotlinx.coroutines.runBlocking
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+
+/**
+ * Fallback merchant for repositories that also receive a live source in this module
+ * (ActivationRepository / outbox journal / currentMerchant). Their production paths always read
+ * the live source; the fallback exists only for standalone construction in tests.
+ */
+private const val NO_PINNED_MERCHANT = ""
 
 val salesManagerModule = module {
     // ── Database ─────────────────────────────────────────────────
@@ -148,11 +154,11 @@ val salesManagerModule = module {
         )
     }
 
-    // ── merchantId helper ─────────────────────────────────────────
-    single<String>(org.koin.core.qualifier.named("merchantId")) {
-        runBlocking {
-            get<ActivationRepository>().getMerchantCode()
-        }
+    // ── Active merchant ───────────────────────────────────────────
+    // Always read the merchant that is active *now*: merchant A can be deactivated and
+    // merchant B activated in the same process. Never capture the code once in DI.
+    single<com.trader.core.domain.repository.MerchantContext> {
+        com.trader.core.data.repository.ActivationMerchantContext(get())
     }
 
     single { val activation = get<ActivationRepository>()
@@ -194,7 +200,7 @@ val salesManagerModule = module {
             get(),
             get(),
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            NO_PINNED_MERCHANT,
             outboxDatabase = get(),
             activation = get()
         )
@@ -204,7 +210,7 @@ val salesManagerModule = module {
             get(),
             get(),
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            NO_PINNED_MERCHANT,
             outboxDatabase = get(),
             activation = get()
         )
@@ -214,13 +220,13 @@ val salesManagerModule = module {
             get(),
             get(),
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            get(),
             get()
         )
     }
     single<ReturnRepository> {
         val commands = get<com.trader.salesmanager.sales.SaleCommands>()
-        ReturnRepositoryImpl(get(), get(), get(), get(), get(qualifier = org.koin.core.qualifier.named("merchantId")), get(), get(),
+        ReturnRepositoryImpl(get(), get(), get(), get(), NO_PINNED_MERCHANT, get(), get(),
             outboxJournal = commands::journalReturn)
     }
     single<ReportsRepository> {
@@ -235,7 +241,7 @@ val salesManagerModule = module {
     single<EmployeeRepository> {
         EmployeeRepositoryImpl(
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            get(),
             get(),
             get()
         )
@@ -324,7 +330,7 @@ val salesManagerModule = module {
         BackupManager(
             context = androidContext(),
             database = get(),
-            merchantId = get(qualifier = org.koin.core.qualifier.named("merchantId")),
+            merchantId = NO_PINNED_MERCHANT,
             afterRestore = { com.trader.salesmanager.sales.outbox.SaleOutboxWork.enqueue(androidContext(), true) },
             currentMerchant = { get<ActivationRepository>().getMerchantCode() }
         )
@@ -344,7 +350,7 @@ val salesManagerModule = module {
     viewModel {
         SessionsViewModel(
             sessionDao = get(),
-            merchantCode = get(qualifier = org.koin.core.qualifier.named("merchantId"))
+            merchant = get()
         )
     }
     viewModel {
@@ -363,7 +369,7 @@ val salesManagerModule = module {
         InventorySessionViewModel(
             get(),
             get(),
-            get(qualifier = org.koin.core.qualifier.named("merchantId"))
+            get()
         )
     }
     viewModel {
@@ -377,7 +383,7 @@ val salesManagerModule = module {
             get(),
             get(),
             get(),
-            get(org.koin.core.qualifier.named("merchantId")),
+            get(),
             params.get()
         )
     }

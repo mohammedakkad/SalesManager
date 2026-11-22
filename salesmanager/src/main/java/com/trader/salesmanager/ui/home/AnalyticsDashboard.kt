@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.home
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -401,7 +402,7 @@ fun SalesChartCard(
     val accessibleValues = remember(sales, labels) {
         "المبيعات خلال 7 أيام: " + if (sales.isEmpty()) "لا توجد بيانات" else
             sales.mapIndexed { index, day ->
-                "${labels[index]}: ${String.format(Locale.US, "%.2f", day.totalSales)}"
+                "${labels[index]}: ${AppNumberFormat.number(day.totalSales, "%.2f")}"
             }.joinToString("; ")
     }
     LaunchedEffect(entries) {
@@ -576,18 +577,18 @@ private fun arabicDayName(timeMillis: Long): String {
 }
 
 private fun formatAmount(value: Double): String =
-    String.format(Locale.US, "%,.0f", value)
+    AppNumberFormat.number(value, "%,.0f")
 
 private fun formatQuantity(value: Double): String =
     if (value % 1.0 == 0.0) {
-        String.format(Locale.US, "%,.0f", value)
+        AppNumberFormat.number(value, "%,.0f")
     } else {
-        String.format(Locale.US, "%,.1f", value)
+        AppNumberFormat.number(value, "%,.1f")
     }
 
 private fun compactAmount(value: Float): String =
     when {
-        value >= 1_000_000f -> String.format(Locale.US, "%.1f م", value / 1_000_000f)
-        value >= 1_000f -> String.format(Locale.US, "%.0f ألف", value / 1_000f)
-        else -> String.format(Locale.US, "%.0f", value)
+        value >= 1_000_000f -> AppNumberFormat.number(value / 1_000_000f, "%.1f م")
+        value >= 1_000f -> AppNumberFormat.number(value / 1_000f, "%.0f ألف")
+        else -> AppNumberFormat.number(value, "%.0f")
     }

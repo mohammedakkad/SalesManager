@@ -1,5 +1,8 @@
 package com.trader.salesmanager.ui.inventory.list
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -296,7 +299,7 @@ fun InventoryListScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (showNavigateUp) {
                             IconButton(onClick = onNavigateUp) {
-                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                                Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                             }
                         }
                         Text(
@@ -354,7 +357,7 @@ fun InventoryListScreen(
                             .clip(CircleShape)
                             .background(Color.White.copy(0.15f))
                         ) {
-                            Icon(Icons.Rounded.QrCodeScanner, null, tint = Color.White)
+                            Icon(Icons.Rounded.QrCodeScanner, stringResource(R.string.cd_scan_barcode), tint = Color.White)
                         }
                     }
 
@@ -383,7 +386,7 @@ fun InventoryListScreen(
                                 IconButton(onClick = {
                                     viewModel.setQuery("")
                                 }) {
-                                    Icon(Icons.Rounded.Close, null, tint = Color.White.copy(0.7f))
+                                    Icon(Icons.Rounded.Close, stringResource(R.string.cd_clear_search), tint = Color.White.copy(0.7f))
                                 }
                             }
                         },
@@ -728,7 +731,7 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                         unit ->
                         val qty = unit.quantityInStock
                         val qtyText = if (unit.unitType == UnitType.WEIGHT)
-                            "${String.format("%.2f", qty)} ${unit.unitLabel}"
+                            "${AppNumberFormat.number(qty, "%.2f")} ${unit.unitLabel}"
                         else "${qty.toInt()} ${unit.unitLabel}"
                         Surface(shape = RoundedCornerShape(6.dp), color = appColors.divider) {
                             Text(
@@ -766,7 +769,7 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                 item.defaultUnit?.let {
                     unit ->
                     Text(
-                        "₪${String.format("%.2f", unit.price)}",
+                        "₪${AppNumberFormat.number(unit.price, "%.2f")}",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = appColors.textPrimary

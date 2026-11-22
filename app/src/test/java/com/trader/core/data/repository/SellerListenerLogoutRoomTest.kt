@@ -45,7 +45,7 @@ class SellerListenerLogoutRoomTest {
     @Test fun employeeListenerUnregistersOnLogoutRatherThanFilteringOutTheSignal()=runBlocking {
         val events=MutableSharedFlow<List<Employee>>()
         every{sync.observeEmployees(any())} returns tracked(events)
-        EmployeeRepositoryImpl(db.employeeDao(),"m1",sync,activation)
+        EmployeeRepositoryImpl(db.employeeDao(),com.trader.core.domain.repository.MerchantContext.fixed("m1"),sync,activation)
         withTimeout(5000){events.subscriptionCount.first{it==1}}
         actor.value=""
         assertNotNull("Logout must cancel the old employee listener",withTimeoutOrNull(1000){events.subscriptionCount.first{it==0}})

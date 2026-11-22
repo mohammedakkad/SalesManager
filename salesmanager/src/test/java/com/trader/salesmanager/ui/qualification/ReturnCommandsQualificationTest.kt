@@ -21,7 +21,7 @@ class ReturnCommandsQualificationTest {
         coEvery{returns.processReturn(any(),any())} coAnswers {firstArg()}
     }
     @After fun cleanup(){store.clear();Dispatchers.resetMain()}
-    private fun model()=ReturnViewModel(returns,invoices,products,"m1",41).also{store.put("return",it)}
+    private fun model()=ReturnViewModel(returns,invoices,products,com.trader.core.domain.repository.MerchantContext.fixed("m1"),41).also{store.put("return",it)}
     @Test fun deselectedReturnableLineMakesReturnPartialAndKeepsItOutOfRefund()=runTest {
         val vm=model();runCurrent();vm.toggleLine(1)
         assertFalse("Unselected returnable items cannot be classified as a full return",vm.state.value.isFullReturn)
@@ -125,7 +125,7 @@ class ReturnCommandsQualificationTest {
         val vm=model();runCurrent();assertFalse(vm.state.value.canConfirm)
     }
     @Test fun missingMerchantCannotSubmitARefund()=runTest {
-        val vm=ReturnViewModel(returns,invoices,products,"",41).also{store.put("return",it)}
+        val vm=ReturnViewModel(returns,invoices,products,com.trader.core.domain.repository.MerchantContext.fixed(""),41).also{store.put("return",it)}
         runCurrent();vm.confirmReturn();runCurrent();coVerify(exactly=0){returns.processReturn(any(),any())}
     }
 

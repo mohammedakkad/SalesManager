@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk=[28],manifest=Config.NONE,application=Application::class)
 class UnpaidDebtWorkerRoomTest {
+    @get:org.junit.Rule(order=-10) val westernDigits=com.trader.salesmanager.testing.WesternDigitsRule()
     private val context:Context=ApplicationProvider.getApplicationContext()
     private lateinit var db:AppDatabase
     private val manager get()=context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

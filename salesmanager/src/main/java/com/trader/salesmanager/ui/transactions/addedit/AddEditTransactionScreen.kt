@@ -1,5 +1,8 @@
 package com.trader.salesmanager.ui.transactions.addedit
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,16 +21,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Notes
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AttachMoney
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.CreditCard
-import androidx.compose.material.icons.rounded.Notes
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -107,7 +111,7 @@ fun AddEditTransactionScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                 }
                 Text(if (uiState.isEditMode) "تعديل العملية" else "إضافة عملية",
                     style = MaterialTheme.typography.titleLarge,
@@ -129,7 +133,7 @@ fun AddEditTransactionScreen(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = customerExpanded)
                     },
-                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                     isError = uiState.error == "اختر الزبون",
                     leadingIcon = {
                         Icon(Icons.Rounded.Person, null)
@@ -187,7 +191,7 @@ fun AddEditTransactionScreen(
                                     style = MaterialTheme.typography.bodySmall
                                 )
                                 Text(
-                                    "₪${String.format(java.util.Locale.US, "%.2f", line.totalPrice)}",
+                                    "₪${AppNumberFormat.number(line.totalPrice, "%.2f")}",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold, color = Emerald500
                                 )
@@ -268,7 +272,7 @@ fun AddEditTransactionScreen(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = paymentExpanded)
                     },
-                    modifier = Modifier.fillMaxWidth().menuAnchor(),
+                    modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                     leadingIcon = {
                         Icon(Icons.Rounded.CreditCard, null)
                     }
@@ -296,7 +300,7 @@ fun AddEditTransactionScreen(
                 },
                 modifier = Modifier.fillMaxWidth(), maxLines = 3,
                 leadingIcon = {
-                    Icon(Icons.Rounded.Notes, null)
+                    Icon(Icons.AutoMirrored.Rounded.Notes, null)
                 }
             )
 

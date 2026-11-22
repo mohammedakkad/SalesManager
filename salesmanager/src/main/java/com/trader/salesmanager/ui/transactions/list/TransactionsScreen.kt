@@ -1,5 +1,8 @@
 package com.trader.salesmanager.ui.transactions.list
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -25,14 +28,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.AssignmentReturn
+import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.AssignmentReturn
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.CloudOff
 import androidx.compose.material.icons.rounded.PendingActions
 import androidx.compose.material.icons.rounded.Receipt
-import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
@@ -87,7 +90,7 @@ fun TransactionsScreen(
                 containerColor = Cyan500, contentColor = Color.White,
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Icon(Icons.Rounded.Add, null)
+                Icon(Icons.Rounded.Add, stringResource(R.string.cd_new_transaction))
             }
         }
     ) {
@@ -102,7 +105,7 @@ fun TransactionsScreen(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(onClick = onNavigateUp) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                         }
                         Spacer(Modifier.width(8.dp))
                         Column {
@@ -226,8 +229,8 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
         else         -> UnpaidAmber
     }
     val icon = when {
-        isFullReturn -> Icons.Rounded.Undo
-        isPartReturn -> Icons.Rounded.AssignmentReturn
+        isFullReturn -> Icons.AutoMirrored.Rounded.Undo
+        isPartReturn -> Icons.AutoMirrored.Rounded.AssignmentReturn
         tx.isPaid    -> Icons.Rounded.CheckCircle
         else         -> Icons.Rounded.PendingActions
     }
@@ -309,7 +312,7 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
             Column(horizontalAlignment = Alignment.End) {
                 if (hasReturn && tx.amountChanged) {
                     Text(
-                        "₪${String.format("%.2f", tx.originalAmount)}",
+                        "₪${AppNumberFormat.number(tx.originalAmount, "%.2f")}",
                         style = MaterialTheme.typography.bodySmall.copy(
                             textDecoration = TextDecoration.LineThrough
                         ),
@@ -317,7 +320,7 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
                     )
                 }
                 Text(
-                    "₪${String.format("%.2f", tx.amount)}",
+                    "₪${AppNumberFormat.number(tx.amount, "%.2f")}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = when {

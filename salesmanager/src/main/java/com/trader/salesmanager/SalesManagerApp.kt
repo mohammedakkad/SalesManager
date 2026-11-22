@@ -3,6 +3,8 @@ package com.trader.salesmanager
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.database.FirebaseDatabase
+import com.trader.core.data.local.appDataStore
+import com.trader.core.util.format.DigitSystemPreference
 import com.trader.core.data.local.dao.ProductDao
 import com.trader.core.domain.repository.ActivationRepository
 import com.trader.core.domain.repository.LowStockSettingsRepository
@@ -38,6 +40,11 @@ class SalesManagerApp : Application(), KoinComponent {
         StatusCheckWorker.schedule(this)
         BackgroundUpdateWorker.schedulePeriodic(this)
 
+        // Keep the shared formatter on the user's digit system for work outside the UI
+        // (PDF exports, notifications). Also warms DataStore before the first frame.
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            runCatching { appDataStore.data.collect { DigitSystemPreference.apply(it) } }
+        }
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             runCatching {
                 val lowStockSettingsRepository: LowStockSettingsRepository by inject()

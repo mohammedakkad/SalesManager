@@ -77,4 +77,18 @@ class ChatCommandsTest {
         queued.value=listOf(PendingMessageEntity("pending","m1","queued","store",isFailed=true));runCurrent()
         vm.dismissFailedMessage("pending");runCurrent();coVerify {pending.delete("pending")}
     }
+    @Test fun remoteListenerFailureEndsLoadingWithoutCrashing()=runTest {
+        // Regression: a Firestore listener error closed the flow with an uncaught exception.
+        every { repo.getMessages("m1") } returns flow { throw IllegalStateException("PERMISSION_DENIED fixture") }
+        val vm=model();runCurrent()
+        assertFalse(vm.uiState.value.isLoading);assertTrue(vm.uiState.value.messages.isEmpty())
+    }
+    @Test fun blankMerchantCodeEndsLoadingWithoutCrashing()=runTest {
+        // Regression: ChatService rejects a blank merchant code by throwing before a flow exists.
+        coEvery { activation.getMerchantCode() } returns ""
+        every { repo.getMessages("") } throws IllegalArgumentException("Merchant ID is required")
+        every { pending.getAll("") } returns queued
+        val vm=model();runCurrent()
+        assertFalse(vm.uiState.value.isLoading)
+    }
 }

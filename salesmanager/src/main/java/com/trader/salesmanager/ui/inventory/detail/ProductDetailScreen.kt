@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.inventory.detail
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Undo
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.AddCircle
@@ -33,7 +35,6 @@ import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.RemoveCircle
 import androidx.compose.material.icons.rounded.Scale
 import androidx.compose.material.icons.rounded.ShoppingCart
-import androidx.compose.material.icons.rounded.Undo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -338,7 +339,7 @@ private fun UnitCard(
                             }
                     }
                     val qtyText = when (unit.unitType) {
-                        UnitType.WEIGHT -> "${String.format("%.3f", unit.quantityInStock)} كجم"
+                        UnitType.WEIGHT -> "${AppNumberFormat.number(unit.quantityInStock, "%.3f")} كجم"
                         else -> "${unit.quantityInStock.toInt()} ${unit.unitLabel}"
                     }
                     Text(
@@ -354,16 +355,13 @@ private fun UnitCard(
                 }
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        "₪${String.format("%.2f", unit.price)}",
+                        "₪${AppNumberFormat.number(unit.price, "%.2f")}",
                         fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall
                     )
                     Text(
                         "تنبيه < ${
                             unit.lowStockThreshold.let {
-                                if (unit.unitType == UnitType.WEIGHT) String.format(
-                                    "%.1f",
-                                    it
-                                ) else it.toInt().toString()
+                                if (unit.unitType == UnitType.WEIGHT) AppNumberFormat.number(it, "%.1f") else it.toInt().toString()
                             }
                         }",
                         style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle
@@ -458,7 +456,7 @@ private fun MovementRow(mov: StockMovement) {
     val color = if (isIn) PaidGreen else DebtRed
     val icon = when (mov.movementType) {
         MovementType.SALE_OUT -> Icons.Rounded.ShoppingCart
-        MovementType.RETURN_IN -> Icons.Rounded.Undo
+        MovementType.RETURN_IN -> Icons.AutoMirrored.Rounded.Undo
         MovementType.MANUAL_IN -> Icons.Rounded.AddCircle
         MovementType.MANUAL_OUT -> Icons.Rounded.RemoveCircle
         MovementType.INVENTORY_ADJUST -> Icons.Rounded.Inventory2
@@ -470,8 +468,7 @@ private fun MovementRow(mov: StockMovement) {
         MovementType.MANUAL_OUT -> "خصم يدوي"
         MovementType.INVENTORY_ADJUST -> "تعديل جرد"
     }
-    val fmt = SimpleDateFormat("dd/MM hh:mm a", Locale("ar"))
-    val timeStr = fmt.format(Date(mov.createdAt))
+    val timeStr = AppNumberFormat.formatDate("dd/MM hh:mm a", Date(mov.createdAt))
 
     Row(
         Modifier
@@ -508,16 +505,13 @@ private fun MovementRow(mov: StockMovement) {
         }
         Column(horizontalAlignment = Alignment.End) {
             Text(
-                "${if (isIn) "+" else ""}${String.format("%.2f", mov.quantity)}",
+                "${if (isIn) "+" else ""}${AppNumberFormat.number(mov.quantity, "%.2f")}",
                 color = color, fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                "${String.format("%.2f", mov.quantityBefore)} → ${
-                    String.format(
-                        "%.2f",
-                        mov.quantityAfter
-                    )
+                "${AppNumberFormat.number(mov.quantityBefore, "%.2f")} → ${
+                    AppNumberFormat.number(mov.quantityAfter, "%.2f")
                 }",
                 style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle,
                 fontSize = 9.sp

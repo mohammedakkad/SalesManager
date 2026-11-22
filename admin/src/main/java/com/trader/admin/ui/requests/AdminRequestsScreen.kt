@@ -1,5 +1,8 @@
 package com.trader.admin.ui.requests
 
+import com.trader.core.util.format.AppNumberFormat
+import com.trader.admin.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,7 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Inbox
 import androidx.compose.material3.*
@@ -24,11 +27,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.trader.admin.ui.theme.*
 import com.trader.core.domain.model.SubscriptionRequest
 import org.koin.androidx.compose.koinViewModel
-import java.text.SimpleDateFormat
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +60,7 @@ fun AdminRequestsScreen(
                 title = { Text("طلبات الاشتراك", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.Rounded.ArrowBack, contentDescription = null, tint = Slate100)
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = stringResource(R.string.cd_navigate_back), tint = Slate100)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -122,7 +124,7 @@ fun AdminRequestsScreen(
                         .align(Alignment.TopEnd)
                         .padding(12.dp)
                         .background(Color.Black.copy(0.5f), CircleShape)
-                ) { Icon(Icons.Rounded.Close, null, tint = Color.White) }
+                ) { Icon(Icons.Rounded.Close, stringResource(R.string.cd_close_preview), tint = Color.White) }
             }
         }
     }
@@ -135,8 +137,7 @@ private fun RequestItem(
     onApprove: () -> Unit,
     onReject: () -> Unit
 ) {
-    val date =
-        SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date(request.requestedAt))
+    val date = AppNumberFormat.formatDate("yyyy/MM/dd HH:mm", request.requestedAt)
 
     Card(
         shape = RoundedCornerShape(16.dp),

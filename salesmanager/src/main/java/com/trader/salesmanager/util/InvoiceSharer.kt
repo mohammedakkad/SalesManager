@@ -1,5 +1,6 @@
 package com.trader.salesmanager.util
 
+import com.trader.core.util.format.AppNumberFormat
 import android.content.Context
 import android.content.Intent
 import com.trader.core.domain.model.InvoiceItem
@@ -34,8 +35,7 @@ object InvoiceSharer {
         storeName: String
     ): String {
         val displayName = storeName.ifBlank { "المتجر" }
-        val dateStr = SimpleDateFormat("dd/MM/yyyy - hh:mm a", Locale("ar"))
-            .format(Date(transaction.date))
+        val dateStr = AppNumberFormat.formatDate("dd/MM/yyyy - hh:mm a", Date(transaction.date))
 
         return buildString {
             appendLine("🧾 *فاتورة من $displayName*")

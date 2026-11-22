@@ -1,5 +1,6 @@
 package com.trader.core.sync
 
+import com.trader.core.util.format.AppNumberFormat
 import com.trader.core.data.local.dao.CashBoxDao
 import com.trader.core.data.local.dao.CashBoxMovementDao
 import com.trader.core.data.local.dao.InvoiceItemDao
@@ -32,13 +33,12 @@ class SyncStatusObserver(
         transactions.forEach { entity ->
             val status = runCatching { SyncStatus.valueOf(entity.syncStatus) }
                 .getOrDefault(SyncStatus.PENDING)
-            val dateStr = SimpleDateFormat("dd/MM HH:mm", Locale.getDefault())
-                .format(Date(entity.date))
+            val dateStr = AppNumberFormat.formatDate("dd/MM HH:mm", Date(entity.date))
             items.add(
                 UnsyncedItem(
                     id = entity.id.toString(),
                     type = UnsyncedItemType.TRANSACTION,
-                    label = "${String.format("%.0f", entity.amount)} — $dateStr",
+                    label = "${AppNumberFormat.number(entity.amount, "%.0f")} — $dateStr",
                     syncStatus = status
                 )
             )
@@ -75,7 +75,7 @@ class SyncStatusObserver(
                 .getOrDefault(SyncStatus.PENDING)
             val qty = if (entity.quantity == entity.quantity.toLong().toDouble())
                 entity.quantity.toLong().toString()
-            else String.format("%.1f", entity.quantity)
+            else AppNumberFormat.number(entity.quantity, "%.1f")
             items.add(
                 UnsyncedItem(
                     id = entity.id,

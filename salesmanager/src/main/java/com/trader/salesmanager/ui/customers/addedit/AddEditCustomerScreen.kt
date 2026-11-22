@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.customers.addedit
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -113,7 +115,7 @@ fun AddEditCustomerScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, null, tint = Color.White)
+                    Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.cd_navigate_back), tint = Color.White)
                 }
                 Spacer(Modifier.width(8.dp))
                 // Avatar دائري

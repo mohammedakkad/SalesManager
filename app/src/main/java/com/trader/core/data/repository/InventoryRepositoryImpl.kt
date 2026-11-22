@@ -8,6 +8,7 @@ import com.trader.core.data.local.entity.InventorySessionEntity
 import com.trader.core.data.local.entity.toEntity
 import com.trader.core.domain.model.*
 import com.trader.core.domain.repository.InventoryRepository
+import com.trader.core.domain.repository.MerchantContext
 import com.trader.core.domain.repository.StockRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -17,7 +18,7 @@ class InventoryRepositoryImpl(
     private val inventoryDao: InventoryDao,
     private val productDao: ProductDao,
     private val stockRepo: StockRepository,
-    private val merchantId: String,
+    private val merchant: MerchantContext,
     private val database: AppDatabase
 ) : InventoryRepository {
 
@@ -31,7 +32,7 @@ class InventoryRepositoryImpl(
         inventoryDao.getAllSessions().map { it.map { e -> e.toDomain() } }
 
     override suspend fun startNewSession(merchantId: String): String = database.withTransaction {
-        require(merchantId == this@InventoryRepositoryImpl.merchantId) { "Inventory merchant mismatch" }
+        require(merchantId == merchant.currentCode()) { "Inventory merchant mismatch" }
         val sessionId = UUID.randomUUID().toString()
         inventoryDao.insertSession(
             InventorySession(
@@ -106,7 +107,7 @@ class InventoryRepositoryImpl(
 
     private suspend fun ownedSession(sessionId: String): InventorySessionEntity {
         val session = requireNotNull(inventoryDao.getSessionById(sessionId)) { "Inventory session not found" }
-        require(session.merchantId == merchantId) { "Inventory merchant mismatch" }
+        require(session.merchantId == merchant.currentCode()) { "Inventory merchant mismatch" }
         return session
     }
 }

@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.payments
 
+import com.trader.salesmanager.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,8 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Payment
 import androidx.compose.material3.AlertDialog
@@ -63,12 +65,12 @@ fun PaymentMethodsScreen(onNavigateUp: () -> Unit, viewModel: PaymentMethodsView
         topBar = {
             TopAppBar(
                 title = { Text("طرق الدفع", fontWeight = FontWeight.Bold) },
-                navigationIcon = { IconButton(onClick = onNavigateUp) { Icon(Icons.Default.ArrowBack, null) } },
+                navigationIcon = { IconButton(onClick = onNavigateUp) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cd_navigate_back)) } },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary, navigationIconContentColor = MaterialTheme.colorScheme.onPrimary)
             )
         },
-        floatingActionButton = { FloatingActionButton(onClick = { showDialog = true }) { Icon(Icons.Default.Add, null) } }
+        floatingActionButton = { FloatingActionButton(onClick = { showDialog = true }) { Icon(Icons.Default.Add, stringResource(R.string.cd_add_payment_method)) } }
     ) { padding ->
         LazyColumn(modifier = Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(uiState.methods, key = { it.id }) { method ->
@@ -77,7 +79,7 @@ fun PaymentMethodsScreen(onNavigateUp: () -> Unit, viewModel: PaymentMethodsView
                         Icon(Icons.Default.Payment, null, tint = MaterialTheme.colorScheme.primary)
                         Spacer(Modifier.width(12.dp))
                         Text(method.name, modifier = Modifier.weight(1f), fontWeight = FontWeight.Medium)
-                        IconButton(onClick = { viewModel.deleteMethod(method) }) { Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error) }
+                        IconButton(onClick = { viewModel.deleteMethod(method) }) { Icon(Icons.Default.Delete, stringResource(R.string.cd_delete_payment_method), tint = MaterialTheme.colorScheme.error) }
                     }
                 }
             }

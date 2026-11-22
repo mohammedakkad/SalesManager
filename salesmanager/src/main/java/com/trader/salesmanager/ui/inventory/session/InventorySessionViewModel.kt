@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.inventory.session
 
+import com.trader.core.domain.repository.MerchantContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.InventorySession
@@ -29,7 +30,7 @@ data class InventorySessionUiState(
 class InventorySessionViewModel(
     private val inventoryRepo: InventoryRepository,
     private val productRepo: ProductRepository,
-    private val merchantId: String
+    private val merchant: MerchantContext
 ) : ViewModel() {
 
     private val _search      = MutableStateFlow("")
@@ -69,7 +70,7 @@ class InventorySessionViewModel(
 
     fun startNewSession() {
         viewModelScope.launch {
-            inventoryRepo.startNewSession(merchantId)
+            inventoryRepo.startNewSession(merchant.currentCode())
         }
     }
 

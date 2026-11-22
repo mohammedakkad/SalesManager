@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.settings.sessions
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -107,9 +108,8 @@ private fun SessionCard(
     isRevoking: Boolean,
     onRevokeSession: () -> Unit
 ) {
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale("ar"))
-    val loginDate = dateFormat.format(Date(session.loginDate))
-    val lastActive = dateFormat.format(Date(session.lastActive))
+    val loginDate = AppNumberFormat.formatDate("dd/MM/yyyy HH:mm", Date(session.loginDate))
+    val lastActive = AppNumberFormat.formatDate("dd/MM/yyyy HH:mm", Date(session.lastActive))
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -155,7 +155,7 @@ private fun SessionCard(
 
             IconButton(onClick = onRevokeSession, enabled = !isRevoking) {
                 Icon(
-                    imageVector = Icons.Rounded.Logout,
+                    imageVector = Icons.AutoMirrored.Rounded.Logout,
                     contentDescription = "إنهاء الجلسة",
                     tint = MaterialTheme.colorScheme.error
                 )

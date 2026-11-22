@@ -45,7 +45,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.*
 import org.junit.Assert.*
 import org.junit.runner.RunWith
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -54,6 +54,7 @@ import java.lang.reflect.Proxy
 /** Actual Android dialogs and app theme; only isolated local Room/DataStore data is opened. */
 @RunWith(AndroidJUnit4::class)
 class ThemedDialogJourneyTest {
+    @get:Rule(order=-10) val westernDigits=WesternDigitsRule()
     @get:Rule val compose=createAndroidComposeRule<ComponentActivity>()
     private val context=ApplicationProvider.getApplicationContext<Context>()
     private val store=ViewModelStore()
@@ -79,12 +80,10 @@ class ThemedDialogJourneyTest {
     }
     private fun show(content:@Composable ()->Unit) {
         compose.setContent {
-            org.koin.compose.KoinContext {
-                SalesManagerTheme(context=context) {
-                    val dark=isDarkTheme
-                    SideEffect{observedDark=dark}
-                    content()
-                }
+            SalesManagerTheme(context=context) {
+                val dark=isDarkTheme
+                SideEffect{observedDark=dark}
+                content()
             }
         }
         compose.waitUntil(5000){observedDark==false}
@@ -138,8 +137,8 @@ class ThemedDialogJourneyTest {
         val item=InventorySessionItem("dialog-row",session.id,"p","قهوة جرد","u","حبة جرد",5.0)
         db.inventoryDao().insertSession(session.toEntity())
         db.inventoryDao().insertSessionItems(listOf(item.toEntity()))
-        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),"offline-dialog",db)
-        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),"offline-dialog")
+        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),com.trader.core.domain.repository.MerchantContext.fixed("offline-dialog"),db)
+        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),com.trader.core.domain.repository.MerchantContext.fixed("offline-dialog"))
         store.put("inventory",vm)
         show{InventorySessionScreen({},viewModel=vm)}
         compose.waitUntil(5000){!vm.uiState.value.isLoading&&vm.sessionItems.value.any{it.id==item.id}}
@@ -161,8 +160,8 @@ class ThemedDialogJourneyTest {
         val other=InventorySessionItem("untouched-row",session.id,"q","سكر محفوظ","v","علبة باقية",3.0,3.0)
         db.inventoryDao().insertSession(session.toEntity())
         db.inventoryDao().insertSessionItems(listOf(selected.toEntity(),other.toEntity()))
-        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),"offline-dialog",db)
-        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),"offline-dialog")
+        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),com.trader.core.domain.repository.MerchantContext.fixed("offline-dialog"),db)
+        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),com.trader.core.domain.repository.MerchantContext.fixed("offline-dialog"))
         store.put("inventory",vm)
         show{InventorySessionScreen({},viewModel=vm)}
         compose.waitUntil(5000){!vm.uiState.value.isLoading&&vm.sessionItems.value.size==2}

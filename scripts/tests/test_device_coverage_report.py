@@ -26,11 +26,14 @@ class DeviceCoverageReportTest(unittest.TestCase):
             for task, covered in [('qaCoverage', 70), ('qaCombinedCoverage', 80)]:
                 path = report.ROOT / module / f'build/reports/jacoco/{task}/{task}.xml'
                 path.parent.mkdir(parents=True)
-                sources = ''.join(f'<sourcefile name="{name}"><counter type="LINE" covered="1" missed="1"/></sourcefile>'
-                                  for name in ['InvoicePdfGenerator.kt', 'ReportPdfGenerator.kt', 'PdfCanvas.kt'])
+                packages = ''.join(
+                    f'<package name="{package}">' + ('<class name="fixture"/>' if package.endswith('/pdf') else '') +
+                    ''.join(f'<sourcefile name="{name}"><counter type="LINE" covered="1" missed="1"/></sourcefile>' for name in names) +
+                    '</package>'
+                    for package, names in report.NATIVE_PDF_SOURCES.items())
                 metrics = ''.join(f'<counter type="{kind}" covered="{covered}" missed="{100-covered}"/>'
                                   for kind in ['LINE', 'BRANCH', 'METHOD', 'CLASS'])
-                path.write_text(f'<report><package name="com/trader/salesmanager/util/pdf"><class name="fixture"/>{sources}</package>{metrics}</report>')
+                path.write_text(f'<report>{packages}{metrics}</report>')
 
     def tearDown(self):
         report.ROOT = self.old_root

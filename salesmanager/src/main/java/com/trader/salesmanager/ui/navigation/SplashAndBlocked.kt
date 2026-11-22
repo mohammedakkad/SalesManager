@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.navigation
 
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -20,10 +21,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.TrendingUp
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.SupportAgent
-import androidx.compose.material.icons.rounded.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -65,12 +65,13 @@ fun SplashCheckScreen() {
             Box(
                 modifier = Modifier
                     .size(90.dp)
-                    .scale(pulse)
+                    // Read in the draw layer: the pulse never recomposes the screen.
+                    .graphicsLayer { scaleX = pulse; scaleY = pulse }
                     .clip(CircleShape)
                     .background(Color.White.copy(0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Rounded.TrendingUp, null,
+                Icon(Icons.AutoMirrored.Rounded.TrendingUp, null,
                     tint = Color.White, modifier = Modifier.size(48.dp))
             }
             Spacer(Modifier.height(24.dp))
