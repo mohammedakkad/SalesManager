@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.chat
 
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.draw.drawBehind
 import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -667,10 +669,15 @@ private fun PendingBubble(
     )
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
         Column(horizontalAlignment = Alignment.End) {
+            val bubbleShape = RoundedCornerShape(topStart = 18.dp, topEnd = 4.dp, bottomStart = 18.dp, bottomEnd = 18.dp)
             Surface(
-                shape = RoundedCornerShape(topStart = 18.dp, topEnd = 4.dp, bottomStart = 18.dp, bottomEnd = 18.dp),
-                color = if (pending.isFailed) DebtRed.copy(0.12f) else Emerald500.copy(alpha),
-                modifier = Modifier.widthIn(max = 280.dp)
+                shape = bubbleShape,
+                color = if (pending.isFailed) DebtRed.copy(0.12f) else Color.Transparent,
+                // The sending pulse is painted in the draw phase so it never recomposes the bubble.
+                modifier = Modifier.widthIn(max = 280.dp).then(
+                    if (pending.isFailed) Modifier
+                    else Modifier.drawBehind { drawOutline(bubbleShape.createOutline(size, layoutDirection, this), Emerald500.copy(alpha)) }
+                )
             ) {
                 Text(pending.text, Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                     color = if (pending.isFailed) DebtRed else Color.White,
