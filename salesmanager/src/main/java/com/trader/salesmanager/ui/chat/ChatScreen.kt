@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.chat
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -718,21 +719,20 @@ private fun DateDivider(label: String) {
 
 // ── Helpers ───────────────────────────────────────────────────
 private fun formatTime(date: Date): String =
-SimpleDateFormat("hh:mm a", Locale("ar")).format(date)
+AppNumberFormat.formatDate("hh:mm a", date)
 
 private fun groupMessagesByDate(messages: List<ChatMessage>): Map<String, List<ChatMessage>> {
-    val today = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+    val today = AppNumberFormat.formatDate("dd/MM/yyyy", Date())
     val yesterday = Calendar.getInstance().apply {
         add(Calendar.DAY_OF_YEAR, -1)
     }
     .time.let {
-        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(it)
+        AppNumberFormat.formatDate("dd/MM/yyyy", it)
     }
-    val fmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return messages.groupBy {
         msg ->
         val d = msg.timestamp?.toDate() ?: return@groupBy "—"
-        when (val k = fmt.format(d)) {
+        when (val k = AppNumberFormat.formatDate("dd/MM/yyyy", d)) {
             today -> "اليوم"; yesterday -> "أمس"; else -> k
         }
     }

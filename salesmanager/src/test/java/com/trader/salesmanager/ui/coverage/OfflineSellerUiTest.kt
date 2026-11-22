@@ -23,6 +23,7 @@ import org.robolectric.annotation.Config
 /** No app manifest/providers: only a plain test activity is registered before ActivityScenario starts. */
 @Config(sdk=[28],manifest=Config.NONE,application=Application::class)
 abstract class OfflineSellerUiTest {
+    @get:org.junit.Rule(order=-10) val westernDigits=com.trader.salesmanager.testing.WesternDigitsRule()
     @get:Rule(order=-2) val koinLifetime=object:ExternalResource() {
         override fun before(){startKoin { modules(module { viewModel { ExportViewModel() } }) }}
         override fun after(){stopKoin()}

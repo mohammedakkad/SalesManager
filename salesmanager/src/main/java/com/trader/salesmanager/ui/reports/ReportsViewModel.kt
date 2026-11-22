@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.reports
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.DailySalesProfit
@@ -397,7 +398,6 @@ class ReportsViewModel(
 
     private fun fillLastSevenDays(rows: List<DailySalesProfit>): List<SalesProfitDayEntry> {
         val byDay = rows.associateBy { it.dayStartMillis }
-        val dayFmt = SimpleDateFormat("dd/MM", Locale.getDefault())
         val cal = Calendar.getInstance().apply {
             timeInMillis = lastSevenDaysStart()
         }
@@ -405,7 +405,7 @@ class ReportsViewModel(
             val dayStart = cal.timeInMillis
             val row = byDay[dayStart]
             val entry = SalesProfitDayEntry(
-                label = dayFmt.format(Date(dayStart)),
+                label = AppNumberFormat.formatDate("dd/MM", Date(dayStart)),
                 sales = row?.sales ?: 0.0,
                 profit = row?.profit ?: 0.0
             )
@@ -490,16 +490,19 @@ class ReportsViewModel(
         val total = filtered.sumOf { it.amount }
         val paid = filtered.filter { it.isPaid }.sumOf { it.amount }
         val unpaid = total - paid
-
-        val dayFmt = SimpleDateFormat("dd/MM", Locale.getDefault())
         val dailyMap = mutableMapOf<String, Pair<Double, Double>>()
+        // Sort by (month, day) from the date itself, never by parsing the display label.
+        val dayOrder = mutableMapOf<String, Int>()
+        val calendar = Calendar.getInstance()
         filtered.forEach { tx ->
-            val label = dayFmt.format(Date(tx.date))
+            val label = AppNumberFormat.formatDate("dd/MM", Date(tx.date))
+            calendar.timeInMillis = tx.date
+            dayOrder[label] = calendar.get(Calendar.MONTH) * 100 + calendar.get(Calendar.DAY_OF_MONTH)
             val (t, p) = dailyMap.getOrDefault(label, 0.0 to 0.0)
             dailyMap[label] = (t + tx.amount) to (p + if (tx.isPaid) tx.amount else 0.0)
         }
         val dailySales = dailyMap.entries
-            .sortedBy { dayFmt.parse(it.key)?.time ?: 0L }
+            .sortedBy { dayOrder[it.key] ?: 0 }
             .map { DaySalesEntry(it.key, it.value.first, it.value.second) }
 
         val pmMap = mutableMapOf<String, Double>()

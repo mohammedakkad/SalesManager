@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.inventory.list
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
@@ -728,7 +729,7 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                         unit ->
                         val qty = unit.quantityInStock
                         val qtyText = if (unit.unitType == UnitType.WEIGHT)
-                            "${String.format("%.2f", qty)} ${unit.unitLabel}"
+                            "${AppNumberFormat.number(qty, "%.2f")} ${unit.unitLabel}"
                         else "${qty.toInt()} ${unit.unitLabel}"
                         Surface(shape = RoundedCornerShape(6.dp), color = appColors.divider) {
                             Text(
@@ -766,7 +767,7 @@ private fun ProductCard(item: ProductWithUnits, onClick: () -> Unit) {
                 item.defaultUnit?.let {
                     unit ->
                     Text(
-                        "₪${String.format("%.2f", unit.price)}",
+                        "₪${AppNumberFormat.number(unit.price, "%.2f")}",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = appColors.textPrimary

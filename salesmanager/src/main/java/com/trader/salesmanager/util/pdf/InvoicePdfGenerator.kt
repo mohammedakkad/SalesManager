@@ -8,7 +8,7 @@ import com.trader.core.domain.model.PaymentType
 import com.trader.core.domain.model.ReturnSummary
 import com.trader.core.domain.model.Transaction
 import com.trader.core.domain.model.TransactionReturnStatus
-import com.trader.salesmanager.util.format.AppNumberFormat
+import com.trader.core.util.format.AppNumberFormat
 import com.trader.salesmanager.util.pdf.components.PdfBadgeTone
 import com.trader.salesmanager.util.pdf.components.PdfCell
 import com.trader.salesmanager.util.pdf.components.PdfColumn

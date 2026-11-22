@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.debts
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -179,7 +180,7 @@ private fun DebtCard(name: String, debt: Double, rank: Int, onClick: () -> Unit)
                 )
             }
             Text(
-                String.format("%.2f", debt),
+                AppNumberFormat.number(debt, "%.2f"),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = DebtRed

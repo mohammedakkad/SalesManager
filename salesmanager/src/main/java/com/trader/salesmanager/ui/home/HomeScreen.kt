@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.home
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
@@ -378,7 +379,7 @@ private fun RecentTransactionCard(tx: Transaction, index: Int, onClick: () -> Un
                 // المبلغ + حالة
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        String.format("%.0f", tx.amount),
+                        AppNumberFormat.number(tx.amount, "%.0f"),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = if (tx.isPaid) PaidGreen else UnpaidAmber
@@ -422,6 +423,6 @@ private fun formatTxDate(millis: Long): String {
         diff < 60_000L -> "الآن"
         diff < 3_600_000L -> "${diff / 60_000} د"
         diff < 86_400_000L -> "${diff / 3_600_000} س"
-        else -> SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(millis))
+        else -> AppNumberFormat.formatDate("dd/MM", Date(millis))
     }
 }

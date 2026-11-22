@@ -1,14 +1,12 @@
 package com.trader.core.util
 
-import java.text.SimpleDateFormat
-import java.util.*
+import com.trader.core.util.format.AppNumberFormat
+import java.util.Calendar
 
 object DateUtils {
-    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    private val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-
-    fun Long.toDateString(): String = dateFormat.format(Date(this))
-    fun Long.toTimeString(): String = timeFormat.format(Date(this))
+    // Display formatting goes through the central formatter (device-independent, thread-safe).
+    fun Long.toDateString(): String = AppNumberFormat.formatDate("dd/MM/yyyy", this)
+    fun Long.toTimeString(): String = AppNumberFormat.formatDate("hh:mm a", this)
     fun Long.toDateTimeString(): String = toDateString() + " " + toTimeString()
 
     fun todayStart(): Long {

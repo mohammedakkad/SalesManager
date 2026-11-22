@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.transactions.list
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -309,7 +310,7 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
             Column(horizontalAlignment = Alignment.End) {
                 if (hasReturn && tx.amountChanged) {
                     Text(
-                        "₪${String.format("%.2f", tx.originalAmount)}",
+                        "₪${AppNumberFormat.number(tx.originalAmount, "%.2f")}",
                         style = MaterialTheme.typography.bodySmall.copy(
                             textDecoration = TextDecoration.LineThrough
                         ),
@@ -317,7 +318,7 @@ private fun TransactionCard(tx: Transaction, onClick: () -> Unit) {
                     )
                 }
                 Text(
-                    "₪${String.format("%.2f", tx.amount)}",
+                    "₪${AppNumberFormat.number(tx.amount, "%.2f")}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = when {

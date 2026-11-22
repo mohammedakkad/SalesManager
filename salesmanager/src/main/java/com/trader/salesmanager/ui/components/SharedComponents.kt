@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.components
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
@@ -143,7 +144,7 @@ fun AnimatedCounter(
     // Values outside Float range are displayed directly instead of animating to infinity.
     val displayedValue = if (!canAnimate || animatedValue == floatTarget) value else animatedValue.toDouble()
     Text(
-        text = prefix + String.format(Locale.US, "%,.${decimals}f", displayedValue) + suffix,
+        text = prefix + AppNumberFormat.number(displayedValue, "%,.${decimals}f") + suffix,
         style = style,
         fontWeight = FontWeight.Bold,
         color = color,

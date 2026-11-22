@@ -20,6 +20,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk=[28],manifest=Config.NONE,application=Application::class)
 class InvoiceDraftLifecycleTest {
+    @get:org.junit.Rule(order=-10) val westernDigits=com.trader.salesmanager.testing.WesternDigitsRule()
     private val repo=mockk<ProductRepository>()
     private val kg=ProductUnit("kg","p",UnitType.WEIGHT,"كيلو",price=20.0,quantityInStock=8.0,isDefault=true)
     private val piece=ProductUnit("piece","p",UnitType.PIECE,"حبة",price=5.0,quantityInStock=3.0)

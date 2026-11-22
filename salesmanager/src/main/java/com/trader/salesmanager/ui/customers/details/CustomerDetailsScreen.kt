@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.customers.details
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.core.net.toUri
 import android.content.Intent
 import android.net.Uri
@@ -493,7 +494,7 @@ if (tx.paymentMethodName.isNotEmpty()) {
 }
 Spacer(Modifier.width(12.dp))
 Text(
-String.format("%.2f", tx.amount),
+AppNumberFormat.number(tx.amount, "%.2f"),
 style = MaterialTheme.typography.titleSmall,
 fontWeight = FontWeight.Bold
 )

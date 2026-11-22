@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.boxes
 
+import com.trader.core.util.format.AppNumberFormat
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -79,7 +80,7 @@ class BoxesViewModel(
 
     fun setInitialBalance(boxId: String, amountText: String, onSaved: () -> Unit = {}) {
         if (_uiState.value.isSaving) return
-        val amount = amountText.toLatinDigits().toDoubleOrNull()
+        val amount = amountText.let(AppNumberFormat::normalizeDigits).toDoubleOrNull()
         if (amount == null || !amount.isFinite() || amount < 0) {
             _uiState.update {
                 it.copy(error = context.getString(R.string.boxes_error_invalid_amount))
@@ -97,7 +98,7 @@ class BoxesViewModel(
         onSaved: () -> Unit = {}
     ) {
         if (_uiState.value.isSaving) return
-        val amount = amountText.toLatinDigits().toDoubleOrNull()
+        val amount = amountText.let(AppNumberFormat::normalizeDigits).toDoubleOrNull()
         if (amount == null || !amount.isFinite() || amount < 0) {
             _uiState.update {
                 it.copy(error = context.getString(R.string.boxes_error_invalid_amount))
@@ -151,11 +152,3 @@ class BoxesViewModel(
     }
 }
 
-private fun String.toLatinDigits(): String = this
-    .replace('٠', '0').replace('١', '1').replace('٢', '2')
-    .replace('٣', '3').replace('٤', '4').replace('٥', '5')
-    .replace('٦', '6').replace('٧', '7').replace('٨', '8')
-    .replace('٩', '9').replace('۰', '0').replace('۱', '1')
-    .replace('۲', '2').replace('۳', '3').replace('۴', '4')
-    .replace('۵', '5').replace('۶', '6').replace('۷', '7')
-    .replace('۸', '8').replace('۹', '9')

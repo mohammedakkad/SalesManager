@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.transactions.addedit
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -188,7 +189,7 @@ fun AddEditTransactionScreen(
                                     style = MaterialTheme.typography.bodySmall
                                 )
                                 Text(
-                                    "₪${String.format(java.util.Locale.US, "%.2f", line.totalPrice)}",
+                                    "₪${AppNumberFormat.number(line.totalPrice, "%.2f")}",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold, color = Emerald500
                                 )

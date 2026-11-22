@@ -3,7 +3,7 @@ package com.trader.salesmanager.util.pdf
 import android.text.Layout
 import com.trader.core.domain.model.DailySalesProfit
 import com.trader.core.domain.model.DebtAging
-import com.trader.salesmanager.util.format.AppNumberFormat
+import com.trader.core.util.format.AppNumberFormat
 import com.trader.salesmanager.util.pdf.components.PdfCell
 import com.trader.salesmanager.util.pdf.components.PdfColumn
 import com.trader.salesmanager.util.pdf.components.PdfMetricCard

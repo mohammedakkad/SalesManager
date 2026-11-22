@@ -1,4 +1,4 @@
-package com.trader.salesmanager.util.format
+package com.trader.core.util.format
 
 import org.junit.After
 import org.junit.Assert.assertEquals

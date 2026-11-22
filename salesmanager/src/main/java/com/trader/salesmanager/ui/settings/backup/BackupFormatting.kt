@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.settings.backup
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -26,6 +27,6 @@ fun formatLastBackupRelative(timestamp: Long?): String {
             val days = TimeUnit.MILLISECONDS.toDays(diff).toInt()
             stringResource(R.string.backup_time_days, days)
         }
-        else -> SimpleDateFormat("dd/MM/yyyy", LocalConfiguration.current.locales[0]).format(Date(timestamp))
+        else -> AppNumberFormat.formatDate("dd/MM/yyyy", Date(timestamp))
     }
 }

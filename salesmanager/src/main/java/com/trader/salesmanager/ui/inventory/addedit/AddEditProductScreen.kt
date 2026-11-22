@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.inventory.addedit
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -477,13 +478,13 @@ private fun UnitEditor(
                             color = if (isProfit) Emerald500 else DebtRed
                         )
                         Text(
-                            "₪${String.format("%.2f", kotlin.math.abs(margin))}",
+                            "₪${AppNumberFormat.number(kotlin.math.abs(margin), "%.2f")}",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = if (isProfit) Emerald500 else DebtRed
                         )
                         Text(
-                            "${String.format("%.1f", kotlin.math.abs(pct))}%",
+                            "${AppNumberFormat.number(kotlin.math.abs(pct), "%.1f")}%",
                             style = MaterialTheme.typography.labelSmall,
                             color = if (isProfit) Emerald500 else DebtRed
                         )

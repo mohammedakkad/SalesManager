@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.reports
 
+import com.trader.core.util.format.AppNumberFormat
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
@@ -185,7 +186,7 @@ fun DayTransactionsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val dateLabel = remember(dateMillis) {
-        SimpleDateFormat("EEEE، d MMMM yyyy", Locale("ar")).format(Date(dateMillis))
+        AppNumberFormat.formatDate("EEEE، d MMMM yyyy", Date(dateMillis))
     }
     var showFilterSheet by remember { mutableStateOf(false) }
 
@@ -373,7 +374,7 @@ private fun SummaryChip(modifier: Modifier, label: String, value: Double, color:
         Text(label, style = MaterialTheme.typography.labelSmall, color = appColors.textSubtle)
         Spacer(Modifier.height(2.dp))
         Text(
-            "₪${String.format("%,.0f", animated)}",
+            "₪${AppNumberFormat.number(animated, "%,.0f")}",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = color
@@ -425,7 +426,7 @@ private fun DayTxCard(tx: Transaction, onClick: () -> Unit) {
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    "₪${String.format("%,.0f", tx.amount)}",
+                    "₪${AppNumberFormat.number(tx.amount, "%,.0f")}",
                     style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold,
                     color = if (tx.isPaid) PaidGreen else appColors.textPrimary
                 )
