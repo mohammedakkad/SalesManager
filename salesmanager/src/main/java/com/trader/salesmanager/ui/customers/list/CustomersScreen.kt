@@ -222,6 +222,9 @@ fun CustomersScreen(
             }
 
             // ── Content ──────────────────────────────────────────
+            // Capture only the list: capturing the whole uiState would re-run every visible row
+            // whenever an unrelated field (e.g. the sync badge) changes.
+            val customers = uiState.customers
             AnimatedContent(
                 targetState = Triple(uiState.isLoading, uiState.customers.isEmpty(), uiState.searchQuery),
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
@@ -243,7 +246,7 @@ fun CustomersScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        itemsIndexed(uiState.customers, key = { _, c ->
+                        itemsIndexed(customers, key = { _, c ->
                             c.id
                         }) { index, customer ->
                             val visible = remember {
