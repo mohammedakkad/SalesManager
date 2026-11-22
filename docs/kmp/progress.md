@@ -1,12 +1,11 @@
 # KMP migration progress
 
 Single source of truth. Each task: checkbox, commit hash, evidence line. Split tasks are noted here.
-Branch: `feat/kmp-android-desktop` (from `production` @ fc8f9c6).
+Branch: `feat/kmp-android-desktop` (merged with `production` @ 44229d1, PRs #52/#53 included).
 
 ## Notes / deviations
 
-- (2026-11-22) The master prompt context (Gradle 9.9.2, AGP 9.5.2, Kotlin 2.4.21, compileSdk 36, 1,190 tests) does NOT match this checkout of `production`: see `baseline.md`. K0.2/K1.1 must be re-based on the real versions; ask the owner if a toolchain upgrade is expected before K1.
-- Branch was created from `production` as instructed; whether PRs #52/#53 are merged was not verified.
+- None yet.
 
 ## Tasks
 
