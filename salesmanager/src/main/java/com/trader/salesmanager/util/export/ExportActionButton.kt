@@ -1,5 +1,7 @@
 package com.trader.salesmanager.util.export
 
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -119,7 +121,7 @@ fun ExportActionButton(
             loading ->
             if (loading) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CircularProgressIndicator(Modifier.size(16.dp), strokeWidth = 2.dp, color = Violet500.copy(shimmer))
+                    CircularProgressIndicator(Modifier.size(16.dp).graphicsLayer { alpha = shimmer; compositingStrategy = CompositingStrategy.ModulateAlpha }, strokeWidth = 2.dp, color = Violet500)
                     Text((state as? ExportState.Loading)?.message ?: "جارٍ...",
                         color = appColors.textSubtle, style = MaterialTheme.typography.labelMedium)
                 }
