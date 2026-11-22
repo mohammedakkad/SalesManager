@@ -54,6 +54,7 @@ import java.lang.reflect.Proxy
 /** Actual Android dialogs and app theme; only isolated local Room/DataStore data is opened. */
 @RunWith(AndroidJUnit4::class)
 class ThemedDialogJourneyTest {
+    @get:Rule(order=-10) val westernDigits=WesternDigitsRule()
     @get:Rule val compose=createAndroidComposeRule<ComponentActivity>()
     private val context=ApplicationProvider.getApplicationContext<Context>()
     private val store=ViewModelStore()
