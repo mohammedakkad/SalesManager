@@ -90,6 +90,7 @@ dependencies {
     testImplementation(libs.test.mockk)
     testImplementation(libs.test.coroutines)
     testImplementation(libs.test.mockwebserver)
+    testImplementation(libs.test.koin)
     implementation(project(":app"))
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.activity.compose)
