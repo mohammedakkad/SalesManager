@@ -1,0 +1,37 @@
+package com.trader.core.data.repository
+
+import com.google.firebase.Timestamp
+import com.trader.core.data.remote.MerchantAdminService
+import com.trader.core.domain.model.Merchant
+import com.trader.core.domain.model.MerchantStatus
+import com.trader.core.domain.repository.MerchantAdminRepository
+import kotlinx.coroutines.flow.Flow
+
+class MerchantAdminRepositoryImpl(private val service: MerchantAdminService) :
+    MerchantAdminRepository {
+    override fun getAllMerchants(): Flow<List<Merchant>> = service.getAllMerchants()
+    override suspend fun getMerchantById(id: String): Merchant? = service.getMerchantById(id)
+    override suspend fun addMerchant(merchant: Merchant): String = service.addMerchant(merchant)
+    override suspend fun updateMerchant(merchant: Merchant) = service.updateMerchant(merchant)
+    override suspend fun deleteMerchant(id: String) = service.deleteMerchant(id)
+    override suspend fun unlinkDevice(id: String) {
+        service.unlinkDevice(id)
+    }
+
+    override suspend fun setMerchantStatus(id: String, status: MerchantStatus) =
+        service.setStatus(id, status)
+
+    override suspend fun adjustExpiry(id: String, deltaDays: Int) =
+        service.adjustExpiry(id, deltaDays)
+
+    override suspend fun setSubscriptionType(
+        id: String,
+        isPermanent: Boolean,
+        expiryDate: Timestamp?
+    ) {
+        // تمرير النص الذي يوثق حالة التحويل القسري
+        val newPlanName =
+            if (isPermanent) "تم التحويل لدائم (بواسطة الإدارة)" else "تم التحويل لمؤقت (بواسطة الإدارة)"
+        service.setSubscriptionType(id, isPermanent, expiryDate, newPlanName)
+    }
+}

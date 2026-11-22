@@ -1,0 +1,127 @@
+import java.util.Properties
+
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
+    jacoco
+}
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) load(keystorePropertiesFile.inputStream())
+}
+
+// Instrumented tests normally run against debug. The R8 smoke lane passes
+// -PsellerTestBuildType=staging to run them against the minified staging build instead.
+val sellerTestBuildType = providers.gradleProperty("sellerTestBuildType").getOrElse("debug")
+val minifiedSmoke = sellerTestBuildType == "staging"
+
+android {
+    namespace  = "com.trader.salesmanager"
+    compileSdk = 36
+    defaultConfig {
+        testInstrumentationRunner = "com.trader.salesmanager.qa.OfflineQaRunner"
+        applicationId = "com.trader.salesmanager"
+        minSdk = 24; targetSdk = 36
+        versionCode = 10205; versionName = "1.2.5"
+    }
+    signingConfigs {
+        create("release") {
+            storeFile = (System.getenv("KEYSTORE_PATH") ?: keystoreProperties["storeFile"] as String?)?.let { file(it) }
+            storePassword = System.getenv("KEYSTORE_PASSWORD")    ?: keystoreProperties["storePassword"] as String?
+            keyAlias    = System.getenv("KEY_ALIAS")              ?: keystoreProperties["keyAlias"]     as String?
+            keyPassword = System.getenv("KEY_PASSWORD")           ?: keystoreProperties["keyPassword"]  as String?
+        }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+        }
+        // ── نسخة الاختبار: تُنصَّب بجانب البرودكشن على نفس الجهاز ──
+        create("staging") {
+            applicationIdSuffix = ".test"           // com.trader.salesmanager.test
+            manifestPlaceholders["appName"] = "Sales Test"
+            resValue("string", "app_name", "مدير المبيعات TEST")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Without signing inputs, produce an explicitly unsigned QA artifact.
+            if (signingConfigs.getByName("release").storeFile != null) {
+                signingConfig = signingConfigs.getByName("release")
+            } else if (minifiedSmoke) {
+                // Instrumented R8 smoke lane only: installable test build without release keys.
+                signingConfig = signingConfigs.getByName("debug")
+            }
+        }
+        release {
+            isMinifyEnabled = true; isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Without signing inputs, produce an explicitly unsigned QA artifact.
+            if (signingConfigs.getByName("release").storeFile != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
+    testOptions { unitTests.isIncludeAndroidResources = true }
+    testBuildType = sellerTestBuildType
+    // Test-only helpers shared with :admin (never part of an APK).
+    sourceSets.getByName("test").kotlin.directories.add("../testing/recomposition")
+    compileOptions { sourceCompatibility = JavaVersion.VERSION_11; targetCompatibility = JavaVersion.VERSION_11 }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+        resValues = true
+    }
+    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+    // AppLocale forces the app language at runtime; keep every language in the base APK of an
+    // App Bundle so a device-language split can never drop the resources it needs.
+    bundle { language { enableSplit = false } }
+}
+
+dependencies {
+    implementation(libs.bouncycastle.bcprov)
+    implementation(libs.androidx.startup)
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.test.compose.junit)
+    testImplementation(libs.test.workmanager)
+    testImplementation(libs.test.robolectric)
+    testImplementation(libs.test.androidx.core)
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.test.androidx.runner)
+    androidTestImplementation(libs.test.androidx.junit)
+    androidTestImplementation(libs.test.compose.junit)
+    androidTestImplementation(libs.test.espresso.intents)
+    debugImplementation(libs.test.compose.manifest)
+    testImplementation(libs.test.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
+    testImplementation(libs.test.mockwebserver)
+    testImplementation(libs.test.koin)
+    implementation(project(":app"))
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.activity.compose)
+    // ── ML Kit Barcode ────────────────────────────────────────
+    implementation(libs.mlkit.barcode)
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.view)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+    debugImplementation(libs.compose.ui.tooling)
+}
+
+apply(from = rootProject.file("gradle/qa-coverage.gradle"))
+
+kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11) } }
+
+// Compose compiler reports/metrics for recomposition audits: ./gradlew -PcomposeReports=true assembleDebug
+if (providers.gradleProperty("composeReports").orNull == "true") {
+    composeCompiler {
+        reportsDestination.set(layout.buildDirectory.dir("compose_compiler"))
+        metricsDestination.set(layout.buildDirectory.dir("compose_compiler"))
+    }
+}

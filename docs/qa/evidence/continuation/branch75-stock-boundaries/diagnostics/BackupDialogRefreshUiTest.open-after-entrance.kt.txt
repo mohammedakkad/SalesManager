@@ -1,0 +1,73 @@
+package com.trader.salesmanager.ui.coverage
+
+import androidx.compose.ui.test.*
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.text.AnnotatedString
+import com.trader.salesmanager.R
+import com.trader.salesmanager.ui.settings.backup.*
+import io.mockk.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.*
+import org.junit.Assert.*
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+
+@RunWith(RobolectricTestRunner::class)
+@Config(qualifiers="w480dp-h900dp")
+class BackupDialogRefreshUiTest:AppThemeUiFixture(){
+    private val vm=mockk<BackupViewModel>(relaxed=true)
+    private val state=MutableStateFlow(BackupUiState())
+    @Before fun model(){every{vm.uiState} returns state}
+    private fun text(id:Int)=ui.onNodeWithText(activity.getString(id))
+    private fun render(){
+        // Match the user journey: let the screen enter before opening its window.
+        val requested=state.value
+        state.value=requested.copy(showExportPasswordDialog=false,showImportPasswordDialog=false,showImportConfirmDialog=false)
+        showApp{BackupScreen({},vm)}
+        ui.runOnIdle{state.value=requested}
+    }
+    @Test fun exportPasswordDraftRemainsMaskedAndExactAfterThemeRoundTrip(){
+        state.value=BackupUiState(showExportPasswordDialog=true);render()
+        ui.onAllNodes(hasSetTextAction())[0].performTextReplacement(" رمز عربي 🔑 ")
+        ui.onAllNodes(hasSetTextAction())[1].performTextReplacement(" رمز عربي 🔑 ")
+        dark(true);ui.onAllNodes(SemanticsMatcher.keyIsDefined(SemanticsProperties.Password)).assertCountEquals(2);dark(false)
+        text(R.string.backup_export_confirm).assertIsEnabled().performClick()
+        verify(exactly=1){vm.confirmExportPassword(" رمز عربي 🔑 "," رمز عربي 🔑 ")}
+        verify(exactly=0){vm.requestExport()}
+    }
+    @Test fun importPasswordDraftSurvivesLiveBackupTimestampAndThemeUpdate(){
+        state.value=BackupUiState(showImportPasswordDialog=true);render()
+        ui.onNode(hasSetTextAction()).performTextReplacement("سر الاستعادة")
+        dark(true);ui.runOnIdle{state.value=state.value.copy(lastBackupAt=1700000000000)};dark(false)
+        ui.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.Password)).assertExists();text(R.string.backup_import_unlock).performClick()
+        verify(exactly=1){vm.confirmImportPassword("سر الاستعادة")};verify(exactly=0){vm.confirmImport()}
+    }
+    @Test fun closedExportDialogDropsItsSensitiveDraftBeforeReopening(){
+        state.value=BackupUiState(showExportPasswordDialog=true);render()
+        ui.onAllNodes(hasSetTextAction())[0].performTextReplacement("old secret")
+        dark(true);text(R.string.backup_cancel).performClick();verify(exactly=1){vm.dismissExportPasswordDialog()}
+        ui.runOnIdle{state.value=state.value.copy(showExportPasswordDialog=false)}
+        ui.onNode(isDialog()).assertDoesNotExist();dark(false)
+        ui.runOnIdle{state.value=state.value.copy(showExportPasswordDialog=true)}
+        text(R.string.backup_export_confirm).assertIsNotEnabled()
+        ui.onAllNodes(hasSetTextAction()).onFirst().assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText,AnnotatedString("")))
+        verify(exactly=0){vm.confirmExportPassword(any(),any())}
+    }
+    @Test fun replacingPasswordEntryWithRestoreConfirmationRequiresAnExplicitDecision(){
+        state.value=BackupUiState(showImportPasswordDialog=true);render();dark(true)
+        ui.runOnIdle{state.value=state.value.copy(showImportPasswordDialog=false,showImportConfirmDialog=true)}
+        ui.onAllNodes(hasSetTextAction()).assertCountEquals(0)
+        dark(false);verify(exactly=0){vm.confirmImport()}
+        text(R.string.backup_confirm_yes).performClick();verify(exactly=1){vm.confirmImport()}
+    }
+    @Test fun inProgressRestorePreventsAnotherExportAcrossThemeThenRestoresAvailability(){
+        render();dark(true)
+        ui.runOnIdle{state.value=state.value.copy(isImporting=true)}
+        text(R.string.backup_export_title).performScrollTo().assertIsNotEnabled()
+        text(R.string.backup_import_title).performScrollTo().assertIsNotEnabled();dark(false)
+        ui.runOnIdle{state.value=state.value.copy(isImporting=false)}
+        text(R.string.backup_export_title).performScrollTo().assertIsEnabled().performClick()
+        verify(exactly=1){vm.requestExport()};verify(exactly=0){vm.confirmImport()}
+    }
+}

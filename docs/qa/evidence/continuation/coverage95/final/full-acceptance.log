@@ -1,0 +1,291 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Configuration on demand is an incubating feature.
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 35
+
+This Android Gradle plugin (8.3.2) was tested up to compileSdk = 34.
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 35.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 35 is available.
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=35
+to this project's gradle.properties.
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:generateDebugRFile UP-TO-DATE
+> Task :app:kspDebugKotlin UP-TO-DATE
+> Task :app:compileDebugKotlin UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :app:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:writeDebugAarMetadata UP-TO-DATE
+> Task :app:checkDebugUnitTestAarMetadata UP-TO-DATE
+> Task :app:compileDebugLibraryResources UP-TO-DATE
+> Task :app:generateDebugUnitTestResValues UP-TO-DATE
+> Task :app:mapDebugUnitTestSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugUnitTestResources UP-TO-DATE
+> Task :app:mergeDebugUnitTestResources UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugUnitTestManifest UP-TO-DATE
+> Task :app:processDebugUnitTestResources UP-TO-DATE
+> Task :app:kspDebugUnitTestKotlin UP-TO-DATE
+> Task :app:compileDebugUnitTestKotlin UP-TO-DATE
+> Task :app:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:generateDebugUnitTestAssets UP-TO-DATE
+> Task :app:packageDebugAssets UP-TO-DATE
+> Task :app:mergeDebugUnitTestAssets UP-TO-DATE
+> Task :app:packageDebugUnitTestForUnitTest UP-TO-DATE
+> Task :app:generateDebugUnitTestConfig UP-TO-DATE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:processDebugUnitTestJavaRes UP-TO-DATE
+> Task :app:testDebugUnitTest UP-TO-DATE
+> Task :salesmanager:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :salesmanager:preBuild UP-TO-DATE
+> Task :salesmanager:preDebugBuild UP-TO-DATE
+> Task :salesmanager:generateDebugBuildConfig UP-TO-DATE
+> Task :salesmanager:checkDebugAarMetadata UP-TO-DATE
+> Task :salesmanager:generateDebugResValues UP-TO-DATE
+> Task :salesmanager:injectCrashlyticsMappingFileIdDebug UP-TO-DATE
+> Task :salesmanager:processDebugGoogleServices
+> Task :salesmanager:mapDebugSourceSetPaths UP-TO-DATE
+> Task :salesmanager:generateDebugResources UP-TO-DATE
+> Task :salesmanager:packageDebugResources
+> Task :salesmanager:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :salesmanager:extractDeepLinksDebug UP-TO-DATE
+> Task :salesmanager:processDebugMainManifest UP-TO-DATE
+> Task :salesmanager:processDebugManifest UP-TO-DATE
+> Task :salesmanager:processDebugManifestForPackage UP-TO-DATE
+> Task :salesmanager:javaPreCompileDebug UP-TO-DATE
+> Task :salesmanager:preDebugUnitTestBuild UP-TO-DATE
+> Task :salesmanager:javaPreCompileDebugUnitTest UP-TO-DATE
+> Task :salesmanager:mergeDebugShaders UP-TO-DATE
+> Task :salesmanager:compileDebugShaders NO-SOURCE
+> Task :salesmanager:generateDebugAssets UP-TO-DATE
+> Task :salesmanager:parseDebugLocalResources
+> Task :salesmanager:mergeDebugAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugResources
+> Task :app:qaCoverage UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:copyDebugJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :app:extractDebugAnnotations UP-TO-DATE
+> Task :app:extractDeepLinksForAarDebug UP-TO-DATE
+> Task :app:mergeDebugGeneratedProguardFiles UP-TO-DATE
+> Task :app:mergeDebugConsumerProguardFiles UP-TO-DATE
+> Task :app:prepareDebugArtProfile UP-TO-DATE
+> Task :app:prepareLintJarForPublish UP-TO-DATE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:syncDebugLibJars UP-TO-DATE
+> Task :app:bundleDebugLocalLintAar UP-TO-DATE
+> Task :app:createFullJarDebug UP-TO-DATE
+> Task :app:preDebugAndroidTestBuild UP-TO-DATE
+> Task :app:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :app:writeDebugLintModelMetadata UP-TO-DATE
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :app:generateDebugLintModel UP-TO-DATE
+> Task :app:generateDebugAndroidTestLintModel UP-TO-DATE
+> Task :app:generateDebugUnitTestLintModel UP-TO-DATE
+> Task :app:lintAnalyzeDebug UP-TO-DATE
+> Task :app:lintAnalyzeDebugAndroidTest UP-TO-DATE
+> Task :app:lintAnalyzeDebugUnitTest UP-TO-DATE
+> Task :salesmanager:preDebugAndroidTestBuild SKIPPED
+> Task :salesmanager:generateDebugAndroidTestResValues UP-TO-DATE
+> Task :salesmanager:extractProguardFiles UP-TO-DATE
+> Task :salesmanager:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :salesmanager:compressDebugAssets UP-TO-DATE
+> Task :salesmanager:checkDebugDuplicateClasses UP-TO-DATE
+> Task :salesmanager:desugarDebugFileDependencies UP-TO-DATE
+> Task :salesmanager:processDebugResources
+> Task :salesmanager:mergeExtDexDebug UP-TO-DATE
+> Task :salesmanager:packageDebugUnitTestForUnitTest
+> Task :salesmanager:generateDebugUnitTestConfig
+> Task :app:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :app:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :salesmanager:mergeDebugJniLibFolders UP-TO-DATE
+> Task :salesmanager:mergeDebugNativeLibs UP-TO-DATE
+> Task :salesmanager:mergeLibDexDebug UP-TO-DATE
+> Task :salesmanager:stripDebugDebugSymbols UP-TO-DATE
+> Task :salesmanager:validateSigningDebug UP-TO-DATE
+> Task :salesmanager:writeDebugAppMetadata UP-TO-DATE
+> Task :salesmanager:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :salesmanager:processDebugAndroidTestManifest UP-TO-DATE
+> Task :salesmanager:generateDebugAndroidTestBuildConfig UP-TO-DATE
+> Task :salesmanager:checkDebugAndroidTestAarMetadata UP-TO-DATE
+> Task :salesmanager:mapDebugAndroidTestSourceSetPaths UP-TO-DATE
+> Task :salesmanager:generateDebugAndroidTestResources UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestResources UP-TO-DATE
+> Task :salesmanager:processDebugAndroidTestResources UP-TO-DATE
+> Task :salesmanager:javaPreCompileDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestShaders UP-TO-DATE
+> Task :salesmanager:compileDebugAndroidTestShaders NO-SOURCE
+> Task :salesmanager:generateDebugAndroidTestAssets UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestAssets UP-TO-DATE
+> Task :salesmanager:compressDebugAndroidTestAssets UP-TO-DATE
+> Task :salesmanager:checkDebugAndroidTestDuplicateClasses UP-TO-DATE
+> Task :salesmanager:desugarDebugAndroidTestFileDependencies UP-TO-DATE
+> Task :salesmanager:mergeExtDexDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:mergeLibDexDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestJniLibFolders UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestNativeLibs NO-SOURCE
+> Task :salesmanager:stripDebugAndroidTestDebugSymbols NO-SOURCE
+> Task :salesmanager:validateSigningDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:writeDebugAndroidTestSigningConfigVersions UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:generateReleaseBuildConfig UP-TO-DATE
+> Task :app:generateReleaseResValues UP-TO-DATE
+> Task :app:generateReleaseResources UP-TO-DATE
+> Task :app:packageReleaseResources UP-TO-DATE
+> Task :app:parseReleaseLocalResources UP-TO-DATE
+> Task :app:generateReleaseRFile UP-TO-DATE
+> Task :app:kspReleaseKotlin UP-TO-DATE
+> Task :app:compileReleaseKotlin UP-TO-DATE
+> Task :app:javaPreCompileRelease UP-TO-DATE
+> Task :app:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :app:processReleaseManifest UP-TO-DATE
+> Task :app:generateReleaseLintVitalModel UP-TO-DATE
+> Task :app:lintVitalAnalyzeRelease UP-TO-DATE
+> Task :app:bundleLibRuntimeToJarRelease UP-TO-DATE
+> Task :app:processReleaseJavaRes UP-TO-DATE
+> Task :app:createFullJarRelease UP-TO-DATE
+> Task :app:generateReleaseLintModel UP-TO-DATE
+> Task :salesmanager:buildKotlinToolingMetadata UP-TO-DATE
+> Task :app:bundleLibCompileToJarRelease UP-TO-DATE
+> Task :salesmanager:preReleaseBuild UP-TO-DATE
+> Task :salesmanager:generateReleaseBuildConfig UP-TO-DATE
+> Task :app:writeReleaseAarMetadata UP-TO-DATE
+> Task :salesmanager:checkReleaseAarMetadata UP-TO-DATE
+> Task :salesmanager:generateReleaseResValues UP-TO-DATE
+> Task :salesmanager:injectCrashlyticsMappingFileIdRelease
+> Task :salesmanager:processReleaseGoogleServices UP-TO-DATE
+> Task :salesmanager:mapReleaseSourceSetPaths UP-TO-DATE
+> Task :salesmanager:generateReleaseResources UP-TO-DATE
+> Task :salesmanager:packageReleaseResources
+> Task :salesmanager:createReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksRelease UP-TO-DATE
+> Task :salesmanager:extractDeepLinksRelease UP-TO-DATE
+> Task :salesmanager:processReleaseMainManifest UP-TO-DATE
+> Task :salesmanager:processReleaseManifest UP-TO-DATE
+> Task :salesmanager:processReleaseManifestForPackage UP-TO-DATE
+> Task :salesmanager:javaPreCompileRelease UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :app:extractDeepLinksForAarRelease UP-TO-DATE
+> Task :app:extractReleaseAnnotations UP-TO-DATE
+> Task :app:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :app:mergeReleaseConsumerProguardFiles UP-TO-DATE
+> Task :app:mergeReleaseShaders UP-TO-DATE
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:packageReleaseAssets UP-TO-DATE
+> Task :app:prepareReleaseArtProfile UP-TO-DATE
+> Task :app:mergeReleaseJavaResource UP-TO-DATE
+> Task :app:syncReleaseLibJars UP-TO-DATE
+> Task :app:bundleReleaseLocalLintAar UP-TO-DATE
+> Task :app:writeReleaseLintModelMetadata UP-TO-DATE
+> Task :app:copyReleaseJniLibsProjectOnly UP-TO-DATE
+> Task :salesmanager:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :salesmanager:mergeReleaseNativeLibs UP-TO-DATE
+> Task :salesmanager:stripReleaseDebugSymbols UP-TO-DATE
+> Task :salesmanager:extractReleaseNativeSymbolTables UP-TO-DATE
+> Task :salesmanager:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:exportReleaseConsumerProguardFiles UP-TO-DATE
+> Task :salesmanager:checkReleaseDuplicateClasses UP-TO-DATE
+> Task :salesmanager:parseReleaseLocalResources
+> Task :salesmanager:mergeReleaseArtProfile UP-TO-DATE
+> Task :salesmanager:mergeReleaseShaders UP-TO-DATE
+> Task :salesmanager:compileReleaseShaders NO-SOURCE
+> Task :salesmanager:generateReleaseAssets UP-TO-DATE
+> Task :salesmanager:mergeReleaseAssets UP-TO-DATE
+> Task :salesmanager:compressReleaseAssets UP-TO-DATE
+> Task :salesmanager:mergeReleaseResources
+> Task :salesmanager:extractReleaseVersionControlInfo
+> Task :salesmanager:processApplicationManifestReleaseForBundle UP-TO-DATE
+> Task :salesmanager:collectReleaseDependencies UP-TO-DATE
+> Task :salesmanager:sdkReleaseDependencyData UP-TO-DATE
+> Task :salesmanager:writeReleaseAppMetadata UP-TO-DATE
+> Task :salesmanager:writeReleaseSigningConfigVersions UP-TO-DATE
+> Task :salesmanager:processReleaseResources
+> Task :salesmanager:bundleReleaseResources
+> Task :salesmanager:compileReleaseKotlin
+
+> Task :salesmanager:compileDebugKotlin
+w: file:///workspace/SalesManager/salesmanager/src/main/java/com/trader/salesmanager/ui/settings/SettingsScreen.kt:621:34 Condition is always 'true'.
+
+> Task :salesmanager:compileReleaseJavaWithJavac UP-TO-DATE
+> Task :salesmanager:compileDebugJavaWithJavac UP-TO-DATE
+> Task :salesmanager:processDebugJavaRes UP-TO-DATE
+> Task :salesmanager:bundleDebugClassesToRuntimeJar
+> Task :salesmanager:bundleDebugClassesToCompileJar
+> Task :salesmanager:generateDebugLintReportModel
+> Task :salesmanager:generateDebugAndroidTestLintModel
+> Task :salesmanager:generateDebugUnitTestLintModel
+> Task :salesmanager:compileDebugUnitTestKotlin
+> Task :salesmanager:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :salesmanager:processDebugUnitTestJavaRes UP-TO-DATE
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+> Task :salesmanager:lintAnalyzeDebugAndroidTest
+> Task :salesmanager:lintAnalyzeDebug
+> Task :salesmanager:lintAnalyzeDebugUnitTest
+> Task :salesmanager:testDebugUnitTest
+
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+
+> Task :salesmanager:qaCoverage
+> Task :salesmanager:lintReportDebug UP-TO-DATE
+> Task :salesmanager:lintDebug
+> Task :salesmanager:mergeDebugJavaResource UP-TO-DATE
+> Task :salesmanager:dexBuilderDebug
+> Task :salesmanager:generateReleaseLintVitalReportModel
+> Task :salesmanager:mergeProjectDexDebug
+> Task :salesmanager:compileDebugAndroidTestKotlin
+> Task :salesmanager:packageDebug
+> Task :salesmanager:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :salesmanager:assembleDebug
+> Task :salesmanager:expandReleaseArtProfileWildcards
+> Task :salesmanager:compileDebugAndroidTestJavaWithJavac UP-TO-DATE
+> Task :salesmanager:processDebugAndroidTestJavaRes UP-TO-DATE
+> Task :salesmanager:mergeDebugAndroidTestJavaResource UP-TO-DATE
+> Task :salesmanager:dexBuilderDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:mergeProjectDexDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:packageDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:createDebugAndroidTestApkListingFileRedirect UP-TO-DATE
+> Task :salesmanager:assembleDebugAndroidTest UP-TO-DATE
+> Task :salesmanager:mergeReleaseGeneratedProguardFiles UP-TO-DATE
+> Task :salesmanager:processReleaseJavaRes UP-TO-DATE
+> Task :salesmanager:mergeReleaseJavaResource UP-TO-DATE
+> Task :salesmanager:lintVitalAnalyzeRelease
+> Task :salesmanager:lintVitalReportRelease UP-TO-DATE
+> Task :salesmanager:lintVitalRelease
+> Task :salesmanager:minifyReleaseWithR8
+> Task :salesmanager:compileReleaseArtProfile
+> Task :salesmanager:shrinkReleaseRes
+> Task :salesmanager:optimizeReleaseResources
+> Task :salesmanager:packageRelease
+> Task :salesmanager:createReleaseApkListingFileRedirect UP-TO-DATE
+> Task :salesmanager:assembleRelease
+
+BUILD SUCCESSFUL in 5m 36s
+227 actionable tasks: 41 executed, 186 up-to-date

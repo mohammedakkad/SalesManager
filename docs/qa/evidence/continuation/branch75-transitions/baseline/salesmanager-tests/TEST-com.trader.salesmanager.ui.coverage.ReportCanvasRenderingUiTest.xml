@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ReportCanvasRenderingUiTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-17T13:53:06" hostname="6d75d821cc71" time="8.478">
+  <properties/>
+  <testcase name="negativeProfitKeepsAVisibleRedLossBar" classname="com.trader.salesmanager.ui.coverage.ReportCanvasRenderingUiTest" time="7.999"/>
+  <testcase name="salesBarUsesTheSalesLegendColorAndProfitUsesItsOwnColor" classname="com.trader.salesmanager.ui.coverage.ReportCanvasRenderingUiTest" time="0.479"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

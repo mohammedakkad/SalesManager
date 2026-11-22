@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:17:02" hostname="ac8333d6728a" time="2.161">
+  <properties/>
+  <testcase name="deletedMerchantEventRoutesBackToActivationAfterAcknowledgment" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.158"/>
+  <testcase name="settingsNotificationOpensPaymentMethodDestination" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.218"/>
+  <testcase name="unknownNotificationDoesNotNavigateOrAcknowledgeAnUnrecognizedAction" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.084"/>
+  <testcase name="freeStartupUsesTheSameLowStockEntryContract" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.134"/>
+  <testcase name="expiredMerchantEventRoutesBackToActivationAfterAcknowledgment" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.13"/>
+  <testcase name="settingsNotificationOpensTheSupportConversation" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.148"/>
+  <testcase name="homeSupportActionHasAnAccessibleNameAndOpensConversation" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.104"/>
+  <testcase name="aNonRetryableStartupBlockCannotOfferAFalseRetry" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.036"/>
+  <testcase name="lowStockNotificationUsesTheAttentionFilterAndAcknowledgesOnlyOnce" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.12"/>
+  <testcase name="settingsNotificationAcknowledgesExactlyOnceAndOpensCashDestination" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.154"/>
+  <testcase name="settingsNotificationOpensBackupDestination" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.151"/>
+  <testcase name="invoiceNavigationPreservesLiteralPlusPercentAndSlashInCustomerName" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.261"/>
+  <testcase name="homeSettingsActionHasAnAccessibleNameAndOpensSettings" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.139"/>
+  <testcase name="invoiceNavigationReturnsDisplayWeightAndCustomPriceThroughSavedState" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.216"/>
+  <testcase name="notificationCannotBypassAnUnactivatedStartup" classname="com.trader.salesmanager.ui.coverage.NavigationDestinationsUiTest" time="0.082"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

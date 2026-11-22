@@ -1,0 +1,3 @@
+Expected unsigned QA output; verification exit=1
+DOES NOT VERIFY
+ERROR: Missing META-INF/MANIFEST.MF

@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Seller device QA exit [API 24]",
+    "message": "stage=complete exit=0",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller actual Android PDF paths [API 24]",
+    "message": "[{\"package\": \"com.trader.salesmanager.debug\", \"source\": \"/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf\", \"exported\": \"/data/local/tmp/seller-qa-pdf/customer-statement.pdf\", \"sha256\": \"d5999c5c5c3180d69da206a0e78bccb10eae749bc6f184a8e48b7fe10f5ca128\"}, {\"package\": \"com.trader.salesmanager.debug\", \"source\": \"/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf\", \"exported\": \"/data/local/tmp/seller-qa-pdf/monthly-report.pdf\", \"sha256\": \"2ccde5ca7a58ee758e49203f7b7e727130b10f02d4a09f2d4b9728255aeacc24\"}]",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller actual device and PDFBox XML [API 24]",
+    "message": "[{\"test\": \"createArabicCustomerValidatesFormSavesOnceAndNavigatesBack\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"editCustomerPreservesIdAndDoesNotCreateDuplicate\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generateCustomerStatementForHostBalanceVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generateLongInvoiceForHostPaginationAndContentVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generateMonthlyReportForHostPaginationAndFinancialVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generateSingleInvoiceForHostContentVerification\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"longInvoicePaginatesWithoutDroppingFinalItemOrTotal\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages\", \"result\": \"PASS\", \"detail\": \"\"}, {\"test\": \"viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances\", \"result\": \"PASS\", \"detail\": \"\"}]",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller measured all-combined suite coverage [API 24]",
+    "message": "{\"BRANCH\": {\"app\": {\"covered\": 1948, \"missed\": 1181}, \"salesmanager\": {\"covered\": 9758, \"missed\": 5054}, \"weighted overall\": {\"covered\": 11706, \"missed\": 6235}}, \"LINE\": {\"app\": {\"covered\": 8585, \"missed\": 1803}, \"salesmanager\": {\"covered\": 16486, \"missed\": 1485}, \"weighted overall\": {\"covered\": 25071, \"missed\": 3288}}, \"METHOD\": {\"app\": {\"covered\": 1991, \"missed\": 532}, \"salesmanager\": {\"covered\": 2772, \"missed\": 452}, \"weighted overall\": {\"covered\": 4763, \"missed\": 984}}}",
+    "annotation_level": "notice"
+  },
+  {
+    "title": "Seller measured Android plus JVM coverage [API 24]",
+    "message": "{\"branches\": {\"app\": {\"covered\": 1846, \"missed\": 1283}, \"salesmanager\": {\"covered\": 9758, \"missed\": 5054}, \"weighted overall\": {\"covered\": 11604, \"missed\": 6337}}, \"lines\": {\"app\": {\"covered\": 8307, \"missed\": 2081}, \"salesmanager\": {\"covered\": 16486, \"missed\": 1485}, \"weighted overall\": {\"covered\": 24793, \"missed\": 3566}}, \"methods\": {\"app\": {\"covered\": 1879, \"missed\": 644}, \"salesmanager\": {\"covered\": 2772, \"missed\": 452}, \"weighted overall\": {\"covered\": 4651, \"missed\": 1096}}, \"nativePdfLines\": {\"InvoicePdfGenerator.kt\": {\"covered\": 489, \"missed\": 48}, \"PdfCanvas.kt\": {\"covered\": 68, \"missed\": 2}, \"ReportPdfGenerator.kt\": {\"covered\": 438, \"missed\": 19}}}",
+    "annotation_level": "notice"
+  }
+]

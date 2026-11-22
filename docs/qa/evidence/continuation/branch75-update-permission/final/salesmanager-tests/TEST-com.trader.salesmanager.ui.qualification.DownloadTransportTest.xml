@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.DownloadTransportTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:06:07" hostname="ac8333d6728a" time="0.335">
+  <properties/>
+  <testcase name="cancelledDownloadPropagatesCancellationAndRemovesPartialArtifact" classname="com.trader.salesmanager.ui.qualification.DownloadTransportTest" time="0.222"/>
+  <testcase name="unknownContentLengthIsSupportedAndHttpFailureDoesNotSucceed" classname="com.trader.salesmanager.ui.qualification.DownloadTransportTest" time="0.026"/>
+  <testcase name="truncatedDownloadIsRejectedAndPartialArtifactRemoved" classname="com.trader.salesmanager.ui.qualification.DownloadTransportTest" time="0.066"/>
+  <testcase name="completeDownloadPreservesBytesAndMonotonicProgress" classname="com.trader.salesmanager.ui.qualification.DownloadTransportTest" time="0.021"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

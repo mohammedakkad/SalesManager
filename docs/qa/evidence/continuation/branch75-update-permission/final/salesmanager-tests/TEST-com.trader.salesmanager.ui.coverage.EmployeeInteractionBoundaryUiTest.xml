@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:04:31" hostname="ac8333d6728a" time="1.605">
+  <properties/>
+  <testcase name="roleChipsReflectModelSelectionAndDelegateBothRoles" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.318"/>
+  <testcase name="cancellingSheetResetsTheFormWithoutSubmitting" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.248"/>
+  <testcase name="blankLegacyEmployeeNameUsesAFallbackAvatarWithoutDroppingTheRecord" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.104"/>
+  <testcase name="saveGatesFollowBothNameAndPinAcrossModelUpdates" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.25"/>
+  <testcase name="failureEventKeepsTheDraftSheetOpenAndDisplaysTheReason" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.114"/>
+  <testcase name="distinctValidationErrorsReplaceTheirPredecessorAndClearOnRecovery" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.205"/>
+  <testcase name="emptyEmployeeListExplainsCreationAndBackNavigates" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.06"/>
+  <testcase name="addedEventClosesTheSheetAndShowsItsSpecificOutcome" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.135"/>
+  <testcase name="submissionInProgressShowsADisabledProgressControl" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.107"/>
+  <testcase name="deletedEventReportsDeletionWithoutStartingAnotherDelete" classname="com.trader.salesmanager.ui.coverage.EmployeeInteractionBoundaryUiTest" time="0.06"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

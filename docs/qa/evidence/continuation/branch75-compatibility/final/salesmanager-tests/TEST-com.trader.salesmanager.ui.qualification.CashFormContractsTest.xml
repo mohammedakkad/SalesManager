@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.CashFormContractsTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:45:18" hostname="ac8333d6728a" time="0.625">
+  <properties/>
+  <testcase name="cancelledInitializationDoesNotReportAnOrdinaryFailure" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.585"/>
+  <testcase name="zeroRemainsValidAndInvalidBlankOrNegativeTextCannotCreateMutations" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.008"/>
+  <testcase name="nanInitialBalanceNeverReachesTheRepository" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.005"/>
+  <testcase name="infiniteInitialBalanceNeverReachesTheRepository" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.003"/>
+  <testcase name="localizedDigitsDecimalValuesAndAllReasonLabelsArePreserved" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.006"/>
+  <testcase name="cancelledCorrectionDoesNotReportAnOrdinaryFailure" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.004"/>
+  <testcase name="infiniteCorrectionNeverReachesTheRepository" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.003"/>
+  <testcase name="nanCorrectionNeverReachesTheRepository" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.003"/>
+  <testcase name="overflowingCorrectionNeverReachesTheRepository" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.003"/>
+  <testcase name="overflowingInitialBalanceNeverReachesTheRepository" classname="com.trader.salesmanager.ui.qualification.CashFormContractsTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

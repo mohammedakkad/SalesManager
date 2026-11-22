@@ -1,0 +1,935 @@
+[
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.InvoiceTextSharingJourneyUiTest",
+    "name": "actualQuickShareActionPreservesPartialReturnIdentityAndNetAmount",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/InvoiceTextSharingJourneyUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportCanvasRenderingUiTest",
+    "name": "negativeProfitKeepsAVisibleRedLossBar",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportCanvasRenderingUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM",
+      "Native bitmap graphics"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportCanvasRenderingUiTest",
+    "name": "salesBarUsesTheSalesLegendColorAndProfitUsesItsOwnColor",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportCanvasRenderingUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM",
+      "Native bitmap graphics"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest",
+    "name": "zeroPaymentSharesRemainAccessibleWithoutInventingAPositiveArc",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportChartAccessibilityUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM",
+      "Native bitmap graphics"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest",
+    "name": "dailyCurveExposesEveryDayAmountAndDrawsItsActualMultiPointPath",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportChartAccessibilityUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM",
+      "Native bitmap graphics"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest",
+    "name": "profitChartExposesSignedLossAndKeepsAllThreeSeriesVisible",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportChartAccessibilityUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM",
+      "Native bitmap graphics"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest",
+    "name": "paymentBarsExposePaidAndUnpaidAmountsAndDrawBothSeries",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportChartAccessibilityUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM",
+      "Native bitmap graphics"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest",
+    "name": "paymentDonutExposesAmountsAndDrawsTheMajorShareLarger",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportChartAccessibilityUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM",
+      "Native bitmap graphics"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportChartAccessibilityUiTest",
+    "name": "singleZeroDayRemainsAccessibleAndDrawsAFinitePoint",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportChartAccessibilityUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM",
+      "Native bitmap graphics"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest",
+    "name": "zeroPeriodDoesNotInventPaymentPillsOrATransactionCount",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportSummaryPresentationUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest",
+    "name": "changedPeriodReplacesCountAndBothAmountsTogether",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportSummaryPresentationUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest",
+    "name": "summarySeparatesPaidAndPendingValuesFromTheSamePeriod",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportSummaryPresentationUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest",
+    "name": "summaryShowsTheSelectedPeriodsActualTransactionCount",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/coverage/ReportSummaryPresentationUiTest.kt",
+    "primary": "Compose UI on JVM",
+    "tags": [
+      "Compose UI on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest",
+    "name": "laterChatNotificationReplacesTheExistingChatSlot",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatPushNotificationContractsTest.kt",
+    "primary": "Android notification component on JVM",
+    "tags": [
+      "Android notification component on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest",
+    "name": "legacyAndroidReceivesTheSameContentWithoutAChannel",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatPushNotificationContractsTest.kt",
+    "primary": "Android notification component on JVM",
+    "tags": [
+      "Android notification component on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest",
+    "name": "absentPayloadUsesTheExistingArabicDefaultAndEmptyBody",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatPushNotificationContractsTest.kt",
+    "primary": "Android notification component on JVM",
+    "tags": [
+      "Android notification component on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest",
+    "name": "tapRoutesToTheChatDestinationWithAnImmutablePendingIntent",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatPushNotificationContractsTest.kt",
+    "primary": "Android notification component on JVM",
+    "tags": [
+      "Android notification component on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest",
+    "name": "dataMessagePreservesArabicTitleBodyAndTimestampInExpandedText",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatPushNotificationContractsTest.kt",
+    "primary": "Android notification component on JVM",
+    "tags": [
+      "Android notification component on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest",
+    "name": "emptyTimestampDoesNotAddAnExtraLine",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatPushNotificationContractsTest.kt",
+    "primary": "Android notification component on JVM",
+    "tags": [
+      "Android notification component on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest",
+    "name": "channelUsesHighImportanceAndExistingDescription",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatPushNotificationContractsTest.kt",
+    "primary": "Android notification component on JVM",
+    "tags": [
+      "Android notification component on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest",
+    "name": "notificationPayloadTakesPrecedenceOverDataFallback",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/ChatPushNotificationContractsTest.kt",
+    "primary": "Android notification component on JVM",
+    "tags": [
+      "Android notification component on JVM"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "changingWeightDisplayPreservesStoredKilogramsAndTheLocalCommercialPoundRule",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "clearLinesRemovesTotalsAndStockWarningsTogether",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "nullCustomPriceRestoresCatalogPriceAndZeroCustomPriceRemainsValid",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "missingCatalogRecordsCannotCreateInventedInvoiceItems",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "weightLabelsDistinguishCommercialDisplayFromKilograms",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "zeroAndNegativeQuantitiesRemoveTheChosenLineWithoutChangingOthers",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "validPersistedWeightDraftRestoresPriceStockAndKilograms",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "unknownLegacyWeightLabelUsesTheExistingKilogramFallback",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "stockWarningComparesConvertedKgAndAllowsTheExactBoundary",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "matchingCatalogPriceRestoresWithoutRedundantOverride",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "searchIncludesNameBarcodeAndCategoryAndCapsVisibleResultsAtTen",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "pieceProjectionDoesNotApplyAWeightConversionOrLabel",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "projectionUsesConvertedQuantityPriceMerchantAndTransactionIdentity",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "unitChangeUsesItsOwnStockAndResetsCustomPrice",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "duplicateDefaultProductIncrementsOneLineAndClearsSearch",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "malformedDraftPreservesThePreviousBasketInsteadOfPartiallyReplacingIt",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "legacyDraftWithoutWeightKeyDefaultsToKilograms",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "matchingBarcodeAddsTheRealProductAndUnknownBarcodeReturnsItsExactText",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "productWithoutUnitsCannotInventAnInvoiceLine",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "catalogueLookupCancellationCancelsTheLoadJobAndPreservesTheDraft",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.InvoiceDraftLifecycleTest",
+    "name": "explicitUnitsRemainSeparateAndDuplicateChosenUnitIncrementsOnlyThatLine",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/InvoiceDraftLifecycleTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest",
+    "name": "futureHourIsScheduledTodayAndRemovesMinutesSecondsAndMilliseconds",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockSchedulingContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest",
+    "name": "cancellationCancelsTheScheduledUniqueWork",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockSchedulingContractsTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest",
+    "name": "exactPreferredHourSchedulesTomorrowInsteadOfImmediateDuplicate",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockSchedulingContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest",
+    "name": "repeatedSchedulingKeepsOneExistingPeriodicRequest",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockSchedulingContractsTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest",
+    "name": "autumnDstTransitionPreservesTheLocalHour",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockSchedulingContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest",
+    "name": "springDstTransitionPreservesTheLocalHour",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockSchedulingContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest",
+    "name": "explicitReplacementCancelsTheOldRequestAndCreatesOneActiveRequest",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockSchedulingContractsTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockSchedulingContractsTest",
+    "name": "pastPreferredHourSchedulesTheNextDay",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockSchedulingContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "cancellationWhileReadingCandidatesDoesNotBecomeRetry",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "cancellationWhileMarkingDeliveryDoesNotBecomeSuccess",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "cancellationWhileReadingSettingsDoesNotBecomeRetry",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "emptyCandidateSetDoesNotPostOrAcknowledgeAnything",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "disabledStockChannelDoesNotConsumeCandidateCooldown",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "deliveredNotificationUsesDistinctProductCountAndLowStockDestination",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "failedCooldownPersistenceKeepsTheExistingDeliveredNotification",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "globallyDisabledNotificationsDoNotConsumeCandidateCooldown",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "legacyAndroidDeliversWithoutNotificationChannelSupport",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest",
+    "name": "deniedNotificationPermissionDoesNotConsumeCandidateCooldown",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/ui/qualification/LowStockWorkerRecoveryTest.kt",
+    "primary": "WorkManager lifecycle",
+    "tags": [
+      "WorkManager lifecycle"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "absentAssetsCannotInventAnApk",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "prereleaseNeverBecomesAnUpdateOffer",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "patchBeyondTwoDigitEncodingCannotAliasTheNextMinor",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "matchingAssetWithoutUrlIsNotAnOffer",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "blankAssetUrlIsNotAnOffer",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "unprefixedVersionRemainsCompatible",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "malformedJsonIsUnavailableRatherThanAnException",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "missingVersionTagCannotOfferAnUpdate",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "loopbackRequestUsesGithubHeadersAndParsesTheActualHttpBody",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Loopback HTTP",
+    "tags": [
+      "Loopback HTTP"
+    ]
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "negativeMinorCannotBeOffered",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "transportFailureDisconnectsTheConnection",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "draftNeverBecomesAnUpdateOffer",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "cancellationPropagatesAndDisconnectsTheConnection",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "negativePatchCannotBeOffered",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "minorBeyondTwoDigitEncodingCannotAliasTheNextMajor",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "malformedVersionComponentsAreNotOffers",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "deniedHttpResponseDisconnectsTheConnection",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "negativeMajorCannotBeOffered",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "overflowedVersionCodeCannotBeOffered",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "otherApkNameCannotBeInstalledAsSellerRelease",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "publishedReleaseUsesEncodedVersionExactAssetAndTrimmedChangelog",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "plainVPrefixRemainsCompatible",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "emptyAssetsCannotInventAnApk",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.update.ReleaseMetadataContractsTest",
+    "name": "absentNotesProduceAnEmptyChangelog",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/update/ReleaseMetadataContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "ordinaryInvoicePreservesCustomerAmountPaymentStatusAndStore",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "absentShareHandlersDoNotCrashTheSeller",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "unsavedTransactionDoesNotInventAPersistedInvoiceNumber",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "blankStoreUsesTheExistingGenericName",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "absentWhatsappUsesAnUnrestrictedChooserWithTheSameText",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "whatsappIntentContainsExactlyTheBuiltTextAndNewTaskFlag",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "itemQuantityTotalAndNoteArePreservedWithoutRecomputingLedgerValues",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "partialReturnDistinguishesOriginalItemsRefundAndNet",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "eachPaymentKindUsesItsOwnArabicLabel",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "sharedTextIdentifiesTheActualPersistedInvoice",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  },
+  {
+    "module": "salesmanager",
+    "class": "com.trader.salesmanager.util.InvoiceTextContractsTest",
+    "name": "fullReturnKeepsTheOriginalAmountAndShowsZeroNet",
+    "result": "passed",
+    "source": "salesmanager/src/test/java/com/trader/salesmanager/util/InvoiceTextContractsTest.kt",
+    "primary": "Unit/model with deterministic fakes",
+    "tags": []
+  }
+]

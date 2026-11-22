@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.remote.SellerFirebaseWireContractsTest" tests="32" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:23:43" hostname="ac8333d6728a" time="5.494">
+  <properties/>
+  <testcase name="cancellationDuringFinalSnapshotParsingCannotDeliverThePayload" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.454"/>
+  <testcase name="subscriptionStatusUsesTheProvidedLatestChildAndDoesNotApproveUnknownStatus" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.179"/>
+  <testcase name="cashPaymentTypeSurvivesUploadFetchAndRealtimeSnapshots" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.188"/>
+  <testcase name="invoiceReadPathsKeepTheirExplicitSparseLegacyAndRealtimeRequirements" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.226"/>
+  <testcase name="transactionOptionalWireFieldsFallBackWithoutAcceptingMissingRequiredIdentityOrAmount" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.185"/>
+  <testcase name="returnInvoicesPermissionFailureClosesWithoutDeletingReturns" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.15"/>
+  <testcase name="currentSessionListenerClosesOnPermissionFailureAndUnregisters" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.147"/>
+  <testcase name="legacyTransactionsWithoutPaymentTypeKeepExistingDebtDefault" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.178"/>
+  <testcase name="cancelledCodeStatusReadNeverReturnsAFalseMissingStatusToTheConsumer" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.132"/>
+  <testcase name="cancellingEachSnapshotReadNeverReturnsAnAuthoritativePayloadToItsConsumer" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.211"/>
+  <testcase name="cashSnapshotsKeepMerchantIdentityInitialBalanceAndMovementType" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.153"/>
+  <testcase name="employeesPermissionFailureClosesAndUnregisters" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.13"/>
+  <testcase name="cancelledActivationValidationNeverReturnsANetworkErrorToTheConsumer" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.15"/>
+  <testcase name="returnWireMapAndListItemsKeepLegacyBindingsAndExplicitUnitOverrides" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.192"/>
+  <testcase name="paymentMethodsPermissionFailureClosesAndUnregisters" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.126"/>
+  <testcase name="customerSnapshotsRetainSupportedIdsAndSkipMalformedRecordsOnBothReadPaths" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.192"/>
+  <testcase name="bulkAndRealtimeReturnSnapshotsPreserveLegacyUnitFallbackAndRefunds" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.195"/>
+  <testcase name="invoiceAndEmployeeSnapshotsKeepIdsAndSkipUnusableRecords" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.155"/>
+  <testcase name="cashBoxWireFallbacksKeepTheRequestedMerchantAndSkipUnusableMethodIds" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.177"/>
+  <testcase name="invoiceItemsPermissionFailureClosesWithoutDroppingInvoiceLines" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.127"/>
+  <testcase name="cashMovementWireFallbacksRetainSignedAmountsAndRelatedTransaction" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.19"/>
+  <testcase name="cashBoxesPermissionFailureClosesWithoutChangingBalances" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.124"/>
+  <testcase name="cancellingEverySellerListenerRemovesItAndLateCallbacksCannotEmit" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.182"/>
+  <testcase name="activationUnknownDisabledExpiredAndTimeoutAreDistinct" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.172"/>
+  <testcase name="uploadAndDeleteUseOnlyRequestedMerchantAndPreserveInvoiceAmounts" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.166"/>
+  <testcase name="numericWireFormsPreserveDebtReturnAndCustomerFieldsAndRejectMalformedRows" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.155"/>
+  <testcase name="transactionsPermissionFailureClosesWithoutAnEmptySnapshot" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.129"/>
+  <testcase name="paymentSchemasPreserveIntegerDecimalAndStringIdsWithDocumentedTypeFallback" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.184"/>
+  <testcase name="customersPermissionFailureClosesAndUnregisters" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.135"/>
+  <testcase name="cashMovementsPermissionFailureClosesWithoutAnEmptyLedger" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.127"/>
+  <testcase name="employeeWireRequiresNameAndPinAndPreservesSupportedRolesAndMerchant" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.137"/>
+  <testcase name="cachedSnapshotCompletionStillHonorsCancellationBeforeDeliveringData" classname="com.trader.core.data.remote.SellerFirebaseWireContractsTest" time="0.128"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

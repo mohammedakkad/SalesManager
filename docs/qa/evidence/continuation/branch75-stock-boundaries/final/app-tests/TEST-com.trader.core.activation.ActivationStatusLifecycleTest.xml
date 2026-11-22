@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.activation.ActivationStatusLifecycleTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:13:43" hostname="ac8333d6728a" time="19.007">
+  <properties/>
+  <testcase name="statusChangesMapKnownCaseVariantsAndUnknownOrMissingValuesToNull" classname="com.trader.core.activation.ActivationStatusLifecycleTest" time="16.664"/>
+  <testcase name="startupValidationKeepsOfflineSeparateFromDisabledExpiredAndDeleted" classname="com.trader.core.activation.ActivationStatusLifecycleTest" time="0.644"/>
+  <testcase name="collectorCancellationAlwaysRemovesTheRegisteredListener" classname="com.trader.core.activation.ActivationStatusLifecycleTest" time="0.479"/>
+  <testcase name="inactiveAndBlankStartupSessionsNeverValidateRemotely" classname="com.trader.core.activation.ActivationStatusLifecycleTest" time="0.411"/>
+  <testcase name="switchingMerchantDetachesOldListenerAndLogoutDetachesTheCurrentOne" classname="com.trader.core.activation.ActivationStatusLifecycleTest" time="0.483"/>
+  <testcase name="blankSessionEmitsNoStatusAndDoesNotSubscribeToAnActivationPath" classname="com.trader.core.activation.ActivationStatusLifecycleTest" time="0.325"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

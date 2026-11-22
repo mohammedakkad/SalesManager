@@ -1,0 +1,1332 @@
+[
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/pdf/InvoicePdfGenerator.kt",
+    "covered": 0,
+    "missed": 537,
+    "branchMissed": 127
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/pdf/ReportPdfGenerator.kt",
+    "covered": 12,
+    "missed": 445,
+    "branchMissed": 53
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/reports/ReportsScreen.kt",
+    "covered": 884,
+    "missed": 327,
+    "branchMissed": 632
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/navigation/AppNavigation.kt",
+    "covered": 248,
+    "missed": 293,
+    "branchMissed": 239
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/SaleOutboxDao_Impl.java",
+    "covered": 311,
+    "missed": 239,
+    "branchMissed": 61
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/db/AppDatabase.kt",
+    "covered": 62,
+    "missed": 182,
+    "branchMissed": 28
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/remote/ProductFirestoreService.kt",
+    "covered": 0,
+    "missed": 145,
+    "branchMissed": 120
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/detail/ProductDetailScreen.kt",
+    "covered": 212,
+    "missed": 139,
+    "branchMissed": 264
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/export/ExportManager.kt",
+    "covered": 142,
+    "missed": 133,
+    "branchMissed": 41
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/scanner/BarcodeScannerScreen.kt",
+    "covered": 0,
+    "missed": 133,
+    "branchMissed": 101
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/remote/MerchantAdminService.kt",
+    "covered": 0,
+    "missed": 130,
+    "branchMissed": 135
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/transactions/details/TransactionDetailsScreen.kt",
+    "covered": 388,
+    "missed": 128,
+    "branchMissed": 270
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/ActivationRepositoryImpl.kt",
+    "covered": 65,
+    "missed": 119,
+    "branchMissed": 54
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/boxes/BoxesScreen.kt",
+    "covered": 385,
+    "missed": 118,
+    "branchMissed": 306
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/di/SalesManagerModule.kt",
+    "covered": 112,
+    "missed": 114,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/addedit/AddEditProductScreen.kt",
+    "covered": 284,
+    "missed": 109,
+    "branchMissed": 256
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsScreen.kt",
+    "covered": 567,
+    "missed": 108,
+    "branchMissed": 273
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/list/InventoryListScreen.kt",
+    "covered": 421,
+    "missed": 107,
+    "branchMissed": 247
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/session/InventorySessionScreen.kt",
+    "covered": 448,
+    "missed": 105,
+    "branchMissed": 339
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/remote/ChatService.kt",
+    "covered": 0,
+    "missed": 94,
+    "branchMissed": 36
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/ReturnDao_Impl.java",
+    "covered": 330,
+    "missed": 91,
+    "branchMissed": 5
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/db/AppDatabase_Impl.java",
+    "covered": 494,
+    "missed": 88,
+    "branchMissed": 58
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/CashBoxRepositoryImpl.kt",
+    "covered": 168,
+    "missed": 79,
+    "branchMissed": 70
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/employees/EmployeeManagementScreen.kt",
+    "covered": 369,
+    "missed": 79,
+    "branchMissed": 224
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/remote/FirebaseSyncService.kt",
+    "covered": 517,
+    "missed": 78,
+    "branchMissed": 284
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/SettingsScreen.kt",
+    "covered": 401,
+    "missed": 77,
+    "branchMissed": 249
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/backup/BackupScreen.kt",
+    "covered": 347,
+    "missed": 75,
+    "branchMissed": 259
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/SaleOperationDao_Impl.java",
+    "covered": 32,
+    "missed": 73,
+    "branchMissed": 4
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/TransactionDao_Impl.java",
+    "covered": 934,
+    "missed": 73,
+    "branchMissed": 85
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/invoice/InvoiceItemsViewModel.kt",
+    "covered": 96,
+    "missed": 67,
+    "branchMissed": 52
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ChatNotificationService.kt",
+    "covered": 0,
+    "missed": 67,
+    "branchMissed": 38
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/FirebaseSubscriptionRepositoryImpl.kt",
+    "covered": 0,
+    "missed": 66,
+    "branchMissed": 10
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/components/SharedComponents.kt",
+    "covered": 100,
+    "missed": 65,
+    "branchMissed": 285
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/TransactionRepositoryImpl.kt",
+    "covered": 77,
+    "missed": 63,
+    "branchMissed": 82
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/InvoiceItemDao_Impl.java",
+    "covered": 298,
+    "missed": 62,
+    "branchMissed": 5
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/reports/StockReportsScreen.kt",
+    "covered": 219,
+    "missed": 62,
+    "branchMissed": 219
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/worker/StatusCheckWorker.kt",
+    "covered": 0,
+    "missed": 60,
+    "branchMissed": 30
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/export/ExportActionButton.kt",
+    "covered": 131,
+    "missed": 60,
+    "branchMissed": 207
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/AdminSubscriptionSettingsRepositoryImpl.kt",
+    "covered": 0,
+    "missed": 58,
+    "branchMissed": 20
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/InvoiceItemRepositoryImpl.kt",
+    "covered": 22,
+    "missed": 56,
+    "branchMissed": 91
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/EmployeeRepositoryImpl.kt",
+    "covered": 16,
+    "missed": 53,
+    "branchMissed": 8
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/InvoiceSharer.kt",
+    "covered": 0,
+    "missed": 53,
+    "branchMissed": 17
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionScreen.kt",
+    "covered": 173,
+    "missed": 50,
+    "branchMissed": 184
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/ProductRepositoryImpl.kt",
+    "covered": 137,
+    "missed": 48,
+    "branchMissed": 47
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/update/AppUpdateChecker.kt",
+    "covered": 0,
+    "missed": 47,
+    "branchMissed": 32
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/migration/FirestoreMigrationHelper.kt",
+    "covered": 0,
+    "missed": 45,
+    "branchMissed": 8
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/MainActivity.kt",
+    "covered": 0,
+    "missed": 44,
+    "branchMissed": 36
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/customers/details/CustomerDetailsScreen.kt",
+    "covered": 276,
+    "missed": 44,
+    "branchMissed": 174
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/pdf/PdfPrintManager.kt",
+    "covered": 0,
+    "missed": 42,
+    "branchMissed": 14
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/backup/BackupManager.kt",
+    "covered": 190,
+    "missed": 41,
+    "branchMissed": 120
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/device/DeviceFingerprintProvider.kt",
+    "covered": 0,
+    "missed": 39,
+    "branchMissed": 32
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/CustomerRepositoryImpl.kt",
+    "covered": 21,
+    "missed": 37,
+    "branchMissed": 8
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/worker/LowStockCheckWorker.kt",
+    "covered": 63,
+    "missed": 37,
+    "branchMissed": 15
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/CustomerDao_Impl.java",
+    "covered": 183,
+    "missed": 36,
+    "branchMissed": 3
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/MerchantStatusRepositoryImpl.kt",
+    "covered": 0,
+    "missed": 35,
+    "branchMissed": 12
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/util/ImageCompressor.kt",
+    "covered": 0,
+    "missed": 34,
+    "branchMissed": 20
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/util/ExpiryNotificationHelper.kt",
+    "covered": 0,
+    "missed": 32,
+    "branchMissed": 10
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/update/BackgroundUpdateWorker.kt",
+    "covered": 107,
+    "missed": 32,
+    "branchMissed": 3
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/theme/Theme.kt",
+    "covered": 97,
+    "missed": 32,
+    "branchMissed": 48
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/ReportAnalytics.kt",
+    "covered": 0,
+    "missed": 30,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/SalesManagerApp.kt",
+    "covered": 0,
+    "missed": 30,
+    "branchMissed": 2
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/remote/CloudinaryUploader.kt",
+    "covered": 0,
+    "missed": 29,
+    "branchMissed": 8
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/reports/DayTransactionsScreen.kt",
+    "covered": 349,
+    "missed": 28,
+    "branchMissed": 165
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/chat/ChatScreen.kt",
+    "covered": 430,
+    "missed": 27,
+    "branchMissed": 295
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/PaymentMethodRepositoryImpl.kt",
+    "covered": 13,
+    "missed": 25,
+    "branchMissed": 2
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/ProductDao_Impl.java",
+    "covered": 679,
+    "missed": 25,
+    "branchMissed": 29
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/returns/ReturnProcessScreen.kt",
+    "covered": 464,
+    "missed": 25,
+    "branchMissed": 152
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/sales/outbox/SaleOutboxWork.kt",
+    "covered": 15,
+    "missed": 25,
+    "branchMissed": 12
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/ReturnRepositoryImpl.kt",
+    "covered": 130,
+    "missed": 22,
+    "branchMissed": 59
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/util/NetworkMonitor.kt",
+    "covered": 0,
+    "missed": 21,
+    "branchMissed": 6
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/SubscriptionRequest.kt",
+    "covered": 0,
+    "missed": 20,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/worker/UnpaidDebtWorker.kt",
+    "covered": 58,
+    "missed": 19,
+    "branchMissed": 3
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/home/AnalyticsDashboard.kt",
+    "covered": 357,
+    "missed": 19,
+    "branchMissed": 281
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/backup/BackupViewModel.kt",
+    "covered": 198,
+    "missed": 19,
+    "branchMissed": 5
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/entity/EmployeeEntity.kt",
+    "covered": 9,
+    "missed": 18,
+    "branchMissed": 4
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/ChatMessage.kt",
+    "covered": 0,
+    "missed": 18,
+    "branchMissed": 6
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/update/AppUpdateDownloader.kt",
+    "covered": 48,
+    "missed": 18,
+    "branchMissed": 14
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/home/SyncStatusSheet.kt",
+    "covered": 229,
+    "missed": 18,
+    "branchMissed": 130
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/transactions/list/TransactionsScreen.kt",
+    "covered": 187,
+    "missed": 18,
+    "branchMissed": 102
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/sync/SyncStatusObserver.kt",
+    "covered": 64,
+    "missed": 17,
+    "branchMissed": 17
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/Merchant.kt",
+    "covered": 0,
+    "missed": 17,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/addedit/AddEditProductViewModel.kt",
+    "covered": 178,
+    "missed": 17,
+    "branchMissed": 23
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/StockRepositoryImpl.kt",
+    "covered": 90,
+    "missed": 16,
+    "branchMissed": 78
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/entity/SessionEntity.kt",
+    "covered": 8,
+    "missed": 16,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/CashBoxDao_Impl.java",
+    "covered": 332,
+    "missed": 16,
+    "branchMissed": 5
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/home/HomeScreen.kt",
+    "covered": 269,
+    "missed": 15,
+    "branchMissed": 106
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/customers/addedit/AddEditCustomerScreen.kt",
+    "covered": 256,
+    "missed": 15,
+    "branchMissed": 112
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/MerchantAdminRepositoryImpl.kt",
+    "covered": 0,
+    "missed": 14,
+    "branchMissed": 2
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/theme/Type.kt",
+    "covered": 0,
+    "missed": 14,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/activation/ActivationScreen.kt",
+    "covered": 131,
+    "missed": 14,
+    "branchMissed": 38
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/util/DateUtils.kt",
+    "covered": 0,
+    "missed": 13,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/entity/CashBoxMovementEntity.kt",
+    "covered": 30,
+    "missed": 13,
+    "branchMissed": 2
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/navigation/Screen.kt",
+    "covered": 29,
+    "missed": 13,
+    "branchMissed": 4
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/backup/BackupFormatting.kt",
+    "covered": 2,
+    "missed": 13,
+    "branchMissed": 13
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/ReportsRepositoryImpl.kt",
+    "covered": 0,
+    "missed": 12,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/LowStockSettingsRepositoryImpl.kt",
+    "covered": 0,
+    "missed": 12,
+    "branchMissed": 10
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/SubscriptionConfig.kt",
+    "covered": 0,
+    "missed": 12,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/list/InventoryListViewModel.kt",
+    "covered": 56,
+    "missed": 12,
+    "branchMissed": 24
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/session/InventorySessionViewModel.kt",
+    "covered": 48,
+    "missed": 12,
+    "branchMissed": 11
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/SubscriptionState.kt",
+    "covered": 0,
+    "missed": 11,
+    "branchMissed": 6
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/manager/EmployeeSessionManager.kt",
+    "covered": 0,
+    "missed": 10,
+    "branchMissed": 4
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/Product.kt",
+    "covered": 51,
+    "missed": 10,
+    "branchMissed": 11
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/InventoryRepositoryImpl.kt",
+    "covered": 63,
+    "missed": 9,
+    "branchMissed": 19
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/ReturnModels.kt",
+    "covered": 52,
+    "missed": 9,
+    "branchMissed": 6
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/customers/addedit/AddEditCustomerViewModel.kt",
+    "covered": 93,
+    "missed": 9,
+    "branchMissed": 18
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/ChatRepositoryImpl.kt",
+    "covered": 0,
+    "missed": 8,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/Session.kt",
+    "covered": 0,
+    "missed": 8,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/transactions/addedit/AddEditTransactionViewModel.kt",
+    "covered": 281,
+    "missed": 8,
+    "branchMissed": 58
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/entity/InvoiceAndInventoryEntities.kt",
+    "covered": 63,
+    "missed": 7,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/StartupStatus.kt",
+    "covered": 0,
+    "missed": 7,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/InventoryDao.kt",
+    "covered": 4,
+    "missed": 7,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/update/AppUpdateViewModel.kt",
+    "covered": 91,
+    "missed": 7,
+    "branchMissed": 8
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/activation/ActivationViewModel.kt",
+    "covered": 69,
+    "missed": 7,
+    "branchMissed": 1
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/PaymentMethodDao_Impl.java",
+    "covered": 108,
+    "missed": 6,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/chat/ChatViewModel.kt",
+    "covered": 180,
+    "missed": 6,
+    "branchMissed": 19
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/boxes/BoxesViewModel.kt",
+    "covered": 92,
+    "missed": 6,
+    "branchMissed": 7
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/detail/ProductDetailViewModel.kt",
+    "covered": 63,
+    "missed": 6,
+    "branchMissed": 9
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/service/NotificationService.kt",
+    "covered": 54,
+    "missed": 6,
+    "branchMissed": 4
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/CashBoxMovementDao_Impl.java",
+    "covered": 354,
+    "missed": 5,
+    "branchMissed": 5
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/customers/list/CustomersScreen.kt",
+    "covered": 226,
+    "missed": 5,
+    "branchMissed": 109
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/pdf/PdfCanvas.kt",
+    "covered": 65,
+    "missed": 5,
+    "branchMissed": 1
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/employees/EmployeeManagementViewModel.kt",
+    "covered": 85,
+    "missed": 5,
+    "branchMissed": 10
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/repository/LowStockSettingsRepository.kt",
+    "covered": 0,
+    "missed": 4,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/entity/CustomerEntity.kt",
+    "covered": 11,
+    "missed": 4,
+    "branchMissed": 2
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/MerchantTier.kt",
+    "covered": 0,
+    "missed": 4,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/InventoryDao_Impl.java",
+    "covered": 317,
+    "missed": 4,
+    "branchMissed": 4
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/StockMovementDao_Impl.java",
+    "covered": 347,
+    "missed": 4,
+    "branchMissed": 4
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/export/ExportViewModel.kt",
+    "covered": 63,
+    "missed": 4,
+    "branchMissed": 9
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/update/UpdateDownloadReceiver.kt",
+    "covered": 1,
+    "missed": 4,
+    "branchMissed": 4
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/sales/outbox/OutboxDispatcher.kt",
+    "covered": 92,
+    "missed": 4,
+    "branchMissed": 30
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/transactions/list/TransactionsViewModel.kt",
+    "covered": 9,
+    "missed": 4,
+    "branchMissed": 1
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/worker/SafeCollector.common.kt",
+    "covered": 0,
+    "missed": 3,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/repository/ProductRepository.kt",
+    "covered": 0,
+    "missed": 3,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/entity/PaymentMethodEntity.kt",
+    "covered": 4,
+    "missed": 3,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/CashBoxMovement.kt",
+    "covered": 19,
+    "missed": 3,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/reports/ReportsViewModel.kt",
+    "covered": 381,
+    "missed": 3,
+    "branchMissed": 24
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/theme/SafeCollector.common.kt",
+    "covered": 0,
+    "missed": 3,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/sessions/SessionsScreen.kt",
+    "covered": 92,
+    "missed": 3,
+    "branchMissed": 53
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/Comparisons.kt",
+    "covered": 0,
+    "missed": 2,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/Merge.kt",
+    "covered": 0,
+    "missed": 2,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/sync/SyncCoordinator.kt",
+    "covered": 38,
+    "missed": 2,
+    "branchMissed": 6
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/repository/StockRepository.kt",
+    "covered": 0,
+    "missed": 2,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/BuildConfig.java",
+    "covered": 0,
+    "missed": 2,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/Transaction.kt",
+    "covered": 21,
+    "missed": 2,
+    "branchMissed": 10
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/Inventory.kt",
+    "covered": 32,
+    "missed": 2,
+    "branchMissed": 2
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/DashboardAnalytics.kt",
+    "covered": 22,
+    "missed": 2,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/export/ExportState.kt",
+    "covered": 16,
+    "missed": 2,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/update/AppUpdateInfo.kt",
+    "covered": 6,
+    "missed": 2,
+    "branchMissed": 2
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/transactions/details/TransactionDetailsViewModel.kt",
+    "covered": 80,
+    "missed": 2,
+    "branchMissed": 2
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/activation/MerchantWatcherViewModel.kt",
+    "covered": 28,
+    "missed": 2,
+    "branchMissed": 1
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/backup/BackupMigrator.kt",
+    "covered": 139,
+    "missed": 2,
+    "branchMissed": 56
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/BuildConfig.java",
+    "covered": 0,
+    "missed": 2,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/sales/outbox/FirebaseOutboxTransport.kt",
+    "covered": 74,
+    "missed": 2,
+    "branchMissed": 7
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/debts/DebtsScreen.kt",
+    "covered": 100,
+    "missed": 2,
+    "branchMissed": 37
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/repository/LowStockAlertRepositoryImpl.kt",
+    "covered": 51,
+    "missed": 1,
+    "branchMissed": 4
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/sync/GlobalSyncState.kt",
+    "covered": 12,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/sync/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/usecase/GetDashboardAnalyticsUseCase.kt",
+    "covered": 59,
+    "missed": 1,
+    "branchMissed": 1
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/worker/Emitters.kt",
+    "covered": 0,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/repository/ActivationRepository.kt",
+    "covered": 0,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/repository/CustomerRepository.kt",
+    "covered": 0,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/StockMovement.kt",
+    "covered": 21,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/CashBox.kt",
+    "covered": 11,
+    "missed": 1,
+    "branchMissed": 2
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/Customer.kt",
+    "covered": 7,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/domain/model/Employee.kt",
+    "covered": 11,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "app",
+    "source": "com/trader/core/data/local/dao/EmployeeDao_Impl.java",
+    "covered": 237,
+    "missed": 1,
+    "branchMissed": 1
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/reports/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/sales/SaleCommands.kt",
+    "covered": 151,
+    "missed": 1,
+    "branchMissed": 85
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/reports/Comparisons.kt",
+    "covered": 1,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/reports/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/export/XlsxWriter.kt",
+    "covered": 120,
+    "missed": 1,
+    "branchMissed": 6
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/payments/PaymentMethodsScreen.kt",
+    "covered": 34,
+    "missed": 1,
+    "branchMissed": 88
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/util/pdf/PdfLayoutConstants.kt",
+    "covered": 19,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/theme/Emitters.kt",
+    "covered": 0,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/navigation/MainBottomNavigationBar.kt",
+    "covered": 64,
+    "missed": 1,
+    "branchMissed": 19
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/transactions/details/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/invoice/InvoiceUtils.kt",
+    "covered": 27,
+    "missed": 1,
+    "branchMissed": 2
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/sessions/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/settings/backup/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/list/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ActivityVM.kt",
+    "covered": 0,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/KoinComponent.kt",
+    "covered": 0,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/sales/outbox/ConditionalProtocol.kt",
+    "covered": 34,
+    "missed": 1,
+    "branchMissed": 36
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/transactions/list/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/inventory/detail/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/customers/details/CustomerDetailsViewModel.kt",
+    "covered": 21,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/customers/details/SafeCollector.common.kt",
+    "covered": 2,
+    "missed": 1,
+    "branchMissed": 0
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/debts/DebtsViewModel.kt",
+    "covered": 20,
+    "missed": 1,
+    "branchMissed": 1
+  },
+  {
+    "module": "salesmanager",
+    "source": "com/trader/salesmanager/ui/debts/Comparisons.kt",
+    "covered": 0,
+    "missed": 1,
+    "branchMissed": 0
+  }
+]

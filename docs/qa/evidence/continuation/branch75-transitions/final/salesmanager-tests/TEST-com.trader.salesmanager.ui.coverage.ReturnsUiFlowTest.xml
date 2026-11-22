@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:18:14" hostname="6d75d821cc71" time="0.486">
+  <properties/>
+  <testcase name="alreadyReturnedLineCannotOfferAnotherRefund" classname="com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest" time="0.099"/>
+  <testcase name="pendingConfirmationCannotBeCancelledIntoAnotherRefund" classname="com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest" time="0.118"/>
+  <testcase name="returnFailureIsVisibleInsteadOfSilentlyRemovingConfirmation" classname="com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest" time="0.067"/>
+  <testcase name="failedLoadOffersTheRealReloadAction" classname="com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest" time="0.085"/>
+  <testcase name="partialReturnShowsRemainingQuantityAndCorrectRefund" classname="com.trader.salesmanager.ui.coverage.ReturnsUiFlowTest" time="0.115"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.ChatCommandsTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-15T14:00:32" hostname="236b99701f27" time="0.821">
+  <properties/>
+  <testcase name="deletionOfOtherSenderIsLocalAndOwnDeletionWaitsForExplicitChoice" classname="com.trader.salesmanager.ui.qualification.ChatCommandsTest" time="0.662"/>
+  <testcase name="loadMarksOnlyUnreadAdminMessagesAndHidesPendingEcho" classname="com.trader.salesmanager.ui.qualification.ChatCommandsTest" time="0.015"/>
+  <testcase name="selectionCopiesChronologicallyAndNeverCopiesDeletedContent" classname="com.trader.salesmanager.ui.qualification.ChatCommandsTest" time="0.017"/>
+  <testcase name="sendingPersistsBeforeDispatchAndDeletesOnlySameStableId" classname="com.trader.salesmanager.ui.qualification.ChatCommandsTest" time="0.047"/>
+  <testcase name="editOwnMessageTrimsChangedTextAndCannotEditOtherSender" classname="com.trader.salesmanager.ui.qualification.ChatCommandsTest" time="0.015"/>
+  <testcase name="remoteDeleteFailureKeepsMessageHiddenAndSuccessRemovesTemporaryHide" classname="com.trader.salesmanager.ui.qualification.ChatCommandsTest" time="0.025"/>
+  <testcase name="failedSendRetainsPendingAndRetryUsesOriginalIdentity" classname="com.trader.salesmanager.ui.qualification.ChatCommandsTest" time="0.039"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

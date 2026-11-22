@@ -1,0 +1,9 @@
+{
+  "initialization": "Before setup initially returned ChatUiState rather than Unit; corrected before qualified regression run.",
+  "selectors": "Excluded editable-field click semantics from action counts; edit cancel selector and progress-control ancestor corrected.",
+  "constructor": "Employee fixture now supplies named pinCode.",
+  "productRegressionCases": 15,
+  "financialFormulasChanged": false,
+  "roomSchemaChanged": false,
+  "existingChatCommandsFixture": "Owned-dismiss positive case now seeds the owned pending message; its delete assertion is retained. Active-pending UI fixture now supplies the explicit sending state."
+}

@@ -1,0 +1,7 @@
+{
+  "startingSha": "a5c402f564669129aacdc745210c4f6a3075352d",
+  "productionFileSha256": "f8f95f41c748ca9a4601e9260a92d9e23d17193057c7580691ed12cc88751c7c",
+  "tests": 4,
+  "failed": 4,
+  "scope": "Public view-model API, deterministic coroutine scheduler; repeated submissions, provider cancellation, ordinary storage failure, explicit retry. Other current shared stock/worker edits do not participate in these mocked StockRepository cases."
+}

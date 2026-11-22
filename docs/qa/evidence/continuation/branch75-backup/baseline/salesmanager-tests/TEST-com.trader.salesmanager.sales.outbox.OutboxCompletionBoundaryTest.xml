@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:29:33" hostname="6d75d821cc71" time="0.454">
+  <properties/>
+  <testcase name="repeatedFailureCapsBackoffAtSixHoursAndRetainsEventIdentity" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.034"/>
+  <testcase name="oldConflictCannotReplaceAReclaimedLease" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.028"/>
+  <testcase name="oldNetworkFailureCannotReleaseAnotherWorkersLease" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.035"/>
+  <testcase name="changedReturnRemainsPendingDespiteOlderReceipt" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.029"/>
+  <testcase name="sessionChangedAfterClaimReleasesOwnershipWithoutSending" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.028"/>
+  <testcase name="matchingReturnIsAcknowledgedWithoutChangingRefund" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.038"/>
+  <testcase name="blankMerchantDoesNotClaimOrTransmit" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.025"/>
+  <testcase name="deletedReturnIsNotResurrectedByQueueDrain" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.029"/>
+  <testcase name="sessionChangedAfterRemoteResultCannotCommitAcknowledgment" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.029"/>
+  <testcase name="sessionChangedWhileEmptyClaimWasReadPausesQueueRecovery" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.029"/>
+  <testcase name="durableConflictReasonIsBoundedAndNeverAcknowledged" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.028"/>
+  <testcase name="returnStatusFailureRollsBackReceiptAndAllowsIdempotentRetry" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.054"/>
+  <testcase name="alreadySyncedReturnDoesNotReceiveARedundantWrite" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.031"/>
+  <testcase name="durableReceiptIsBoundedWithoutChangingRemoteCompletion" classname="com.trader.salesmanager.sales.outbox.OutboxCompletionBoundaryTest" time="0.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.UpdateLifecycleTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-15T09:30:45" hostname="236b99701f27" time="4.834">
+  <properties/>
+  <testcase name="backgroundDownloadSuccessPersistsPathAndPostsReadyNotification" classname="com.trader.salesmanager.ui.qualification.UpdateLifecycleTest" time="0.706"/>
+  <testcase name="checkerFailureAndCurrentVersionNeverOfferAnUpdate" classname="com.trader.salesmanager.ui.qualification.UpdateLifecycleTest" time="0.77"/>
+  <testcase name="downloadedPathSurvivesViewModelRestartAndInstallUsesThatExactFile" classname="com.trader.salesmanager.ui.qualification.UpdateLifecycleTest" time="0.64"/>
+  <testcase name="backgroundDownloadFailureDoesNotPersistAnInstallPath" classname="com.trader.salesmanager.ui.qualification.UpdateLifecycleTest" time="0.674"/>
+  <testcase name="backgroundCheckNotifiesOnlyForNewerRelease" classname="com.trader.salesmanager.ui.qualification.UpdateLifecycleTest" time="0.671"/>
+  <testcase name="overlappingChecksAreSuppressedAndNewerVersionIsPresented" classname="com.trader.salesmanager.ui.qualification.UpdateLifecycleTest" time="0.632"/>
+  <testcase name="failedDownloadClearsProgressAndCanBeRetried" classname="com.trader.salesmanager.ui.qualification.UpdateLifecycleTest" time="0.739"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

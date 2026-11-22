@@ -1,0 +1,11 @@
+{
+  "url": "https://github.com/mohammedakkad/SalesManager/actions/runs/42640961313",
+  "source": "b7b8d33d0c9149ec5191d8fda9c68f1f239c0662",
+  "workflow": "FAILURE",
+  "seller": "SUCCESS",
+  "compose": "FAILURE",
+  "emulatorStep": "FAILURE",
+  "artifactUpload": "SUCCESS",
+  "artifacts": 2,
+  "limits": "Authenticated logs and XML/PDF/job summaries unavailable from public HTML; exact device failure and individual execution counts unverified. No success inferred. Added actual XML public annotations for next run."
+}

@@ -1,0 +1,535 @@
+{
+  "seller": {
+    "job": "seller",
+    "status": "completed",
+    "conclusion": "success",
+    "evidenceJobId": 134917901511,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134917901511
+  },
+  "24": {
+    "job": "compose (API 24)",
+    "status": "completed",
+    "conclusion": "failure",
+    "evidenceJobId": 134917902051,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134917902051,
+    "actualApi": 24,
+    "exit": "stage=Android instrumentation exit=1",
+    "paths": [
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+        "sha256": "b37210e330837e52ce261acd90f756c7cf35687459570e3ccc6effae12cba57e"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+        "sha256": "dc44e2165953552a327d9e80ca85ed88f26a6731d809c7e557375838b8cb2cc7"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+        "sha256": "b7e7d030ee5b5033e71e46687b3eb6b8f3cc07f6984f97251775d1d126e71120"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+        "sha256": "2c947ca2f2c014d091bddb38d1435d1e43cb18c62d2c48d9825e2905f0b37231"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+        "sha256": "2ccde5ca7a58ee758e49203f7b7e727130b10f02d4a09f2d4b9728255aeacc24"
+      }
+    ],
+    "cases": [
+      {
+        "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateCustomerStatementForHostBalanceVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateSingleInvoiceForHostContentVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "encryptedImportPasswordSurvivesThemeAndUnlocksWithoutReplacingRoom",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport",
+        "result": "FAILURE",
+        "detail": "java.lang.AssertionError: Failed to assert count of nodes.\nReason: Expected '2' nodes but could not find any node that satisfies: (SetText is defined)\n\nat androidx.compose.ui.test.AssertionsKt.assertCountEquals(Assertions.kt:286)\nat com.trader.salesmanager.qa.ThemedDialogJourneyTest.exportDialogKeep"
+      },
+      {
+        "test": "failedStockAdjustmentRetainsDraftAndExplicitRetryUsesTheEditedQuantity",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      }
+    ]
+  },
+  "28": {
+    "job": "compose (API 28)",
+    "status": "completed",
+    "conclusion": "failure",
+    "evidenceJobId": 134917902089,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134917902089,
+    "actualApi": 28,
+    "exit": "stage=Android instrumentation exit=1",
+    "paths": [
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+        "sha256": "f98bb5adac5122ea5321fa0714aeff1f0880b12e356aab8a248c7039fa8aead2"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+        "sha256": "7fa79a8a405e8537e9d2273a8e9f4347cf2b43c60bb84e6d53c9114acea463d8"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+        "sha256": "e8d4c4d405d4e880022f29b851a9e8169769a4e2655192cbb38112a53d87ef9e"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+        "sha256": "47dc75a1ed5d5081f5da7f96393dca70140bd6a0cb552ed8299bf018a5d59f7e"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+        "sha256": "e891ac1b978ba6c8f524836c5f7db98889bd7cec74793cba2ba186431e4342d2"
+      }
+    ],
+    "cases": [
+      {
+        "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateCustomerStatementForHostBalanceVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateSingleInvoiceForHostContentVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "encryptedImportPasswordSurvivesThemeAndUnlocksWithoutReplacingRoom",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport",
+        "result": "FAILURE",
+        "detail": "java.lang.AssertionError: Failed to assert count of nodes.\nReason: Expected '2' nodes but could not find any node that satisfies: (SetText is defined)\n\nat androidx.compose.ui.test.AssertionsKt.assertCountEquals(Assertions.kt:286)\nat com.trader.salesmanager.qa.ThemedDialogJourneyTest.exportDialogKeep"
+      },
+      {
+        "test": "failedStockAdjustmentRetainsDraftAndExplicitRetryUsesTheEditedQuantity",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      }
+    ]
+  },
+  "33": {
+    "job": "compose (API 33)",
+    "status": "completed",
+    "conclusion": "failure",
+    "evidenceJobId": 134917902199,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134917902199,
+    "actualApi": 33,
+    "exit": "stage=JVM coverage exit=1",
+    "paths": [],
+    "cases": [
+      {
+        "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateCustomerStatementForHostBalanceVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generateSingleInvoiceForHostContentVerification",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "encryptedImportPasswordSurvivesThemeAndUnlocksWithoutReplacingRoom",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "failedStockAdjustmentRetainsDraftAndExplicitRetryUsesTheEditedQuantity",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      }
+    ]
+  },
+  "35": {
+    "job": "compose (API 35)",
+    "status": "completed",
+    "conclusion": "failure",
+    "evidenceJobId": 134917902200,
+    "executionAttempt": 1,
+    "reportedByLatestJobId": 134917902200,
+    "actualApi": 35,
+    "exit": "stage=Android instrumentation exit=1",
+    "paths": [
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/customer-statement.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/customer-statement.pdf",
+        "sha256": "55af9eae6a04a7d0f401d0ccf2b7ba5507c058398abe016bcbed5d1782a8d4cb"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-content.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-content.pdf",
+        "sha256": "8449b9d7f4fb023f01883d831a8ddecea2ddfd56df6117fc31dfd61bea1c6a53"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-long.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-long.pdf",
+        "sha256": "1a39bb4565dcb2ca50cff59ee0d055f846b74597382f6d9f702357c1b8c4c845"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/invoice-return-viewmodel.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/invoice-return-viewmodel.pdf",
+        "sha256": "82571372f449401686378500857ad668c84912b5fd11f4f291c7736ecebe1355"
+      },
+      {
+        "package": "com.trader.salesmanager.debug",
+        "source": "/storage/emulated/0/Android/data/com.trader.salesmanager.debug/files/qa-pdf/monthly-report.pdf",
+        "exported": "/data/local/tmp/seller-qa-pdf/monthly-report.pdf",
+        "sha256": "34a7e9d120d1134fa375f56f40186c63c9eacf77038d5bf8a3270cc0b904fb32"
+      }
+    ],
+    "cases": [
+      {
+        "test": "createArabicCustomerValidatesFormSavesOnceAndNavigatesBack",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "editCustomerPreservesIdAndDoesNotCreateDuplicate",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "exportViewModelGeneratesRealPartialReturnInvoiceForHostVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateCustomerStatementForHostBalanceVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateLongInvoiceForHostPaginationAndContentVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateMonthlyReportForHostPaginationAndFinancialVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "generateSingleInvoiceForHostContentVerification",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "actualAndroidEncryptedArchiveRejectsWrongPasswordsAndModifiedCiphertext",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "clearingACountAfterThemeChangeOnlyClearsTheSelectedRoomItem",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "encryptedImportPasswordSurvivesThemeAndUnlocksWithoutReplacingRoom",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "exportDialogKeepsBothPasswordsAcrossThemeChangeAndCancelDoesNotExport",
+        "result": "FAILURE",
+        "detail": "java.lang.AssertionError: Failed to assert count of nodes.\nReason: Expected '2' nodes but could not find any node that satisfies: (SetText is defined)\n\nat androidx.compose.ui.test.AssertionsKt.assertCountEquals(Assertions.kt:286)\nat com.trader.salesmanager.qa.ThemedDialogJourneyTest.exportDialogKeep"
+      },
+      {
+        "test": "failedStockAdjustmentRetainsDraftAndExplicitRetryUsesTheEditedQuantity",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "inventoryCountDraftSurvivesThemeRoundTripAndOnlyConfirmationWritesRoom",
+        "result": "PASS",
+        "detail": ""
+      },
+      {
+        "test": "customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "longInvoicePaginatesWithoutDroppingFinalItemOrTotal",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      },
+      {
+        "test": "viewModelInvoicePreservesRefundNetAmountAndDerivedCustomerBalances",
+        "result": "NOT EXECUTED",
+        "detail": ""
+      }
+    ]
+  }
+}

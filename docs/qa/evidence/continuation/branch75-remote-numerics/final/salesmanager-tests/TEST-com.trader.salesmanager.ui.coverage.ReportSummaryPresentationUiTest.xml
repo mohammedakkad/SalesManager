@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:30:35" hostname="ac8333d6728a" time="1.04">
+  <properties/>
+  <testcase name="zeroPeriodDoesNotInventPaymentPillsOrATransactionCount" classname="com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest" time="0.108"/>
+  <testcase name="changedPeriodReplacesCountAndBothAmountsTogether" classname="com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest" time="0.28"/>
+  <testcase name="summarySeparatesPaidAndPendingValuesFromTheSamePeriod" classname="com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest" time="0.258"/>
+  <testcase name="summaryShowsTheSelectedPeriodsActualTransactionCount" classname="com.trader.salesmanager.ui.coverage.ReportSummaryPresentationUiTest" time="0.393"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

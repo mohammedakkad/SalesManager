@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:29:31" hostname="ac8333d6728a" time="0.432">
+  <properties/>
+  <testcase name="newEditDuringFlightDoesNotLoseNewRevisionOrHoldDatabaseLock" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.041"/>
+  <testcase name="remoteFailureRetainsIdentityAndRetriesAfterBackoff" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.042"/>
+  <testcase name="conflictIsRetainedAndBlocksLaterFinancialEvents" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.037"/>
+  <testcase name="cancellationReleasesClaimWithoutAcknowledging" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.034"/>
+  <testcase name="logoutDuringDispatchCancelsOldMerchantAndRetainsIntent" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.044"/>
+  <testcase name="merchantSwitchNeverClaimsAnotherTenant" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.034"/>
+  <testcase name="expiredOwnershipRejectsOldNetworkCompletion" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.051"/>
+  <testcase name="timeoutAndRestartKeepDeletionIntent" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.079"/>
+  <testcase name="failedLocalAcknowledgmentKeepsUncertainRemoteCompletionRetryable" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.033"/>
+  <testcase name="concurrentDispatchersDoNotClaimOneEventTwice" classname="com.trader.salesmanager.sales.outbox.OutboxDispatcherTest" time="0.036"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

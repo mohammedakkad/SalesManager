@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ThemedDashboardRefreshUiTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:27:52" hostname="ac8333d6728a" time="1.923">
+  <properties/>
+  <testcase name="retryUsesCurrentPendingRecordsAndThemeChangesDoNotIssueExtraRetries" classname="com.trader.salesmanager.ui.coverage.ThemedDashboardRefreshUiTest" time="0.379"/>
+  <testcase name="unreadChatBadgeTracksAllSizeThresholdsAndDisappearsWhenRead" classname="com.trader.salesmanager.ui.coverage.ThemedDashboardRefreshUiTest" time="0.374"/>
+  <testcase name="recentInvoiceReplacementUpdatesItsNavigationIdentityAndPaymentStatus" classname="com.trader.salesmanager.ui.coverage.ThemedDashboardRefreshUiTest" time="0.374"/>
+  <testcase name="anOpenSyncSheetReplacesFailedRowsWithTheAcknowledgedStateWithoutRetrying" classname="com.trader.salesmanager.ui.coverage.ThemedDashboardRefreshUiTest" time="0.428"/>
+  <testcase name="liveRankingsReplaceBothProductsAndDebtorTargetsAcrossThemeChange" classname="com.trader.salesmanager.ui.coverage.ThemedDashboardRefreshUiTest" time="0.366"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

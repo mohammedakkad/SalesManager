@@ -1,0 +1,13 @@
+{
+  "classesCompared": 2340,
+  "identicalAfterRuntimePackageNormalization": 2340,
+  "different": [],
+  "scope": "Actual production classfiles instrumented in memory with both versions; normalize only the7hex characters of the injected runtime package. No production class/exec/APK is modified and no additional coverage case is counted.",
+  "sourceRoots": [
+    "/workspace/SalesManager/app/build/tmp/kotlin-classes/debug",
+    "/workspace/SalesManager/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes",
+    "/workspace/SalesManager/salesmanager/build/tmp/kotlin-classes/debug",
+    "/workspace/SalesManager/salesmanager/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes"
+  ],
+  "buildShape": "Canonical cold compilation, stable across normal/covered/normal packaging"
+}

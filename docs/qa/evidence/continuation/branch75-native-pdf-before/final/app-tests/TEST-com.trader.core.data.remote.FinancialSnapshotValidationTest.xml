@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.remote.FinancialSnapshotValidationTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:21:39" hostname="ac8333d6728a" time="6.007">
+  <properties/>
+  <testcase name="realtimeCashMovementsRejectNonfiniteDeltaAndBalance" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="1.41"/>
+  <testcase name="bulkReturnRefundCannotTurnIntoInfiniteMoney" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.288"/>
+  <testcase name="realtimeReturnRefundRejectsTheWholeSnapshot" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.193"/>
+  <testcase name="realtimeTransactionAmountsCannotPublishAPartialReplacement" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.266"/>
+  <testcase name="realtimeCashBalancesRejectAllRowsWhenOneIsNonfinite" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.232"/>
+  <testcase name="finiteStringAndNumberFormsKeepTheExistingOptionalDefaults" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.17"/>
+  <testcase name="bulkInvoiceQuantityAndPricesCannotImportNonfiniteValues" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.397"/>
+  <testcase name="realtimeNestedReturnAmountsCannotBecomeADeletedOrZeroedReturn" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.491"/>
+  <testcase name="bulkCashBalancesCannotBePartiallyImportedWhenOneIsNonfinite" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.4"/>
+  <testcase name="realtimeInvoiceQuantitiesAndPricesCannotPublishNonfiniteValues" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.295"/>
+  <testcase name="returnFallbackInvoiceCannotSupplyANonfiniteOriginalQuantityOrUnitPrice" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.284"/>
+  <testcase name="unknownMetadataAndAbsentOptionalFinancialFieldsRetainLegacyMeaning" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.223"/>
+  <testcase name="bulkNestedReturnItemsRejectNonfiniteQuantitiesCostsAndRefunds" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.861"/>
+  <testcase name="bulkCashMovementsRejectNonfiniteDeltaOrResult" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.302"/>
+  <testcase name="bulkTransactionAmountsRejectNonfiniteWireNumbersAsACompleteSnapshot" classname="com.trader.core.data.remote.FinancialSnapshotValidationTest" time="0.192"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

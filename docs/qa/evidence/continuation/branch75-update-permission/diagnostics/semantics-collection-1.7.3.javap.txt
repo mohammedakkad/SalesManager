@@ -1,0 +1,233 @@
+Compiled from "SemanticsNodeInteraction.kt"
+public final class androidx.compose.ui.test.SemanticsNodeInteractionCollection {
+  private final androidx.compose.ui.test.TestContext testContext;
+
+  private final boolean useUnmergedTree;
+
+  private final androidx.compose.ui.test.SemanticsSelector selector;
+
+  private java.util.List<java.lang.Integer> nodeIds;
+
+  public static final int $stable;
+
+  public androidx.compose.ui.test.SemanticsNodeInteractionCollection(androidx.compose.ui.test.TestContext, boolean, androidx.compose.ui.test.SemanticsSelector);
+    Code:
+       0: aload_0
+       1: invokespecial #10                 // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: aload_1
+       6: putfield      #14                 // Field testContext:Landroidx/compose/ui/test/TestContext;
+       9: aload_0
+      10: iload_2
+      11: putfield      #18                 // Field useUnmergedTree:Z
+      14: aload_0
+      15: aload_3
+      16: putfield      #22                 // Field selector:Landroidx/compose/ui/test/SemanticsSelector;
+      19: return
+
+  public final androidx.compose.ui.test.TestContext getTestContext$ui_test_release();
+    Code:
+       0: aload_0
+       1: getfield      #14                 // Field testContext:Landroidx/compose/ui/test/TestContext;
+       4: areturn
+
+  public final boolean getUseUnmergedTree$ui_test_release();
+    Code:
+       0: aload_0
+       1: getfield      #18                 // Field useUnmergedTree:Z
+       4: ireturn
+
+  public final androidx.compose.ui.test.SemanticsSelector getSelector$ui_test_release();
+    Code:
+       0: aload_0
+       1: getfield      #22                 // Field selector:Landroidx/compose/ui/test/SemanticsSelector;
+       4: areturn
+
+  public androidx.compose.ui.test.SemanticsNodeInteractionCollection(androidx.compose.ui.test.TestContext, boolean, androidx.compose.ui.test.SemanticsMatcher);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: aload_3
+       4: invokestatic  #37                 // Method androidx/compose/ui/test/SemanticsSelectorKt.SemanticsSelector:(Landroidx/compose/ui/test/SemanticsMatcher;)Landroidx/compose/ui/test/SemanticsSelector;
+       7: invokespecial #39                 // Method "<init>":(Landroidx/compose/ui/test/TestContext;ZLandroidx/compose/ui/test/SemanticsSelector;)V
+      10: return
+
+  public final java.util.List<androidx.compose.ui.semantics.SemanticsNode> fetchSemanticsNodes(boolean, java.lang.String);
+    Code:
+       0: aload_0
+       1: getfield      #49                 // Field nodeIds:Ljava/util/List;
+       4: ifnonnull     171
+       7: aload_0
+       8: getfield      #22                 // Field selector:Landroidx/compose/ui/test/SemanticsSelector;
+      11: aload_0
+      12: getfield      #14                 // Field testContext:Landroidx/compose/ui/test/TestContext;
+      15: iload_1
+      16: aload_0
+      17: getfield      #18                 // Field useUnmergedTree:Z
+      20: iconst_0
+      21: iconst_4
+      22: aconst_null
+      23: invokestatic  #55                 // Method androidx/compose/ui/test/TestContext.getAllSemanticsNodes$ui_test_release$default:(Landroidx/compose/ui/test/TestContext;ZZZILjava/lang/Object;)Ljava/lang/Iterable;
+      26: aload_2
+      27: dup
+      28: ifnonnull     34
+      31: pop
+      32: ldc           #57                 // String
+      34: invokevirtual #63                 // Method androidx/compose/ui/test/SemanticsSelector.map:(Ljava/lang/Iterable;Ljava/lang/String;)Landroidx/compose/ui/test/SelectionResult;
+      37: astore_3
+      38: aload_3
+      39: astore        4
+      41: iconst_0
+      42: istore        5
+      44: aload_0
+      45: aload         4
+      47: invokevirtual #69                 // Method androidx/compose/ui/test/SelectionResult.getSelectedNodes:()Ljava/util/List;
+      50: checkcast     #71                 // class java/lang/Iterable
+      53: astore        6
+      55: astore        7
+      57: iconst_0
+      58: istore        8
+      60: aload         6
+      62: astore        9
+      64: new           #73                 // class java/util/ArrayList
+      67: dup
+      68: aload         6
+      70: bipush        10
+      72: invokestatic  #79                 // Method kotlin/collections/CollectionsKt.collectionSizeOrDefault:(Ljava/lang/Iterable;I)I
+      75: invokespecial #82                 // Method java/util/ArrayList."<init>":(I)V
+      78: checkcast     #84                 // class java/util/Collection
+      81: astore        10
+      83: iconst_0
+      84: istore        11
+      86: aload         9
+      88: invokeinterface #88,  1           // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      93: astore        12
+      95: aload         12
+      97: invokeinterface #93,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+     102: ifeq          148
+     105: aload         12
+     107: invokeinterface #97,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     112: astore        13
+     114: aload         10
+     116: aload         13
+     118: checkcast     #99                 // class androidx/compose/ui/semantics/SemanticsNode
+     121: astore        14
+     123: astore        15
+     125: iconst_0
+     126: istore        16
+     128: aload         14
+     130: invokevirtual #103                // Method androidx/compose/ui/semantics/SemanticsNode.getId:()I
+     133: invokestatic  #109                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     136: aload         15
+     138: swap
+     139: invokeinterface #113,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+     144: pop
+     145: goto          95
+     148: aload         10
+     150: checkcast     #115                // class java/util/List
+     153: nop
+     154: aload         7
+     156: swap
+     157: checkcast     #71                 // class java/lang/Iterable
+     160: invokestatic  #119                // Method kotlin/collections/CollectionsKt.toList:(Ljava/lang/Iterable;)Ljava/util/List;
+     163: putfield      #49                 // Field nodeIds:Ljava/util/List;
+     166: aload_3
+     167: invokevirtual #69                 // Method androidx/compose/ui/test/SelectionResult.getSelectedNodes:()Ljava/util/List;
+     170: areturn
+     171: aload_0
+     172: getfield      #14                 // Field testContext:Landroidx/compose/ui/test/TestContext;
+     175: iload_1
+     176: aload_0
+     177: getfield      #18                 // Field useUnmergedTree:Z
+     180: iconst_0
+     181: iconst_4
+     182: aconst_null
+     183: invokestatic  #55                 // Method androidx/compose/ui/test/TestContext.getAllSemanticsNodes$ui_test_release$default:(Landroidx/compose/ui/test/TestContext;ZZZILjava/lang/Object;)Ljava/lang/Iterable;
+     186: astore_3
+     187: nop
+     188: iconst_0
+     189: istore        4
+     191: aload_3
+     192: astore        5
+     194: new           #73                 // class java/util/ArrayList
+     197: dup
+     198: invokespecial #120                // Method java/util/ArrayList."<init>":()V
+     201: checkcast     #84                 // class java/util/Collection
+     204: astore        6
+     206: iconst_0
+     207: istore        7
+     209: aload         5
+     211: invokeinterface #88,  1           // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+     216: astore        8
+     218: aload         8
+     220: invokeinterface #93,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+     225: ifeq          284
+     228: aload         8
+     230: invokeinterface #97,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     235: astore        9
+     237: aload         9
+     239: checkcast     #99                 // class androidx/compose/ui/semantics/SemanticsNode
+     242: astore        10
+     244: iconst_0
+     245: istore        11
+     247: aload_0
+     248: getfield      #49                 // Field nodeIds:Ljava/util/List;
+     251: dup
+     252: invokestatic  #126                // Method kotlin/jvm/internal/Intrinsics.checkNotNull:(Ljava/lang/Object;)V
+     255: aload         10
+     257: invokevirtual #103                // Method androidx/compose/ui/semantics/SemanticsNode.getId:()I
+     260: invokestatic  #109                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     263: invokeinterface #129,  2          // InterfaceMethod java/util/List.contains:(Ljava/lang/Object;)Z
+     268: ifeq          218
+     271: aload         6
+     273: aload         9
+     275: invokeinterface #113,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+     280: pop
+     281: goto          218
+     284: aload         6
+     286: checkcast     #115                // class java/util/List
+     289: nop
+     290: areturn
+
+  public static java.util.List fetchSemanticsNodes$default(androidx.compose.ui.test.SemanticsNodeInteractionCollection, boolean, java.lang.String, int, java.lang.Object);
+    Code:
+       0: iload_3
+       1: iconst_1
+       2: iand
+       3: ifeq          8
+       6: iconst_1
+       7: istore_1
+       8: iload_3
+       9: iconst_2
+      10: iand
+      11: ifeq          16
+      14: aconst_null
+      15: astore_2
+      16: aload_0
+      17: iload_1
+      18: aload_2
+      19: invokevirtual #160                // Method fetchSemanticsNodes:(ZLjava/lang/String;)Ljava/util/List;
+      22: areturn
+
+  public final androidx.compose.ui.test.SemanticsNodeInteraction get(int);
+    Code:
+       0: new           #164                // class androidx/compose/ui/test/SemanticsNodeInteraction
+       3: dup
+       4: aload_0
+       5: getfield      #14                 // Field testContext:Landroidx/compose/ui/test/TestContext;
+       8: aload_0
+       9: getfield      #18                 // Field useUnmergedTree:Z
+      12: aload_0
+      13: getfield      #22                 // Field selector:Landroidx/compose/ui/test/SemanticsSelector;
+      16: iload_1
+      17: invokestatic  #168                // Method androidx/compose/ui/test/SemanticsSelectorKt.addIndexSelector:(Landroidx/compose/ui/test/SemanticsSelector;I)Landroidx/compose/ui/test/SemanticsSelector;
+      20: invokespecial #169                // Method androidx/compose/ui/test/SemanticsNodeInteraction."<init>":(Landroidx/compose/ui/test/TestContext;ZLandroidx/compose/ui/test/SemanticsSelector;)V
+      23: areturn
+
+  static {};
+    Code:
+       0: bipush        8
+       2: putstatic     #174                // Field $stable:I
+       5: return
+}

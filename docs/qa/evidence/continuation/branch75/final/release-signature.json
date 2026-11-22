@@ -1,0 +1,6 @@
+{
+  "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "Picked up JAVA_TOOL_OPTIONS:  -Dhttps.proxyHost=proxy -Dhttps.proxyPort=8080 -Dhttp.proxyHost=proxy -Dhttp.proxyPort=8080 -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts\nDOES NOT VERIFY\nERROR: Missing META-INF/MANIFEST.MF\n"
+}

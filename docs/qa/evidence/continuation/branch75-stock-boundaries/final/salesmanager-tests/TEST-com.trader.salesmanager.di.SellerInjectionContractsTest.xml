@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.di.SellerInjectionContractsTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T11:15:30" hostname="ac8333d6728a" time="31.055">
+  <properties/>
+  <testcase name="returnFactoryAcceptsTheActualNavigationParametersAndKeepsTheRequestedInvoiceIdentity" classname="com.trader.salesmanager.di.SellerInjectionContractsTest" time="24.896"/>
+  <testcase name="injectedSaleViewModelUsesTheRealAggregateCommandInsteadOfIndependentRepositoryWrites" classname="com.trader.salesmanager.di.SellerInjectionContractsTest" time="5.51"/>
+  <testcase name="productionDaoFactoriesShareTheSameRoomDatabaseAndCommandSingleton" classname="com.trader.salesmanager.di.SellerInjectionContractsTest" time="0.649"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

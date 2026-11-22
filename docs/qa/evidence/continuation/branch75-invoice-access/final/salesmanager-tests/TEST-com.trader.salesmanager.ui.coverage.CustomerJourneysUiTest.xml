@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:26:36" hostname="ac8333d6728a" time="0.858">
+  <properties/>
+  <testcase name="actualCustomerFormRejectsReservedNameThenSavesTrimmedIdentityOnce" classname="com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest" time="0.202"/>
+  <testcase name="debtsNavigateToCorrectCustomerRatherThanDisplayedRank" classname="com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest" time="0.179"/>
+  <testcase name="linkedCustomerDeletionRequiresExplicitConfirmation" classname="com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest" time="0.185"/>
+  <testcase name="customerListSearchAndIdentityNavigationAreDelegated" classname="com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest" time="0.1"/>
+  <testcase name="editCustomerFormPreservesLoadedPhoneAndRoutesSave" classname="com.trader.salesmanager.ui.coverage.CustomerJourneysUiTest" time="0.192"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

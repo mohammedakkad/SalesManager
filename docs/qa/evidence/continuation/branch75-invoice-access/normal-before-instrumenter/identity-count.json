@@ -1,0 +1,5 @@
+{
+  "actualJUnitCases": 1020,
+  "identityDigestSha256": "7a5c117086e999e80e96cc85f3762ef0b65d67b691284ff19328aade9ac9ba3e",
+  "scope": "Normal full run before Android-only tooling update; all1020pass. Final qualification reruns both JVM suites after that update."
+}

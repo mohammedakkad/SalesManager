@@ -1,0 +1,11 @@
+# Seller realtime failure contracts
+
+Starting source b9c978f silently ignored onCancelled in eight Seller listener families. Eight actual SDK-fake callback regressions fail before repair; two real Room logout regressions also fail for payment methods (merchant read once) and employees (blank logout filtered out). No deployed Firebase rules or production data are accessed.
+
+After repair the targeted shared set passes35 cases: wire contracts18, bounded recovery8, logout2 and customer Room integrity7 (22 new cases). The listener now closes with a typed error carrying the SDK error code, removes its registration and never emits a fabricated empty snapshot. A cross-family cancellation test checks all eight unregister and ignore late callbacks. The unchanged consumer merge/deletion handlers run only for real snapshots.
+
+All relevant consumers were reviewed: Customer, Transaction, PaymentMethod, CashBox (two streams), InvoiceItem, Return and Employee repositories. The changed observer methods are used by these Seller components; Admin business logic and the separate activation/session observer protocols are untouched. Recovery is inside each merchant collectLatest boundary. NETWORK_ERROR, DISCONNECTED and UNAVAILABLE get at most three total subscriptions with500ms/1000ms delays. Permission and credential failures are not retried. Cancellation and unrelated programming errors are not hidden. On terminal failure the affected stream completes with a sanitized code warning; the merchant observer remains alive. Payment and employee logout now cancels the old listener.
+
+Real Room customer cases preserve pending data and derived debt on denial, recover on a later merchant session, accept only an actual snapshot after network retries and cancel old-account backoff on logout. This proves listener ownership/cancellation, not complete tenant partitioning of legacy shared tables or deployed server authorization.
+
+Remaining limitation: there is no new user-visible per-listener failure status or explicit same-session retry action after retry exhaustion. The failure is explicit at the SDK Flow boundary and bounded/safely handled by current repositories. Global sync-status integration and same-session reconnect qualification remain a named follow-up. Remote payload validity and cross-merchant cache ownership are not certified by SDK fakes.

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:28:18" hostname="ac8333d6728a" time="9.908">
+  <properties/>
+  <testcase name="cancellationWhileReadingCandidatesDoesNotBecomeRetry" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.027"/>
+  <testcase name="cancellationWhileMarkingDeliveryDoesNotBecomeSuccess" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.019"/>
+  <testcase name="cancellationWhileReadingSettingsDoesNotBecomeRetry" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.024"/>
+  <testcase name="emptyCandidateSetDoesNotPostOrAcknowledgeAnything" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.025"/>
+  <testcase name="disabledStockChannelDoesNotConsumeCandidateCooldown" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.021"/>
+  <testcase name="deliveredNotificationUsesDistinctProductCountAndLowStockDestination" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.022"/>
+  <testcase name="failedCooldownPersistenceKeepsTheExistingDeliveredNotification" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.019"/>
+  <testcase name="globallyDisabledNotificationsDoNotConsumeCandidateCooldown" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="0.018"/>
+  <testcase name="legacyAndroidDeliversWithoutNotificationChannelSupport" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="1.823"/>
+  <testcase name="deniedNotificationPermissionDoesNotConsumeCandidateCooldown" classname="com.trader.salesmanager.ui.qualification.LowStockWorkerRecoveryTest" time="7.91"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

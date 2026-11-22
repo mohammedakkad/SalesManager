@@ -1,0 +1,8 @@
+{
+  "startingSha": "a5c402f564669129aacdc745210c4f6a3075352d",
+  "workerProductionUnchanged": true,
+  "tests": 9,
+  "passed": 7,
+  "failed": 2,
+  "scope": "Public doWork through WorkManager test builder, deterministic DataStore and SDK status fake, actual Robolectric notification manager. Not a server authorization/ABA guarantee."
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.InventoryCompletionUiTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:45:03" hostname="6d75d821cc71" time="0.332">
+  <properties/>
+  <testcase name="countedItemCanBeClearedWithoutChangingOtherItem" classname="com.trader.salesmanager.ui.coverage.InventoryCompletionUiTest" time="0.24"/>
+  <testcase name="finishingWarnsAboutUncountedItemsAndRequiresExplicitApply" classname="com.trader.salesmanager.ui.coverage.InventoryCompletionUiTest" time="0.092"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

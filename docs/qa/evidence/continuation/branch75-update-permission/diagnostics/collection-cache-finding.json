@@ -1,0 +1,6 @@
+{
+  "dependency": "androidx.compose.ui:ui-test-android:1.7.3",
+  "aarSha256": "6731f05492c376733345b0aa647291eb21d50c0a2859b44918ed11f386d1ade7",
+  "finding": "SemanticsNodeInteractionCollection.fetchSemanticsNodes stores nodeIds on first query and later filters by those IDs. Reusing the old dialog collection cannot find new-window input nodes. Query afresh on each readiness poll and again after the reopened window is ready.",
+  "scope": "Read-only framework bytecode inspection; no private field/method is invoked or modified, no coverage/data rewriting."
+}

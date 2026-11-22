@@ -1,0 +1,98 @@
+[
+  {
+    "source": "com/trader/salesmanager/ui/settings/backup/BackupManager.kt",
+    "before": {
+      "BRANCH": {
+        "covered": 172,
+        "missed": 120
+      },
+      "LINE": {
+        "covered": 190,
+        "missed": 41
+      },
+      "METHOD": {
+        "covered": 33,
+        "missed": 2
+      }
+    },
+    "after": {
+      "BRANCH": {
+        "covered": 223,
+        "missed": 69
+      },
+      "LINE": {
+        "covered": 218,
+        "missed": 15
+      },
+      "METHOD": {
+        "covered": 35,
+        "missed": 0
+      }
+    },
+    "branchCoveredDelta": 51
+  },
+  {
+    "source": "com/trader/salesmanager/ui/settings/backup/BackupViewModel.kt",
+    "before": {
+      "BRANCH": {
+        "covered": 21,
+        "missed": 5
+      },
+      "LINE": {
+        "covered": 198,
+        "missed": 19
+      },
+      "METHOD": {
+        "covered": 37,
+        "missed": 0
+      }
+    },
+    "after": {
+      "BRANCH": {
+        "covered": 24,
+        "missed": 4
+      },
+      "LINE": {
+        "covered": 197,
+        "missed": 19
+      },
+      "METHOD": {
+        "covered": 37,
+        "missed": 0
+      }
+    },
+    "branchCoveredDelta": 3
+  },
+  {
+    "source": "com/trader/salesmanager/ui/settings/backup/BackupMigrator.kt",
+    "before": {
+      "BRANCH": {
+        "covered": 92,
+        "missed": 56
+      },
+      "LINE": {
+        "covered": 139,
+        "missed": 2
+      },
+      "METHOD": {
+        "covered": 27,
+        "missed": 0
+      }
+    },
+    "after": {
+      "BRANCH": {
+        "covered": 124,
+        "missed": 24
+      },
+      "LINE": {
+        "covered": 139,
+        "missed": 2
+      },
+      "METHOD": {
+        "covered": 27,
+        "missed": 0
+      }
+    },
+    "branchCoveredDelta": 32
+  }
+]

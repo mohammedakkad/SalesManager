@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:45:40" hostname="ac8333d6728a" time="0.902">
+  <properties/>
+  <testcase name="explicitNullLegacyCollectionsNormalizeBeforeValidation" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.061"/>
+  <testcase name="invalidCustomerCollectionCannotMasqueradeAsValidPayload" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.054"/>
+  <testcase name="archiveWithoutCanonicalNameUsesFirstLegacyJson" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.059"/>
+  <testcase name="damagedZipCompressionMethodIsReportedAsCorruption" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.057"/>
+  <testcase name="directoriesAndNonJsonFilesAreSkipped" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.06"/>
+  <testcase name="jsonNullIsRejectedInsteadOfProducingARestorePayload" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.047"/>
+  <testcase name="encryptedArchiveRequiresPasswordBeforeParsing" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.234"/>
+  <testcase name="archiveWithoutJsonIsRejected" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.053"/>
+  <testcase name="jsonArrayCannotMasqueradeAsPayloadObject" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.056"/>
+  <testcase name="productOnlyBackupIsValidWithoutInventingSaleRecords" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.056"/>
+  <testcase name="paymentMethodOnlyBackupIsValidAndRestoresVisitorCustomer" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.066"/>
+  <testcase name="ordinarySessionLookupFailureRetainsStorageFailureContract" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.05"/>
+  <testcase name="nestedCanonicalEntryWinsOverEarlierLegacyJson" classname="com.trader.salesmanager.ui.settings.backup.BackupArchiveBoundaryTest" time="0.048"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

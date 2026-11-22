@@ -1,0 +1,16 @@
+[
+  {
+    "rawArchive": "before/TEST-com.trader.core.data.local.InvoicePendingSyncBoundaryTest.xml.gz",
+    "rawBytesSha256": "f4cf70ef259bfc4af3ff8a391dc9354768deac945adc88c954885a8595e84681",
+    "view": "before/TEST-com.trader.core.data.local.InvoicePendingSyncBoundaryTest.xml",
+    "viewSha256": "cf3b926b178953b9ef54eb0f5967d280ccf71e4522a53143d0034c4ccfff853f",
+    "transform": "Trim trailing line whitespace for Git review. Exact raw JUnit XML is preserved in gzip; test identities/outcomes were compared and are unchanged."
+  },
+  {
+    "rawArchive": "before-job-cancellation/TEST-com.trader.core.data.local.InvoicePendingSyncBoundaryTest.xml.gz",
+    "rawBytesSha256": "541815c17891d07a64c97e7297e199ac3f4f025068d5a8a0a4548f13be536b30",
+    "view": "before-job-cancellation/TEST-com.trader.core.data.local.InvoicePendingSyncBoundaryTest.xml",
+    "viewSha256": "c54e85d2bb31940ba5aa5625410c2c571e351fd34027a9286ec5b5eb74573a87",
+    "transform": "Trim trailing line whitespace for Git review. Exact raw JUnit XML is preserved in gzip; test identities/outcomes were compared and are unchanged."
+  }
+]

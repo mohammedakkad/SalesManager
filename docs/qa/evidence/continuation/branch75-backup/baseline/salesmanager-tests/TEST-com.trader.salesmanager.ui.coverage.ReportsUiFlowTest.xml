@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ReportsUiFlowTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:30:28" hostname="6d75d821cc71" time="1.826">
+  <properties/>
+  <testcase name="selectedBusyDayShowsPaidAndDebtRowsAndNavigatesToItsMidnight" classname="com.trader.salesmanager.ui.coverage.ReportsUiFlowTest" time="0.146"/>
+  <testcase name="selectedEmptyDayExplainsThatNoTransactionsExist" classname="com.trader.salesmanager.ui.coverage.ReportsUiFlowTest" time="0.121"/>
+  <testcase name="monthReadinessMismatchKeepsBothFinancialExportActionsDisabled" classname="com.trader.salesmanager.ui.coverage.ReportsUiFlowTest" time="0.063"/>
+  <testcase name="calendarMonthActionsAreAccessibleAndInvokeTheirActualCallbacks" classname="com.trader.salesmanager.ui.coverage.ReportsUiFlowTest" time="0.117"/>
+  <testcase name="pendingMonthlyTotalsDisablePdfUntilReady" classname="com.trader.salesmanager.ui.coverage.ReportsUiFlowTest" time="0.061"/>
+  <testcase name="financialSectionsPresentAllSalesProfitAndDebtAnalytics" classname="com.trader.salesmanager.ui.coverage.ReportsUiFlowTest" time="1.237"/>
+  <testcase name="periodButtonsDispatchTheirOwnPeriodAndDoNotChangeTheCalendarDirectly" classname="com.trader.salesmanager.ui.coverage.ReportsUiFlowTest" time="0.08"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,26 @@
+{
+  "provenance": "Synthetic cryptographic reference vectors generated independently with Python hashlib.pbkdf2_hmac(SHA-256,UTF-8,100000,32) and cryptography AESGCM(128-bit tag). Fixed salts/nonces are test-only. Schema field42 is arbitrary wire metadata, not an authentic Room migration fixture.",
+  "vectors": [
+    {
+      "label": "ascii",
+      "password": "isolated-fixture-password",
+      "plaintextBase64": "UEsDBBQAAAAAAAAAIVxRd6SrIgAAACIAAAALAAAAZml4dHVyZS50eHTZhtiz2K7YqSDZhdix2KzYudmK2Kkg2YXYs9iq2YLZhNipUEsBAhQDFAAAAAAAAAAhXFF3pKsiAAAAIgAAAAsAAAAAAAAAAAAAAIABAAAAAGZpeHR1cmUudHh0UEsFBgAAAAABAAEAOQAAAEsAAAAAAA==",
+      "ciphertextBase64": "U01CSwEAAAAqAAABi8/laAAAAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHwECAwQFBgcICQoLDK5IQMWewkVh4PB9xngRf20LvCLM2ZQuNvFiUjBfTX+OPKoIWorJ0w0hKBI3SEdRFd8ANyOh1U9wCTRVRvEnwc13psASvsuGDEDpUkqr7RaUX6PgZe+l8rw/lUd2lzFIfPugsWtlfRNuhJqSdbDdf/8HvBmbvbQJ5CPooQv4ixEJkccErKmGZR1t7EcBaxdbur4lOKaoOyeyel/S9WF9nYnYcMM2E7uSOQFm",
+      "ciphertextSha256": "a83f4ed868f6f75b89f98bffbe0951d69029691d2107efe777ba0e13116c3fc0"
+    },
+    {
+      "label": "arabic",
+      "password": "كلمة مرور معيارية",
+      "plaintextBase64": "UEsDBBQAAAAAAAAAIVxRd6SrIgAAACIAAAALAAAAZml4dHVyZS50eHTZhtiz2K7YqSDZhdix2KzYudmK2Kkg2YXYs9iq2YLZhNipUEsBAhQDFAAAAAAAAAAhXFF3pKsiAAAAIgAAAAsAAAAAAAAAAAAAAIABAAAAAGZpeHR1cmUudHh0UEsFBgAAAAABAAEAOQAAAEsAAAAAAA==",
+      "ciphertextBase64": "U01CSwEAAAAqAAABi8/laAAAAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHwECAwQFBgcICQoLDAJ2FQQQnZL7DA3eqX5KKm/5te71gGMfw4DsqGO/HNXwtkZahgj9xMzlusmpoZdx7ovil3fBCzoIzeviFAv2mjugxPwdK/xVVFiBJ8tNRvsQBhHifO2krBeJbB5Wn4C0aZ4olwld3QdRJm2ML5NizC/0QVAtCiuxa58xqSc8o1pJmtU2QRyaxqc+TeeR23nJLALWyaDnBkzf561VEuVLVVBq7X0nJa1MgMj5",
+      "ciphertextSha256": "f5c051af49efcd51089997d7257b815e41690b2b4a73da7e590d26b5a6a03235"
+    },
+    {
+      "label": "emoji",
+      "password": "phrase-🌿-🔐",
+      "plaintextBase64": "UEsDBBQAAAAAAAAAIVxRd6SrIgAAACIAAAALAAAAZml4dHVyZS50eHTZhtiz2K7YqSDZhdix2KzYudmK2Kkg2YXYs9iq2YLZhNipUEsBAhQDFAAAAAAAAAAhXFF3pKsiAAAAIgAAAAsAAAAAAAAAAAAAAIABAAAAAGZpeHR1cmUudHh0UEsFBgAAAAABAAEAOQAAAEsAAAAAAA==",
+      "ciphertextBase64": "U01CSwEAAAAqAAABi8/laAAAAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHwECAwQFBgcICQoLDCJ4fII5hex5pIyNDujywpEkaWT4+YQr857ESKoQA2yb4WD8wDG7AcaFyR/hkuyOS7+jzGJSgCZIFl9cevyIB9leDNS5hUG+KGknty7iJcvEDC9mjukqoUthYvoAJPGFEBhWaloX4ukvULqEYD6j1YHJkxcJbjhEO4wVM2xusRqDY7xkSzDP/PlEbHtRLqQVdXdOraK1h1K2MROCIWfgM11PxsCY/4QkQGx9",
+      "ciphertextSha256": "f10670cc2b92ecfa45cd4ea3664f176e846174771f37842354d0c4eff1b1afd1"
+    }
+  ]
+}

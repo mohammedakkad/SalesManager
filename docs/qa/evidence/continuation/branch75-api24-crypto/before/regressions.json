@@ -1,0 +1,13 @@
+{
+  "count": 2,
+  "cases": [
+    {
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoCompatibilityTest",
+      "name": "decryptsIndependentAsciiArabicAndEmojiVersionOneReferenceArchivesWithoutPlatformFactory"
+    },
+    {
+      "class": "com.trader.salesmanager.ui.settings.backup.BackupCryptoCompatibilityTest",
+      "name": "encryptsAndInteroperatesWithTheNativeFactoryWhenTheNamedPlatformFactoryIsAbsent"
+    }
+  ]
+}

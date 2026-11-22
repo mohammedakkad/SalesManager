@@ -1,0 +1,21 @@
+{
+  "productionSourceSha": "99b59033911339f60b2d63972cecf688816c67da",
+  "scope": "Local complete5m32s offline QA build; later DI additions affect JVM test source only, not APK production classes. No hosted APK hashes claimed.",
+  "apks": [
+    {
+      "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+      "bytes": 1077216,
+      "sha256": "ba48461a7d4a434a5bb03988e990e8e6dd2964e11b87fda47daa135b7780033d"
+    },
+    {
+      "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+      "bytes": 51293732,
+      "sha256": "53e6e8bf8cce860ce92f86c61f4b0e7cfc190c859147a8e8f4bafe36c730ae7b"
+    },
+    {
+      "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
+      "bytes": 26702050,
+      "sha256": "fba111fc1c5fd70c795b12ec9ae2ae77c383f4a4b2dc4de0fd16844930ae8504"
+    }
+  ]
+}

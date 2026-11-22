@@ -1,0 +1,33 @@
+{
+  "scope": "Three actual native-rendering cases, four Skia bitmap captures. Two additional chart cases assert semantics only. The replaced three-day series must draw a central valley, not the earlier two-day rising curve. This is not physical-device pixel qualification.",
+  "captures": [
+    {
+      "path": "changingThemeRetainsTheSeriesAndItsVisibleCurve-0.png",
+      "sha256": "840fa54c65c063f487bb00d3ec824580fba3706d74e75e189602ce1f8aabd440",
+      "greenPixels": 815,
+      "hasValley": false,
+      "accessibleDescription": "المبيعات خلال 7 أيام: السبت: 100.00; الأحد: 200.00; الاثنين: 50.00"
+    },
+    {
+      "path": "changingThemeRetainsTheSeriesAndItsVisibleCurve-1.png",
+      "sha256": "80149cfa1c0a4c82bfb8dd54cbd8ec1622ecf322055477d5a507b09a01835778",
+      "greenPixels": 845,
+      "hasValley": false,
+      "accessibleDescription": "المبيعات خلال 7 أيام: السبت: 100.00; الأحد: 200.00; الاثنين: 50.00"
+    },
+    {
+      "path": "sevenDayChartExposesEveryActualDayAndAmountAndDrawsItsCurve-0.png",
+      "sha256": "1dfdea0feb849cd718d28673243b7a5c9922a1f45f4c2674415f279fb7679663",
+      "greenPixels": 1465,
+      "hasValley": false,
+      "accessibleDescription": "المبيعات خلال 7 أيام: السبت: 0.00; الأحد: 900.00; الاثنين: 1100.00; الثلاثاء: 1000000.00; الأربعاء: 1300.00; الخميس: 1400.00; الجمعة: 1100000.00"
+    },
+    {
+      "path": "replacingHistoryUpdatesAccessibleValuesAndRemovesStaleDates-0.png",
+      "sha256": "169943f4eeb8f00d2bc29f4c23af8cebe584c72e29e744853d46e6446c427acf",
+      "greenPixels": 894,
+      "hasValley": true,
+      "accessibleDescription": "المبيعات خلال 7 أيام: السبت: 75.25; الأحد: 0.00; الاثنين: 125.50"
+    }
+  ]
+}

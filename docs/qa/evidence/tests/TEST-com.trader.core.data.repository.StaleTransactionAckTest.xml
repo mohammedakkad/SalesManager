@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.StaleTransactionAckTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-01T05:33:45" hostname="1845f097faca" time="28.044">
+  <properties/>
+  <testcase name="oldFailureCannotMarkNewEditFailed" classname="com.trader.core.data.repository.StaleTransactionAckTest" time="27.233"/>
+  <testcase name="unchangedSuccessAcknowledges" classname="com.trader.core.data.repository.StaleTransactionAckTest" time="0.313"/>
+  <testcase name="unchangedFailureRemainsRetryable" classname="com.trader.core.data.repository.StaleTransactionAckTest" time="0.27"/>
+  <testcase name="oldSuccessCannotAcknowledgeNewEdit" classname="com.trader.core.data.repository.StaleTransactionAckTest" time="0.228"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

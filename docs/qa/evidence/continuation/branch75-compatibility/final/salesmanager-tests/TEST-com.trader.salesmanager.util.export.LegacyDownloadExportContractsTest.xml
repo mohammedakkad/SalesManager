@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.util.export.LegacyDownloadExportContractsTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:45:53" hostname="ac8333d6728a" time="0.046">
+  <properties/>
+  <testcase name="legacyDownloadCopiesRealWorkbookAndReplacesAnOlderExport" classname="com.trader.salesmanager.util.export.LegacyDownloadExportContractsTest" time="0.018"/>
+  <testcase name="missingLegacySourceReturnsFailureWithoutInventingAFile" classname="com.trader.salesmanager.util.export.LegacyDownloadExportContractsTest" time="0.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.remote.SellerRealtimeRecoveryTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-10T14:08:47" hostname="13302589aed6" time="3.309">
+  <properties/>
+  <testcase name="cancellationDuringBackoffCannotResubscribe" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="2.957"/>
+  <testcase name="permanentDisconnectionStopsAfterThreeAttemptsWithoutDeletingLocalRows" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.045"/>
+  <testcase name="unavailableBackendUsesTheSameFiniteRetryBudget" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.044"/>
+  <testcase name="permissionDeniedDoesNotRetryOrInventAnEmptySnapshot" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.04"/>
+  <testcase name="expiredCredentialsDoNotEnterANetworkRetryLoop" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.045"/>
+  <testcase name="switchingMerchantDuringRetryCancelsThePreviousAccount" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.085"/>
+  <testcase name="callerCancellationAndProgrammingErrorsAreNotHiddenAsSdkFailures" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.051"/>
+  <testcase name="transientFailuresUseTwoBoundedDelaysThenDeliverTheActualSnapshot" classname="com.trader.core.data.remote.SellerRealtimeRecoveryTest" time="0.041"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

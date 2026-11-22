@@ -1,0 +1,9 @@
+{
+  "artifact": "seller-compose-results-api-28",
+  "id": 14421615141,
+  "source": "a5c402f564669129aacdc745210c4f6a3075352d",
+  "redirectHost": "productionresultssa5.blob.core.windows.net",
+  "status": "BLOCKED",
+  "error": "Tunnel connection failed: 403 Forbidden",
+  "rawBytesVerified": false
+}

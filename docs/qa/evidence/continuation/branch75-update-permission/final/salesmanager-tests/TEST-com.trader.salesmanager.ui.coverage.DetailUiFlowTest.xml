@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.DetailUiFlowTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:04:30" hostname="ac8333d6728a" time="0.567">
+  <properties/>
+  <testcase name="deletionNavigatesBackOnlyAfterStateConfirmsDeletion" classname="com.trader.salesmanager.ui.coverage.DetailUiFlowTest" time="0.28"/>
+  <testcase name="partiallyReturnedInvoiceKeepsNetItemsAndCustomerDebtVisible" classname="com.trader.salesmanager.ui.coverage.DetailUiFlowTest" time="0.143"/>
+  <testcase name="customerDetailsShowsDerivedDebtAndRealTransactionNavigation" classname="com.trader.salesmanager.ui.coverage.DetailUiFlowTest" time="0.143"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

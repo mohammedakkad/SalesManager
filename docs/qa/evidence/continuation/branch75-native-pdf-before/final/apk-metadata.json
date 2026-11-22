@@ -1,0 +1,26 @@
+[
+  {
+    "path": "salesmanager/build/outputs/apk/debug/salesmanager-debug.apk",
+    "bytes": 53571417,
+    "sha256": "0d1c161b7b1f0e67f09b72a8038f7e529aaa166c28d6b4ecae36c614a92c0605",
+    "signatureVerificationExit": 0,
+    "expectedSigned": true,
+    "scope": "QA debug signing or deliberately unsigned minified release; no production signing material"
+  },
+  {
+    "path": "salesmanager/build/outputs/apk/androidTest/debug/salesmanager-debug-androidTest.apk",
+    "bytes": 1075853,
+    "sha256": "e299c26eda48ca3c5dc20730392d1537e3aae4855e1b0337072e2fe469a9d6cc",
+    "signatureVerificationExit": 0,
+    "expectedSigned": true,
+    "scope": "QA debug signing or deliberately unsigned minified release; no production signing material"
+  },
+  {
+    "path": "salesmanager/build/outputs/apk/release/salesmanager-release-unsigned.apk",
+    "bytes": 27049506,
+    "sha256": "bedf18e41813843896c9c93bbd67aac78419166f4dd4d4e4b5d79b427e107a01",
+    "signatureVerificationExit": 1,
+    "expectedSigned": false,
+    "scope": "QA debug signing or deliberately unsigned minified release; no production signing material"
+  }
+]

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.ChatRetryConcurrencyRoomTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:45:21" hostname="ac8333d6728a" time="0.109">
+  <properties/>
+  <testcase name="staleDismissCallbackCannotDeleteAnIdentityStillBeingSent" classname="com.trader.salesmanager.ui.qualification.ChatRetryConcurrencyRoomTest" time="0.029"/>
+  <testcase name="staleDismissCannotRemoveAnotherMerchantsPendingRowButOwnDismissStillWorks" classname="com.trader.salesmanager.ui.qualification.ChatRetryConcurrencyRoomTest" time="0.052"/>
+  <testcase name="repeatedRetryWhileSendingUsesOneRemoteAttemptAndOnePersistedIdentity" classname="com.trader.salesmanager.ui.qualification.ChatRetryConcurrencyRoomTest" time="0.028"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

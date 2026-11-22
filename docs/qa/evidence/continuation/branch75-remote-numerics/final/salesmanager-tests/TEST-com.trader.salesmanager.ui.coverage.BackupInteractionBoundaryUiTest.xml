@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-18T16:29:37" hostname="ac8333d6728a" time="2.52">
+  <properties/>
+  <testcase name="exportingDisablesRepeatedExportAndImportSelection" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.349"/>
+  <testcase name="exportedFileShareEffectDoesNotRepeatOnUnrelatedRecomposition" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.218"/>
+  <testcase name="refusingReplacementDoesNotRestoreData" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.31"/>
+  <testcase name="errorToastIsConsumedOnceAcrossUnrelatedStateChange" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.195"/>
+  <testcase name="cancellingImportPasswordDoesNotAttemptDecryption" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.322"/>
+  <testcase name="successToastIsConsumedOnceAcrossUnrelatedStateChange" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.159"/>
+  <testcase name="importPasswordRequiresContentAndDelegatesItsExactValue" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.243"/>
+  <testcase name="exportConfirmationTracksBothNonblankPasswordFieldsAcrossEdits" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.366"/>
+  <testcase name="cancellingExportDialogDoesNotStartExport" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.237"/>
+  <testcase name="importingDisablesExportAndRepeatedImportSelection" classname="com.trader.salesmanager.ui.coverage.BackupInteractionBoundaryUiTest" time="0.118"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

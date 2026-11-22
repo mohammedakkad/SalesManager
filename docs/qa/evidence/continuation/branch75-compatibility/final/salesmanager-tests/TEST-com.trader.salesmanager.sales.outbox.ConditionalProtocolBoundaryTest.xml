@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" tests="20" skipped="0" failures="0" errors="0" timestamp="2026-11-18T08:43:38" hostname="ac8333d6728a" time="0.202">
+  <properties/>
+  <testcase name="payloadVersionCannotBeUpgradedWithoutProtocolSupport" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.046"/>
+  <testcase name="foreignAfterImageCannotCreateAnotherTenantProjection" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.008"/>
+  <testcase name="repeatedTargetCannotApplyAmbiguousEffects" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.003"/>
+  <testcase name="zeroAggregateCannotTargetAnUnallocatedSale" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <testcase name="unsupportedBackendCannotFallThroughToSuccessfulDelivery" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <testcase name="rtdbCannotWriteProtocolReceiptsAsBusinessData" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.002"/>
+  <testcase name="totalEffectLimitIncludesRealtimeEffects" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.084"/>
+  <testcase name="eventIdentityCannotEscapeReceiptNamespace" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <testcase name="unitPathMustUseTheUnitsCollection" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <testcase name="firestoreLimitAccepts450ButRejects451Effects" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.042"/>
+  <testcase name="numericBeforeImagePreservesLargeIntegerPrecisionAndAllowsSdkNumberKinds" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.002"/>
+  <testcase name="revisionZeroCannotMasqueradeAsFirstMutation" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.0"/>
+  <testcase name="firestoreCannotWriteAnEntireProductInsteadOfAUnit" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <testcase name="receiptRequiresSameDigestAndCurrentHead" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.002"/>
+  <testcase name="validTombstoneRetainsBeforeImageAndNullAfterImage" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.003"/>
+  <testcase name="trailingSeparatorCannotCreateAnEmptyRemoteKey" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <testcase name="nonfiniteRemoteBeforeImageCannotMatchAFiniteExpectedBalance" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <testcase name="merchantIdentityCannotEscapeTenantNamespace" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.0"/>
+  <testcase name="foreignBeforeImageIsRejectedEvenForDeletion" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <testcase name="sameLegacyPathAcrossIndependentBackendsRemainsValid" classname="com.trader.salesmanager.sales.outbox.ConditionalProtocolBoundaryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

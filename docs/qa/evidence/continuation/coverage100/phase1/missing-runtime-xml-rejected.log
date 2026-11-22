@@ -1,0 +1,16 @@
+## Seller actual device and PDFBox runtime cases
+
+| Group | Test | Result |
+| --- | --- | --- |
+| Android instrumentation | createArabicCustomerValidatesFormSavesOnceAndNavigatesBack | NOT EXECUTED |
+| Android instrumentation | editCustomerPreservesIdAndDoesNotCreateDuplicate | NOT EXECUTED |
+| Android instrumentation | generateCustomerStatementForHostBalanceVerification | NOT EXECUTED |
+| Android instrumentation | generateLongInvoiceForHostPaginationAndContentVerification | NOT EXECUTED |
+| Android instrumentation | generateMonthlyReportForHostPaginationAndFinancialVerification | NOT EXECUTED |
+| Android instrumentation | generateSingleInvoiceForHostContentVerification | NOT EXECUTED |
+| PDFBox on Android-generated files | customerStatementPreservesPaidDebtTotalsAndBothTransactionIdentities | NOT EXECUTED |
+| PDFBox on Android-generated files | generatedPdfContainsInvoiceIdentityArabicAndFinancialTotal | NOT EXECUTED |
+| PDFBox on Android-generated files | longInvoicePaginatesWithoutDroppingFinalItemOrTotal | NOT EXECUTED |
+| PDFBox on Android-generated files | monthlyReportPreservesFinancialSummaryAndFinalDayAcrossPages | NOT EXECUTED |
+
+Required runtime XML cases incomplete or unsuccessful

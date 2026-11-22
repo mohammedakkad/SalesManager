@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:35:31" hostname="6d75d821cc71" time="0.806">
+  <properties/>
+  <testcase name="wakeupFailureDoesNotRollBackAlreadyCommittedRestore" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.049"/>
+  <testcase name="foreignCommandReceiptsRollBackEarlierCustomerReplacement" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.085"/>
+  <testcase name="wakeupCancellationPropagatesAfterTheRestoreHasCommitted" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.092"/>
+  <testcase name="cancelledSessionLookupLeavesExistingDatabaseUntouched" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.051"/>
+  <testcase name="historicalAcknowledgmentRecoversKnownReceiptWhenBackupMetadataIsMissing" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.086"/>
+  <testcase name="foreignOutboxRollsBackReplacementAndEarlierCommandReceiptInsert" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.084"/>
+  <testcase name="backupConflictRemainsPermanentEvenWhenNoLocalHistoryExists" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.072"/>
+  <testcase name="restoreNeverReducesKnownRetryHistoryAndRemovesSchedulingDelay" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.049"/>
+  <testcase name="higherBackupRetryHistorySurvivesRestore" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.062"/>
+  <testcase name="historicalAcknowledgmentKeepsBackupReceiptWhenThereIsNoKnownReceipt" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.04"/>
+  <testcase name="knownPermanentConflictCannotBeClearedByPendingBackup" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.062"/>
+  <testcase name="latestAcknowledgmentLosesRestoredLeaseAndRequiresRemoteRevalidation" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.04"/>
+  <testcase name="endedSessionCannotStartDestructiveRestore" classname="com.trader.salesmanager.ui.settings.backup.BackupOutboxRecoveryRoomTest" time="0.032"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

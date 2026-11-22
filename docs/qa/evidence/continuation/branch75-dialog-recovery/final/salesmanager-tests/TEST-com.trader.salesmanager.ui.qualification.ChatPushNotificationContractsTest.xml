@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-17T15:46:09" hostname="6d75d821cc71" time="2.047">
+  <properties/>
+  <testcase name="laterChatNotificationReplacesTheExistingChatSlot" classname="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" time="0.108"/>
+  <testcase name="legacyAndroidReceivesTheSameContentWithoutAChannel" classname="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" time="1.82"/>
+  <testcase name="absentPayloadUsesTheExistingArabicDefaultAndEmptyBody" classname="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" time="0.017"/>
+  <testcase name="tapRoutesToTheChatDestinationWithAnImmutablePendingIntent" classname="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" time="0.018"/>
+  <testcase name="dataMessagePreservesArabicTitleBodyAndTimestampInExpandedText" classname="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" time="0.022"/>
+  <testcase name="emptyTimestampDoesNotAddAnExtraLine" classname="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" time="0.029"/>
+  <testcase name="channelUsesHighImportanceAndExistingDescription" classname="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" time="0.015"/>
+  <testcase name="notificationPayloadTakesPrecedenceOverDataFallback" classname="com.trader.salesmanager.ui.qualification.ChatPushNotificationContractsTest" time="0.016"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

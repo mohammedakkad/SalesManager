@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.ActivationImportIntegrityTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-15T13:27:38" hostname="236b99701f27" time="11.536">
+  <properties/>
+  <testcase name="localImportFailureRollsBackEveryEarlierWrite" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="9.714"/>
+  <testcase name="cancellationDuringCashInsertRollsBackEveryImportedRow" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.269"/>
+  <testcase name="managedOperationCommittedDuringFetchBlocksLateImport" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.284"/>
+  <testcase name="successfulImportPreservesExpectedBalancesAndDerivedDebt" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.196"/>
+  <testcase name="successfulCatalogImportDoesNetworkOutsideRoomAndPreservesStock" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.207"/>
+  <testcase name="unitInsertFailureRollsBackCustomerTransactionAndProductWrites" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.166"/>
+  <testcase name="cancelledUnitDownloadDoesNotPersistAnyStagedRows" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.158"/>
+  <testcase name="failedUnitDownloadLeavesAllLocalRowsUnchanged" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.154"/>
+  <testcase name="accountSwitchDuringFetchCannotApplyPreviousMerchantReply" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.219"/>
+  <testcase name="logoutDuringFetchBlocksLateImport" classname="com.trader.core.data.local.ActivationImportIntegrityTest" time="0.166"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

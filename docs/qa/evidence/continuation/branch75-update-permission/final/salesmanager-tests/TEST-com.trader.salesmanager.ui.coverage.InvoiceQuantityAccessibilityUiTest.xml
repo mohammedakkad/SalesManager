@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:04:36" hostname="ac8333d6728a" time="0.678">
+  <properties/>
+  <testcase name="accessibleEditOpensTheNamedLineAndConfirmationUsesItsEditedQuantityAndPrice" classname="com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest" time="0.24"/>
+  <testcase name="accessibleBackLeavesTheInvoiceWithoutConfirmingItsDraft" classname="com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest" time="0.096"/>
+  <testcase name="accessibleDecreaseRemovesTheSelectedLastUnitAndKeepsTheOtherInvoiceLine" classname="com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest" time="0.071"/>
+  <testcase name="accessibleIncreaseNamesItsLineAndOnlyIncrementsThatLine" classname="com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest" time="0.095"/>
+  <testcase name="accessibleSearchSelectsTheNamedProductWithoutChangingTheOtherLine" classname="com.trader.salesmanager.ui.coverage.InvoiceQuantityAccessibilityUiTest" time="0.173"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

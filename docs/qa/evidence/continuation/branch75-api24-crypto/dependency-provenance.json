@@ -1,0 +1,9 @@
+{
+  "artifact": "org.bouncycastle:bcprov-jdk18on:1.87",
+  "latestReleaseAtLookup": "1.87",
+  "metadataUpdated": "20261111102806",
+  "sha256": "12d2d3dd82a9ec15e92ec7c7943ee64f6097c6dc12c07e984f1693b77565b9aa",
+  "sha1": "3cf2bbc1280a743fd3d4d7d556883c13e5d28be5",
+  "downloadedJarSha256": "12d2d3dd82a9ec15e92ec7c7943ee64f6097c6dc12c07e984f1693b77565b9aa",
+  "matchedMavenPublishedSha256": true
+}

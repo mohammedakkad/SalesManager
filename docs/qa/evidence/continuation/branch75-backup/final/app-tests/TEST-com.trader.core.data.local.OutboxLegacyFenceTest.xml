@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.local.OutboxLegacyFenceTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-17T09:36:46" hostname="6d75d821cc71" time="0.665">
+  <properties/>
+  <testcase name="foreignCashRowsAreNotRetargetedOnAccountSwitch" classname="com.trader.core.data.local.OutboxLegacyFenceTest" time="0.259"/>
+  <testcase name="pendingOutboxPreventsIndependentLegacyStockUpload" classname="com.trader.core.data.local.OutboxLegacyFenceTest" time="0.065"/>
+  <testcase name="foreignPendingInvoiceIsNotRetargetedOnAccountSwitch" classname="com.trader.core.data.local.OutboxLegacyFenceTest" time="0.085"/>
+  <testcase name="standaloneCashEffectUploadsAfterCommitAndSeesCommittedBalance" classname="com.trader.core.data.local.OutboxLegacyFenceTest" time="0.11"/>
+  <testcase name="foreignStockAndUnitsAreNotUploadedUnderTheNextMerchant" classname="com.trader.core.data.local.OutboxLegacyFenceTest" time="0.08"/>
+  <testcase name="nestedCashEffectRemainsPendingForItsOwningOutbox" classname="com.trader.core.data.local.OutboxLegacyFenceTest" time="0.065"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,37 @@
+{
+  "startingCases": 1074,
+  "endingCases": 1080,
+  "missing": [],
+  "added": [
+    [
+      "salesmanager",
+      "com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest",
+      "aPendingCheckBlocksRepeatedClicksAndItsErrorCanBeRetriedExplicitly"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest",
+      "aRefreshedCandidateReplacesTheVisibleVersionWithoutStartingADownload"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest",
+      "deniedUnknownAppsPermissionOffersSettingsWithoutDownloadingOrInstalling"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest",
+      "downloadProgressRemainsBusyAcrossThemeAndOnlyReadyStateOffersInstallation"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest",
+      "grantingUnknownAppsPermissionOutsideTheActivityRefreshesActionsOnResume"
+    ],
+    [
+      "salesmanager",
+      "com.trader.salesmanager.ui.coverage.SettingsUpdateRefreshUiTest",
+      "revokingUnknownAppsPermissionOutsideTheActivityRemovesTheInstallActionOnResume"
+    ]
+  ]
+}

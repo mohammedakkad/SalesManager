@@ -1,0 +1,10 @@
+{
+  "startingHead": "5b2016ca3503abe87136621f4b6b19191096a1e7",
+  "qualifiedSource": "fda922fb865dabf5633115268d3b4e72ccbb8e4f",
+  "runUrl": "https://github.com/mohammedakkad/SalesManager/actions/runs/42863854908",
+  "publicRunHeadDisplay": "fda922f",
+  "sourceScope": "Public PR run displays abbreviated source SHA; native Git resolves full branch source. Raw authenticated checkout/artifacts were not independently downloaded.",
+  "documentationCommit": "Final evidence-only commit follows the qualified source; its SHA is available from Git history.",
+  "noAdminBusinessChanges": true,
+  "noExclusionsOrLowerGates": true
+}

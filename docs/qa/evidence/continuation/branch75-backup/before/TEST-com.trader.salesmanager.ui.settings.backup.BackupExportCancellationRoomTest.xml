@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.settings.backup.BackupExportCancellationRoomTest" tests="1" skipped="0" failures="1" errors="0" timestamp="2026-11-17T09:34:29" hostname="6d75d821cc71" time="2.243">
+  <properties/>
+  <testcase name="cancelledSessionLookupPropagatesAndReleasesSnapshotTransaction" classname="com.trader.salesmanager.ui.settings.backup.BackupExportCancellationRoomTest" time="2.243">
+    <failure message="StorageFailed" type="com.trader.salesmanager.ui.settings.backup.BackupException$StorageFailed">StorageFailed
+	at com.trader.salesmanager.ui.settings.backup.BackupException$StorageFailed.&lt;clinit&gt;(BackupManager.kt)
+	at com.trader.salesmanager.ui.settings.backup.BackupManager$exportEncryptedBackup$2.invokeSuspend(BackupManager.kt:52)
+	at app//kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:99)
+	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:113)
+	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:589)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:823)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:720)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:707)
+</failure>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

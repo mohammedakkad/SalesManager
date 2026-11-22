@@ -1,0 +1,77 @@
+{
+  "policy": "Human-readable log views trim trailing whitespace/blank EOF lines for Git checks. Each .log.gz preserves the exact original bytes; XML/coverage/PDF bytes are not normalized.",
+  "files": [
+    {
+      "view": "after-targeted/targeted.log",
+      "rawGzip": "after-targeted/targeted.log.gz",
+      "rawSha256": "7904ae4e6f6bf15bd88b4390bc546fa5955fb8a212f626aa595a00ede5d413c7",
+      "viewSha256": "22cfeede2ac2f250b10ab37765c7290f65fd787f4599c660ce44be47f1e1b806"
+    },
+    {
+      "view": "baseline/full.log",
+      "rawGzip": "baseline/full.log.gz",
+      "rawSha256": "b770be51423b918f86b171ecad0825aff89ad6c5660992d79605f6fd08f689b9",
+      "viewSha256": "3fbd4c467ea9755a751cc68bec5c6439cbb676642e6cb1dc82f85fc8459e18ae"
+    },
+    {
+      "view": "before/targeted.log",
+      "rawGzip": "before/targeted.log.gz",
+      "rawSha256": "2c91a9c73ef2e8b13d4c7aea8fd35d51c8f67b8518a138aa8f6ae97b12e7f01e",
+      "viewSha256": "2c226a20a9f67e7c2d023b83ed0b041f415165a43f6b18abb85013489f16e7e4"
+    },
+    {
+      "view": "final/clean.log",
+      "rawGzip": "final/clean.log.gz",
+      "rawSha256": "f4c5d56264d57022f9d9f4cbac2a2359943eeba9f78d5305cb50f5441dbb59b7",
+      "viewSha256": "d7dd613704ec3fb06163eeee1c4364e49dc168deff9c614e521952d61cd08e2a"
+    },
+    {
+      "view": "final/debug-signature.log",
+      "rawGzip": "final/debug-signature.log.gz",
+      "rawSha256": "b0a1af67205efcd284e5bbae691ebf4a0d296b4fcae02cd28e7e0509d0e0efbc",
+      "viewSha256": "b0a1af67205efcd284e5bbae691ebf4a0d296b4fcae02cd28e7e0509d0e0efbc"
+    },
+    {
+      "view": "final/debugAndroidTest-signature.log",
+      "rawGzip": "final/debugAndroidTest-signature.log.gz",
+      "rawSha256": "b0a1af67205efcd284e5bbae691ebf4a0d296b4fcae02cd28e7e0509d0e0efbc",
+      "viewSha256": "b0a1af67205efcd284e5bbae691ebf4a0d296b4fcae02cd28e7e0509d0e0efbc"
+    },
+    {
+      "view": "final/gates.log",
+      "rawGzip": "final/gates.log.gz",
+      "rawSha256": "88d6ff1d70370cc8b34dd952edcbf74138ed05f95a447b437157af0f4d87822a",
+      "viewSha256": "88d6ff1d70370cc8b34dd952edcbf74138ed05f95a447b437157af0f4d87822a"
+    },
+    {
+      "view": "final/python.log",
+      "rawGzip": "final/python.log.gz",
+      "rawSha256": "b540ea5fa82db1cd18b8921b7312c83e66989df36c43cb23d241a4471024ec58",
+      "viewSha256": "b540ea5fa82db1cd18b8921b7312c83e66989df36c43cb23d241a4471024ec58"
+    },
+    {
+      "view": "final/qualified.log",
+      "rawGzip": "final/qualified.log.gz",
+      "rawSha256": "2e6d9b2e4f895b561ebd6a7eb156124342e989623a3d0adaf9bc79f07d0f1e2c",
+      "viewSha256": "047b7a1e1ad2a0a81daaa7523010f6561872836d1c76d7b43d9b323ed139ec67"
+    },
+    {
+      "view": "final/secrets.log",
+      "rawGzip": "final/secrets.log.gz",
+      "rawSha256": "daecccc64bb5769a7087b8ebf223a81792bf3ca435b268140552e96b054037d5",
+      "viewSha256": "daecccc64bb5769a7087b8ebf223a81792bf3ca435b268140552e96b054037d5"
+    },
+    {
+      "view": "final/suite-report.log",
+      "rawGzip": "final/suite-report.log.gz",
+      "rawSha256": "67d03bf2e90c93e98de5ff28fd818429e3630cd785f3dccc36608832b3d7910a",
+      "viewSha256": "f6f7df37b16259049f5ce6c3657a521134fcb98838d4960344ba3d171e5afcfb"
+    },
+    {
+      "view": "final/unsignedRelease-signature.log",
+      "rawGzip": "final/unsignedRelease-signature.log.gz",
+      "rawSha256": "1413af210d1627fde4f14e31934eb5d9d031684e4f7a5c3371a74b3bdeb8764c",
+      "viewSha256": "1413af210d1627fde4f14e31934eb5d9d031684e4f7a5c3371a74b3bdeb8764c"
+    }
+  ]
+}

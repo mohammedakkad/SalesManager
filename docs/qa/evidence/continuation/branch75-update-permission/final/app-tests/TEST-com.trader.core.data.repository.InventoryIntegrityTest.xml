@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.core.data.repository.InventoryIntegrityTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:02:16" hostname="ac8333d6728a" time="0.363">
+  <properties/>
+  <testcase name="repeatedFinalizationAppliesEachAdjustmentOnce" classname="com.trader.core.data.repository.InventoryIntegrityTest" time="0.07"/>
+  <testcase name="finishPreservesOriginalStartTimeAndMerchant" classname="com.trader.core.data.repository.InventoryIntegrityTest" time="0.031"/>
+  <testcase name="cancellationPreservesHistoryWithoutChangingStock" classname="com.trader.core.data.repository.InventoryIntegrityTest" time="0.032"/>
+  <testcase name="failureOnSecondUnitRollsBackFirstQuantityAndSession" classname="com.trader.core.data.repository.InventoryIntegrityTest" time="0.055"/>
+  <testcase name="wrongMerchantCannotFinalizeLocalSession" classname="com.trader.core.data.repository.InventoryIntegrityTest" time="0.031"/>
+  <testcase name="invalidNegativeCountNeverPersists" classname="com.trader.core.data.repository.InventoryIntegrityTest" time="0.052"/>
+  <testcase name="newSessionCapturesCurrentProductUnits" classname="com.trader.core.data.repository.InventoryIntegrityTest" time="0.054"/>
+  <testcase name="uncountedAndUnchangedItemsDoNotAdjustStock" classname="com.trader.core.data.repository.InventoryIntegrityTest" time="0.036"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

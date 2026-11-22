@@ -1,0 +1,49 @@
+{
+  "jvmCases": 514,
+  "result": {
+    "passed": 514
+  },
+  "primaryCategories": {
+    "Room/SQLite on JVM": 204,
+    "Room migration": 7,
+    "Firebase SDK/protocol fake": 31,
+    "Unit/model with deterministic fakes": 168,
+    "Compose UI on JVM": 75,
+    "Loopback HTTP": 4,
+    "WorkManager lifecycle": 6,
+    "Android notification component on JVM": 3,
+    "Native bitmap graphics": 2,
+    "Backup format/crypto": 10,
+    "Real XLSX file content": 4
+  },
+  "overlappingTags": {
+    "Room/SQLite on JVM": 219,
+    "Firebase SDK/protocol fake": 66,
+    "Room migration": 7,
+    "Restart/recovery in test harness": 20,
+    "WorkManager lifecycle": 13,
+    "Compose UI on JVM": 75,
+    "Loopback HTTP": 4,
+    "Android notification component on JVM": 3,
+    "Native bitmap graphics": 2,
+    "Backup format/crypto": 15,
+    "Real XLSX file content": 4
+  },
+  "remainingDefinedWorkItems": 56,
+  "remainingByStatus": {
+    "BLOCKED": 32,
+    "NOT TESTED": 23,
+    "PARTIAL": 1
+  },
+  "remainingByKind": {
+    "Historical migration": 21,
+    "Firebase/server integration": 8,
+    "Device/end-to-end": 10,
+    "Performance benchmark": 5,
+    "Security qualification": 5,
+    "Mutation campaign": 5,
+    "SDK failure contract": 1,
+    "Logic boundary": 1
+  },
+  "scope": "Categories partition actual JVM cases; tags overlap. Remaining work items are an explicit plan, not a count of all possible tests."
+}

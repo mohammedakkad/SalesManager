@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.inventory.session.InventorySessionViewModelTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-18T10:28:06" hostname="ac8333d6728a" time="0.156">
+  <properties/>
+  <testcase name="validCountsAndClearingPersistWhileInvalidCountsNeverReachRepository" classname="com.trader.salesmanager.ui.inventory.session.InventorySessionViewModelTest" time="0.156"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

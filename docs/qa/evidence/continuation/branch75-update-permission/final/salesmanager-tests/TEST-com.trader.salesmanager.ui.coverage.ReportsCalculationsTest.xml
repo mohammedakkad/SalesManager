@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.trader.salesmanager.ui.coverage.ReportsCalculationsTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-18T17:05:10" hostname="ac8333d6728a" time="0.252">
+  <properties/>
+  <testcase name="periodChangesAndLiveRowsRecomputeTotalsWithoutLosingAnalytics" classname="com.trader.salesmanager.ui.coverage.ReportsCalculationsTest" time="0.208"/>
+  <testcase name="paidDebtProfitAndCustomerRanksRemainConsistent" classname="com.trader.salesmanager.ui.coverage.ReportsCalculationsTest" time="0.013"/>
+  <testcase name="selectingDayBuildsCorrectPaidAndUnpaidBreakdownAndCanDeselect" classname="com.trader.salesmanager.ui.coverage.ReportsCalculationsTest" time="0.014"/>
+  <testcase name="changingMonthClearsSelectionAndProducesReadyMonthlyExport" classname="com.trader.salesmanager.ui.coverage.ReportsCalculationsTest" time="0.017"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
