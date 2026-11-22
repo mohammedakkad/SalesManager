@@ -1,5 +1,7 @@
 package com.trader.salesmanager.ui.home
 
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -52,7 +54,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -125,7 +126,7 @@ private fun PendingIconButton(onClick: () -> Unit) {
             tint = UnpaidAmber,
             modifier = Modifier
                 .size(22.dp)
-                .rotate(rotation)
+                .graphicsLayer { rotationZ = rotation }
         )
     }
 }
@@ -133,7 +134,7 @@ private fun PendingIconButton(onClick: () -> Unit) {
 @Composable
 private fun FailedIconButton(onClick: () -> Unit) {
     val infiniteTransition = rememberInfiniteTransition(label = "sync_pulse")
-    val alpha by infiniteTransition.animateFloat(
+    val pulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.6f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
@@ -151,8 +152,9 @@ private fun FailedIconButton(onClick: () -> Unit) {
         Icon(
             Icons.Rounded.SyncProblem,
             contentDescription = stringResource(R.string.sync_status_failed_desc),
-            tint = DebtRed.copy(alpha = alpha),
-            modifier = Modifier.size(22.dp)
+            tint = DebtRed,
+            // Single-colour icon: layer alpha equals tint alpha, but is applied without recomposition.
+            modifier = Modifier.size(22.dp).graphicsLayer { alpha = pulseAlpha; compositingStrategy = CompositingStrategy.ModulateAlpha }
         )
     }
 }
