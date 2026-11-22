@@ -63,7 +63,7 @@ class ReturnRecoveryRoomTest {
     }
     @After fun cleanup() {models.forEach{it.viewModelScope.cancel()};scope.cancel();db.close();context.deleteDatabase(name);Dispatchers.resetMain()}
     private suspend fun model(repo:ReturnRepository=returns):ReturnViewModel {
-        val vm=ReturnViewModel(repo,invoices,products,merchant,tx.id);models+=vm
+        val vm=ReturnViewModel(repo,invoices,products,com.trader.core.domain.repository.MerchantContext.fixed(merchant),tx.id);models+=vm
         withTimeout(10000){vm.state.first{!it.isLoading}}
         vm.updateQty(0,1.0);return vm
     }
@@ -110,7 +110,7 @@ class ReturnRecoveryRoomTest {
         coEvery{fresh.getAlreadyReturnedQty(any(),any())} coAnswers {db.returnDao().totalReturnedForUnit(firstArg(),secondArg())}
         val reads=mockk<InvoiceItemRepository>()
         coEvery{reads.getItemsForTransactionOnce(any())} coAnswers {db.invoiceItemDao().getForTransactionOnce(firstArg()).map{it.toDomain()}}
-        val next=ReturnViewModel(fresh,reads,products,merchant,tx.id);models+=next
+        val next=ReturnViewModel(fresh,reads,products,com.trader.core.domain.repository.MerchantContext.fixed(merchant),tx.id);models+=next
         withTimeout(10000){next.state.first{!it.isLoading}}
         assertEquals(1.0,next.state.value.lines.single().maxReturnable,0.0)
         assertEquals(25.0,next.state.value.totalRefund,0.0)

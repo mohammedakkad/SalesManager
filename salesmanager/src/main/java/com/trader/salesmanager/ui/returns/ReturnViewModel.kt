@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.returns
 
+import com.trader.core.domain.repository.MerchantContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.trader.core.domain.model.InvoiceItem
@@ -69,7 +70,7 @@ class ReturnViewModel(
     private val returnRepo: ReturnRepository,
     private val invoiceRepo: InvoiceItemRepository,
     private val productRepo: ProductRepository,
-    private val merchantId: String,
+    private val merchant: MerchantContext,
     private val transactionId: Long         // ✅ يأتي من Koin parametersOf
 ) : ViewModel() {
 
@@ -177,11 +178,20 @@ class ReturnViewModel(
     fun confirmReturn() {
         val s = _state.value
         if (isSubmitting || !s.canConfirm) return
-        if (merchantId.isBlank()) {
-            _state.update { it.copy(processingState = ReturnUiState.Error("انتهت جلسة التاجر"), showConfirmSheet = false) }
-            return
+        isSubmitting = true
+        viewModelScope.launch {
+            // The merchant active now (not one captured when this screen was created).
+            val merchantId = merchant.currentCode()
+            if (merchantId.isBlank()) {
+                isSubmitting = false
+                _state.update { it.copy(processingState = ReturnUiState.Error("انتهت جلسة التاجر"), showConfirmSheet = false) }
+                return@launch
+            }
+            submit(s, merchantId)
         }
+    }
 
+    private suspend fun submit(s: ReturnScreenState, merchantId: String) {
         val invoice = pendingRequest?.first ?: ReturnInvoice(
             originalTransactionId = transactionId,
             merchantId = merchantId,
@@ -203,28 +213,25 @@ class ReturnViewModel(
             )
         }
         pendingRequest = invoice to returnItems
-        isSubmitting = true
         _state.update { it.copy(processingState = ReturnUiState.Loading) }
 
-        viewModelScope.launch {
-            try {
-                val result = returnRepo.processReturn(invoice, returnItems)
-                _state.update { it.copy(processingState = ReturnUiState.Success(result), showConfirmSheet = false) }
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (failure: Exception) {
-                val message = when (failure) {
-                    is IllegalArgumentException -> failure.message ?: "بيانات غير صحيحة"
-                    is IllegalStateException -> failure.message ?: "تجاوز الكمية المسموح بها"
-                    else -> "حدث خطأ، حاول مجدداً"
-                }
-                _state.update { it.copy(processingState = ReturnUiState.Error(message), showConfirmSheet = false) }
-            } finally {
-                isSubmitting = false
-                _state.update {
-                    if (it.processingState == ReturnUiState.Loading)
-                        it.copy(processingState = ReturnUiState.Idle, showConfirmSheet = false) else it
-                }
+        try {
+            val result = returnRepo.processReturn(invoice, returnItems)
+            _state.update { it.copy(processingState = ReturnUiState.Success(result), showConfirmSheet = false) }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (failure: Exception) {
+            val message = when (failure) {
+                is IllegalArgumentException -> failure.message ?: "بيانات غير صحيحة"
+                is IllegalStateException -> failure.message ?: "تجاوز الكمية المسموح بها"
+                else -> "حدث خطأ، حاول مجدداً"
+            }
+            _state.update { it.copy(processingState = ReturnUiState.Error(message), showConfirmSheet = false) }
+        } finally {
+            isSubmitting = false
+            _state.update {
+                if (it.processingState == ReturnUiState.Loading)
+                    it.copy(processingState = ReturnUiState.Idle, showConfirmSheet = false) else it
             }
         }
     }

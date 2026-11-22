@@ -136,8 +136,8 @@ class ThemedDialogJourneyTest {
         val item=InventorySessionItem("dialog-row",session.id,"p","قهوة جرد","u","حبة جرد",5.0)
         db.inventoryDao().insertSession(session.toEntity())
         db.inventoryDao().insertSessionItems(listOf(item.toEntity()))
-        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),"offline-dialog",db)
-        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),"offline-dialog")
+        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),com.trader.core.domain.repository.MerchantContext.fixed("offline-dialog"),db)
+        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),com.trader.core.domain.repository.MerchantContext.fixed("offline-dialog"))
         store.put("inventory",vm)
         show{InventorySessionScreen({},viewModel=vm)}
         compose.waitUntil(5000){!vm.uiState.value.isLoading&&vm.sessionItems.value.any{it.id==item.id}}
@@ -159,8 +159,8 @@ class ThemedDialogJourneyTest {
         val other=InventorySessionItem("untouched-row",session.id,"q","سكر محفوظ","v","علبة باقية",3.0,3.0)
         db.inventoryDao().insertSession(session.toEntity())
         db.inventoryDao().insertSessionItems(listOf(selected.toEntity(),other.toEntity()))
-        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),"offline-dialog",db)
-        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),"offline-dialog")
+        val repo=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),unused(StockRepository::class.java),com.trader.core.domain.repository.MerchantContext.fixed("offline-dialog"),db)
+        val vm=InventorySessionViewModel(repo,unused(ProductRepository::class.java),com.trader.core.domain.repository.MerchantContext.fixed("offline-dialog"))
         store.put("inventory",vm)
         show{InventorySessionScreen({},viewModel=vm)}
         compose.waitUntil(5000){!vm.uiState.value.isLoading&&vm.sessionItems.value.size==2}

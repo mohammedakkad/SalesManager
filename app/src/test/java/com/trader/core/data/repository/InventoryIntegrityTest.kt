@@ -18,7 +18,7 @@ import java.io.IOException
 class InventoryIntegrityTest {
  private lateinit var db:AppDatabase
  private val stock=mockk<StockRepository>()
- private fun repo()=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),stock,"m",db)
+ private fun repo()=InventoryRepositoryImpl(db.inventoryDao(),db.productDao(),stock,com.trader.core.domain.repository.MerchantContext.fixed("m"),db)
  @Before fun open() {
   db=Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(),AppDatabase::class.java).allowMainThreadQueries().build()
   coEvery { stock.manualAdjust(any(),any(),any(),any(),any(),any(),any()) } coAnswers {

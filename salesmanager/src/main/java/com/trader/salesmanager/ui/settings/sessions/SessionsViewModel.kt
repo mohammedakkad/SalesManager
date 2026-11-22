@@ -1,5 +1,6 @@
 package com.trader.salesmanager.ui.settings.sessions
 
+import com.trader.core.domain.repository.MerchantContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.FirebaseDatabase
@@ -18,13 +19,8 @@ import kotlinx.coroutines.tasks.await
 
 class SessionsViewModel(
     private val sessionDao: SessionDao,
-    private val merchantCode: String
+    private val merchant: MerchantContext
 ) : ViewModel() {
-
-    private val sessionsReference = FirebaseDatabase.getInstance()
-        .getReference("merchants")
-        .child(merchantCode)
-        .child("sessions")
 
     val activeSessions: StateFlow<List<Session>> = sessionDao
         .getAllSessions()
@@ -41,12 +37,16 @@ class SessionsViewModel(
     val revokeError: StateFlow<String?> = _revokeError.asStateFlow()
 
     fun revokeSession(sessionId: String) {
-        if (sessionId.isBlank() || merchantCode.isBlank() || sessionId in _revoking.value) return
+        if (sessionId.isBlank() || sessionId in _revoking.value) return
         _revoking.update { it + sessionId }
         _revokeError.value = null
         viewModelScope.launch {
             try {
-                sessionsReference.child(sessionId).removeValue().await()
+                // Resolve the merchant at revoke time: the node must belong to the merchant active now.
+                val merchantCode = merchant.currentCode()
+                if (merchantCode.isBlank()) return@launch
+                FirebaseDatabase.getInstance().getReference("merchants").child(merchantCode).child("sessions")
+                    .child(sessionId).removeValue().await()
                 sessionDao.deleteSessionById(sessionId)
             } catch (cancelled: CancellationException) {
                 throw cancelled
