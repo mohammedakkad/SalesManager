@@ -219,6 +219,8 @@ fun SettingsScreen(
 
                 DarkModeSettingItem()
 
+                DigitSystemSettingItem()
+
                 LowStockAlertsSettingItem(
                     settings = lowStockSettings,
                     onEnabledChange = { enabled ->

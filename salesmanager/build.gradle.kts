@@ -65,6 +65,9 @@ android {
         resValues = true
     }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+    // AppLocale forces the app language at runtime; keep every language in the base APK of an
+    // App Bundle so a device-language split can never drop the resources it needs.
+    bundle { language { enableSplit = false } }
 }
 
 dependencies {

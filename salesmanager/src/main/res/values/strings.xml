@@ -106,4 +106,9 @@
     <string name="sync_sheet_empty_title">لا يوجد شيء معلق</string>
     <string name="sync_sheet_empty_subtitle">جميع بياناتك متزامنة بالكامل</string>
     <string name="search_clear">مسح البحث</string>
+    <!-- Settings: digit system -->
+    <string name="settings_digits_title">نظام الأرقام</string>
+    <string name="settings_digits_subtitle">يُطبَّق على الشاشات والفواتير والتقارير</string>
+    <string name="settings_digits_arabic_indic">عربية ١٢٣</string>
+    <string name="settings_digits_western">غربية 123</string>
 </resources>

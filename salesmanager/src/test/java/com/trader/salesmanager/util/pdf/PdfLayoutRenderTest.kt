@@ -169,4 +169,23 @@ class PdfLayoutRenderTest {
         assertEquals(1, ib.layoutLog.count { it.kind == "table-message" })
         assertWellFormed(rb, report); assertWellFormed(ib, manual)
     }
+
+    @Test fun pdfOutputIsIdenticalOnEnglishAndArabicDevices() {
+        val device = java.util.Locale.getDefault()
+        fun render(tag: String): List<Bitmap> {
+            org.robolectric.RuntimeEnvironment.setQualifiers(tag)
+            java.util.Locale.setDefault(java.util.Locale.forLanguageTag(tag))
+            val sink = sink("locale-$tag")
+            CustomerStatementPdfGenerator.render(CustomerStatementPdfGenerator.StatementPdfData(
+                Customer(7, "سامر", phone = "0599123456"),
+                (1..30).map { Transaction(id = 500L + it, customerId = 7, amount = it * 3.75, isPaid = it % 3 == 0, date = printedAt + it * 86_400_000L) },
+                "متجر النور", printedAt = printedAt), sink)
+            return sink.pages
+        }
+        try {
+            val arabic = render("ar"); val english = render("en")
+            assertEquals(arabic.size, english.size)
+            arabic.zip(english).forEachIndexed { i, (a, e) -> assertTrue("Page ${i + 1} differs between ar and en", a.sameAs(e)) }
+        } finally { java.util.Locale.setDefault(device) }
+    }
 }

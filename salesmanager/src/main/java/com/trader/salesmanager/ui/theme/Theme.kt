@@ -11,12 +11,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import com.trader.salesmanager.ui.locale.AppLocale
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.trader.core.data.local.appDataStore
+import com.trader.core.util.format.DigitSystemPreference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 // ══════════════════════════════════════════════════════════════════
@@ -156,6 +160,8 @@ fun SalesManagerTheme(
     // خطأ القراءة يعود للمظهر الفاتح الافتراضي بدل إيقاف التطبيق.
     val storedDarkFlow: Flow<Boolean?> = remember(context) {
         context.appDataStore.data
+            // Apply the digit setting before the first themed frame so numbers never flip style.
+            .onEach { DigitSystemPreference.apply(it) }
             .map<_, Boolean?> { it[DARK_MODE_KEY] == true }
             .catch { emit(false) }
     }
@@ -175,6 +181,8 @@ fun SalesManagerTheme(
     }
 
     CompositionLocalProvider(
+        // Single place for the root layout direction (see AppLocale).
+        LocalLayoutDirection provides AppLocale.layoutDirection,
         LocalDarkTheme provides isDark,
         LocalToggleTheme provides toggle,
         LocalAppColors provides tokens
