@@ -162,3 +162,4 @@ jobs:
             salesmanager/build/reports/androidTests/
             salesmanager/build/outputs/androidTest-results/
             salesmanager/build/outputs/mapping/staging/
+            salesmanager/build/outputs/qa-logcat/
