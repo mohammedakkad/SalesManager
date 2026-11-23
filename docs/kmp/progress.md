@@ -5,7 +5,8 @@ Branch: `feat/kmp-android-desktop` (merged with `production` @ 44229d1, PRs #52/
 
 ## Notes / deviations
 
-- `baseline.md` supersedes the figures in section 0 of the master prompt (unit-test floor: 1,192).
+- `baseline.md` supersedes the figures in section 0 of the master prompt. Test floors: JVM unit tests 1,192; `qa/pdf-verifier` 10 (10 PASS on each of API 24/28/33/35/36 in run #88); instrumented 19 executed per compose job on API 24/28/33/35/36 (20 in XML incl. 1 skipped `MinifiedSmokeTest`), R8 smoke lane on API 24/36 not verified from artifacts.
+- Seller QA runs on every PR to `production` (no `paths:` or draft filter): it started on PR #54 as run #91.
 - K0.1 commit: `328e3b7` (to be backfilled in the K0.2 commit).
 
 ## Tasks
@@ -39,7 +40,7 @@ Branch: `feat/kmp-android-desktop` (merged with `production` @ 44229d1, PRs #52/
 - [ ] K1.6 Docs: `docs/kmp/developer-setup.md` (JDK, running desktop and Android, IDE plugin).  
   - commit: _pending_ · evidence: _pending_
 
-- [ ] K1.7 **Proposed, needs owner approval:** make `:admin` debug buildable (today `:admin:assembleDebug` fails in `processDebugGoogleServices`: no client for `com.trader.admin.debug`). Options: (a) add a `com.trader.admin.debug` Android app to the Firebase project and update `admin/google-services.json` (owner action, touches Firebase config); (b) drop `applicationIdSuffix = ".debug"` in `admin/build.gradle.kts:32` (changes the debug applicationId, so it no longer installs beside release). Not started.  
+- [ ] K1.7 **Proposed, needs owner approval:** make `:admin` debug buildable (today `:admin:assembleDebug` fails in `processDebugGoogleServices`: no client for `com.trader.admin.debug`). Options: Context: `:salesmanager` also has `debug { applicationIdSuffix = ".debug" }` (`salesmanager/build.gradle.kts:41`, plus `.test` for staging at line 45) and it builds, because `salesmanager/google-services.json` already has clients for `com.trader.salesmanager.debug` and `.test`; `admin/google-services.json` has none for `.debug`. Options: (a) add a `com.trader.admin.debug` Android app to the Firebase project and update `admin/google-services.json` (owner action, touches Firebase config); (b) drop `applicationIdSuffix = ".debug"` in `admin/build.gradle.kts:32` (changes the debug applicationId, so it no longer installs beside release). Not started.  
   - commit: _pending_ · evidence: _pending_
 
 ### K2 — Domain models to commonMain (smallest pieces first)
