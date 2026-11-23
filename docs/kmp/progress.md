@@ -149,3 +149,19 @@ Branch: `feat/kmp-android-desktop` (merged with `production` @ 44229d1, PRs #52/
   - commit: _pending_ · evidence: _pending_
 - [ ] K11.4 Final docs and Arabic report (template in section 7).  
   - commit: _pending_ · evidence: _pending_
+
+## Post-migration backlog (do not touch during KMP)
+
+Declared but not imported anywhere in `src/main` (verified by grep on 2026-11-23). Removal needs owner approval and is **not part of the KMP work**.
+
+- `com.google.firebase:firebase-analytics` (`:app`, `api`). **Caution:** the Analytics SDK initialises itself without any import (content provider and manifest merge), so removing it changes behaviour (events and device data collection stop). Treat it as a product decision, not a cleanup.
+- `com.google.firebase:firebase-config` (`:app`, `api`): no `remoteconfig` import.
+- `androidx.compose.ui:ui-graphics` (catalog entry, no module references it).
+- `androidx.compose.ui:ui-tooling-preview` (catalog entry, no module references it).
+
+## Proposed tasks (need owner approval, not started)
+
+- [ ] **K1.0 CI hardening: Gradle dependency cache + `concurrency` cancel-in-progress for `seller-qa.yml`.** Needs owner approval; it edits a workflow.
+  Current state (checked): `seller-qa.yml` already caches `~/.gradle/caches` with `actions/cache@v4` in its three job types (lines 27, 82, 144), with one exact key `seller-qa-<os>-<hash of *.gradle.kts, gradle/*.gradle, libs.versions.toml>` and **no `restore-keys`**; the post-step is skipped when a job fails (seen in #90, #91, #93), so a failed job does not refresh the cache; every change to a build file starts from an empty cache and re-downloads everything from Maven Central. `gradle/actions/setup-gradle` is **not** used. There is **no `concurrency:` block** (superseded runs keep running). The release workflows use `actions/setup-java` with `cache: gradle`.
+  Proposal: add `restore-keys` (prefix) so a changed key still starts warm, consider `gradle/actions/setup-gradle` (or caching `~/.gradle/wrapper` too), and add `concurrency: group: seller-qa-${{ github.ref }}` with `cancel-in-progress: true`.
+  - commit: _pending_ · evidence: _pending_

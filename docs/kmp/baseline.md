@@ -130,6 +130,8 @@ runs only on `pull_request`, so it has **no run on the production head commit it
 | Build SalesManager Release APK #618 | `44229d1` (production) | success | https://github.com/mohammedakkad/SalesManager/actions/runs/45034140633 |
 | Build Admin Release APK #491 | `44229d1` (production) | success | https://github.com/mohammedakkad/SalesManager/actions/runs/45034140859 |
 | Seller QA #90 (PR #53 head) | `45c913b` | failure: 1 of 8 jobs, infra (see below) | https://github.com/mohammedakkad/SalesManager/actions/runs/45033629599 |
+| Seller QA #92 (PR #54) | `a89afaa` | success (all 8 jobs) | https://github.com/mohammedakkad/SalesManager/actions/runs/45095152246 |
+| Seller QA #93 (PR #54) | `813d250` | failure: compose API 35 (infra) and compose API 36 (one UI test), see below | https://github.com/mohammedakkad/SalesManager/actions/runs/45096331350 |
 | Seller QA #89 (PR #53) | `ffd6cf5` | cancelled | https://github.com/mohammedakkad/SalesManager/actions/runs/44999265518 |
 | Seller QA #88 (PR #53) | `581d50a` | success (all jobs) | https://github.com/mohammedakkad/SalesManager/actions/runs/44998447639 |
 
@@ -161,6 +163,12 @@ BUILD FAILED in 1m 32s   ...   stage=JVM coverage exit=1
 
 Same class as #90 (infra, Maven Central throttling; no test executed). Run: https://github.com/mohammedakkad/SalesManager/actions/runs/45041474229.
 Run #90 itself was not re-run (still attempt 1, failure).
+
+### Seller QA #93 (docs-only commit `813d250`): two failed jobs, read from the job artifacts
+
+- **compose (API 35): infra.** All 29 device and PDFBox cases are `NOT EXECUTED`. The JVM stage failed with `ActivationStatusLifecycleTest > classMethod FAILED ... AssertionError at MavenArtifactFetcher.java:133 ... Caused by: IOException at HttpURLConnection.java:2059`, i.e. Robolectric could not download its Android jars. Third time in this family (see Risks).
+- **compose (API 36): one real-looking test failure, probably flaky.** 18 PASS, 1 FAILURE, 10 NOT EXECUTED (the PDFBox group did not run after the instrumentation failure).
+  The failing case is `encryptedExportAfterThemeChangeProducesAnArchiveDecryptableWithTheOriginalPassword`, detail `androidx.test.espresso.base.RootViewPicker$RootViewWithoutFocusException: Waited ...` (the test window never got focus). The same test passed on API 36 in #88, #91 and #92, and this commit changed only docs, so this looks like an emulator focus flake. **Not verified** until it is re-run.
 
 ### Seller QA #90, job "compose (API 24)" (job 137242428178): classification (a) infra, not a test or code failure
 
@@ -243,11 +251,63 @@ Three separate floors. None of them may go down during the migration (rule 3).
   and #91 compose API 28 (HTTP 429 on `nativeruntime-dist-compat-1.0.20.jar`). Each failure happened before any test ran, but it blocks the
   device-test gate. Possible mitigation: Gradle dependency caching in workflows (or a repository mirror) — **future task, needs owner approval**.
   No workflow was changed.
-- **R8 smoke report anomaly** (see "Test floors (c)"): green job but a `testRunFailed` entry in the XML; needs a look before relying on that lane as a gate.
+- **R8 smoke lane is a possible false green** (see "R8 smoke lane" below): the minified build has never been confirmed to start on a device.
+- **Seller QA flakiness / infra:** #93 shows a third Maven download failure (Robolectric) and a focus flake in one UI test.
 - **`:admin` debug variant cannot be built** (see above; K1.7).
 - **Tracked Firebase config.** `admin/google-services.json` and `salesmanager/google-services.json` are tracked in git. They are client config, not
   secret keys, but they are the source of the debug-variant mismatch above.
 - **`:app` coverage varies by 1-2 units between runs** (9585 vs 9584 lines): treat coverage gates as thresholds, not exact numbers.
+
+### R8 smoke lane (possible false green; read-only investigation)
+
+**Finding: the R8 smoke lane has never recorded a real test case, and it is green anyway.** The root cause of the crash is **not verified**: the lane captures no logcat.
+
+How the lane decides pass/fail (`.github/workflows/seller-qa.yml`, job `minified-smoke`; script `scripts/run-seller-minified-smoke.sh`):
+
+```yaml
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          ...
+          script: bash scripts/run-seller-minified-smoke.sh
+```
+```bash
+set -euo pipefail
+...
+gradle --configure-on-demand --no-configuration-cache --no-daemon --max-workers=2 -PsellerTestBuildType=staging \
+  -Pandroid.testInstrumentationRunnerArguments.class=com.trader.salesmanager.qa.MinifiedSmokeTest \
+  :salesmanager:connectedStagingAndroidTest -x :salesmanager:uploadCrashlyticsMappingFileStaging
+```
+
+- The job passes if **Gradle exits 0**. Nothing reads the JUnit XML. The compose lane is different: `run-seller-device-qa.sh:88,105` runs `check-device-qa-results.py` and `summarize-device-tests.py --check`, where "missing/skipped/duplicate is never success". The R8 lane has no such check.
+- Evidence that Gradle exits 0 although no test ran (job 137289577942, run #91 attempt 2, API 24):
+  ```
+  16:09:31 > Task :salesmanager:connectedStagingAndroidTest
+  16:09:31 additionalTestOutput is not supported on this device running API level 24 ...
+  16:09:32 Running tests on devices: test(AVD) - 7.0
+  16:09:35 BUILD SUCCESSFUL in 7m 6s
+  ```
+  Three seconds from "Running tests" to success; `MinifiedSmokeTest` alone sleeps 5 s, so it cannot have run.
+- Evidence from the artifacts (`outputs/androidTest-results/connected/staging/TEST-test(AVD) - N.xml`), identical in every run checked:
+  ```xml
+  <testsuite name="android-test" tests="1" failures="1" ...>
+    <testcase name="testRunFailed" classname="android-test" time="0.000">
+      <failure>Test run failed to complete. Instrumentation run failed due to Process crashed.</failure>
+  ```
+  `test-result-exit-code.txt` contains `0`; `test-result.pb` has no test case; `reports/androidTests/.../index.html` says "1 tests 1 failures". 
+- **Did it ever record a real test case? "none found".** The lane was added in run #84 (commit `1f5c9b3`). Artifacts read: run #84 (API 24), #85 (24), #87 (24), #88 (24 and 36), #92 (24): every one contains only the `testRunFailed` entry. Not read: #86, #89 (cancelled), #90, #91, #93 (same script, same job).
+- **Whose process crashed: not determinable.** On Android the app and the instrumentation share one process, and neither the script nor the workflow runs `adb logcat`; the artifact has no logcat and the job log has no `FATAL EXCEPTION`. I could not extract a stack trace (0 lines available).
+- **Classification: undetermined.** I cannot say (a) CI/test-infrastructure defect or (b) the minified app crashes on start. What was checked locally on this checkout (build of `-PsellerTestBuildType=staging :salesmanager:packageStagingAndroidTest`, no device available here: no `/dev/kvm`):
+  - ruled out: the instrumentation runner `OfflineQaRunner` and `MinifiedSmokeTest` are present in the test APK (not stripped by R8);
+  - ruled out: the test APK uses the same obfuscated names as the app (app `mapping.txt`: `kotlin.text.StringsKt -> c66`, `androidx.lifecycle.ViewModelStore -> g17`, `kotlin.Unit -> rt6`; the test APK calls `c66`, `g17`, `rt6`), so there is no name mismatch between the two APKs;
+  - ruled out: `string/project_id` survives resource shrinking in the staging build, so the guard in `OfflineQaRunner.newApplication` (`check(... getString(id) == "seller-qa-offline")`) is not tripped by shrinking, assuming the offline fixture is generated as in CI (locally the real `google-services.json` is used, so this was only checked for presence);
+  - **not excluded**: an exception in the real `Application.onCreate` (Koin, Room, WorkManager, Firebase) of the minified build. This would be (b) and would also affect the minified release APK that is shipped. It fits the timing (the process dies before the test body starts), but the same timing also fits other infrastructure causes.
+  - The compose lanes run the same app code unminified, with the application class replaced (`newApplication` returns a plain `Application` there), so they say nothing about the real `Application.onCreate` under R8.
+- **Owner attention:** until a logcat is captured, the minified build must be treated as **not smoke-tested on a device**. The unminified debug build and its tests are unaffected.
+
+Proposed fix (text only, **needs owner approval**; to be done on a separate branch from `production`, not on `feat/kmp-android-desktop`; no branch was created):
+1. In `scripts/run-seller-minified-smoke.sh`, capture `adb logcat -d -v threadtime` (and `adb logcat -b crash -d`) after the Gradle step into `salesmanager/build/outputs/qa/minified-logcat.txt`, and add it to the artifact paths of the job (both changes are outside the KMP work).
+2. Make the lane fail when the JUnit XML does not contain exactly one executed, passed `MinifiedSmokeTest` case (reuse the rule of `check-device-qa-results.py`: missing, skipped or failure is never success), so a crash can no longer be green.
+3. Run the lane once with that logcat and decide (a) or (b) from the `FATAL EXCEPTION` head. If it is (b), fix the R8 rules or the startup code under its own approval.
 
 ## Not verified
 
