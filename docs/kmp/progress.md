@@ -7,16 +7,15 @@ Branch: `feat/kmp-android-desktop` (merged with `production` @ 44229d1, PRs #52/
 
 - `baseline.md` supersedes the figures in section 0 of the master prompt. Test floors: JVM unit tests 1,192; `qa/pdf-verifier` 10 (10 PASS on each of API 24/28/33/35/36 in run #88); instrumented 19 executed per compose job on API 24/28/33/35/36 (20 in XML incl. 1 skipped `MinifiedSmokeTest`), R8 smoke lane on API 24/36 not verified from artifacts.
 - Seller QA runs on every PR to `production` (no `paths:` or draft filter): it started on PR #54 as run #91.
-- K0.1 commit: `328e3b7` (to be backfilled in the K0.2 commit).
 
 ## Tasks
 
 
 ### K0 — Baseline and spike (no production code changes)
 - [x] K0.1 Record the baseline: test counts per module, coverage, lint, build times, APK size. Save to `docs/kmp/baseline.md`.  
-  - commit: the commit titled "docs(kmp): K0.1 baseline (re-measured on merged production)" (a commit cannot contain its own hash; measured on code `44229d1`) · evidence: 1,192 unit tests from XML (app 292, salesmanager 884, admin 16), 0 failures/skipped; lint 0 errors (29/22/23 warnings); line coverage 90.31%; debug APK 59,851,221 B, release R8 27,616,762 B; cold assemble 93 s; toolchain matches prompt. Seller QA #90 on PR #53 head failed on API 24 (cause not verified); #88 green.
-- [ ] K0.2 Generate the dependency inventory: every library mapped to KMP-ready / JVM-only / Android-only, with version and evidence link. Save to `docs/kmp/dependency-matrix.md`.  
-  - commit: _pending_ · evidence: _pending_
+  - commit: `328e3b7` (closing items `0509751`, `a89afaa`; measured on code `44229d1`) · evidence: 1,192 unit tests from XML (app 292, salesmanager 884, admin 16), 0 failures/skipped; lint 0 errors (29/22/23 warnings); line coverage 90.31%; debug APK 59,851,221 B, release R8 27,616,762 B; cold assemble 93 s; toolchain matches prompt. Seller QA #90 on PR #53 head failed on API 24 (cause not verified); #88 green.
+- [x] K0.2 Generate the dependency inventory: every library mapped to KMP-ready / JVM-only / Android-only, with version and evidence link. Save to `docs/kmp/dependency-matrix.md`.  
+  - commit: the commit titled "docs(kmp): K0.2 dependency matrix" (hash backfilled in the K0.3 commit) · evidence: 70 catalog/BOM/imported rows + 32 candidate rows, each from Gradle module metadata of the exact version; KMP-ready 12, JVM-only 7, Android-only 31, Android-only with desktop stub 12, build-time 6, BOM 2. Blockers listed for K1.3, K5.5, K6.1; newer versions need compileSdk 37; Compose Multiplatform vs Kotlin 2.4.21 / AGP 9.5.2 not verified (K0.4).
 - [ ] K0.3 Generate the Android-coupling inventory per file (`android.*`, Firebase, Gson, WorkManager, PDF, CameraX), grouped by module and layer. Save to `docs/kmp/coupling-inventory.md`.  
   - commit: _pending_ · evidence: _pending_
 - [ ] K0.4 Spike in a throwaway branch: an empty KMP library + `desktopApp` showing one Arabic RTL Compose screen with the bundled IBM Plex Sans Arabic font on Windows. Record the Compose Multiplatform, Kotlin and AGP versions that work. Do not merge the spike; write ADR-0001 (module layout and plugins).  
